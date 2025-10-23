@@ -1,0 +1,14 @@
+
+services:
+  local-postgres-database:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    environment:
+      - POSTGRESQL_USERNAME=admin
+      - POSTGRESQL_PASSWORD=password
+      - POSTGRESQL_DATABASE=bookden
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
