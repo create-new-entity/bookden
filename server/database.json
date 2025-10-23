@@ -1,0 +1,16 @@
+
+{
+    "defaultEnv": "dev",
+    "dev": {
+        "driver": "pg",
+        "user": {
+            "ENV": "LOCAL_DB_ADMIN"
+        },
+        "password": {
+            "ENV": "LOCAL_DB_PASSWORD"
+        },
+        "host": "localhost",
+        "port": "5432",
+        "database": "bookden"
+    }
+}
