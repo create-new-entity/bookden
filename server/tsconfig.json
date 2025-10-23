@@ -1,19 +1,15 @@
 {
-  "compilerOptions":{
+  "compilerOptions": {
     "target": "ES2020",
-    "outDir": "./build/",
-    "module": "node16",
-    "moduleResolution": "node16",
+    "outDir": "./build",
+    "module": "ES2020",   
+    "moduleResolution": "node",
     "skipLibCheck": true,
     "strict": true,
-    "noImplicitAny": true,
     "allowUnreachableCode": false,
-    "strictNullChecks": true,
+    "esModuleInterop": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "esModuleInterop": true
+    "noImplicitReturns": true
   }
 }

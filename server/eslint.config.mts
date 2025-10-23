@@ -18,7 +18,8 @@ export default defineConfig([
         rules: {
             'no-await-in-loop': 'error',
             '@stylistic/js/indent': ['error', 4],
-            '@stylistic/js/semi': ['error']
+            '@stylistic/js/semi': ['error'],
+            '@stylistic/js/quotes': ['error', 'single']
         }
     },
     {
@@ -28,4 +29,10 @@ export default defineConfig([
         }
     },
     tseslint.configs.recommended,
+    {
+        rules: {
+            '@typescript-eslint/no-var-requires': 'off',
+            '@typescript-eslint/no-require-imports': 'off'
+        }
+    }
 ]);
