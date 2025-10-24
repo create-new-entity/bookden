@@ -3,7 +3,7 @@ import { getAllUsers } from '../controllers/user';
 
 const userRouter = Router();
 
-userRouter.get('/', async (req, res) => {
+userRouter.get('/', async (_req, res) => {
     try {
         const allUsers = await getAllUsers();  
         res.json(allUsers);
