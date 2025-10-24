@@ -1,4 +1,6 @@
 import express from 'express';
+import camelcaseKeys from 'camelcase-keys';
+
 import configs from './configs';
 
 const sql = configs.pgDBPoolUtitlities.sql;
@@ -9,7 +11,7 @@ app.use(express.json());
 app.get('/', async (req, res) => {
     try {
         const result = await sql`SELECT user_id, username, email FROM users;`;
-        console.log('result', result);
+        console.log('result', camelcaseKeys(result, { deep: true }));
         res.end();
     }
     catch(error) {
