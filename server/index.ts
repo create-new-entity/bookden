@@ -3,6 +3,7 @@ import configs from './configs';
 
 const PORT = configs.ENV_VARIABLES.PORT;
 
+
 const server = app.listen(PORT, (error) => {
     if(error) {
         console.log('App failed to start.');
