@@ -8,7 +8,7 @@ const sql = configs.pgDBPoolUtitlities.sql;
 const app = express();
 app.use(express.json());
 
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
     try {
         const result = await sql`SELECT user_id, username, email FROM users;`;
         console.log('result', camelcaseKeys(result, { deep: true }));
