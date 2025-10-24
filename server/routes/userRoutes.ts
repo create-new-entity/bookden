@@ -7,9 +7,11 @@ userRouter.get('/', async (_req, res) => {
     try {
         const allUsers = await getAllUsers();  
         res.json(allUsers);
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
+
 
 export default userRouter;

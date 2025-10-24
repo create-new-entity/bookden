@@ -39,6 +39,11 @@ const sql = async (template: TemplateStringsArray, ...values: ValueExpression[])
     return result.map((row) => camelcaseKeys(row, { deep: true }));
 };
 
+const sqlOne = async (template: TemplateStringsArray, ...values: ValueExpression[]) => {
+    const result = await pgDBPool!.one(slonikSql.unsafe(template, ...values));
+    return camelcaseKeys(result, { deep: true });
+};
+
 const sqlFragment = slonikSql.fragment;
 
 const initPGDBPool = async () => {
@@ -51,11 +56,16 @@ const initPGDBPool = async () => {
     }
 };
 
+const queryVariants = {
+    sql,
+    sqlOne,
+    sqlFragment
+};
+
 const pgDBPoolUtitlities = {
     getPGDBPool,
     endConnectionPool,
-    sql,
-    sqlFragment,
+    queryVariants,
     initPGDBPool
 };
 

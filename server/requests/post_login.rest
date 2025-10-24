@@ -1,0 +1,27 @@
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+    "username": "superadmin1",
+    "password": "password"
+}
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+    "username": "superadmin1",
+    "password": "invalidpassword"
+}
+
+###
+
+POST http://localhost:3000/api/login
+Content-Type: application/json
+
+{
+    "username": "invaliduser",
+    "password": "invalidpassword"
+}
