@@ -1,4 +1,5 @@
 
+import camelcaseKeys from 'camelcase-keys';
 import {
     createPool,
     ClientConfiguration,
@@ -27,8 +28,11 @@ const endConnectionPool = async () => {
 };
 
 const sql = async (template: TemplateStringsArray, ...values: ValueExpression[]) => {
-    return pgDBPool!.any(slonikSql.unsafe(template, ...values));
+    const result = await pgDBPool!.any(slonikSql.unsafe(template, ...values));
+    return result.map((row) => camelcaseKeys(row, { deep: true }));
 };
+
+const sqlFragment = slonikSql.fragment;
 
 const initPGDBPool = async () => {
     try {
@@ -46,6 +50,7 @@ const pgDBPoolUtitlities = {
     getPGDBPool,
     endConnectionPool,
     sql,
+    sqlFragment
 };
 
 export default pgDBPoolUtitlities;
