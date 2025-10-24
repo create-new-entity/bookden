@@ -44,13 +44,12 @@ const initPGDBPool = async () => {
     }
 };
 
-initPGDBPool();
-
 const pgDBPoolUtitlities = {
     getPGDBPool,
     endConnectionPool,
     sql,
-    sqlFragment
+    sqlFragment,
+    initPGDBPool
 };
 
 export default pgDBPoolUtitlities;
