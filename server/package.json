@@ -6,8 +6,9 @@
   "scripts": {
     "tsc": "tsc",
     "lint": "eslint",
-    "dev": "tsx watch index.ts",
-    "test": "jest"
+    "migrate:up:test": "cross-env NODE_ENV=test ./node_modules/.bin/db-migrate up",
+    "dev": "cross-env NODE_ENV=development tsx watch index.ts",
+    "test": "npm run migrate:up:test && cross-env NODE_ENV=test jest"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "camelcase-keys": "^10.0.0",
+    "cross-env": "^10.1.0",
     "db-migrate": "^0.11.14",
     "db-migrate-pg": "^1.5.2",
     "dotenv": "^17.2.3",

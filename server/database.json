@@ -1,7 +1,9 @@
 
 {
-    "defaultEnv": "dev",
-    "dev": {
+    "defaultEnv": {
+        "ENV": "NODE_ENV"
+    },
+    "development": {
         "driver": "pg",
         "user": {
             "ENV": "LOCAL_DB_ADMIN"
@@ -12,5 +14,17 @@
         "host": "localhost",
         "port": "5432",
         "database": "bookden"
+    },
+    "test": {
+        "driver": "pg",
+        "user": {
+            "ENV": "LOCAL_DB_ADMIN"
+        },
+        "password": {
+            "ENV": "LOCAL_DB_PASSWORD"
+        },
+        "host": "localhost",
+        "port": "5432",
+        "database": "test_db"
     }
 }
