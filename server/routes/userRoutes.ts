@@ -5,6 +5,7 @@ import { User } from '../validation';
 import { ZodError } from 'zod';
 import { AuthenticatedRequest } from '../types/Authentication';
 import { SlonikError } from 'slonik';
+import { ADMIN } from '../types';
 
 const userRouter = Router();
 
@@ -24,9 +25,17 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
         if(req.user) {
             creatorUserType = req.user.userType;
             if(!canCreateUser(creatorUserType, validated.userType)) {
-                res.status(403).json({ message: 'Forbidden: You do not have permission to create this type of user.' });
+                res.status(403).json({ message: errorMessages.notAllowedToCreateUser });
                 return;
             }
+        }
+
+        /*
+            An admin user can only be created if it is requested by the superadmin user.
+        */
+        if(!req.user && validated.userType === ADMIN) {
+            res.status(403).json({ message: errorMessages.notAllowedToCreateUser });
+            return;
         }
         await createUser(validated);
         res.status(201).end();

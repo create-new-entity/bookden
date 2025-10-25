@@ -31,7 +31,8 @@ export const errorMessages = {
     [INVALID_TOKEN]: 'Authentication token is invalid.',
     [FORBIDDEN_ACTION]: 'Forbidden action. You do not have permission to perform this action.',
     [VALIDATION_FAILED]: 'Data validation failed.',
-    [TOKEN_EXPIRED]: 'Authentication token has expired.'
+    [TOKEN_EXPIRED]: 'Authentication token has expired.',
+    notAllowedToCreateUser: 'Forbidden: You do not have permission to create this type of user.'
 };
 
 const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
