@@ -1,6 +1,9 @@
 import configs from '../configs';
-import { User } from '../types';
-import { UserTypes } from '../types/User';
+import { SALT_ROUNDS } from '../constants';
+import { ADMIN, User } from '../types';
+import { NewUserPayload, UserTypes } from '../types';
+import { convertToSnakeCaseDeep } from '../utilities';
+import bcrypt from 'bcrypt';
 
 const { sql, sqlFragment } = configs.pgDBPoolUtitlities.queryVariants;
 
@@ -30,4 +33,31 @@ const getAllUsers = async (userType?: UserTypes | undefined): Promise<User[]> =>
     return users.map(mapDate);
 };
 
-export { getAllUsers };
+const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): boolean => {
+    /*
+         Superadmin can create Admins.
+         Admins don't create anyone.
+         Customers will sign up themselves.
+
+         If the create request is coming from an authenticated
+         user, they have tobe superadmin and they should be
+         creating an admin.
+     */
+    const hierrarchy: Record<UserTypes, UserTypes[]>= {
+        superadmin: [ADMIN],
+        admin: [],
+        customer: [],
+    };
+    return hierrarchy[creatorUserType].includes(targetUserType);
+};
+
+const createUser = async (newUserData: NewUserPayload) => {
+    newUserData.password = await bcrypt.hash(newUserData.password, SALT_ROUNDS);
+    const snakeCasedData = convertToSnakeCaseDeep(newUserData);
+    await sql`
+        INSERT INTO users (username, password_hash, email, user_type, is_active)
+        VALUES (${snakeCasedData.username}, ${snakeCasedData.password}, ${snakeCasedData.email}, ${snakeCasedData.user_type}, ${snakeCasedData.is_active})
+    `;
+};
+
+export { getAllUsers, createUser, canCreateUser };

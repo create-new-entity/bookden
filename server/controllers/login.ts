@@ -2,24 +2,26 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import configs from '../configs';
 import { errorMessages, errorNames } from '../middlewares';
+import { JWTSignPayload } from '../types/Authentication';
 
 const { sqlOne } = configs.pgDBPoolUtitlities.queryVariants;
 
+const TOKEN_VALIDITY_SECONDS = 24 * 60 * 60; // 24 hours in seconds
 
-const getToken = (username: string, userId: string): string => {
-    const payload = { username, userId };
-    const ONE_HOUR = 60 * 60;
+const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
     if(configs.ENV_VARIABLES.JWT_SECRET) {
-        return jwt.sign(payload, configs.ENV_VARIABLES.JWT_SECRET, { expiresIn: ONE_HOUR });
+        return jwt.sign({ username, userId, userType }, configs.ENV_VARIABLES.JWT_SECRET, { expiresIn: TOKEN_VALIDITY_SECONDS });
     }
-    throw new Error('JWT secret is not defined');
+    const internalServerError = new Error(errorMessages[errorNames.internalServerError]);
+    internalServerError.name = errorNames.internalServerError;
+    throw internalServerError; // configs.ENV_VARIABLES.JWT_SECRET is not defined.
 };
 
 const login = async (username: string, password: string): Promise<{ token: string } | undefined> => {
     let result;
     try {
         result = await sqlOne`
-            SELECT user_id, password_hash
+            SELECT user_id, password_hash, user_type
             FROM users
             WHERE username=${username}
         `;
@@ -32,10 +34,10 @@ const login = async (username: string, password: string): Promise<{ token: strin
         }
     }
 
-    const { userId, passwordHash } = result;
+    const { userId, passwordHash, userType } = result;
     const isPasswordCorrect = await bcrypt.compare(password, passwordHash);
     if(isPasswordCorrect) {
-        const token = getToken(username, userId);
+        const token = getToken({ username, userId, userType });
         return { token };
     }
     else {
