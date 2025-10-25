@@ -5,8 +5,7 @@ import { NewUserPayload, UserTypes } from '../types';
 import { convertToSnakeCaseDeep } from '../utilities';
 import bcrypt from 'bcrypt';
 
-const sql = configs.pgDBPoolUtitlities.sql;
-const sqlFragment = configs.pgDBPoolUtitlities.sqlFragment;
+const { sql, sqlFragment } = configs.pgDBPoolUtitlities.queryVariants;
 
 const mapDate = (user: User): User => {
     return {
