@@ -4,6 +4,7 @@ import { getAllUsers, canCreateUser, createUser } from '../controllers';
 import { User } from '../validation';
 import { ZodError } from 'zod';
 import { AuthenticatedRequest } from '../types/Authentication';
+import { SlonikError } from 'slonik';
 
 const userRouter = Router();
 
@@ -32,8 +33,12 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
     } catch (error) {
         if (error instanceof ZodError) {
             res.status(403).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
-        } else {
-            res.status(500).json({ message: 'Internal Server Error' });
+        }
+        else if(error instanceof SlonikError) {
+            res.status(400).json({ error });
+        }
+        else {
+            res.status(500).json({ message: errorMessages[errorNames.internalServerError] });
         }
     }
 });
