@@ -1,0 +1,11 @@
+POST http://localhost:3000/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4xIiwidXNlcklkIjoxLCJ1c2VyVHlwZSI6InN1cGVyYWRtaW4iLCJpYXQiOjE3NjE0MDE5ODcsImV4cCI6MTc2MTQ4ODM4N30.1K2WXyMdtl6Ghw1VKqNbI0mxBGHw4I4sChoOU2GwyhY
+
+{
+    "username": "admin2",
+    "password": "password",
+    "email": "admin2@gmail.com",
+    "userType": "admin",
+    "isActive": true
+}

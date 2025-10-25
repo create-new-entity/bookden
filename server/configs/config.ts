@@ -1,8 +1,9 @@
 import 'dotenv/config';
 
 const PORT = process.env.PORT;
+const JWT_SECRET = process.env.JWT_SECRET;
 const ENV_VARIABLES = {
-    PORT
+    PORT, JWT_SECRET
 };
 
 export default ENV_VARIABLES;
