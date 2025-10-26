@@ -43,7 +43,7 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
         res.status(201).end();
     } catch (error) {
         if (error instanceof ZodError) {
-            res.status(403).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
+            res.status(400).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
         }
         else if(error instanceof SlonikError) {
             res.status(400).json({ error });
@@ -53,7 +53,5 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
         }
     }
 });
-
-
 
 export default userRouter;
