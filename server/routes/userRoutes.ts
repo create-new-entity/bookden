@@ -7,6 +7,8 @@ import { AuthenticatedRequest } from '../types/Authentication';
 import { SlonikError } from 'slonik';
 import { ADMIN } from '../types';
 
+export const userBaseUrl = '/api/users';
+
 const userRouter = Router();
 
 userRouter.get('/', async (_req: Request, res: Response) => {
