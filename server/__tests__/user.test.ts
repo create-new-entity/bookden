@@ -44,19 +44,61 @@ describe('User accounts related tests', () => {
         await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
     });
 
+    describe('superadmin managing admin users.', () => {
+        test('superadmin can not create a superadmin user.', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const newSuperAdminUser = {
+                ...seedSuperAdminUser,
+                username: 'superadmin2',
+                email: 'superadmin2@gmail.com'
+            };
+            await createUser(newSuperAdminUser, EXPECT_403, token);
+        });
+        test('superadmin can create admin user.', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const newAdminUser = {
+                ...seedAdminUser,
+                username: 'admin2',
+                email: 'admin2@gmail.com'
+            };
+            await createUser(newAdminUser, EXPECT_201, token);
+        });
+        test('superadmin can not create a customer user.', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const newCustomerUser = {
+                ...seedCustomerUser,
+                username: 'customer2',
+                email: 'customer2@gmail.com'
+            };
+            await createUser(newCustomerUser, EXPECT_403, token);
+        });
+    });
+
     describe('admin users are not allowed to create any users.', () => {
         test('admins can not create admin users.', async () => {
             const loginPayload = {
                 username: seedAdminUser.username,
                 password: 'password'
             };
-            const newAdminuser = {
+            const token = await login(loginPayload);
+            const newAdminUser = {
                 ...seedAdminUser,
                 username: 'admin2',
                 email: 'admin2@gmail.com'
             };
-            const token = await login(loginPayload);
-            await createUser(newAdminuser, EXPECT_403, token);
+            await createUser(newAdminUser, EXPECT_403, token);
         });
         test('admins can not create customer users.', async () => {
             const loginPayload = {
@@ -73,10 +115,10 @@ describe('User accounts related tests', () => {
         });
     });
 
-    describe('superadmin managing admin users.', () => {
-        test('superadmin can create admin user.', async () => {
+    describe('customer users are not allowed to create any users.', () => {
+        test('customer can not create an admin user.', async () => {
             const loginPayload = {
-                username: seedSuperAdminUser.username,
+                username: seedCustomerUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
@@ -85,7 +127,20 @@ describe('User accounts related tests', () => {
                 username: 'admin2',
                 email: 'admin2@gmail.com'
             };
-            await createUser(newAdminUser, EXPECT_201, token);
+            await createUser(newAdminUser, EXPECT_403, token);
+        });
+        test('customer can not create a superadmin user.', async () => {
+            const loginPayload = {
+                username: seedCustomerUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const newSuperAdminUser = {
+                ...seedSuperAdminUser,
+                username: 'superadmin2',
+                email: 'superadmin2@gmail.com'
+            };
+            await createUser(newSuperAdminUser, EXPECT_403, token);
         });
     });
     
