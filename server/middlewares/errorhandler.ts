@@ -1,4 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { SlonikError } from 'slonik';
+import { ZodError } from 'zod';
+import jwt from 'jsonwebtoken';
 
 const USER_NOT_FOUND = 'UserNotFound' as const;
 const INVALID_PASSWORD = 'InvalidPassword' as const;
@@ -36,11 +39,25 @@ export const errorMessages = {
 };
 
 const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
-    const show404 = error.name === errorNames.userNotFound || error.name === errorNames.invalidPassword;
-    if (show404) {
+    const send404 = error.name === errorNames.userNotFound || error.name === errorNames.invalidPassword;
+    const send401 = error.name === errorNames.unauthorized || error instanceof jwt.TokenExpiredError || error instanceof jwt.JsonWebTokenError;
+    const zodError = error instanceof ZodError;
+    const slonikError = error instanceof SlonikError;
+    
+    if(zodError) {
+        return res.status(400).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
+    }
+    else if(slonikError) {
+        res.status(400).json({ error });
+    }
+    else if (send404) {
         return res.status(404).json({ message: error.message });
     }
-    return res.status(500).json({ message: 'Internal Server Error.' });
+    else if(send401) {
+        return res.status(401).json({ message: error.message });
+    }
+    
+    return res.status(500).json({ message: errorMessages[errorNames.internalServerError] });
 };
 
 export default errorHandler;

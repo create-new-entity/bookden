@@ -3,7 +3,7 @@ import { errorMessages, errorNames } from './errorhandler';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest, JWTSignPayload } from '../types/Authentication';
 
-export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const tokenExtractor = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
     if(authHeader) {
         const token = authHeader.split('Bearer ')[1];
@@ -16,14 +16,16 @@ export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: N
             }
             catch(error) {
                 if(error instanceof jwt.TokenExpiredError) {
-                    res.status(401).json({ error: errorMessages[errorNames.tokenExpired] });
+                    error.message = errorMessages[errorNames.tokenExpired];
+                    next(error);
                     return;
                 }
                 else if(error instanceof jwt.JsonWebTokenError) {
-                    res.status(401).json({ error: errorMessages[errorNames.invalidToken] });
+                    error.message = errorMessages[errorNames.invalidToken];
+                    next(error);
                     return;
                 }
-                res.status(500).json({ error: errorMessages[errorNames.internalServerError] });
+                next(error);
                 return;
             }
         }

@@ -1,26 +1,24 @@
-import { Router, Request, Response } from 'express';
-import { errorMessages, errorNames, tokenExtractor } from '../middlewares';
+import { Router, Request, Response, NextFunction } from 'express';
+import { errorMessages, tokenExtractor } from '../middlewares';
 import { getAllUsers, canCreateUser, createUser } from '../controllers';
 import { User } from '../validation';
-import { ZodError } from 'zod';
 import { AuthenticatedRequest } from '../types/Authentication';
-import { SlonikError } from 'slonik';
 import { ADMIN } from '../types';
 
 export const userBaseUrl = '/api/users';
 
 const userRouter = Router();
 
-userRouter.get('/', async (_req: Request, res: Response) => {
+userRouter.get('/', async (_req: Request, res: Response, next: NextFunction) => {
     try {
         const allUsers = await getAllUsers();  
         res.json(allUsers);
-    } catch {
-        res.status(500).json({ message: 'Internal Server Error' });
+    } catch (error) {
+        next(error);
     }
 });
 
-userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response) => {
+userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         let creatorUserType;
         const validated = User.parse(req.body);
@@ -42,16 +40,10 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
         await createUser(validated);
         res.status(201).end();
     } catch (error) {
-        if (error instanceof ZodError) {
-            res.status(400).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
-        }
-        else if(error instanceof SlonikError) {
-            res.status(400).json({ error });
-        }
-        else {
-            res.status(500).json({ message: errorMessages[errorNames.internalServerError] });
-        }
+        next(error);
     }
 });
+
+
 
 export default userRouter;
