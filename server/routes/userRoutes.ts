@@ -11,8 +11,12 @@ export const userBaseUrl = '/api/users';
 
 const userRouter = Router();
 
-userRouter.get('/', async (_req: Request, res: Response, next: NextFunction) => {
+userRouter.get('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
+        if(!req.user) {
+            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
+            throw unauthorizedError;
+        }
         const allUsers = await getAllUsers();  
         res.json(allUsers);
     } catch (error) {
