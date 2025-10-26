@@ -58,7 +58,7 @@ const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFun
         return res.status(400).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
     }
     else if(slonikError) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ error: error.message });
     }
     else if (send404) {
         return res.status(404).json({ message: error.message });
