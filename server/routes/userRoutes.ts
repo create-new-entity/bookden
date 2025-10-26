@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import { errorMessages, errorNames, extractDuplicateErrorMessage, isDuplicateError, tokenExtractor } from '../middlewares';
 import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser } from '../controllers';
 import { UpdateUser, User } from '../validation';
