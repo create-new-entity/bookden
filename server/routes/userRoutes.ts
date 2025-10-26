@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { errorMessages, errorNames, extractDuplicateErrorMessage, isDuplicateError, tokenExtractor } from '../middlewares';
-import { getAllUsers, canCreateUser, createUser, updateUser } from '../controllers';
+import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser } from '../controllers';
 import { UpdateUser, User } from '../validation';
 import { AuthenticatedRequest } from '../types/Authentication';
 import { ADMIN } from '../types';
@@ -66,6 +66,30 @@ userRouter.put('/', tokenExtractor, async (req: AuthenticatedRequest, res: Respo
             }
         }
         next(e);
+    }
+});
+
+userRouter.delete('/:id', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        if(!req.user) {
+            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
+            unauthorizedError.name = errorNames.unauthorized;
+            throw unauthorizedError;
+        }
+        const userId = req.params.id;
+        await deleteUser(userId, req.user);
+        res.status(204).end();
+    }
+    catch(error) {
+        if(error instanceof SlonikError) {
+            // Want to set a cleaner error message.
+            const userNotFoundError = new Error(errorMessages[errorNames.userNotFound]);
+            userNotFoundError.name = errorNames.userNotFound;
+            next(userNotFoundError);
+        }
+        else {
+            next(error);
+        }
     }
 });
 

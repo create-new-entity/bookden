@@ -1,7 +1,9 @@
 import configs from '../configs';
 import { SALT_ROUNDS } from '../constants';
-import { ADMIN, UpdateUserPayload, User } from '../types';
+import { errorMessages, errorNames } from '../middlewares';
+import { ADMIN, CUSTOMER, UpdateUserPayload, User } from '../types';
 import { NewUserPayload, UserTypes } from '../types';
+import { JWTSignPayload } from '../types/Authentication';
 import { convertToSnakeCaseDeep } from '../utilities';
 import bcrypt from 'bcrypt';
 
@@ -51,6 +53,15 @@ const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): b
     return hierrarchy[creatorUserType].includes(targetUserType);
 };
 
+const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): boolean => {
+    const hierrarchy: Record<UserTypes, UserTypes[]>= {
+        superadmin: [ADMIN, CUSTOMER],
+        admin: [CUSTOMER],
+        customer: [],
+    };
+    return hierrarchy[deletorUserType].includes(targetUserType);
+};
+
 const getPasswordHash = async (textPassword: string): Promise<string> => {
     return bcrypt.hash(textPassword, SALT_ROUNDS);
 };
@@ -77,12 +88,52 @@ const updateUser = async (userId: string, updateUserData: UpdateUserPayload): Pr
             user_id = ${userId}
         RETURNING *;
     `;
+};
 
+const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<void> => {
+    const targetUser = await sqlOne`
+        SELECT user_id, username, user_type
+        FROM users
+        WHERE users.user_id = ${targetUserId}
+        AND deleted_at IS NULL;
+    `;
+    console.log('targetUser', targetUser);
+    const notSameTypeUser = user.userType !== targetUser.userType;
+    const notSameTypeButAuthorizedToDelete = notSameTypeUser && canDeleteUser(user.userType, targetUser.userType);
+    
+    /* 
+        Only a customer can delete his own account.
+        Admin can delete customer accounts.
+        Superadmin is not allowed to delete himself. He can delete customer or admin users.
+    */
+    const customerTypeAndAllowedToDelete = (user.userType === targetUser.userType && user.userType === CUSTOMER) && (user.userId === targetUser.userId);
+    const isAllowedToDelete = notSameTypeButAuthorizedToDelete || customerTypeAndAllowedToDelete;
+    if(isAllowedToDelete) {
+        if(customerTypeAndAllowedToDelete) {
+            await sql`
+                UPDATE users
+                SET deleted_at = NOW()
+                WHERE user_id = ${targetUserId}
+            `;
+        }
+        else {
+            await sql`
+                DELETE FROM users
+                WHERE user_id = ${targetUserId};
+            `;
+        }
+    }
+    else {
+        const forbiddenActionError = new Error(errorMessages[errorNames.forbiddenAction]);
+        forbiddenActionError.name = errorNames.forbiddenAction;
+        throw forbiddenActionError;
+    }
 };
 
 export {
     getAllUsers,
     createUser,
     canCreateUser,
-    updateUser
+    updateUser,
+    deleteUser
 };

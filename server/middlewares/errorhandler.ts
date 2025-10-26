@@ -51,6 +51,7 @@ export const extractDuplicateErrorMessage = (error: PostgresError): string => {
 const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
     const send404 = error.name === errorNames.userNotFound || error.name === errorNames.invalidPassword;
     const send401 = error.name === errorNames.unauthorized || error instanceof jwt.TokenExpiredError || error instanceof jwt.JsonWebTokenError;
+    const send403 = error.name === errorNames.forbiddenAction;
     const zodError = error instanceof ZodError;
     const slonikError = error instanceof SlonikError;
     
@@ -58,13 +59,16 @@ const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFun
         return res.status(400).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
     }
     else if(slonikError) {
-        return res.status(400).json({ error: error.message });
+        return res.status(400).json({ message: error.message });
     }
     else if (send404) {
         return res.status(404).json({ message: error.message });
     }
     else if(send401) {
         return res.status(401).json({ message: error.message });
+    }
+    else if(send403) {
+        return res.status(403).json({ message: error.message });
     }
     
     return res.status(500).json({ message: errorMessages[errorNames.internalServerError] });
