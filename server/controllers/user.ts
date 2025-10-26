@@ -97,7 +97,6 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
         WHERE users.user_id = ${targetUserId}
         AND deleted_at IS NULL;
     `;
-    console.log('targetUser', targetUser);
     const notSameTypeUser = user.userType !== targetUser.userType;
     const notSameTypeButAuthorizedToDelete = notSameTypeUser && canDeleteUser(user.userType, targetUser.userType);
     

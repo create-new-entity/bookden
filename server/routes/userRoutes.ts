@@ -18,7 +18,7 @@ userRouter.get('/', tokenExtractor, async (req: AuthenticatedRequest, res: Respo
             throw unauthorizedError;
         }
         const allUsers = await getAllUsers();  
-        res.json(allUsers);
+        res.status(200).json(allUsers);
     } catch (error) {
         next(error);
     }

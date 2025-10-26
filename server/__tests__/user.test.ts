@@ -1,8 +1,9 @@
 import pgDBPoolUtitlities from '../configs/db';
-import { EXPECT_200, EXPECT_201, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
+import { ADMIN, CUSTOMER, SUPERADMIN, User } from '../types';
+import { EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
 import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
 import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
-import { createUser, login, updateUser } from './testUtils/userUtils';
+import { createUser, deleteUser, getUsers, login, updateUser } from './testUtils/userUtils';
 
 describe('User accounts related tests', () => {
 
@@ -224,6 +225,226 @@ describe('User accounts related tests', () => {
             };
             const token = await login(loginPayload);
             await updateUser(user, EXPECT_500, token);
+        });
+    });
+
+    describe('DELETE users.', () => {
+        describe('superadmin', () => {
+            test('superadmin can not delete superadmin.', async () => {
+                const loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                const token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                const existingSuperAdminuser = allUsers.find(u => u.userType === SUPERADMIN);
+                if(existingSuperAdminuser) {
+                    await deleteUser(existingSuperAdminuser.userId, EXPECT_403, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('superadmin can delete admin.', async () => {
+                const loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                const token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                const existingAdminUser = allUsers.find(u => u.userType === ADMIN);
+                if(existingAdminUser) {
+                    await deleteUser(existingAdminUser.userId, EXPECT_204, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('superadmin can delete customer.', async () => {
+                const loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                const token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                const existingCustomerUser = allUsers.find(u => u.userType === CUSTOMER);
+                if(existingCustomerUser) {
+                    await deleteUser(existingCustomerUser.userId, EXPECT_204, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+        });
+
+        describe('admin', () => {
+            test('admin can not delete superadmin.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedAdminUser.username,
+                    password: seedAdminUser.password
+                };
+                token = await login(loginPayload);
+                const existingSuperAdminuser = allUsers.find(u => u.userType === SUPERADMIN);
+                if(existingSuperAdminuser) {
+                    await deleteUser(existingSuperAdminuser.userId, EXPECT_403, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('admin can not delete admin.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedAdminUser.username,
+                    password: seedAdminUser.password
+                };
+                token = await login(loginPayload);
+                const existingAdminUser = allUsers.find(u => u.userType === ADMIN);
+                if(existingAdminUser) {
+                    await deleteUser(existingAdminUser.userId, EXPECT_403, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('admin can delete customer.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedAdminUser.username,
+                    password: seedAdminUser.password
+                };
+                token = await login(loginPayload);
+                const existingCustomerUser = allUsers.find(u => u.userType === CUSTOMER);
+                if(existingCustomerUser) {
+                    await deleteUser(existingCustomerUser.userId, EXPECT_204, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+        });
+
+        describe('customer', () => {
+            test('customer can not delete superadmin.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedCustomerUser.username,
+                    password: seedCustomerUser.password
+                };
+                token = await login(loginPayload);
+                const existingSuperAdminuser = allUsers.find(u => u.userType === SUPERADMIN);
+                if(existingSuperAdminuser) {
+                    await deleteUser(existingSuperAdminuser.userId, EXPECT_403, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('customer can not delete admin.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedCustomerUser.username,
+                    password: seedCustomerUser.password
+                };
+                token = await login(loginPayload);
+                const existingAdminUser = allUsers.find(u => u.userType === ADMIN);
+                if(existingAdminUser) {
+                    await deleteUser(existingAdminUser.userId, EXPECT_403, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('customer can not delete other customer.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+
+                const newCustomer = {
+                    ...seedCustomerUser,
+                    username: 'new_customer',
+                    email: 'new_customer@gmail.com'
+                };
+                await createUser(newCustomer, 201);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedCustomerUser.username,
+                    password: seedCustomerUser.password
+                };
+                token = await login(loginPayload);
+                const existingOtherCustomerUser = allUsers.find(u => u.username === newCustomer.username);
+                if(existingOtherCustomerUser) {
+                    await deleteUser(existingOtherCustomerUser.userId, EXPECT_403, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
+
+            test('customer can delete own account.', async () => {
+                let loginPayload = {
+                    username: seedSuperAdminUser.username,
+                    password: seedSuperAdminUser.password
+                };
+                let token = await login(loginPayload);
+                const response = await getUsers(EXPECT_200, token);
+                const allUsers = response.body as User[];
+                loginPayload = {
+                    username: seedCustomerUser.username,
+                    password: seedCustomerUser.password
+                };
+                token = await login(loginPayload);
+                const existingCustomerUser = allUsers.find(u => u.username === seedCustomerUser.username);
+                if(existingCustomerUser) {
+                    await deleteUser(existingCustomerUser.userId, EXPECT_204, token);
+                }
+                else {
+                    fail('Could not find a user to delete.');
+                }
+            });
         });
     });
 

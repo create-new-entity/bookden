@@ -33,3 +33,23 @@ export const updateUser = async (user: UpdateUserPayload, expectedCode: number, 
         .send(user)
         .expect(expectedCode);
 };
+
+export const deleteUser = async (userId: string, expectedCode: number, token: string) => {
+    await apiSupertest(app)
+        .delete(`${userBaseUrl}/${userId}`)
+        .set({
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        })
+        .expect(expectedCode);
+};
+
+export const getUsers = async (expectedCode: number, token: string) => {
+    return await apiSupertest(app)
+        .get(userBaseUrl)
+        .set({
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        })
+        .expect(expectedCode);
+};
