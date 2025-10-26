@@ -2,10 +2,11 @@ import { NextFunction, Response } from 'express';
 import { errorMessages, errorNames } from './errorhandler';
 import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest, JWTSignPayload } from '../types/Authentication';
+import { CUSTOMER } from '../types';
 
 export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
-    const isCreatingCustomerUser = req.body.userType;
+    const isCreatingCustomerUser = req.body.userType === CUSTOMER;
     if(isCreatingCustomerUser) {
         next();
         return;
