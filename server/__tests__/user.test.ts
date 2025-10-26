@@ -1,9 +1,7 @@
-import app from '../app';
-import apiSupertest from 'supertest';
 import pgDBPoolUtitlities from '../configs/db';
+import { EXPECT_201, EXPECT_403, EXPECT_500 } from './testUtils/constants';
 import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
-import { seedAdminUser, seedSuperAdminUser } from './testUtils/seeds';
-import { userBaseUrl } from '../routes';
+import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
 import { createUser, login } from './testUtils/userUtils';
 
 
@@ -11,6 +9,9 @@ describe('User accounts related tests', () => {
 
     beforeAll(async () => {
         await pgDBPoolUtitlities.initPGDBPool();
+    });
+
+    beforeEach(async () => {
         await clearDB();
         await createSomeSeedUsers();
     });
@@ -25,14 +26,7 @@ describe('User accounts related tests', () => {
             password: 'password'
         };
         const token = await login(loginPayload);
-        await apiSupertest(app)
-            .post(userBaseUrl)
-            .set({
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            })
-            .send(newSuperAdminUser)
-            .expect(403);
+        await createUser(newSuperAdminUser, EXPECT_403, token);
     });
 
     test('username should be unique.', async () => {
@@ -46,10 +40,55 @@ describe('User accounts related tests', () => {
             password: 'password'
         };
         const token = await login(loginPayload);
-        await createUser(seedAdminUser, 201, token);
-        await createUser(seedAdminUser, 500, token);  // Should be error -> has same username.
-        await createUser(newAdminUser, 201, token);   // Should be 201 -> different username and email.
+        await createUser(seedAdminUser, EXPECT_500, token);  // Should be error -> has same username.
+        await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
     });
+
+    describe('admin users are not allowed to create any users.', () => {
+        test('admins can not create admin users.', async () => {
+            const loginPayload = {
+                username: seedAdminUser.username,
+                password: 'password'
+            };
+            const newAdminuser = {
+                ...seedAdminUser,
+                username: 'admin2',
+                email: 'admin2@gmail.com'
+            };
+            const token = await login(loginPayload);
+            await createUser(newAdminuser, EXPECT_403, token);
+        });
+        test('admins can not create customer users.', async () => {
+            const loginPayload = {
+                username: seedAdminUser.username,
+                password: 'password'
+            };
+            const newCustomerUser = {
+                ...seedCustomerUser,
+                username: 'customer2',
+                email: 'customer2@gmail.com'
+            };
+            const token = await login(loginPayload);
+            await createUser(newCustomerUser, EXPECT_403, token);
+        });
+    });
+
+    describe('superadmin managing admin users.', () => {
+        test('superadmin can create admin user.', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const newAdminUser = {
+                ...seedAdminUser,
+                username: 'admin2',
+                email: 'admin2@gmail.com'
+            };
+            await createUser(newAdminUser, EXPECT_201, token);
+        });
+    });
+    
 
     afterAll(async () => {
         pgDBPoolUtitlities.endConnectionPool();
