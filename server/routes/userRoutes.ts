@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { errorMessages, tokenExtractor } from '../middlewares';
-import { getAllUsers, canCreateUser, createUser } from '../controllers';
-import { User } from '../validation';
+import { errorMessages, errorNames, tokenExtractor } from '../middlewares';
+import { getAllUsers, canCreateUser, createUser, updateUser } from '../controllers';
+import { UpdateUser, User } from '../validation';
 import { AuthenticatedRequest } from '../types/Authentication';
 import { ADMIN } from '../types';
 
@@ -44,6 +44,19 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
     }
 });
 
-
+userRouter.put('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        if(!req.user) {
+            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
+            throw unauthorizedError;
+        }
+        const validated = UpdateUser.parse(req.body);
+        await updateUser(req.user.userId, validated);
+        res.status(200).end();
+    }
+    catch(e) {
+        next(e);
+    }
+});
 
 export default userRouter;

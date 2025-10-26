@@ -1,12 +1,11 @@
 import configs from '../configs';
 import { SALT_ROUNDS } from '../constants';
-import { ADMIN, User } from '../types';
+import { ADMIN, UpdateUserPayload, User } from '../types';
 import { NewUserPayload, UserTypes } from '../types';
 import { convertToSnakeCaseDeep } from '../utilities';
 import bcrypt from 'bcrypt';
 
-const sql = configs.pgDBPoolUtitlities.sql;
-const sqlFragment = configs.pgDBPoolUtitlities.sqlFragment;
+const { sqlOne, sql, sqlFragment } = configs.pgDBPoolUtitlities.queryVariants;
 
 const mapDate = (user: User): User => {
     return {
@@ -52,8 +51,12 @@ const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): b
     return hierrarchy[creatorUserType].includes(targetUserType);
 };
 
+const getPasswordHash = async (textPassword: string): Promise<string> => {
+    return bcrypt.hash(textPassword, SALT_ROUNDS);
+};
+
 const createUser = async (newUserData: NewUserPayload) => {
-    newUserData.password = await bcrypt.hash(newUserData.password, SALT_ROUNDS);
+    newUserData.password = await getPasswordHash(newUserData.password);
     const snakeCasedData = convertToSnakeCaseDeep(newUserData);
     await sql`
         INSERT INTO users (username, password_hash, email, user_type, is_active)
@@ -61,4 +64,25 @@ const createUser = async (newUserData: NewUserPayload) => {
     `;
 };
 
-export { getAllUsers, createUser, canCreateUser };
+const updateUser = async (userId: string, updateUserData: UpdateUserPayload): Promise<void> => {
+    const snakeCasedData = convertToSnakeCaseDeep(updateUserData);
+    snakeCasedData.password = await getPasswordHash(updateUserData.password);
+    await sqlOne`
+        UPDATE users
+        SET
+            username = ${snakeCasedData.username},
+            password_hash = ${snakeCasedData.password},
+            email = ${snakeCasedData.email}
+        WHERE
+            user_id = ${userId}
+        RETURNING *;
+    `;
+
+};
+
+export {
+    getAllUsers,
+    createUser,
+    canCreateUser,
+    updateUser
+};

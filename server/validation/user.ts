@@ -8,3 +8,9 @@ export const User = z.object({
     userType: z.enum([ADMIN, CUSTOMER]),
     isActive: z.boolean()
 });
+
+export const UpdateUser = z.object({
+    username: z.string().min(6).max(30),
+    password: z.string().min(6).max(30),
+    email: z.string().email().max(250)
+});
