@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import login from '../controllers/login';
+
+export const loginBaseUrl = '/api/login';
+
 const loginRouter = Router();
 
 loginRouter.post('/', async (req, res, next) => {
