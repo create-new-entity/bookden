@@ -1,9 +1,9 @@
 PUT http://localhost:3000/api/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4xIiwidXNlcklkIjoxLCJ1c2VyVHlwZSI6InN1cGVyYWRtaW4iLCJpYXQiOjE3NjE1MDAwNzEsImV4cCI6MTc2MTU4NjQ3MX0.XWTmFoZtiAZuUvSomz07EUe3qzIWUvPdsnnmLrCFpL0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMSIsInVzZXJJZCI6MiwidXNlclR5cGUiOiJhZG1pbiIsImlhdCI6MTc2MTUwMjU0OSwiZXhwIjoxNzYxNTg4OTQ5fQ.9k5i7Kh1j1q_tarHISsMyOjBA-2yo1IZJlbGJYE99cM
 
 {
-    "username": "superadmin",
+    "username": "admin5",
     "password": "password",
-    "email": "superadmin@gmail.com"
+    "email": "admin2@gmail.com"
 }

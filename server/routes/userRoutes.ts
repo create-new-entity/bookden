@@ -1,9 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { errorMessages, errorNames, tokenExtractor } from '../middlewares';
+import { errorMessages, errorNames, extractDuplicateErrorMessage, isDuplicateError, tokenExtractor } from '../middlewares';
 import { getAllUsers, canCreateUser, createUser, updateUser } from '../controllers';
 import { UpdateUser, User } from '../validation';
 import { AuthenticatedRequest } from '../types/Authentication';
 import { ADMIN } from '../types';
+import { isPostgresError } from '../types/Errors';
+import { SlonikError } from 'slonik';
 
 export const userBaseUrl = '/api/users';
 
@@ -55,6 +57,14 @@ userRouter.put('/', tokenExtractor, async (req: AuthenticatedRequest, res: Respo
         res.status(200).end();
     }
     catch(e) {
+        if(isPostgresError(e)) {
+            const isUniqueConstraintErr = isDuplicateError(e);
+            if(isUniqueConstraintErr) {
+                e.message = extractDuplicateErrorMessage(e);
+                next(e);
+                return;
+            }
+        }
         next(e);
     }
 });

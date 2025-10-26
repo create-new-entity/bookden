@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { SlonikError } from 'slonik';
 import { ZodError } from 'zod';
 import jwt from 'jsonwebtoken';
+import { PostgresError } from '../types/Errors';
 
 const USER_NOT_FOUND = 'UserNotFound' as const;
 const INVALID_PASSWORD = 'InvalidPassword' as const;
@@ -38,6 +39,15 @@ export const errorMessages = {
     notAllowedToCreateUser: 'Forbidden: You do not have permission to create this type of user.'
 };
 
+export const isDuplicateError = (error: PostgresError): boolean => {
+    return error.cause.code === '23505';
+};
+
+export const extractDuplicateErrorMessage = (error: PostgresError): string => {
+    const msg = error.cause.detail.split('=')[1];
+    return msg.replace(/[()]/g, '');
+};
+
 const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
     const send404 = error.name === errorNames.userNotFound || error.name === errorNames.invalidPassword;
     const send401 = error.name === errorNames.unauthorized || error instanceof jwt.TokenExpiredError || error instanceof jwt.JsonWebTokenError;
@@ -48,7 +58,7 @@ const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFun
         return res.status(400).json({ message: `${errorMessages[errorNames.validationFailed]} ${error.message}`});
     }
     else if(slonikError) {
-        res.status(400).json({ error });
+        res.status(400).json({ error: error.message });
     }
     else if (send404) {
         return res.status(404).json({ message: error.message });
