@@ -3,7 +3,7 @@ import { errorMessages, errorNames, extractDuplicateErrorMessage, isDuplicateErr
 import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser } from '../controllers';
 import { UpdateUser, User } from '../validation';
 import { AuthenticatedRequest } from '../types/Authentication';
-import { ADMIN } from '../types';
+import { ADMIN, CUSTOMER } from '../types';
 import { isPostgresError } from '../types/Errors';
 import { SlonikError } from 'slonik';
 
@@ -13,7 +13,7 @@ const userRouter = Router();
 
 userRouter.get('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-        if(!req.user) {
+        if(!req.user || req.user.userType === CUSTOMER) {
             const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
             throw unauthorizedError;
         }
