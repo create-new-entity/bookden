@@ -1,7 +1,7 @@
 import { loginBaseUrl, userBaseUrl } from '../../routes';
 import apiSupertest from 'supertest';
 import app from '../../app';
-import { NewUserPayload } from '../../types';
+import { NewUserPayload, UpdateUserPayload } from '../../types';
 
 
 export const login = async (loginPayload: { username: string, password: string }): Promise<string> => {
@@ -15,6 +15,17 @@ export const login = async (loginPayload: { username: string, password: string }
 export const createUser = async (user: NewUserPayload, expectedCode: number, token?: string) => {
     await apiSupertest(app)
         .post(userBaseUrl)
+        .set({
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        })
+        .send(user)
+        .expect(expectedCode);
+};
+
+export const updateUser = async (user: UpdateUserPayload, expectedCode: number, token: string) => {
+    await apiSupertest(app)
+        .put(userBaseUrl)
         .set({
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})

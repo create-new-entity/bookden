@@ -1,9 +1,8 @@
 import pgDBPoolUtitlities from '../configs/db';
-import { EXPECT_201, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
+import { EXPECT_200, EXPECT_201, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
 import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
 import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
-import { createUser, login } from './testUtils/userUtils';
-
+import { createUser, login, updateUser } from './testUtils/userUtils';
 
 describe('User accounts related tests', () => {
 
@@ -168,6 +167,64 @@ describe('User accounts related tests', () => {
             email: 'customer2@gmail.com'
         };
         await createUser(newCustomerUser, EXPECT_201);
+    });
+
+    describe('UPDATE users.', () => {
+        test('superadmin user can update own data.', async () => {
+            const user = {
+                username: 'superadmin_updated',
+                password: seedSuperAdminUser.password,
+                email: seedSuperAdminUser.email
+            };
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await updateUser(user, EXPECT_200, token);
+        });
+
+        test('admin user can update own data.', async () => {
+            const user = {
+                username: 'admin_updated',
+                password: 'new_password',
+                email: 'randomNewMail@gmail.com'
+            };
+            const loginPayload = {
+                username: seedAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await updateUser(user, EXPECT_200, token);
+        });
+
+        test('customer user can update own data.', async () => {
+            const user = {
+                username: 'customer_updated',
+                password: 'new_password',
+                email: 'randomNewMail@gmail.com'
+            };
+            const loginPayload = {
+                username: seedCustomerUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await updateUser(user, EXPECT_200, token);
+        });
+
+        test('UPDATE fails if username is duplicate.', async () => {
+            const user = {
+                username: seedAdminUser.username,
+                password: 'new_password',
+                email: 'randomNewMail@gmail.com'
+            };
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await updateUser(user, EXPECT_500, token);
+        });
     });
 
     afterAll(async () => {
