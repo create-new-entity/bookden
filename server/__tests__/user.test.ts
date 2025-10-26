@@ -1,5 +1,5 @@
 import pgDBPoolUtitlities from '../configs/db';
-import { EXPECT_201, EXPECT_403, EXPECT_500 } from './testUtils/constants';
+import { EXPECT_201, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
 import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
 import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
 import { createUser, login } from './testUtils/userUtils';
@@ -19,30 +19,51 @@ describe('User accounts related tests', () => {
     test('New superadmin user can not be created.', async () => {
         const newSuperAdminUser = {
             ...seedSuperAdminUser,
-            username: 'superadmin2'
+            username: 'superadmin2',
+            email: 'superadmin2@gmail.com'
         };
         const loginPayload = {
             username: seedSuperAdminUser.username,
             password: 'password'
         };
         const token = await login(loginPayload);
-        await createUser(newSuperAdminUser, EXPECT_403, token);
+        await createUser(newSuperAdminUser, EXPECT_400, token); // 400 is correct. Because zod validation will throw error.
     });
 
-    test('username should be unique.', async () => {
-        const newAdminUser = {
-            ...seedAdminUser,
-            username: 'admin2',
-            email: 'admin2@gmail.com'
-        };
-        const loginPayload = {
-            username: seedSuperAdminUser.username,
-            password: 'password'
-        };
-        const token = await login(loginPayload);
-        await createUser(seedAdminUser, EXPECT_500, token);  // Should be error -> has same username.
-        await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
+    describe('payload validation tests.', () => {
+        test('username should be unique.', async () => {
+            const newAdminUser = {
+                ...seedAdminUser,
+                username: 'admin2',
+                email: 'admin2@gmail.com'
+            };
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await createUser(seedAdminUser, EXPECT_500, token);  // Should be error -> has same username.
+            await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
+        });
+
+        test('email should be valid.', async () => {
+            const newAdminUser = {
+                ...seedAdminUser,
+                username: 'admin2',
+                email: 'invalid email'
+            };
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await createUser(newAdminUser, EXPECT_400, token);
+        });
     });
+
+    
+
+    
 
     describe('superadmin managing admin users.', () => {
         test('superadmin can not create a superadmin user.', async () => {
@@ -56,7 +77,7 @@ describe('User accounts related tests', () => {
                 username: 'superadmin2',
                 email: 'superadmin2@gmail.com'
             };
-            await createUser(newSuperAdminUser, EXPECT_403, token);
+            await createUser(newSuperAdminUser, EXPECT_400, token);
         });
         test('superadmin can create admin user.', async () => {
             const loginPayload = {
@@ -140,7 +161,7 @@ describe('User accounts related tests', () => {
                 username: 'superadmin2',
                 email: 'superadmin2@gmail.com'
             };
-            await createUser(newSuperAdminUser, EXPECT_403, token);
+            await createUser(newSuperAdminUser, EXPECT_400, token);
         });
     });
     
