@@ -61,10 +61,6 @@ describe('User accounts related tests', () => {
         });
     });
 
-    
-
-    
-
     describe('superadmin managing admin users.', () => {
         test('superadmin can not create a superadmin user.', async () => {
             const loginPayload = {
@@ -165,6 +161,14 @@ describe('User accounts related tests', () => {
         });
     });
     
+    test('customer sign up works.', async () => {
+        const newCustomerUser = {
+            ...seedCustomerUser,
+            username: 'customer2',
+            email: 'customer2@gmail.com'
+        };
+        await createUser(newCustomerUser, EXPECT_201);
+    });
 
     afterAll(async () => {
         pgDBPoolUtitlities.endConnectionPool();

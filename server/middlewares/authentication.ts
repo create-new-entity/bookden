@@ -5,10 +5,6 @@ import { AuthenticatedRequest, JWTSignPayload } from '../types/Authentication';
 
 export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        res.status(401).json({ error: errorMessages[errorNames.unauthorized] });
-        return;
-    }
     if(authHeader) {
         const token = authHeader.split('Bearer ')[1];
         if(token) {
