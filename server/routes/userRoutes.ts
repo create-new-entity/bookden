@@ -1,6 +1,6 @@
 import { Router, Response, NextFunction } from 'express';
 import { errorMessages, errorNames, extractDuplicateErrorMessage, isDuplicateError, tokenExtractor } from '../middlewares';
-import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser } from '../controllers';
+import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser, getUser } from '../controllers';
 import { UpdateUser, User } from '../validation';
 import { AuthenticatedRequest } from '../types/Authentication';
 import { ADMIN, CUSTOMER } from '../types';
@@ -21,6 +21,28 @@ userRouter.get('/', tokenExtractor, async (req: AuthenticatedRequest, res: Respo
         res.status(200).json(allUsers);
     } catch (error) {
         next(error);
+    }
+});
+
+userRouter.get('/:id', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        if(!req.user) {
+            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
+            unauthorizedError.name = errorNames.unauthorized;
+            throw unauthorizedError;
+        }
+        const allUsers = await getUser(req.user.userId, req.params.id);  
+        res.status(200).json(allUsers);
+    } catch (error) {
+        if(error instanceof SlonikError) {
+            // Want to set a cleaner error message.
+            const userNotFoundError = new Error(errorMessages[errorNames.userNotFound]);
+            userNotFoundError.name = errorNames.userNotFound;
+            next(userNotFoundError);
+        }
+        else {
+            next(error);
+        }
     }
 });
 

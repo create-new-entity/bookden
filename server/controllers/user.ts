@@ -35,6 +35,20 @@ const getAllUsers = async (userType?: UserTypes | undefined): Promise<User[]> =>
     return users.map(mapDate);
 };
 
+const getUser = async (requestorUserId: string, targetUserId: string) => {
+    const foundUser = await sqlOne`
+        SELECT username, email, user_type, is_active, user_id
+        FROM users
+        WHERE user_id = ${targetUserId};
+    `;
+    if(foundUser.userId !== requestorUserId) {
+        const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
+        unauthorizedError.name = errorNames.unauthorized;
+        throw unauthorizedError;
+    }
+    return foundUser;
+};
+
 const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): boolean => {
     /*
          Superadmin can create Admins.
@@ -131,6 +145,7 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
 
 export {
     getAllUsers,
+    getUser,
     createUser,
     canCreateUser,
     updateUser,
