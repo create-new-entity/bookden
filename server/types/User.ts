@@ -12,7 +12,9 @@ export interface User {
 
 export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
     password: string;
-}
+};
+
+export type UpdateUserPayload = Pick<NewUserPayload, 'username' | 'email' | 'password'>;
 
 export type UserTypes = 'superadmin' | 'admin' | 'customer';
 

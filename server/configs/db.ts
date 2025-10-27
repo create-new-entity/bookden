@@ -7,6 +7,7 @@ import {
     sql as slonikSql,
     ValueExpression
 } from 'slonik';
+import { isTestEnvironment } from './config';
 
 type PoolOptions = Pick<ClientConfiguration, 'maximumPoolSize' | 'connectionTimeout' | 'connectionRetryLimit'>;
 
@@ -19,7 +20,7 @@ const poolOptions: PoolOptions = {
 let pgDBPool: DatabasePool | undefined;
 
 const DB_URL = (() => {
-    if (process.env.NODE_ENV === 'test') {
+    if (isTestEnvironment()) {
         return process.env.LOCAL_TEST_DB_URL;
     }
     return process.env.LOCAL_DB_URL;

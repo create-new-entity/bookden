@@ -1,0 +1,9 @@
+PUT http://localhost:3000/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMSIsInVzZXJJZCI6MiwidXNlclR5cGUiOiJhZG1pbiIsImlhdCI6MTc2MTUwMjU0OSwiZXhwIjoxNzYxNTg4OTQ5fQ.9k5i7Kh1j1q_tarHISsMyOjBA-2yo1IZJlbGJYE99cM
+
+{
+    "username": "admin5",
+    "password": "password",
+    "email": "admin2@gmail.com"
+}
