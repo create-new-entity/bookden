@@ -61,7 +61,7 @@ describe('User accounts related tests', () => {
         });
     });
 
-    describe('superadmin managing admin users.', () => {
+    describe('CREATE user by superadmin cases.', () => {
         test('superadmin can not create a superadmin user.', async () => {
             const loginPayload = {
                 username: seedSuperAdminUser.username,
@@ -103,7 +103,7 @@ describe('User accounts related tests', () => {
         });
     });
 
-    describe('admin users are not allowed to create any users.', () => {
+    describe('CREATE user by admin users cases.', () => {
         test('admins can not create admin users.', async () => {
             const loginPayload = {
                 username: seedAdminUser.username,
@@ -132,7 +132,7 @@ describe('User accounts related tests', () => {
         });
     });
 
-    describe('customer users are not allowed to create any users.', () => {
+    describe('CREATE user by customer cases.', () => {
         test('customer can not create an admin user.', async () => {
             const loginPayload = {
                 username: seedCustomerUser.username,
@@ -159,17 +159,16 @@ describe('User accounts related tests', () => {
             };
             await createUser(newSuperAdminUser, EXPECT_400, token);
         });
+        test('customer sign up works.', async () => {
+            const newCustomerUser = {
+                ...seedCustomerUser,
+                username: 'customer2',
+                email: 'customer2@gmail.com'
+            };
+            await createUser(newCustomerUser, EXPECT_201);
+        });
     });
     
-    test('customer sign up works.', async () => {
-        const newCustomerUser = {
-            ...seedCustomerUser,
-            username: 'customer2',
-            email: 'customer2@gmail.com'
-        };
-        await createUser(newCustomerUser, EXPECT_201);
-    });
-
     describe('UPDATE users.', () => {
         test('superadmin user can update own data.', async () => {
             const user = {
@@ -229,7 +228,7 @@ describe('User accounts related tests', () => {
     });
 
     describe('DELETE users.', () => {
-        describe('superadmin', () => {
+        describe('DELETE user by superadmin cases.', () => {
             test('superadmin can not delete superadmin.', async () => {
                 const loginPayload = {
                     username: seedSuperAdminUser.username,
@@ -282,7 +281,7 @@ describe('User accounts related tests', () => {
             });
         });
 
-        describe('admin', () => {
+        describe('DELETE user by admin cases.', () => {
             test('admin can not delete superadmin.', async () => {
                 let loginPayload = {
                     username: seedSuperAdminUser.username,
@@ -350,7 +349,7 @@ describe('User accounts related tests', () => {
             });
         });
 
-        describe('customer', () => {
+        describe('DELETE user by customer cases.', () => {
             test('customer can not delete superadmin.', async () => {
                 let loginPayload = {
                     username: seedSuperAdminUser.username,
