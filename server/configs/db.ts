@@ -66,10 +66,8 @@ const queryVariants = {
 const pgDBPoolUtitlities = {
     getPGDBPool,
     endConnectionPool,
-    sql,
-    sqlFragment,
-    initPGDBPool,
-    queryVariants
+    queryVariants,
+    initPGDBPool
 };
 
 export default pgDBPoolUtitlities;
