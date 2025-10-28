@@ -24,6 +24,7 @@
     "@eslint/js": "^9.38.0",
     "@stylistic/eslint-plugin-js": "^4.4.1",
     "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/dotenv": "^8.2.3",
     "@types/eslint": "^9.6.1",
     "@types/express": "^5.0.3",
@@ -46,6 +47,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "camelcase-keys": "^10.0.0",
+    "cors": "^2.8.5",
     "cross-env": "^10.1.0",
     "db-migrate": "^0.11.14",
     "db-migrate-pg": "^1.5.2",
