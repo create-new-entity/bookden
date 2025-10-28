@@ -3,7 +3,7 @@ import useAuthContext from '../contexts/AuthContext';
 import { useEffect } from 'react';
 
 const HomePage = () => {
-    const { isLoggedIn } = useAuthContext();
+    const { isLoggedIn, handleLoggedOutContext } = useAuthContext();
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -15,6 +15,7 @@ const HomePage = () => {
     return (
         <div>
             Hello there and welcome!
+            <button onClick={handleLoggedOutContext}>Log Out</button>
         </div>
     );
 };

@@ -1,6 +1,10 @@
-import { Button, Container, TextField, Paper, Box } from '@mui/material';
+import { Button, Container, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import type { LoginFormInputs } from '../types.ts/LogIn';
+import useLogin from '../hooks/useLogin';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 
 const styles = {
     container: {
@@ -10,12 +14,19 @@ const styles = {
         justifyContent: 'center',
     },
     paper: {
-        maxWidth: '50%',
+        width: '50%',
         padding: '0.5rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
+        gap: '0.5rem'
+    },
+    formContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
     },
     loginButtonContainer: {
         display: 'flex',
@@ -30,37 +41,62 @@ const initialValues = {
     password: ''
 };
 
-const LogIn = () => {
+const loginResolver = z.object({
+    username: z.string().min(6).max(30),
+    password: z.string().min(6).max(250)
+});
 
+const LogIn = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
+        resolver: zodResolver(loginResolver),
         defaultValues: initialValues
     });
 
-    const onSubmit = (formData) => {
-        console.log('formData', formData);
+    const logInMutation = useLogin();
+
+    const onSubmit = (formData: LoginFormInputs) => {
+        logInMutation.mutate(formData);
     };
 
+    const usernameHasError = !!errors.username?.message;
+    const passwordHasError = !!errors.password?.message;
+
     return (
-        <Container sx={styles.container}>
-            <Paper sx={styles.paper}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <Container sx={styles.container}>
+                <Paper sx={styles.paper}>
                     <TextField
                         placeholder='Username'
                         fullWidth
                         {...register('username')}
+                        error={usernameHasError}
                     />
                     <TextField
                         placeholder='Password'
                         fullWidth
                         {...register('password')}
+                        type='password'
+                        error={passwordHasError}
                     />
+                    {
+                        usernameHasError &&
+                        <Typography color='error'>{errors.username?.message}</Typography>
+                    }
+                    {
+                        passwordHasError &&
+                        <Typography color='error'>{errors.password?.message}</Typography>
+                    }
+                    {
+                        logInMutation.status === 'error' && logInMutation.failureReason && logInMutation.failureReason.response &&
+                        <Typography color='error'>{logInMutation.failureReason.response.data.message}</Typography>
+                    }
                     <Box sx={styles.loginButtonContainer}>
                         <Button type='submit'>Log In</Button>
                         <Button>Sign Up</Button>
                     </Box>
-                </form>
-            </Paper>
-        </Container>
+                </Paper>
+            </Container>
+        </form>
     );
 };
 
