@@ -1,6 +1,6 @@
 
 
-export type LogInProps = {
-    username: string;
-    password: string;
-};
+export type LoginFormInputs = {
+  username: string;
+  password: string;
+}
