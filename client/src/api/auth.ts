@@ -1,4 +1,4 @@
-import type { LoginFormInputs } from '../types.ts';
+import type { LoginFormInputs } from '../types/index.ts';
 import { AUTH } from './endpoints';
 import axios from 'axios';
 

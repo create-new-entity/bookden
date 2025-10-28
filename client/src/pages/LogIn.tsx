@@ -1,6 +1,6 @@
 import { Button, Container, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import type { LoginFormInputs } from '../types.ts/LogIn';
+import type { LoginFormInputs } from '../types/LogIn';
 import useLogin from '../hooks/useLogin';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';

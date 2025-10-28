@@ -1,6 +1,6 @@
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { AuthContextType } from '../types.ts';
+import type { AuthContextType } from '../types/index.ts';
 import { BOOKDEN_TOKEN } from '../constants/authContext.ts';
 
 
