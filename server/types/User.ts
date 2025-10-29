@@ -1,5 +1,5 @@
 
-export type User = {
+export interface User {
     userId: string;
     username: string;
     email: string;
@@ -10,4 +10,14 @@ export type User = {
     updatedAt: Date | null;
 };
 
+export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+    password: string;
+};
+
+export type UpdateUserPayload = Pick<NewUserPayload, 'username' | 'email' | 'password'>;
+
 export type UserTypes = 'superadmin' | 'admin' | 'customer';
+
+export const SUPERADMIN: UserTypes = 'superadmin';
+export const ADMIN: UserTypes = 'admin';
+export const CUSTOMER: UserTypes = 'customer';

@@ -32,8 +32,15 @@ export default defineConfig([
     {
         rules: {
             '@typescript-eslint/no-var-requires': 'off',
-            '@typescript-eslint/no-require-imports': 'off'
+            '@typescript-eslint/no-require-imports': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    'argsIgnorePattern': '^_',
+                    'varsIgnorePattern': '^_'
+                }
+            ]
         }
     },
-    globalIgnores(['migrations/'])
+    globalIgnores(['migrations/', 'build'])
 ]);
