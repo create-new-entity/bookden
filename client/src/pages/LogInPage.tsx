@@ -19,7 +19,7 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: 'center'
     },
     image: {
-        maxWidth: '90%',
+        maxWidth: '80%',
         height: 'auto',
         display: 'block',
         objectFit: 'cover',
@@ -27,7 +27,7 @@ const styles: Record<string, React.CSSProperties> = {
         borderRadius: '2rem'
     },
     bookdenLogo: {
-        height: '6rem'
+        height: '5rem'
     }
 };
 

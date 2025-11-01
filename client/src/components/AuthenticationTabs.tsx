@@ -15,7 +15,7 @@ const styles: Record<string, React.CSSProperties> = {
         alignItems: 'flex-start',
 
         padding: '0.5rem',
-        paddingTop: '10rem'
+        paddingTop: '13rem'
     },
 
     tabPanelsContainer: {
