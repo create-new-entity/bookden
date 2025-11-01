@@ -68,7 +68,10 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
         await createUser(validated);
         res.status(201).end();
     } catch (error) {
-        next(error);
+        if(error instanceof Error) {
+            error.message = errorMessages[errorNames.usernameOrEmailDuplicate];
+            next(error);
+        }
     }
 });
 
