@@ -1,5 +1,11 @@
 import { createTheme } from '@mui/material/styles';
 
+export const colors = {
+    paperYellow: '#F6DA8A',
+    sageGreen: '#9FBF90',
+    paleMint: '#C9E4CA'
+};
+
 const theme = createTheme({
     palette: {
         mode: 'light',
@@ -19,7 +25,7 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+        fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
         fontSize: 14,
     },
     shape: {
