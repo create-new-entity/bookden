@@ -81,7 +81,6 @@ const LogInTab = () => {
                 }
                 <Box sx={styles.loginButtonContainer}>
                     <Button type='submit'>Log In</Button>
-                    <Button>Sign Up</Button>
                 </Box>
             </Paper>
         </form>

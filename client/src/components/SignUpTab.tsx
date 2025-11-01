@@ -1,7 +1,7 @@
 
 import { Button, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import type { LoginFormInputs } from '../types/LogIn';
+import type { SignUpFormInputs } from '../types/LogIn';
 import useLogin from '../hooks/useLogin';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,23 +29,35 @@ const styles: Record<string, React.CSSProperties> = {
 
 const initialValues = {
     username: '',
-    password: ''
+    email: '',
+    password: '',
+    confirmPassword: ''
 };
 
-const loginResolver = z.object({
+const signUpResolver = z.object({
     username: z.string().min(6).max(30),
-    password: z.string().min(6).max(250)
+    password: z.string().min(6).max(250),
+    email: z.string().min(5).max(250),
+    confirmPassword: z.string()
+}).superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+        ctx.addIssue({
+            code: 'custom',
+            path: ['confirmPassword'],
+            message: 'Passwords do not match.',
+        });
+    }
 });
 
 const SignUpTab = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
-        resolver: zodResolver(loginResolver),
+    const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormInputs>({
+        resolver: zodResolver(signUpResolver),
         defaultValues: initialValues
     });
 
     const logInMutation = useLogin();
 
-    const onSubmit = (formData: LoginFormInputs) => {
+    const onSubmit = (formData: SignUpFormInputs) => {
         logInMutation.mutate(formData);
     };
 
@@ -62,9 +74,22 @@ const SignUpTab = () => {
                     error={usernameHasError}
                 />
                 <TextField
+                    placeholder='Email'
+                    fullWidth
+                    {...register('email')}
+                    // error={passwordHasError}
+                />
+                <TextField
                     placeholder='Password'
                     fullWidth
                     {...register('password')}
+                    type='password'
+                    error={passwordHasError}
+                />
+                <TextField
+                    placeholder='Password'
+                    fullWidth
+                    {...register('confirmPassword')}
                     type='password'
                     error={passwordHasError}
                 />
@@ -81,8 +106,7 @@ const SignUpTab = () => {
                     <Typography color='error'>{logInMutation.failureReason.response.data.message}</Typography>
                 }
                 <Box sx={styles.loginButtonContainer}>
-                    <Button type='submit'>Log In</Button>
-                    <Button>Sign Up</Button>
+                    <Button type='submit'>Sign Up</Button>
                 </Box>
             </Paper>
         </form>

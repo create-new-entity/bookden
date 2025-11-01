@@ -13,10 +13,11 @@ const styles: Record<string, React.CSSProperties> = {
 
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'flex-start',
 
-        padding: '0.5rem'
+        padding: '0.5rem',
+        paddingTop: '10rem'
     },
 
     tabPanelsContainer: {
