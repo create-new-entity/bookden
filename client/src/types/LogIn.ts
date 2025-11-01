@@ -1,3 +1,4 @@
+import type { UserTypes } from "./Users";
 
 
 export type LoginFormInputs = {
@@ -5,9 +6,16 @@ export type LoginFormInputs = {
   password: string;
 }
 
-export type SignUpFormInputs = {
+interface SignUp {
   username: string;
   email: string;
   password: string;
+}
+
+export interface SignUpFormInputs extends SignUp {
   confirmPassword: string;
+}
+export interface SignUpPayload extends SignUp {
+  userType: UserTypes;
+  isActive: boolean;
 }

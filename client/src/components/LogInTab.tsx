@@ -1,13 +1,14 @@
 import { Button, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import type { LoginFormInputs } from '../types/LogIn';
-import useLogin from '../hooks/useLogin';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { customColors } from '../theme/colors';
 import { useEffect, useState } from 'react';
 import type { AxiosErrorResponse } from '../types/UtilTypes';
+
+import type { LoginFormInputs } from '../types/LogIn';
+import { customColors } from '../theme/colors';
 import { NOTIFICATION_DELAY } from '../constants';
+import useAuthentication from '../hooks/useAuthentication';
 
 const styles: Record<string, React.CSSProperties> = {
     paper: {
@@ -34,39 +35,35 @@ const initialValues = {
 };
 
 const loginResolver = z.object({
-    username: z.string().min(6).max(30),
+    username: z.string().trim().toLowerCase().min(6).max(30),
     password: z.string().min(6).max(250)
 });
 
 const LogInTab = () => {
-    const { register, handleSubmit, formState: { errors }, clearErrors } = useForm<LoginFormInputs>({
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
         resolver: zodResolver(loginResolver),
         defaultValues: initialValues
     });
 
     const [loginFailed, setLoginFailed] = useState<AxiosErrorResponse | null>(null);
 
-    const logInMutation = useLogin();
+    const { loginMutation } = useAuthentication();
 
     useEffect(() => {
-        if(logInMutation.status === 'error') {
-            setLoginFailed(logInMutation.failureReason);
+        if(loginMutation.status === 'error') {
+            setLoginFailed(loginMutation.failureReason);
             setTimeout(() => {
                 setLoginFailed(null);
             }, NOTIFICATION_DELAY);
         }
-    }, [logInMutation.failureReason, logInMutation.status]);
+    }, [loginMutation.failureReason, loginMutation.status]);
 
     const onSubmit = (formData: LoginFormInputs) => {
-        logInMutation.mutate(formData);
+        loginMutation.mutate(formData);
     };
 
     const usernameHasError = !!errors.username?.message;
     const passwordHasError = !!errors.password?.message;
-
-    if(usernameHasError || passwordHasError) {
-        setTimeout(() => clearErrors(), NOTIFICATION_DELAY);
-    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>

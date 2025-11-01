@@ -2,5 +2,6 @@
 const API_BASE = 'http://localhost:3000';
 
 export const AUTH = {
-    login: `${API_BASE}/api/login`
+    logIn: `${API_BASE}/api/login`,
+    signUp: `${API_BASE}/api/users`
 };

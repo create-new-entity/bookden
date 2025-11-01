@@ -1,14 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
-import { loginApi } from '../api/auth';
-import type { LoginFormInputs } from '../types/index.ts';
+import { loginApi, signUpApi } from '../api/auth.ts';
+import type { LoginFormInputs, SignUpPayload } from '../types/index.ts';
 import { useNavigate } from 'react-router-dom';
 import useAuthContext from '../contexts/AuthContext.tsx';
 import type { AxiosErrorResponse } from '../types/UtilTypes.ts';
+import type { AxiosResponse } from 'axios';
 
-const useLogin = () => {
+const useAuthentication = () => {
     const navigate = useNavigate();
     const { handleLoggedInContext } = useAuthContext();
-    const mutation = useMutation<string, AxiosErrorResponse, LoginFormInputs>({
+
+    const loginMutation = useMutation<string, AxiosErrorResponse, LoginFormInputs>({
         mutationFn: loginApi,
         onSuccess: (token) => {
             handleLoggedInContext(token);
@@ -18,7 +20,14 @@ const useLogin = () => {
             console.error('Log in failed', err);
         },
     });
-    return mutation;
+
+    const signUpMutation = useMutation<AxiosResponse, AxiosErrorResponse, SignUpPayload>({
+        mutationFn: signUpApi
+    });
+
+    return {
+        loginMutation, signUpMutation
+    };
 };
 
-export default useLogin;
+export default useAuthentication;
