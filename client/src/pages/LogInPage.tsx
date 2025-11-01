@@ -1,6 +1,6 @@
 import AuthenticationTabs from '../components/AuthenticationTabs';
 import { customColors } from '../theme/colors';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 const styles: Record<string, React.CSSProperties> = {
     rootContainer : {
@@ -33,24 +33,29 @@ const styles: Record<string, React.CSSProperties> = {
 
 
 const LogInPage = () => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     
     return (
         <Box sx={styles.rootContainer}>
-            <Box sx={styles.imageContainer}>
-                <Box sx={styles.bookdenLogo}>
+            {
+                !isMobile &&
+                <Box sx={styles.imageContainer}>
+                    <Box sx={styles.bookdenLogo}>
+                        <img
+                            src="/assets/book-den.svg"
+                            alt="Book Den Logo"
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        />
+                    </Box>
                     <img
-                        src="/assets/book-den.svg"
-                        alt="Book Den Logo"
-                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        style={styles.image}
+                        src="/assets/bookden_illustration.png"
+                        alt="Books background"
+                        className="w-full h-auto object-cover"
                     />
                 </Box>
-                <img
-                    style={styles.image}
-                    src="/assets/bookden_illustration.png"
-                    alt="Books background"
-                    className="w-full h-auto object-cover"
-                />
-            </Box>
+            }
             <AuthenticationTabs/>
         </Box>
     );

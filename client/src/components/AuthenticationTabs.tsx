@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Box, Tab } from '@mui/material';
+import { Box, Tab, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
@@ -12,7 +12,7 @@ const styles: Record<string, React.CSSProperties> = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'flex-start',
+        alignItems: 'center',
 
         padding: '0.5rem',
         paddingTop: '13rem'
@@ -27,18 +27,38 @@ const styles: Record<string, React.CSSProperties> = {
     tabPanel: {
         padding: 0,
         flex: 1
+    },
+
+    bookdenLogo: {
+        height: '5rem'
     }
 };
 
 
 const AuthenticationTabs = () => {
     const [value, setValue] = React.useState('logIn');
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
     return (
         <TabContext value={value}>
             <Box sx={styles.rootContainer}>
+                {
+                    isMobile &&
+                    <>
+                        <Box sx={styles.bookdenLogo}>
+                            <img
+                                src="/assets/book-den.svg"
+                                alt="Book Den Logo"
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                        </Box>
+                        <Typography variant='body1' color='secondary.contrastText'>Find and grab your next favourite book.</Typography>
+                    </>
+                }
                 <Box>
                     <TabList onChange={handleChange}>
                         <Tab label="Log In" value={'logIn'} />
