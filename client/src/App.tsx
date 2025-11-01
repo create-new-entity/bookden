@@ -5,7 +5,7 @@ import HomePage from './pages/HomePage';
 const App = () => {
     return (
         <Routes>
-            <Route path="/login" element={<LogInPage/>} />
+            <Route path="/auth" element={<LogInPage/>} />
             <Route path="/" element={<HomePage/>} />
         </Routes>
     );
