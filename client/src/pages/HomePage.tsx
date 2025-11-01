@@ -1,16 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import useAuthContext from '../contexts/AuthContext';
 import { useEffect } from 'react';
+import { BOOKDEN_TOKEN } from '../constants';
 
 const HomePage = () => {
-    const { isLoggedIn, handleLoggedOutContext } = useAuthContext();
+    const { handleLoggedOutContext } = useAuthContext();
     const navigate = useNavigate();
     
     useEffect(() => {
-        if(!isLoggedIn) {
+        if(!localStorage.getItem(BOOKDEN_TOKEN)) {
             navigate('/auth');
         }
-    }, [isLoggedIn, navigate]);
+    }, [navigate]);
 
     return (
         <div>

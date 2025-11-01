@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { AuthContextType } from '../types/index.ts';
 import { BOOKDEN_TOKEN } from '../constants/authContext.ts';
 
@@ -15,6 +15,13 @@ const AuthContext = createContext(defaultContextValue);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        const existingToken = localStorage.getItem(BOOKDEN_TOKEN);
+        if(existingToken) {
+            setToken(existingToken);
+        }
+    }, []);
 
     const handleLoggedInContext = (newToken: string) => {
         setToken(newToken);
