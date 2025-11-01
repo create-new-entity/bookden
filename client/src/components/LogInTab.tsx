@@ -4,8 +4,10 @@ import type { LoginFormInputs } from '../types/LogIn';
 import useLogin from '../hooks/useLogin';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { colors } from '../theme/theme';
-
+import { customColors } from '../theme/colors';
+import { useEffect, useState } from 'react';
+import type { AxiosErrorResponse } from '../types/UtilTypes';
+import { NOTIFICATION_DELAY } from '../constants';
 
 const styles: Record<string, React.CSSProperties> = {
     paper: {
@@ -16,7 +18,7 @@ const styles: Record<string, React.CSSProperties> = {
         justifyContent: 'flex-start',
         alignItems: 'center',
         gap: '0.5rem',
-        backgroundColor: colors.paleMint
+        backgroundColor: customColors.paleMint
     },
     loginButtonContainer: {
         display: 'flex',
@@ -37,12 +39,23 @@ const loginResolver = z.object({
 });
 
 const LogInTab = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
+    const { register, handleSubmit, formState: { errors }, clearErrors } = useForm<LoginFormInputs>({
         resolver: zodResolver(loginResolver),
         defaultValues: initialValues
     });
 
+    const [loginFailed, setLoginFailed] = useState<AxiosErrorResponse | null>(null);
+
     const logInMutation = useLogin();
+
+    useEffect(() => {
+        if(logInMutation.status === 'error') {
+            setLoginFailed(logInMutation.failureReason);
+            setTimeout(() => {
+                setLoginFailed(null);
+            }, NOTIFICATION_DELAY);
+        }
+    }, [logInMutation.failureReason, logInMutation.status]);
 
     const onSubmit = (formData: LoginFormInputs) => {
         logInMutation.mutate(formData);
@@ -50,6 +63,10 @@ const LogInTab = () => {
 
     const usernameHasError = !!errors.username?.message;
     const passwordHasError = !!errors.password?.message;
+
+    if(usernameHasError || passwordHasError) {
+        setTimeout(() => clearErrors(), NOTIFICATION_DELAY);
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -76,11 +93,11 @@ const LogInTab = () => {
                     <Typography color='error'>{errors.password?.message}</Typography>
                 }
                 {
-                    logInMutation.status === 'error' && logInMutation.failureReason && logInMutation.failureReason.response &&
-                    <Typography color='error'>{logInMutation.failureReason.response.data.message}</Typography>
+                    loginFailed && loginFailed.response &&
+                    <Typography color='error'>{loginFailed.response.data.message}</Typography>
                 }
                 <Box sx={styles.loginButtonContainer}>
-                    <Button type='submit'>Log In</Button>
+                    <Button type='submit' variant='contained'>Log In</Button>
                 </Box>
             </Paper>
         </form>

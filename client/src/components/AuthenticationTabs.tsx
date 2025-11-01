@@ -1,6 +1,5 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Box, Tab } from '@mui/material';
-import { colors } from '../theme/theme';
 import React from 'react';
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
@@ -8,7 +7,6 @@ import SignUpTab from './SignUpTab';
 const styles: Record<string, React.CSSProperties> = {
     rootContainer: {
         alignSelf: 'stretch',
-        backgroundColor: colors.sageGreen,
         flex: 1,
 
         display: 'flex',
@@ -41,7 +39,7 @@ const AuthenticationTabs = () => {
     return (
         <TabContext value={value}>
             <Box sx={styles.rootContainer}>
-                <Box sx={styles.tabListContainer}>
+                <Box>
                     <TabList onChange={handleChange}>
                         <Tab label="Log In" value={'logIn'} />
                         <Tab label="Sign Up" value={'signUp'} />

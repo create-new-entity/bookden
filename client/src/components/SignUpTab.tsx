@@ -5,7 +5,7 @@ import type { SignUpFormInputs } from '../types/LogIn';
 import useLogin from '../hooks/useLogin';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { colors } from '../theme/theme';
+import { customColors } from '../theme/colors';
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -17,7 +17,7 @@ const styles: Record<string, React.CSSProperties> = {
         justifyContent: 'flex-start',
         alignItems: 'center',
         gap: '0.5rem',
-        backgroundColor: colors.paleMint
+        backgroundColor: customColors.paleMint
     },
     loginButtonContainer: {
         display: 'flex',
@@ -106,7 +106,7 @@ const SignUpTab = () => {
                     <Typography color='error'>{logInMutation.failureReason.response.data.message}</Typography>
                 }
                 <Box sx={styles.loginButtonContainer}>
-                    <Button type='submit'>Sign Up</Button>
+                    <Button type='submit' variant='contained'>Sign Up</Button>
                 </Box>
             </Paper>
         </form>

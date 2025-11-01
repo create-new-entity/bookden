@@ -1,5 +1,5 @@
 import AuthenticationTabs from '../components/AuthenticationTabs';
-import { colors } from '../theme/theme';
+import { customColors } from '../theme/colors';
 import { Box } from '@mui/material';
 
 const styles: Record<string, React.CSSProperties> = {
@@ -8,7 +8,7 @@ const styles: Record<string, React.CSSProperties> = {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: colors.paperYellow,
+        backgroundColor: customColors.paperYellow,
         height: '100vh',
     },
     imageContainer: {
@@ -16,8 +16,7 @@ const styles: Record<string, React.CSSProperties> = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'center',
-        backgroundColor: colors.paperYellow
+        alignItems: 'center'
     },
     image: {
         maxWidth: '90%',
