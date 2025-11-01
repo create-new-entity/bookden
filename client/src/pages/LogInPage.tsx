@@ -14,7 +14,9 @@ const styles: Record<string, React.CSSProperties> = {
     imageContainer: {
         width: '50%',
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         backgroundColor: colors.paperYellow
     },
     image: {
@@ -25,6 +27,9 @@ const styles: Record<string, React.CSSProperties> = {
         padding: '0.2rem',
         borderRadius: '2rem'
     },
+    bookdenLogo: {
+        height: '6rem'
+    }
 };
 
 
@@ -33,6 +38,13 @@ const LogInPage = () => {
     return (
         <Box sx={styles.rootContainer}>
             <Box sx={styles.imageContainer}>
+                <Box sx={styles.bookdenLogo}>
+                    <img
+                        src="/assets/book-den.svg"
+                        alt="Book Den Logo"
+                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                </Box>
                 <img
                     style={styles.image}
                     src="/assets/bookden_illustration.png"
