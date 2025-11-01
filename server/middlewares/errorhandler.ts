@@ -13,6 +13,7 @@ const INVALID_TOKEN = 'InvalidToken' as const;
 const FORBIDDEN_ACTION = 'ForbiddenAction' as const;
 const VALIDATION_FAILED = 'ValidationFailed' as const;
 const TOKEN_EXPIRED = 'TokenExpiredError' as const;
+const USER_NAME_EMAIL_DUPLICATE = 'UserNameOrEmailIsDuplicate' as const;
 
 export const errorNames = {
     userNotFound: USER_NOT_FOUND,
@@ -23,7 +24,8 @@ export const errorNames = {
     invalidToken: INVALID_TOKEN,
     forbiddenAction: FORBIDDEN_ACTION,
     validationFailed: VALIDATION_FAILED,
-    tokenExpired: TOKEN_EXPIRED
+    tokenExpired: TOKEN_EXPIRED,
+    usernameOrEmailDuplicate: USER_NAME_EMAIL_DUPLICATE
 };
 
 export const errorMessages = {
@@ -36,7 +38,8 @@ export const errorMessages = {
     [FORBIDDEN_ACTION]: 'Forbidden action. You do not have permission to perform this action.',
     [VALIDATION_FAILED]: 'Data validation failed.',
     [TOKEN_EXPIRED]: 'Authentication token has expired.',
-    notAllowedToCreateUser: 'Forbidden: You do not have permission to create this type of user.'
+    notAllowedToCreateUser: 'Forbidden: You do not have permission to create this type of user.',
+    [USER_NAME_EMAIL_DUPLICATE]: 'Username or Email is not available.'
 };
 
 export const isDuplicateError = (error: PostgresError): boolean => {
