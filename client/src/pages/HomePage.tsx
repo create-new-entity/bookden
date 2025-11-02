@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 import { BOOKDEN_TOKEN } from '../constants';
 
 const HomePage = () => {
-    const { handleLoggedOutContext } = useAuthContext();
+    const { handleLoggedOutContext, isLoggedIn } = useAuthContext();
     const navigate = useNavigate();
     
     useEffect(() => {
-        if(!localStorage.getItem(BOOKDEN_TOKEN)) {
+        if(!localStorage.getItem(BOOKDEN_TOKEN) && !isLoggedIn) {
             navigate('/auth');
         }
-    }, [navigate]);
+    }, [navigate, isLoggedIn]);
 
     return (
         <div>
