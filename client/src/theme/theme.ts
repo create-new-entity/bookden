@@ -162,6 +162,13 @@ const getTheme = (mode: ThemeMode) => {
                 defaultProps: {
                     ...disableRipple
                 }
+            },
+            MuiAppBar: {
+                styleOverrides: {
+                    root: {
+                        boxShadow: 'none'
+                    }
+                }
             }
         },
     });
