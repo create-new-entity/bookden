@@ -9,24 +9,26 @@ import { useEffect } from 'react';
 
 const App = () => {
     const { handleLoggedOutContext } = useAuthContext();
-    const { options, setOptions, setShowNavDrawer } = useNavContext();
+    const { setOptions, setShowNavDrawer } = useNavContext();
     const location = useLocation();
 
     useEffect(() => {
-        const newOptions = options.map(o => {
-            if(o.name === 'logout') {
-                return {
-                    ...o,
-                    action: () => {
-                        setShowNavDrawer(false);
-                        handleLoggedOutContext();
-                    }
-                };
-            }
-            return o;
+        setOptions((prevOptions) => {
+            const newOptions = prevOptions.map(o => {
+                if(o.name === 'logout') {
+                    return {
+                        ...o,
+                        action: () => {
+                            setShowNavDrawer(false);
+                            handleLoggedOutContext();
+                        }
+                    };
+                }
+                return o;
+            });
+            return newOptions;
         });
-        setOptions(newOptions);
-    }, []);
+    }, [setOptions, setShowNavDrawer, handleLoggedOutContext]);
 
     const isLoginPage = location.pathname === '/auth';
 
