@@ -1,4 +1,4 @@
-import type { UserTypes } from "./Users";
+import type { UserTypes } from './Users';
 
 
 export type LoginFormInputs = {
