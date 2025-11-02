@@ -2,6 +2,7 @@ import { AppBar, Autocomplete, Avatar, Box, Button, IconButton, Menu, MenuItem, 
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
+import useNavContext from '../contexts/NavContext';
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -34,12 +35,13 @@ const NavBar = () => {
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const theme = useTheme();
     const hideInSmallerScreens = { display: { xs: 'none', sm: 'block' } };
+    const { setShowNavDrawer } = useNavContext();
 
     return (
         <AppBar>
             <Toolbar>
                 <Stack direction={'row'} sx={styles.rootStack}>
-                    <IconButton sx={{ display: { sm: 'none' } }}>
+                    <IconButton sx={{ display: { sm: 'none' } }} onClick={() => setShowNavDrawer(true)}>
                         <MenuIcon fontSize='large'/>
                     </IconButton>
                     <Button sx={{ ...hideInSmallerScreens }} onClick={() => console.log('Clicked home logo')}>
