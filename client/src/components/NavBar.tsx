@@ -1,5 +1,6 @@
 import { AppBar, Autocomplete, Avatar, Box, Button, Menu, MenuItem, Stack, TextField, Toolbar, useTheme } from '@mui/material';
 import { useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -19,7 +20,8 @@ const styles: Record<string, React.CSSProperties> = {
     searchBox: {
         position: 'absolute',
         left: '50%',
-        transform: 'translateX(-50%)'
+        transform: 'translateX(-50%)',
+        width: '40%'
     },
     bookdenLogo: {
         height: '2.5rem'
@@ -47,7 +49,7 @@ const NavBar = () => {
                     <Autocomplete
                         sx={styles.searchBox}
                         options={[]}
-                        renderInput={() => <TextField/>}
+                        renderInput={(params) => <TextField {...params} sx={{ backgroundColor: theme.palette.primary.light, borderRadius: '0.5rem' }} slotProps={{ input: { startAdornment: <SearchIcon/>}}}/>}
                     />
                     <Avatar onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                         setAnchorElement(e.currentTarget);
