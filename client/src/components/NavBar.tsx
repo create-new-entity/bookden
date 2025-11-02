@@ -44,7 +44,7 @@ const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const theme = useTheme();
-    const { setShowNavDrawer } = useNavContext();
+    const { setShowNavDrawer, options } = useNavContext();
 
     return (
         <AppBar>
@@ -79,9 +79,15 @@ const NavBar = () => {
                             setAnchorElement(null);
                         }}
                     >
-                        <MenuItem onClick={() => console.log('Clicked Profile')}>Profile</MenuItem>
-                        <MenuItem onClick={() => console.log('Clicked My account')}>My account</MenuItem>
-                        <MenuItem onClick={() => console.log('Clicked Logout')}>Logout</MenuItem>
+                        {
+                            options.map((option) => {
+                                return (
+                                    <MenuItem key={option.name} onClick={option.action}>
+                                        {option.text}
+                                    </MenuItem>
+                                );
+                            })
+                        }
                     </Menu>
                 </Stack>
             </Toolbar>
