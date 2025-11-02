@@ -51,7 +51,7 @@ const AuthenticationTabs = () => {
                     <>
                         <Box sx={styles.bookdenLogo}>
                             <img
-                                src="/assets/book-den.svg"
+                                src="/assets/book-den-black.svg"
                                 alt="Book Den Logo"
                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             />

@@ -74,7 +74,7 @@ export const customColors = {
     darkTextSecondary: '#BFC8C0',
 
     // Other
-    paperYellow: '#f6da8aff',
-    paleMint: '#f6da8aff', // #C9E4CA
-    // sageGreen: '#b9e6a4ff' // 9FBF90
+    paperYellow: '#F6DA8A',
+    paleMint: '#C9E4CA',
+    sageGreen: '#9FBF90'
 };

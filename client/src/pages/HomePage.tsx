@@ -14,7 +14,7 @@ const HomePage = () => {
     }, [navigate, isLoggedIn]);
 
     return (
-        <div>
+        <div style={{ marginTop: 300 }}>
             Hello there and welcome!
             <button onClick={handleLoggedOutContext}>Log Out</button>
         </div>
