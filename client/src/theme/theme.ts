@@ -1,4 +1,5 @@
 import { createTheme } from '@mui/material/styles';
+import type { ThemeOptions } from '@mui/material/styles';
 import { customColors } from './colors';
 
 type ThemeMode = 'light' | 'dark';
@@ -10,7 +11,7 @@ const disableRipple = {
 };
 
 const getTheme = (mode: ThemeMode) => {
-    return createTheme({
+    const theme = {
         palette: {
             mode,
             ...(mode === 'light'
@@ -106,7 +107,9 @@ const getTheme = (mode: ThemeMode) => {
                         secondary: customColors.darkTextSecondary,
                     },
                 }),
-        },
+        }
+    };
+    const additionalThemeOptions: ThemeOptions = {
         typography: {
             fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
             fontSize: 14,
@@ -169,10 +172,34 @@ const getTheme = (mode: ThemeMode) => {
                         boxShadow: 'none'
                     }
                 }
+            },
+            MuiPaper: {
+                defaultProps: {
+                    elevation: 0
+                },
+                styleOverrides: {
+                    root: {
+                        boxShadow: 'none',
+                        backgroundColor: theme.palette.primary.light
+                    }
+                }
+            },
+            MuiMenuItem: {
+                defaultProps: {
+                    ...disableRipple
+                }
+            },
+            MuiListItemButton: {
+                defaultProps: {
+                    ...disableRipple
+                }
             }
-        },
-    });
+        }
+    };
+
+    return createTheme(theme, additionalThemeOptions);
 };
+
 
 const theme = getTheme('light');
 
