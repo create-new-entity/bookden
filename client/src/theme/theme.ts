@@ -3,6 +3,12 @@ import { customColors } from './colors';
 
 type ThemeMode = 'light' | 'dark';
 
+const disableRipple = {
+    disableRipple: true,
+    disableFocusRipple: true,
+    disableTouchRipple: true
+};
+
 const getTheme = (mode: ThemeMode) => {
     return createTheme({
         palette: {
@@ -143,17 +149,18 @@ const getTheme = (mode: ThemeMode) => {
             },
             MuiButton: {
                 defaultProps: {
-                    disableRipple: true,
-                    disableFocusRipple: true,
-                    disableTouchRipple: true,
+                    ...disableRipple,
                     disableElevation: true
                 }
             },
             MuiTab: {
                 defaultProps: {
-                    disableRipple: true,
-                    disableFocusRipple: true,
-                    disableTouchRipple: true
+                    ...disableRipple
+                }
+            },
+            MuiIconButton: {
+                defaultProps: {
+                    ...disableRipple
                 }
             }
         },
