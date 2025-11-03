@@ -14,7 +14,7 @@ const HomePage = () => {
     }, [navigate, isLoggedIn]);
 
     return (
-        <div>
+        <div style={{ paddingTop: 200 }}>
             Hello there and welcome!
             <button onClick={handleLoggedOutContext}>Log Out</button>
         </div>

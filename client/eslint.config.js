@@ -22,7 +22,14 @@ export default defineConfig([
     rules: {
        semi: ['error', 'always'],
        indent: ['error', 4],
-       quotes: ['error', 'single']
+       quotes: ['error', 'single'],
+       '@typescript-eslint/no-unused-vars': [
+          'warn',
+          {
+            argsIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
+          },
+        ]
     }
   },
 ])
