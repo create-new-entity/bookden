@@ -84,8 +84,11 @@ const NavBar = () => {
                         {
                             options.map((option) => {
                                 return (
-                                    <MenuItem key={option.name} onClick={option.action}>
-                                        {option.text}
+                                    <MenuItem
+                                        key={option.name}
+                                        onClick={option.action}
+                                    >
+                                        {option.component}
                                     </MenuItem>
                                 );
                             })

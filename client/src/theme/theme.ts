@@ -186,9 +186,21 @@ export const getTheme = (mode: ThemeMode) => {
             MuiMenuItem: {
                 defaultProps: {
                     ...disableRipple
+                },
+                styleOverrides: {
+                    root: {
+                        '&:hover': {
+                            backgroundColor: 'transparent'
+                        }
+                    }
                 }
             },
             MuiListItemButton: {
+                defaultProps: {
+                    ...disableRipple
+                }
+            },
+            MuiSwitch: {
                 defaultProps: {
                     ...disableRipple
                 }

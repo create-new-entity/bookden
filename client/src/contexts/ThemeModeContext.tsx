@@ -6,13 +6,15 @@ import { getTheme } from '../theme/theme';
 type ThemeMode = 'light' | 'dark'
 
 type ThemeModeContextvalue = {
+    isLightMode: boolean;
     theme: Theme;
-    switchMode: () => void
+    handleThemeModeSwitch: () => void;
 };
 
 const defaultContextValue: ThemeModeContextvalue = {
+    isLightMode: true,
     theme: getTheme('light'),
-    switchMode: () => {}
+    handleThemeModeSwitch: () => {}
 };
 
 const ThemeModeContext = createContext(defaultContextValue);
@@ -20,7 +22,7 @@ const ThemeModeContext = createContext(defaultContextValue);
 export const ThemeModeProvider = ({ children }: { children: ReactNode }) => {
     const [themeMode, setThemeMode] = useState<ThemeMode>('light');
 
-    const switchMode = () => {
+    const handleThemeModeSwitch = () => {
         setThemeMode((prevMode) => {
             if(prevMode === 'light') {
                 return 'dark';
@@ -30,8 +32,9 @@ export const ThemeModeProvider = ({ children }: { children: ReactNode }) => {
     };
     
     const value: ThemeModeContextvalue = {
+        isLightMode: themeMode === 'light',
         theme: getTheme(themeMode),
-        switchMode
+        handleThemeModeSwitch
     };
 
     return (

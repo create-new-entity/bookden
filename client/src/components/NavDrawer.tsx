@@ -26,7 +26,7 @@ const NavDrawer = () => {
                         {options.map((option) => (
                             <ListItem key={option.name} disablePadding>
                                 <ListItemButton sx={{ textAlign: 'center' }} onClick={option.action}>
-                                    <ListItemText primary={option.text} />
+                                    {option.component}
                                 </ListItemButton>
                             </ListItem>
                         ))}
