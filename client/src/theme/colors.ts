@@ -31,10 +31,11 @@ export const customColors = {
     lightSuccessText: '#FFFFFF',
 
     // Light mode background & text
-    lightBackgroundDefault: '#F6F7F4',
+    lightBackgroundDefault: '#efffcfff',
     lightBackgroundPaper: '#FFFFFF',
     lightTextPrimary: '#121416',
     lightTextSecondary: '#5B6460',
+
 
     // Dark mode
     darkPrimaryMain: '#A6D2A1',
@@ -72,6 +73,7 @@ export const customColors = {
     darkBackgroundPaper: '#111417',
     darkTextPrimary: '#ECEFE9',
     darkTextSecondary: '#BFC8C0',
+
 
     // Other
     paperYellow: '#F6DA8A',

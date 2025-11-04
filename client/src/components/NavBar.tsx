@@ -37,7 +37,7 @@ const styles = {
         transform: 'translateX(-50%)',
         width: '40%'
     },
-}
+};
 
 
 const NavBar = () => {
@@ -65,7 +65,9 @@ const NavBar = () => {
                     <Autocomplete
                         sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
                         options={[]}
-                        renderInput={(params) => <TextField {...params} sx={{ backgroundColor: theme.palette.primary.light, borderRadius: '0.5rem' }} slotProps={{ input: { startAdornment: <SearchIcon/>}}}/>}
+                        renderInput={(params) => <TextField {...params} sx={{
+                            borderRadius: '0.5rem'
+                        }} slotProps={{ input: { startAdornment: <SearchIcon/>}}}/>}
                     />
                     <Avatar sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                         setAnchorElement(e.currentTarget);
