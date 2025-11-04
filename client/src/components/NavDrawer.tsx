@@ -1,4 +1,4 @@
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemButton } from '@mui/material';
 import useNavContext from '../contexts/NavContext';
 
 const NavDrawer = () => {
@@ -21,7 +21,6 @@ const NavDrawer = () => {
                 }}
             >
                 <Box sx={{ textAlign: 'center' }}>
-                    {/* <Divider /> */}
                     <List>
                         {options.map((option) => (
                             <ListItem key={option.name} disablePadding>

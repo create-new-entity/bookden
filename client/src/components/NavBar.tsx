@@ -1,4 +1,4 @@
-import { AppBar, Autocomplete, Avatar, Box, Button, IconButton, Menu, MenuItem, Stack, TextField, Toolbar, useTheme } from '@mui/material';
+import { AppBar, Autocomplete, Avatar, Box, Button, IconButton, Menu, MenuItem, Stack, TextField, Toolbar } from '@mui/material';
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -43,7 +43,6 @@ const styles = {
 const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
-    const theme = useTheme();
     const { setShowNavDrawer, options } = useNavContext();
 
     return (
