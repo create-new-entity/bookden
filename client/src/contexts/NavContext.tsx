@@ -38,9 +38,9 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                     access: ALL_TYPES_OF_USERS
                 },
                 {
-                    name: 'userManagement',
-                    action: () => console.log('Clicked User Management'),
-                    component: <Typography>User Management</Typography>,
+                    name: 'adminTools',
+                    action: () => console.log('Clicked Admin Tools'),
+                    component: <Typography>Admin Tools</Typography>,
                     access: [SUPERADMIN, ADMIN]
                 },
                 {

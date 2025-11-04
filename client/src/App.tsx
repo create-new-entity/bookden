@@ -34,10 +34,6 @@ const App = () => {
 
     return (
         <>
-            <Routes>
-                <Route path="/auth" element={<LogInPage/>} />
-                <Route path="/" element={<HomePage/>} />
-            </Routes>
             {
                 !isLoginPage &&
                 <>
@@ -45,6 +41,10 @@ const App = () => {
                     <NavDrawer/>
                 </>
             }
+            <Routes>
+                <Route path="/auth" element={<LogInPage/>} />
+                <Route path="/" element={<HomePage/>} />
+            </Routes>
         </>
     );
 };

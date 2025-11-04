@@ -46,7 +46,7 @@ const NavBar = () => {
     const { setShowNavDrawer, options } = useNavContext();
 
     return (
-        <AppBar>
+        <AppBar position='sticky'>
             <Toolbar>
                 <Stack direction={'row'} sx={styles.stack}>
                     <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>

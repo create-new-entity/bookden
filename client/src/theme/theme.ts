@@ -183,17 +183,15 @@ export const getTheme = (mode: ThemeMode) => {
                     }
                 }
             },
+            MuiMenu: {
+                defaultProps: {
+                    autoFocus: false
+                }
+            },
             MuiMenuItem: {
                 defaultProps: {
                     disableRipple: true,
                     disableTouchRipple: true
-                },
-                styleOverrides: {
-                    root: {
-                        '&:hover': {
-                            backgroundColor: 'transparent'
-                        }
-                    }
                 }
             },
             MuiListItemButton: {

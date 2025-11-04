@@ -14,7 +14,7 @@ const HomePage = () => {
     }, [navigate, isLoggedIn]);
 
     return (
-        <div style={{ paddingTop: 200 }}>
+        <div>
             Hello there and welcome!
         </div>
     );
