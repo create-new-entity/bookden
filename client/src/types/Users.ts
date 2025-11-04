@@ -1,2 +1,2 @@
 
-export type UserTypes = 'superadmin' | 'admin' | 'customer';
+export type UserType = 'superadmin' | 'admin' | 'customer';

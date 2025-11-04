@@ -8,8 +8,8 @@ const loginRouter = Router();
 loginRouter.post('/', async (req, res, next) => {
     try {
         const { username, password } = req.body;
-        const token = await login(username, password);
-        res.status(200).json(token);
+        const result = await login(username, password);
+        res.status(200).json(result);
     }
     catch (error) {
         next(error);

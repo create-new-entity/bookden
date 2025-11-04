@@ -1,41 +1,45 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { AuthContextType } from '../types/index.ts';
-import { BOOKDEN_TOKEN } from '../constants/authContext.ts';
-
+import { isLoggedInUserData, type AuthContextType, type LoggedInUserData } from '../types/index.ts';
+import { LOGGED_IN_USER_DATA } from '../constants/authContext.ts';
 
 const defaultContextValue: AuthContextType = {
-    token: null,
+    token: '',
+    userType: 'customer',
     isLoggedIn: false,
-    handleLoggedInContext: () => {},
+    handleLoggedInContext: (_data: LoggedInUserData) => {},
     handleLoggedOutContext: () => {}
 };
 
 const AuthContext = createContext(defaultContextValue);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [token, setToken] = useState<string | null>(null);
+    const [loggedInUserData, setLoggedInUserData] = useState<LoggedInUserData | null>(null);
 
     useEffect(() => {
-        const existingToken = localStorage.getItem(BOOKDEN_TOKEN);
-        if(existingToken) {
-            setToken(existingToken);
+        const loggedInUserData = localStorage.getItem(LOGGED_IN_USER_DATA);
+        if(loggedInUserData){
+            const existingLoggedInData = JSON.parse(loggedInUserData);
+            if(isLoggedInUserData(existingLoggedInData)){
+                setLoggedInUserData(existingLoggedInData);
+            }
         }
     }, []);
 
-    const handleLoggedInContext = (newToken: string) => {
-        setToken(newToken);
-        localStorage.setItem(BOOKDEN_TOKEN, newToken);
+    const handleLoggedInContext = (newLoggedInUserData: LoggedInUserData) => {
+        setLoggedInUserData(newLoggedInUserData);
+        localStorage.setItem(LOGGED_IN_USER_DATA, JSON.stringify(newLoggedInUserData));
     };
 
     const handleLoggedOutContext = () => {
-        setToken(null);
-        localStorage.removeItem(BOOKDEN_TOKEN);
+        setLoggedInUserData(null);
+        localStorage.removeItem(LOGGED_IN_USER_DATA);
     };
 
     const value: AuthContextType = {
-        token,
-        isLoggedIn: !!token,
+        token: loggedInUserData?.token || null,
+        userType: loggedInUserData?.userType || undefined,
+        isLoggedIn: !!(loggedInUserData && loggedInUserData.token),
         handleLoggedInContext,
         handleLoggedOutContext
     };

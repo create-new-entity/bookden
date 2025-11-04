@@ -4,12 +4,6 @@ import { customColors } from './colors';
 
 type ThemeMode = 'light' | 'dark';
 
-const disableRipple = {
-    disableRipple: true,
-    disableFocusRipple: true,
-    disableTouchRipple: true
-};
-
 export const getTheme = (mode: ThemeMode) => {
     const theme = {
         palette: {
@@ -152,18 +146,24 @@ export const getTheme = (mode: ThemeMode) => {
             },
             MuiButton: {
                 defaultProps: {
-                    ...disableRipple,
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true,
                     disableElevation: true
                 }
             },
             MuiTab: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiIconButton: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiAppBar: {
@@ -185,7 +185,8 @@ export const getTheme = (mode: ThemeMode) => {
             },
             MuiMenuItem: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableTouchRipple: true
                 },
                 styleOverrides: {
                     root: {
@@ -197,12 +198,15 @@ export const getTheme = (mode: ThemeMode) => {
             },
             MuiListItemButton: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiSwitch: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true
                 }
             }
         }

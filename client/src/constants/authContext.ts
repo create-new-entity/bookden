@@ -1,3 +1,3 @@
 
 
-export const BOOKDEN_TOKEN= 'bookden_token';
+export const LOGGED_IN_USER_DATA= 'loggedInUserData';
