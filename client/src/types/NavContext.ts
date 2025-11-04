@@ -1,9 +1,9 @@
-
+import type { ReactNode } from 'react';
 
 export type NavOption = {
-    name: string,
-    text: string,
-    action: () => void
+    name: string;
+    component: ReactNode;
+    action: () => void;
 };
 
 export interface NavContextValue {

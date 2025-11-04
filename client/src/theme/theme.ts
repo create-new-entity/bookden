@@ -10,7 +10,7 @@ const disableRipple = {
     disableTouchRipple: true
 };
 
-const getTheme = (mode: ThemeMode) => {
+export const getTheme = (mode: ThemeMode) => {
     const theme = {
         palette: {
             mode,
@@ -179,17 +179,28 @@ const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        boxShadow: 'none',
-                        backgroundColor: theme.palette.primary.light
+                        boxShadow: 'none'
                     }
                 }
             },
             MuiMenuItem: {
                 defaultProps: {
                     ...disableRipple
+                },
+                styleOverrides: {
+                    root: {
+                        '&:hover': {
+                            backgroundColor: 'transparent'
+                        }
+                    }
                 }
             },
             MuiListItemButton: {
+                defaultProps: {
+                    ...disableRipple
+                }
+            },
+            MuiSwitch: {
                 defaultProps: {
                     ...disableRipple
                 }

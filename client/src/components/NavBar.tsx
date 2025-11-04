@@ -1,4 +1,4 @@
-import { AppBar, Autocomplete, Avatar, Box, Button, IconButton, Menu, MenuItem, Stack, TextField, Toolbar, useTheme } from '@mui/material';
+import { AppBar, Autocomplete, Avatar, Box, Button, IconButton, Menu, MenuItem, Stack, TextField, Toolbar } from '@mui/material';
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -37,13 +37,12 @@ const styles = {
         transform: 'translateX(-50%)',
         width: '40%'
     },
-}
+};
 
 
 const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
-    const theme = useTheme();
     const { setShowNavDrawer, options } = useNavContext();
 
     return (
@@ -65,7 +64,9 @@ const NavBar = () => {
                     <Autocomplete
                         sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
                         options={[]}
-                        renderInput={(params) => <TextField {...params} sx={{ backgroundColor: theme.palette.primary.light, borderRadius: '0.5rem' }} slotProps={{ input: { startAdornment: <SearchIcon/>}}}/>}
+                        renderInput={(params) => <TextField {...params} sx={{
+                            borderRadius: '0.5rem'
+                        }} slotProps={{ input: { startAdornment: <SearchIcon/>}}}/>}
                     />
                     <Avatar sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                         setAnchorElement(e.currentTarget);
@@ -82,8 +83,11 @@ const NavBar = () => {
                         {
                             options.map((option) => {
                                 return (
-                                    <MenuItem key={option.name} onClick={option.action}>
-                                        {option.text}
+                                    <MenuItem
+                                        key={option.name}
+                                        onClick={option.action}
+                                    >
+                                        {option.component}
                                     </MenuItem>
                                 );
                             })
