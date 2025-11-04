@@ -79,6 +79,10 @@ const NavBar = () => {
                             setMenuOpen(false);
                             setAnchorElement(null);
                         }}
+                        onBlur={() => {
+                            setMenuOpen(false);
+                            setAnchorElement(null);
+                        }}
                     >
                         {
                             options.map((option) => {
