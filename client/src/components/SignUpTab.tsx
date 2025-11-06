@@ -20,8 +20,7 @@ const styles: Record<string, React.CSSProperties> = {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        gap: '0.5rem',
-        backgroundColor: customColors.paleMint
+        gap: '0.5rem'
     },
     loginButtonContainer: {
         display: 'flex',
