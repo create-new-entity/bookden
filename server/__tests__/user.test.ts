@@ -225,6 +225,50 @@ describe('User accounts related tests', () => {
             const token = await login(loginPayload);
             await updateUser(user, EXPECT_409, token);
         });
+
+        test('UPDATE fails if email is duplicate.', async () => {
+            const user = {
+                username: seedAdminUser.username,
+                password: seedAdminUser.password,
+                email: 'customer1@gmail.com'
+            };
+            const loginPayload = {
+                username: seedAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await updateUser(user, EXPECT_409, token);
+        });
+
+        describe('Update with partial data works.', () => {
+            test('UPDATE succeeds if only email is provided.', async () => {
+                const user = {
+                    email: 'admin_changed@gmail.com'
+                };
+                const loginPayload = {
+                    username: seedAdminUser.username,
+                    password: 'password'
+                };
+                const token = await login(loginPayload);
+                await updateUser(user, EXPECT_200, token);
+            });
+
+            test.only('UPDATE succeeds if only password is provided.', async () => {
+                const NEW_PASSWORD = 'new_password';
+                const user = {
+                    password: NEW_PASSWORD
+                };
+                const loginPayload = {
+                    username: seedAdminUser.username,
+                    password: 'password'
+                };
+                const token = await login(loginPayload);
+                await updateUser(user, EXPECT_200, token);
+                await login({ ...loginPayload, password: NEW_PASSWORD });
+            });
+        });
+
+        
     });
 
     describe('DELETE users.', () => {
