@@ -5,6 +5,5 @@ Content-Type: application/json
     "username": "customer3",
     "password": "password",
     "email": "customer3@gmail.com",
-    "userType": "customer",
-    "isActive": true
+    "userType": "customer"
 }

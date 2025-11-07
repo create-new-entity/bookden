@@ -14,6 +14,8 @@ const FORBIDDEN_ACTION = 'ForbiddenAction' as const;
 const VALIDATION_FAILED = 'ValidationFailed' as const;
 const TOKEN_EXPIRED = 'TokenExpiredError' as const;
 const USER_NAME_EMAIL_DUPLICATE = 'UserNameOrEmailIsDuplicate' as const;
+const USER_NAME_IS_NOT_AVAILABLE = 'UserNameIsNotAvailable' as const;
+const EMAIL_IS_NOT_AVAILABLE = 'EmailIsNotAvailable' as const;
 
 export const errorNames = {
     userNotFound: USER_NOT_FOUND,
@@ -25,7 +27,9 @@ export const errorNames = {
     forbiddenAction: FORBIDDEN_ACTION,
     validationFailed: VALIDATION_FAILED,
     tokenExpired: TOKEN_EXPIRED,
-    usernameOrEmailDuplicate: USER_NAME_EMAIL_DUPLICATE
+    usernameOrEmailDuplicate: USER_NAME_EMAIL_DUPLICATE,
+    userNameIsNotAvailable: USER_NAME_IS_NOT_AVAILABLE,
+    emailIsNotAvailable: EMAIL_IS_NOT_AVAILABLE
 };
 
 export const errorMessages = {
@@ -39,7 +43,9 @@ export const errorMessages = {
     [VALIDATION_FAILED]: 'Data validation failed.',
     [TOKEN_EXPIRED]: 'Authentication token has expired.',
     notAllowedToCreateUser: 'Forbidden: You do not have permission to create this type of user.',
-    [USER_NAME_EMAIL_DUPLICATE]: 'Username or Email is not available.'
+    [USER_NAME_EMAIL_DUPLICATE]: 'Username or Email is not available.',
+    [USER_NAME_IS_NOT_AVAILABLE]: 'Username is not available.',
+    [EMAIL_IS_NOT_AVAILABLE]: 'Email is not available.'
 };
 
 export const isDuplicateError = (error: PostgresError): boolean => {
@@ -55,6 +61,7 @@ const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFun
     const send404 = error.name === errorNames.userNotFound || error.name === errorNames.invalidPassword;
     const send401 = error.name === errorNames.unauthorized || error instanceof jwt.TokenExpiredError || error instanceof jwt.JsonWebTokenError;
     const send403 = error.name === errorNames.forbiddenAction;
+    const send409 = error.name === errorNames.userNameIsNotAvailable || error.name === errorNames.emailIsNotAvailable;
     const zodError = error instanceof ZodError;
     const slonikError = error instanceof SlonikError;
     
@@ -72,6 +79,9 @@ const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFun
     }
     else if(send403) {
         return res.status(403).json({ message: error.message });
+    }
+    else if(send409) {
+        return res.status(409).json({ message: error.message });
     }
     
     return res.status(500).json({ message: errorMessages[errorNames.internalServerError] });

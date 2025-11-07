@@ -8,7 +8,6 @@
     Example: userName -> user_name
 
     type Test = SnakeCase<'userType'>; // "user_type"
-    type Test2 = SnakeCase<'isActive'>; // "is_active"
 */
 type SnakeCase<S extends string> = 
     S extends `${infer T}${infer U}`

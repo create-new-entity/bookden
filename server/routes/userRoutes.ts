@@ -68,14 +68,11 @@ userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Resp
         await createUser(validated);
         res.status(201).end();
     } catch (error) {
-        if(error instanceof Error) {
-            error.message = errorMessages[errorNames.usernameOrEmailDuplicate];
-            next(error);
-        }
+        next(error);
     }
 });
 
-userRouter.put('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+userRouter.patch('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         if(!req.user) {
             const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);

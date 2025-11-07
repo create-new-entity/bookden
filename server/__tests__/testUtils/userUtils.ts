@@ -25,7 +25,7 @@ export const createUser = async (user: NewUserPayload, expectedCode: number, tok
 
 export const updateUser = async (user: UpdateUserPayload, expectedCode: number, token: string) => {
     await apiSupertest(app)
-        .put(userBaseUrl)
+        .patch(userBaseUrl)
         .set({
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})

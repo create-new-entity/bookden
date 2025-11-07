@@ -4,7 +4,6 @@ export interface User {
     username: string;
     email: string;
     userType: UserTypes;
-    isActive: boolean;
     createdAt: Date;
     deletedAt: Date | null;
     updatedAt: Date | null;
@@ -14,7 +13,11 @@ export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'upd
     password: string;
 };
 
-export type UpdateUserPayload = Pick<NewUserPayload, 'username' | 'email' | 'password'>;
+export type UpdateUserPayload = {
+    username?: string;
+    email?: string;
+    password?: string;
+};
 
 export type UserTypes = 'superadmin' | 'admin' | 'customer';
 

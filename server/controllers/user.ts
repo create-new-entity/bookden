@@ -37,7 +37,7 @@ const getAllUsers = async (userType?: UserTypes | undefined): Promise<User[]> =>
 
 const getUser = async (requestorUserId: string, targetUserId: string) => {
     const foundUser = await sqlOne`
-        SELECT username, email, user_type, is_active, user_id
+        SELECT username, email, user_type, user_id
         FROM users
         WHERE user_id = ${targetUserId};
     `;
@@ -84,23 +84,67 @@ const createUser = async (newUserData: NewUserPayload) => {
     newUserData.password = await getPasswordHash(newUserData.password);
     const snakeCasedData = convertToSnakeCaseDeep(newUserData);
     await sql`
-        INSERT INTO users (username, password_hash, email, user_type, is_active)
-        VALUES (${snakeCasedData.username}, ${snakeCasedData.password}, ${snakeCasedData.email}, ${snakeCasedData.user_type}, ${snakeCasedData.is_active})
+        INSERT INTO users (username, password_hash, email, user_type)
+        VALUES (${snakeCasedData.username}, ${snakeCasedData.password}, ${snakeCasedData.email}, ${snakeCasedData.user_type})
     `;
+};
+
+const checkDuplicateUsername = async (userId: string, username: string): Promise<void> => {
+    const found = await sqlOne`
+        SELECT 1
+        FROM users u
+        WHERE
+            u.username = ${username}
+            AND u.user_id != ${userId}
+    `;
+    if(found) {
+        const userNameNotAvailableError = new Error(errorMessages[errorNames.userNameIsNotAvailable]);
+        userNameNotAvailableError.name = errorNames.userNameIsNotAvailable;
+        throw userNameNotAvailableError;
+    }
+};
+
+const checkDuplicateEmail = async (userId: string, email: string): Promise<void> => {
+    const found = await sqlOne`
+        SELECT 1
+        FROM users u
+        WHERE
+            u.email = ${email}
+            AND u.user_id != ${userId}
+    `;
+    if(found) {
+        const emailIsNotAvailableError = new Error(errorMessages[errorNames.emailIsNotAvailable]);
+        emailIsNotAvailableError.name = errorNames.emailIsNotAvailable;
+        throw emailIsNotAvailableError;
+    }
 };
 
 const updateUser = async (userId: string, updateUserData: UpdateUserPayload): Promise<void> => {
     const snakeCasedData = convertToSnakeCaseDeep(updateUserData);
-    snakeCasedData.password = await getPasswordHash(updateUserData.password);
+    const updatedData: UpdateUserPayload = {};
+    
+    if(snakeCasedData.password) {
+        updatedData.password = await getPasswordHash(snakeCasedData.password);
+    };
+    updatedData.username = snakeCasedData.username;
+
+    // Unique constraints are there. Want to have better error messaging though.
+    if(updatedData.username) {
+        await checkDuplicateUsername(userId, updatedData.username);
+    }
+    updatedData.email = snakeCasedData.email;
+    if(updatedData.email) {
+        await checkDuplicateEmail(userId, updatedData.email);
+    }
+
     await sqlOne`
         UPDATE users
         SET
-            username = ${snakeCasedData.username},
-            password_hash = ${snakeCasedData.password},
-            email = ${snakeCasedData.email}
-        WHERE
-            user_id = ${userId}
-        RETURNING *;
+            username = COALESCE(${updatedData.username || null}, username),
+            email = COALESCE(${updatedData.email || null}, email),
+            password_hash = COALESCE(${updatedData.password || null}, password_hash),
+            updated_at = NOW()
+        WHERE user_id = ${userId};
     `;
 };
 

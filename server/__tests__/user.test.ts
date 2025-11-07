@@ -1,6 +1,6 @@
 import pgDBPoolUtitlities from '../configs/db';
 import { ADMIN, CUSTOMER, SUPERADMIN, User } from '../types';
-import { EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
+import { EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409, EXPECT_500 } from './testUtils/constants';
 import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
 import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
 import { createUser, deleteUser, getUsers, login, updateUser } from './testUtils/userUtils';
@@ -223,7 +223,7 @@ describe('User accounts related tests', () => {
                 password: 'password'
             };
             const token = await login(loginPayload);
-            await updateUser(user, EXPECT_500, token);
+            await updateUser(user, EXPECT_409, token);
         });
     });
 
