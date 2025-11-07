@@ -1,0 +1,8 @@
+
+/*
+    is_active. Not created_at.
+*/
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS
+is_active TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
