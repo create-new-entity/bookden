@@ -146,7 +146,7 @@ describe('User accounts related tests', () => {
             };
             await createUser(newAdminUser, EXPECT_403, token);
         });
-        test('customer can not create a superadmin user.', async () => {
+        test('Customer can not create a superadmin user.', async () => {
             const loginPayload = {
                 username: seedCustomerUser.username,
                 password: 'password'
@@ -253,7 +253,7 @@ describe('User accounts related tests', () => {
                 await updateUser(user, EXPECT_200, token);
             });
 
-            test.only('UPDATE succeeds if only password is provided.', async () => {
+            test('UPDATE succeeds if only password is provided.', async () => {
                 const NEW_PASSWORD = 'new_password';
                 const user = {
                     password: NEW_PASSWORD

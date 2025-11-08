@@ -1,122 +1,81 @@
 import { Router, Response, NextFunction } from 'express';
-import { errorMessages, errorNames, extractDuplicateErrorMessage, isDuplicateError, tokenExtractor } from '../middlewares';
+import { tokenExtractor } from '../middlewares';
 import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser, getUser } from '../controllers';
 import { UpdateUser, User } from '../validation';
 import { AuthenticatedRequest } from '../types/Authentication';
 import { ADMIN, CUSTOMER } from '../types';
-import { isPostgresError } from '../types/Errors';
-import { SlonikError } from 'slonik';
+import { asyncHandler } from '../middlewares/asyncHandler';
+import { AuthenticationError, UnauthorizedError } from '../errors/HttpError';
+
 
 export const userBaseUrl = '/api/users';
 
 const userRouter = Router();
 
-userRouter.get('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-        if(!req.user || req.user.userType === CUSTOMER) {
-            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
-            throw unauthorizedError;
-        }
-        const allUsers = await getAllUsers();  
-        res.status(200).json(allUsers);
-    } catch (error) {
-        next(error);
+userRouter.get('/', tokenExtractor, asyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if(!req.user || req.user.userType === CUSTOMER) {
+        const unauthorizedError = new UnauthorizedError();
+        next(unauthorizedError);
+        return;
     }
-});
+    const allUsers = await getAllUsers();  
+    res.status(200).json(allUsers);
+}));
 
-userRouter.get('/:id', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-        if(!req.user) {
-            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
-            unauthorizedError.name = errorNames.unauthorized;
-            throw unauthorizedError;
-        }
-        const allUsers = await getUser(req.user.userId, req.params.id);  
-        res.status(200).json(allUsers);
-    } catch (error) {
-        if(error instanceof SlonikError) {
-            // Want to set a cleaner error message.
-            const userNotFoundError = new Error(errorMessages[errorNames.userNotFound]);
-            userNotFoundError.name = errorNames.userNotFound;
-            next(userNotFoundError);
-        }
-        else {
-            next(error);
-        }
+userRouter.get('/:id', tokenExtractor, asyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if(!req.user) {
+        const unauthorizedError = new UnauthorizedError();
+        next(unauthorizedError);
+        return;
     }
-});
+    const allUsers = await getUser(req.user.userId, req.params.id);  
+    res.status(200).json(allUsers);
+}));
 
-userRouter.post('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-        let creatorUserType;
-        const validated = User.parse(req.body);
-        if(req.user) {
-            creatorUserType = req.user.userType;
-            if(!canCreateUser(creatorUserType, validated.userType)) {
-                res.status(403).json({ message: errorMessages.notAllowedToCreateUser });
-                return;
-            }
-        }
-
-        /*
-            An admin user can only be created if it is requested by the superadmin user.
-        */
-        if(!req.user && validated.userType === ADMIN) {
-            res.status(403).json({ message: errorMessages.notAllowedToCreateUser });
+userRouter.post('/', tokenExtractor, asyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    let creatorUserType;
+    const validated = User.parse(req.body);
+    if(req.user) {
+        creatorUserType = req.user.userType;
+        if(!canCreateUser(creatorUserType, validated.userType)) {
+            const unauthorizedError = new UnauthorizedError();
+            next(unauthorizedError);
             return;
         }
-        await createUser(validated);
-        res.status(201).end();
-    } catch (error) {
-        next(error);
     }
-});
 
-userRouter.patch('/', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-        if(!req.user) {
-            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
-            throw unauthorizedError;
-        }
-        const validated = UpdateUser.parse(req.body);
-        await updateUser(req.user.userId, validated);
-        res.status(200).end();
+    /*
+        An admin user can only be created if it is requested by the superadmin user.
+    */
+    if(!req.user && validated.userType === ADMIN) {
+        const loginRequiredError = new AuthenticationError();
+        next(loginRequiredError);
+        return;
     }
-    catch(e) {
-        if(isPostgresError(e)) {
-            const isUniqueConstraintErr = isDuplicateError(e);
-            if(isUniqueConstraintErr) {
-                e.message = extractDuplicateErrorMessage(e);
-                next(e);
-                return;
-            }
-        }
-        next(e);
-    }
-});
+    await createUser(validated);
+    res.status(201).end();
+}));
 
-userRouter.delete('/:id', tokenExtractor, async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-        if(!req.user) {
-            const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
-            unauthorizedError.name = errorNames.unauthorized;
-            throw unauthorizedError;
-        }
-        const userId = req.params.id;
-        await deleteUser(userId, req.user);
-        res.status(204).end();
+userRouter.patch('/', tokenExtractor, asyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        next(loginRequiredError);
+        return;
     }
-    catch(error) {
-        if(error instanceof SlonikError) {
-            // Want to set a cleaner error message.
-            const userNotFoundError = new Error(errorMessages[errorNames.userNotFound]);
-            userNotFoundError.name = errorNames.userNotFound;
-            next(userNotFoundError);
-        }
-        else {
-            next(error);
-        }
+    const validated = UpdateUser.parse(req.body);
+    await updateUser(req.user.userId, validated);
+    res.status(200).end();
+}));
+
+userRouter.delete('/:id', tokenExtractor, asyncHandler(async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        next(loginRequiredError);
+        return;
     }
-});
+    const userId = req.params.id;
+    await deleteUser(userId, req.user);
+    res.status(204).end();
+}));
 
 export default userRouter;
