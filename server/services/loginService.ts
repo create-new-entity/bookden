@@ -1,11 +1,13 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import configs from '../configs';
-import { JWTSignPayload } from '../types/Authentication';
-import { UserTypes } from '../types';
-import { AuthenticationError } from '../errors/HttpError';
-import { errorMessages, errorNames } from '../errors/errorMessages';
-import { AppError } from '../errors/AppError';
+import { JWTSignPayload, UserTypes } from '../types';
+import {
+    AuthenticationError,
+    AppError,
+    errorMessages,
+    errorNames
+} from '../errors';
 
 const { sqlOne } = configs.pgDBPoolUtitlities.queryVariants;
 
@@ -39,4 +41,6 @@ const login = async (username: string, password: string): Promise<{ token: strin
     }
 };
 
-export default login;
+export {
+    login
+};

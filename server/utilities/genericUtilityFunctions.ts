@@ -1,7 +1,7 @@
 import snakecaseKeys from 'snakecase-keys';
+
 import { isRecord, SnakeCaseDeepObject } from '../types';
-import { AppError } from '../errors/AppError';
-import { errorMessages, errorNames } from '../errors/errorMessages';
+import { AppError, errorMessages, errorNames } from '../errors';
 
 export const convertToSnakeCaseDeep = <T extends object>(obj: T): SnakeCaseDeepObject<T> => {
     if(isRecord(obj) === true) {

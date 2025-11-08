@@ -1,11 +1,10 @@
 import { Router, Response, NextFunction } from 'express';
-import { tokenExtractor } from '../middlewares';
-import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser, getUser } from '../controllers';
+
+import { asyncHandler, tokenExtractor } from '../middlewares';
+import { getAllUsers, canCreateUser, createUser, updateUser, deleteUser, getUser } from '../services';
 import { UpdateUser, User } from '../validation';
-import { AuthenticatedRequest } from '../types/Authentication';
-import { ADMIN, CUSTOMER } from '../types';
-import { asyncHandler } from '../middlewares/asyncHandler';
-import { AuthenticationError, UnauthorizedError } from '../errors/HttpError';
+import { ADMIN, CUSTOMER, AuthenticatedRequest } from '../types';
+import { AuthenticationError, UnauthorizedError } from '../errors';
 
 
 export const userBaseUrl = '/api/users';

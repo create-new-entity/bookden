@@ -1,12 +1,21 @@
+
+import bcrypt from 'bcrypt';
+
 import configs from '../configs';
 import { SALT_ROUNDS } from '../constants';
-import { errorMessages, errorNames } from '../errors/errorMessages';
-import { ConflictError, UnauthorizedError } from '../errors/HttpError';
-import { ADMIN, CUSTOMER, UpdateUserPayload, User } from '../types';
-import { NewUserPayload, UserTypes } from '../types';
-import { JWTSignPayload } from '../types/Authentication';
+import {
+    errorMessages,
+    errorNames,
+    ConflictError,
+    UnauthorizedError
+} from '../errors';
+import {
+    NewUserPayload,
+    UserTypes,
+    JWTSignPayload,
+    ADMIN, CUSTOMER, UpdateUserPayload, User
+} from '../types';
 import { convertToSnakeCaseDeep } from '../utilities';
-import bcrypt from 'bcrypt';
 
 const { sqlOne, sqlMayBeOne, sql, sqlFragment } = configs.pgDBPoolUtitlities.queryVariants;
 

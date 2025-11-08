@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest, JWTSignPayload } from '../types/Authentication';
-import { errorMessages, errorNames } from '../errors/errorMessages';
-import { AuthenticationError } from '../errors/HttpError';
+
+import { AuthenticatedRequest, JWTSignPayload } from '../types';
+import { AuthenticationError, errorMessages, errorNames } from '../errors';
 
 export const tokenExtractor = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;

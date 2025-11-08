@@ -1,8 +1,8 @@
 
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../errors/AppError';
 import { ZodError } from 'zod';
-import { errorMessages, errorNames } from '../errors/errorMessages';
+
+import { errorMessages, errorNames, AppError } from '../errors';
 
 export const errorHandler = ( err: unknown, _req: Request, res: Response, _next: NextFunction ) => {
 

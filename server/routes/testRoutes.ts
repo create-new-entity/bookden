@@ -1,6 +1,6 @@
 import { Router, Response, Request } from 'express';
-import { createUser } from '../controllers';
-import { asyncHandler } from '../middlewares/asyncHandler';
+import { createUser } from '../services';
+import { asyncHandler } from '../middlewares';
 
 /*
     For testing purposes, we need a superadmin in place.

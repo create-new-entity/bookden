@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import login from '../controllers/login';
-import { asyncHandler } from '../middlewares/asyncHandler';
+
+import { asyncHandler } from '../middlewares';
+import { login } from '../services';
 
 export const loginBaseUrl = '/api/login';
 

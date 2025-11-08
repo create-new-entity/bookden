@@ -2,8 +2,9 @@
 
 import multer from 'multer';
 import { Request } from 'express';
-import { UnsupportedMediaTypeError } from '../errors/HttpError';
+
 import { MAX_FILE_SIZE } from '../constants';
+import { UnsupportedMediaTypeError } from '../errors';
 
 const storage = multer.memoryStorage(); // Save in memory temporarily
 
