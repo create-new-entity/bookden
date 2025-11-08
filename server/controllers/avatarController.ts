@@ -1,6 +1,5 @@
 
 import { Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from '../types/Authentication';
 import {
     AuthenticationError,
     BadRequestError,
@@ -8,6 +7,7 @@ import {
     errorNames
 } from '../errors';
 import { saveAvatar } from '../services';
+import { AuthenticatedRequest } from '../types';
 
 const updateAvatarController = async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
     if (!req.user) {
