@@ -41,6 +41,11 @@ const sql = async (template: TemplateStringsArray, ...values: ValueExpression[])
 };
 
 const sqlOne = async (template: TemplateStringsArray, ...values: ValueExpression[]) => {
+    const result = await pgDBPool!.one(slonikSql.unsafe(template, ...values));
+    return camelcaseKeys(result, { deep: true });
+};
+
+const sqlMayBeOne = async (template: TemplateStringsArray, ...values: ValueExpression[]) => {
     const result = await pgDBPool!.maybeOne(slonikSql.unsafe(template, ...values));
     return result ? camelcaseKeys(result, { deep: true }) : null;
 };
@@ -60,6 +65,7 @@ const initPGDBPool = async () => {
 const queryVariants = {
     sql,
     sqlOne,
+    sqlMayBeOne,
     sqlFragment
 };
 

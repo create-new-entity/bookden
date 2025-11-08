@@ -1,13 +1,14 @@
 import configs from '../configs';
 import { SALT_ROUNDS } from '../constants';
-import { errorMessages, errorNames } from '../middlewares';
+import { errorMessages, errorNames } from '../errors/errorMessages';
+import { ConflictError, UnauthorizedError } from '../errors/HttpError';
 import { ADMIN, CUSTOMER, UpdateUserPayload, User } from '../types';
 import { NewUserPayload, UserTypes } from '../types';
 import { JWTSignPayload } from '../types/Authentication';
 import { convertToSnakeCaseDeep } from '../utilities';
 import bcrypt from 'bcrypt';
 
-const { sqlOne, sql, sqlFragment } = configs.pgDBPoolUtitlities.queryVariants;
+const { sqlOne, sqlMayBeOne, sql, sqlFragment } = configs.pgDBPoolUtitlities.queryVariants;
 
 const mapDate = (user: User): User => {
     return {
@@ -42,8 +43,7 @@ const getUser = async (requestorUserId: string, targetUserId: string) => {
         WHERE user_id = ${targetUserId};
     `;
     if(foundUser.userId !== requestorUserId) {
-        const unauthorizedError = new Error(errorMessages[errorNames.unauthorized]);
-        unauthorizedError.name = errorNames.unauthorized;
+        const unauthorizedError = new UnauthorizedError();
         throw unauthorizedError;
     }
     return foundUser;
@@ -90,7 +90,7 @@ const createUser = async (newUserData: NewUserPayload) => {
 };
 
 const checkDuplicateUsername = async (userId: string, username: string): Promise<void> => {
-    const found = await sqlOne`
+    const found = await sqlMayBeOne`
         SELECT 1
         FROM users u
         WHERE
@@ -98,14 +98,13 @@ const checkDuplicateUsername = async (userId: string, username: string): Promise
             AND u.user_id != ${userId}
     `;
     if(found) {
-        const userNameNotAvailableError = new Error(errorMessages[errorNames.userNameIsNotAvailable]);
-        userNameNotAvailableError.name = errorNames.userNameIsNotAvailable;
+        const userNameNotAvailableError = new ConflictError(errorMessages[errorNames.usernameNotAvailable]);
         throw userNameNotAvailableError;
     }
 };
 
 const checkDuplicateEmail = async (userId: string, email: string): Promise<void> => {
-    const found = await sqlOne`
+    const found = await sqlMayBeOne`
         SELECT 1
         FROM users u
         WHERE
@@ -113,8 +112,7 @@ const checkDuplicateEmail = async (userId: string, email: string): Promise<void>
             AND u.user_id != ${userId}
     `;
     if(found) {
-        const emailIsNotAvailableError = new Error(errorMessages[errorNames.emailIsNotAvailable]);
-        emailIsNotAvailableError.name = errorNames.emailIsNotAvailable;
+        const emailIsNotAvailableError = new ConflictError(errorMessages[errorNames.emailNotAvailable]);
         throw emailIsNotAvailableError;
     }
 };
@@ -137,7 +135,7 @@ const updateUser = async (userId: string, updateUserData: UpdateUserPayload): Pr
         await checkDuplicateEmail(userId, updatedData.email);
     }
 
-    await sqlOne`
+    await sqlMayBeOne`
         UPDATE users
         SET
             username = COALESCE(${updatedData.username || null}, username),
@@ -181,8 +179,7 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
         }
     }
     else {
-        const forbiddenActionError = new Error(errorMessages[errorNames.forbiddenAction]);
-        forbiddenActionError.name = errorNames.forbiddenAction;
+        const forbiddenActionError = new UnauthorizedError();
         throw forbiddenActionError;
     }
 };

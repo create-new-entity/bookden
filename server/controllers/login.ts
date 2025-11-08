@@ -1,9 +1,11 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import configs from '../configs';
-import { errorMessages, errorNames } from '../middlewares';
 import { JWTSignPayload } from '../types/Authentication';
 import { UserTypes } from '../types';
+import { AuthenticationError } from '../errors/HttpError';
+import { errorMessages, errorNames } from '../errors/errorMessages';
+import { AppError } from '../errors/AppError';
 
 const { sqlOne } = configs.pgDBPoolUtitlities.queryVariants;
 
@@ -13,27 +15,17 @@ const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
     if(configs.ENV_VARIABLES.JWT_SECRET) {
         return jwt.sign({ username, userId, userType }, configs.ENV_VARIABLES.JWT_SECRET, { expiresIn: TOKEN_VALIDITY_SECONDS });
     }
-    const internalServerError = new Error(errorMessages[errorNames.internalServerError]);
-    internalServerError.name = errorNames.internalServerError;
+    const internalServerError = new AppError(errorMessages[errorNames.envVarUndefined], 500, false);
     throw internalServerError; // configs.ENV_VARIABLES.JWT_SECRET is not defined.
 };
 
 const login = async (username: string, password: string): Promise<{ token: string, userType: UserTypes } | undefined> => {
-    let result;
-    try {
-        result = await sqlOne`
-            SELECT user_id, password_hash, user_type
-            FROM users
-            WHERE username=${username}
-        `;
-    }
-    catch(error) {
-        if(error instanceof Error) {
-            const userNotFoundError = new Error(errorMessages[errorNames.userNotFound]);
-            userNotFoundError.name = errorNames.userNotFound;
-            throw userNotFoundError;
-        }
-    }
+
+    const result = await sqlOne`
+        SELECT user_id, password_hash, user_type
+        FROM users
+        WHERE username=${username}
+    `;
 
     const { userId, passwordHash, userType } = result;
     const isPasswordCorrect = await bcrypt.compare(password, passwordHash);
@@ -42,8 +34,7 @@ const login = async (username: string, password: string): Promise<{ token: strin
         return { token, userType };
     }
     else {
-        const invalidPasswordError = new Error(errorMessages[errorNames.invalidPassword]);
-        invalidPasswordError.name = errorNames.invalidPassword;
+        const invalidPasswordError = new AuthenticationError(errorMessages[errorNames.invalidPassword]);
         throw invalidPasswordError;
     }
 };
