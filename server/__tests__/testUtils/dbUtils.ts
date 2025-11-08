@@ -8,6 +8,7 @@ const { sql } = pgDBPoolUtitlities.queryVariants;
 
 export const clearDB = async () => {
     await sql`DELETE FROM users;`;
+    await sql`DELETE FROM avatars;`;
 };
 
 export const createSomeSeedUsers = async () => {
