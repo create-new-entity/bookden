@@ -12,6 +12,8 @@ const EMAIL_NOT_AVAILABLE = 'EmailNotAvailable' as const;
 const RESOURCE_CONFLICT = 'ResourceConflict' as const;
 const INTERNAL_SERVER_ERROR = 'InternalServerError' as const;
 const VALIDATION_FAILED = 'ValidationFailed' as const;
+const UNSUPPORTED_AVATAR_EXTENSION = 'UnsupportedAvatarExtension' as const;
+const NO_FILE_UPLOADED = 'NoFileUploaded' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -27,7 +29,9 @@ export const errorNames = {
     usernameNotAvailable: USERNAME_NOT_AVAILABLE,
     resourceConflict: RESOURCE_CONFLICT,
     internalServerError: INTERNAL_SERVER_ERROR,
-    validationFailed: VALIDATION_FAILED
+    validationFailed: VALIDATION_FAILED,
+    unsupportedAvatarExtension: UNSUPPORTED_AVATAR_EXTENSION,
+    noFileUploaded: NO_FILE_UPLOADED
 };
 
 export const errorMessages = {
@@ -44,5 +48,17 @@ export const errorMessages = {
     [USERNAME_NOT_AVAILABLE]: 'Username is not available',
     [RESOURCE_CONFLICT]: 'Resource conflicts with existing resource ( duplicate and so on )',
     [INTERNAL_SERVER_ERROR]: 'Internal server error',
-    [VALIDATION_FAILED]: 'Validation failed'
+    [VALIDATION_FAILED]: 'Validation failed',
+    [UNSUPPORTED_AVATAR_EXTENSION]: 'Only JPEG, PNG, and WebP are allowed',
+    [NO_FILE_UPLOADED]: 'No file uploaded'
+};
+
+const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;
+
+export const successNames = {
+    avatarUploadSuccess: AVATAR_UPLOAD_SUCCESS
+};
+
+export const successMessages = {
+    [AVATAR_UPLOAD_SUCCESS]: 'Avatar uploaded successfully'
 };

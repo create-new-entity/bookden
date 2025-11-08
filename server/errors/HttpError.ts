@@ -30,4 +30,10 @@ export class ConflictError extends AppError {
         super(message, 409);
     }
 }
+
+export class UnsupportedMediaTypeError extends AppError {
+    constructor(message = errorMessages[errorNames.unsupportedAvatarExtension]) {
+        super(message, 409);
+    }
+}
  
