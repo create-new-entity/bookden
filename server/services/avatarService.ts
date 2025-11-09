@@ -29,8 +29,19 @@ const getAvatar = async (userId: number) => {
     `);
 };
 
+const deleteAvatar = async (userId: number) => {
+    const dbPool = await getPGDBPool();
+
+    return await dbPool.query(sqlTag.typeAlias('Avatar')`
+        DELETE
+        FROM avatars
+        WHERE user_id = ${userId};
+    `);
+};
+
 
 export {
     saveAvatar,
-    getAvatar
+    getAvatar,
+    deleteAvatar
 };

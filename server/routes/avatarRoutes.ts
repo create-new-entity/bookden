@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 import { asyncHandler, tokenExtractor, uploadAvatar } from '../middlewares';
-import { getAvatarController, updateAvatarController } from '../controllers';
+import { deleteAvatarController, getAvatarController, updateAvatarController } from '../controllers';
 
 export const avatarBaseUrl = '/api/avatar';
 
@@ -18,6 +18,12 @@ avatarRouter.get(
     '/',
     tokenExtractor,
     asyncHandler(getAvatarController)
+);
+
+avatarRouter.delete(
+    '/',
+    tokenExtractor,
+    asyncHandler(deleteAvatarController)
 );
 
 export default avatarRouter;

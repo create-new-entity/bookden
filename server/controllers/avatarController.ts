@@ -7,7 +7,7 @@ import {
     errorMessages,
     errorNames
 } from '../errors';
-import { getAvatar, saveAvatar } from '../services';
+import { deleteAvatar, getAvatar, saveAvatar } from '../services';
 import { AuthenticatedRequest } from '../types';
 import camelcaseKeys from 'camelcase-keys';
 
@@ -16,11 +16,22 @@ import camelcaseKeys from 'camelcase-keys';
     To easily test from terminal:
     ( save an image in /Users/mdimranpavel/Desktop/bookden/server/__tests__/files first )
 
-    1. Send put request like this to save the avatar:
-        curl -X PUT -H "Authorization: Bearer <token>" -F "avatar=@/Users/mdimranpavel/Desktop/bookden/server/__tests__/files/batman1.jpeg" http://localhost:3000/api/avatar
+    1. Send PUT request like this to save the avatar:
+        curl -X PUT \
+            -H "Authorization: Bearer <token>" \
+            -F "avatar=@/Users/mdimranpavel/Desktop/bookden/server/__tests__/files/batman1.jpeg" \
+            http://localhost:3000/api/avatar
 
-    2. Send get request like this to get the avatar:
-        curl -H "Authorization: Bearer <token>" http://localhost:3000/api/avatar --output avatar.jpeg
+    2. Send GET request like this to get the avatar:
+        curl -H "Authorization: Bearer <token>" \
+            http://localhost:3000/api/avatar \
+            --output avatar.jpeg
+
+    3. Send DELETE request like this to delete the avatar:
+        curl -X DELETE \
+            -H "Authorization: Bearer <token>" \
+            http://localhost:3000/api/avatar
+
 */
 
 const updateAvatarController = async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
@@ -62,7 +73,18 @@ const getAvatarController = async (req: AuthenticatedRequest, res: Response, _ne
     res.end(avatar.avatar);
 };
 
+const deleteAvatarController = async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
+    if (!req.user) {
+        throw new AuthenticationError();
+    }
+    const userId = req.user.userId;
+    await deleteAvatar(userId);
+
+    res.status(200).end();
+};
+
 export {
     updateAvatarController,
-    getAvatarController
+    getAvatarController,
+    deleteAvatarController
 };
