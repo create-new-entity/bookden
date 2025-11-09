@@ -1,7 +1,7 @@
 import { sql as slonikSql } from 'slonik';
 import pgDBPoolUtitlities from '../configs/db';
 
-const { sql } = pgDBPoolUtitlities.queryVariants;
+const { sql, sqlMayBeOne } = pgDBPoolUtitlities.queryVariants;
 
 const saveAvatar = async (userId: string, buffer: Buffer, mimetype: string) => {
     return await sql`
@@ -15,7 +15,20 @@ const saveAvatar = async (userId: string, buffer: Buffer, mimetype: string) => {
     `;
 };
 
+const getAvatar = async (userId: string) => {
+    return await pgDBPoolUtitlities.getPGDBPool()?.one(slonikSql.unsafe`
+        SELECT
+            a.avatar_id,
+            a.avatar,
+            a.user_id,
+            a.mime_type
+        FROM avatars a
+        WHERE a.user_id = ${userId};
+    `);
+};
+
 
 export {
-    saveAvatar
+    saveAvatar,
+    getAvatar
 };
