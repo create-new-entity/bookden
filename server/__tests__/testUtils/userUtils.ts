@@ -37,7 +37,7 @@ export const updateUser = async (user: UpdateUserPayload, expectedCode: number, 
         .expect(expectedCode);
 };
 
-export const deleteUser = async (userId: string, expectedCode: number, token: string) => {
+export const deleteUser = async (userId: number, expectedCode: number, token: string) => {
     await apiSupertest(app)
         .delete(`${userBaseUrl}/${userId}`)
         .set({
