@@ -6,7 +6,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export type JWTSignPayload = {
-    userId: string;
+    userId: number;
     username: string;
     userType: UserTypes;
 };

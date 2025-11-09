@@ -1,14 +1,37 @@
+import { z } from 'zod';
+import { userTypes } from '../constants';
+import { CamelCaseDeep } from './Utilities';
 
-export interface User {
-    userId: string;
-    username: string;
-    email: string;
-    userType: UserTypes;
+export const UserTypeAlias = z.object({
+    user_id: z.number(),
+    username: z.string(),
+    email: z.string(),
+    password_hash: z.string(),
+    user_type: z.enum(userTypes),
+    deleted_at: z.string().nullable(),
+    updated_at: z.string().nullable(),
+    created_at: z.string(),
+});
+
+export type UserDBRow = z.infer<typeof UserTypeAlias>;
+
+/* 
+    Need UserTypeAlias to create UserDBRow for sqlTags.
+    Need User below to cast date values to Date types, which can be
+    correctly used by mapDate.
+
+    Without this, followings' types are incompatible:
+    1. Data got out from db
+    2. Data after transformation using mapDate
+*/
+
+
+export type User = CamelCaseDeep<Omit<UserDBRow, 'created_at' | 'updated_at' | 'deleted_at' | 'password_hash'>> & {
     createdAt: Date;
-    deletedAt: Date | null;
     updatedAt: Date | null;
+    deletedAt: Date | null;
 };
-
+  
 export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
     password: string;
 };
