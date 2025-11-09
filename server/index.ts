@@ -1,10 +1,11 @@
 import configs from './configs';
 import app from './app';
+import { endConnectionPool, initPGDBPool } from './configs/db';
 
 const PORT = configs.ENV_VARIABLES.PORT;
 
 const start = async () => {
-    await configs.pgDBPoolUtitlities.initPGDBPool();
+    await initPGDBPool();
     const server = app.listen(PORT, (error) => {
         if(error) {
             console.log('App failed to start.');
@@ -19,7 +20,7 @@ const start = async () => {
     const shutdown = async (signal: string) => {
         console.log(`\nReceived ${signal}. Shutting down server.`);
         server.close(async () => {
-            await configs.pgDBPoolUtitlities.endConnectionPool();
+            await endConnectionPool();
             process.exit(0);
         });
     };
