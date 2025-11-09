@@ -14,6 +14,7 @@ const INTERNAL_SERVER_ERROR = 'InternalServerError' as const;
 const VALIDATION_FAILED = 'ValidationFailed' as const;
 const UNSUPPORTED_AVATAR_EXTENSION = 'UnsupportedAvatarExtension' as const;
 const NO_FILE_UPLOADED = 'NoFileUploaded' as const;
+const AVATAR_NOT_FOUND = 'AvatarNotFound' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -31,7 +32,8 @@ export const errorNames = {
     internalServerError: INTERNAL_SERVER_ERROR,
     validationFailed: VALIDATION_FAILED,
     unsupportedAvatarExtension: UNSUPPORTED_AVATAR_EXTENSION,
-    noFileUploaded: NO_FILE_UPLOADED
+    noFileUploaded: NO_FILE_UPLOADED,
+    avatarNotFound: AVATAR_NOT_FOUND,
 };
 
 export const errorMessages = {
@@ -50,7 +52,8 @@ export const errorMessages = {
     [INTERNAL_SERVER_ERROR]: 'Internal server error',
     [VALIDATION_FAILED]: 'Validation failed',
     [UNSUPPORTED_AVATAR_EXTENSION]: 'Only JPEG, PNG, and WebP are allowed',
-    [NO_FILE_UPLOADED]: 'No file uploaded'
+    [NO_FILE_UPLOADED]: 'No file uploaded',
+    [AVATAR_NOT_FOUND]: 'Avatar not found'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;

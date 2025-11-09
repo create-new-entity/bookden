@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import camelcaseKeys from 'camelcase-keys';
+
 import configs from '../configs';
 import { JWTSignPayload, UserTypes } from '../types';
 import {
@@ -8,10 +10,10 @@ import {
     errorMessages,
     errorNames
 } from '../errors';
+import { TOKEN_VALIDITY_SECONDS } from '../constants';
+import { getPGDBPool } from '../configs/db';
+import { sqlTag } from '../configs/sqlTag';
 
-const { sqlOne } = configs.pgDBPoolUtitlities.queryVariants;
-
-const TOKEN_VALIDITY_SECONDS = 24 * 60 * 60; // 24 hours in seconds
 
 const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
     if(configs.ENV_VARIABLES.JWT_SECRET) {
@@ -22,14 +24,17 @@ const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
 };
 
 const login = async (username: string, password: string): Promise<{ token: string, userType: UserTypes } | undefined> => {
+    const dbPool = await getPGDBPool();
 
-    const result = await sqlOne`
+    const result = await dbPool.query(sqlTag.typeAlias('User')`
         SELECT user_id, password_hash, user_type
         FROM users
         WHERE username=${username}
-    `;
+    `);
 
-    const { userId, passwordHash, userType } = result;
+    const user = camelcaseKeys(result.rows[0], { deep: true });
+    const { userId, passwordHash, userType } = user;
+
     const isPasswordCorrect = await bcrypt.compare(password, passwordHash);
     if(isPasswordCorrect) {
         const token = getToken({ username, userId, userType });

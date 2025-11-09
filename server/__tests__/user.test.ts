@@ -1,4 +1,4 @@
-import pgDBPoolUtitlities from '../configs/db';
+import { endConnectionPool, initPGDBPool } from '../configs/db';
 import { ADMIN, CUSTOMER, SUPERADMIN, User } from '../types';
 import { EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409, EXPECT_500 } from './testUtils/constants';
 import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
@@ -8,7 +8,7 @@ import { createUser, deleteUser, getUsers, login, updateAvatar, updateUser } fro
 describe('User accounts related tests', () => {
 
     beforeAll(async () => {
-        await pgDBPoolUtitlities.initPGDBPool();
+        await initPGDBPool();
     });
 
     beforeEach(async () => {
@@ -499,6 +499,6 @@ describe('User accounts related tests', () => {
     });
 
     afterAll(async () => {
-        pgDBPoolUtitlities.endConnectionPool();
+        await endConnectionPool();
     });
 });

@@ -1,21 +1,36 @@
-import { sql as slonikSql } from 'slonik';
-import pgDBPoolUtitlities from '../configs/db';
+import { getPGDBPool } from '../configs/db';
+import { sqlTag } from '../configs/sqlTag';
 
-const { sql } = pgDBPoolUtitlities.queryVariants;
+const saveAvatar = async (userId: number, buffer: Buffer, mimetype: string) => {
+    const dbPool = await getPGDBPool();
 
-const saveAvatar = async (userId: string, buffer: Buffer, mimetype: string) => {
-    return await sql`
+    return await dbPool.query(sqlTag.typeAlias('Avatar')`
         INSERT INTO avatars (user_id, avatar, mime_type)
-        VALUES (${userId}, ${slonikSql.binary(buffer)}, ${mimetype})
+        VALUES (${userId}, ${sqlTag.binary(buffer)}, ${mimetype})
         ON CONFLICT (user_id)
         DO UPDATE SET
             avatar = EXCLUDED.avatar,
             mime_type = EXCLUDED.mime_type,
             uploaded_at = NOW();
-    `;
+    `);
+};
+
+const getAvatar = async (userId: number) => {
+    const dbPool = await getPGDBPool();
+
+    return await dbPool.query(sqlTag.typeAlias('Avatar')`
+        SELECT
+            a.avatar_id,
+            a.avatar,
+            a.user_id,
+            a.mime_type
+        FROM avatars a
+        WHERE a.user_id = ${userId};
+    `);
 };
 
 
 export {
-    saveAvatar
+    saveAvatar,
+    getAvatar
 };

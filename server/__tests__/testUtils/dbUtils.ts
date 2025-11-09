@@ -1,14 +1,21 @@
 import apiSupertest from 'supertest';
-import pgDBPoolUtitlities from '../../configs/db';
 import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './seeds';
 import app from '../../app';
 import { testBaseUrl } from '../../routes/testRoutes';
+import { getPGDBPool } from '../../configs/db';
+import { sqlTag } from '../../configs/sqlTag';
 
-const { sql } = pgDBPoolUtitlities.queryVariants;
 
 export const clearDB = async () => {
-    await sql`DELETE FROM users;`;
-    await sql`DELETE FROM avatars;`;
+    const pgDBpool = await getPGDBPool();
+
+    await pgDBpool.query(sqlTag.typeAlias('User')`
+        DELETE FROM users;
+    `);
+    
+    await pgDBpool.query(sqlTag.typeAlias('User')`
+        DELETE FROM avatars;
+    `);
 };
 
 export const createSomeSeedUsers = async () => {
