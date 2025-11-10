@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext.tsx';
 import { NavProvider } from '../contexts/NavContext.tsx';
 import useThemeModeContext, { ThemeModeProvider } from '../contexts/ThemeModeContext.tsx';
+import { AvatarProvider } from '../contexts/AvatarContext.tsx';
 
 const queryClient = new QueryClient();
 
@@ -14,13 +15,18 @@ type Props = { children: ReactNode };
 const WrapperComponent = ({ children }: Props) => {
     const { theme } = useThemeModeContext();
     return (
+        /*
+            Welcome to "Provider Hell" 😎.
+        */
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <BrowserRouter>
                 <AuthProvider>
-                    <NavProvider>
-                        {children}
-                    </NavProvider>
+                    <AvatarProvider>
+                        <NavProvider>
+                            {children}
+                        </NavProvider>
+                    </AvatarProvider>
                 </AuthProvider>
             </BrowserRouter>
         </ThemeProvider>

@@ -23,6 +23,7 @@ export interface SignUpPayload extends SignUp {
 export type LoggedInUserData = {
   token: string;
   userType: UserType;
+  username: string;
 };
 
 export const isString = (text: unknown): text is string => {

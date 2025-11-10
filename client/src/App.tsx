@@ -6,6 +6,7 @@ import NavDrawer from './components/NavDrawer';
 import useAuthContext from './contexts/AuthContext';
 import useNavContext from './contexts/NavContext';
 import { useEffect } from 'react';
+import ProfilePage from './pages/ProfilePage';
 
 const App = () => {
     const { handleLoggedOutContext } = useAuthContext();
@@ -43,6 +44,7 @@ const App = () => {
             }
             <Routes>
                 <Route path="/auth" element={<LogInPage/>} />
+                <Route path="/profile" element={<ProfilePage/>}/>
                 <Route path="/" element={<HomePage/>} />
             </Routes>
         </>

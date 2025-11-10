@@ -2,9 +2,11 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { isLoggedInUserData, type AuthContextType, type LoggedInUserData } from '../types/index.ts';
 import { LOGGED_IN_USER_DATA } from '../constants/authContext.ts';
+import { useNavigate } from 'react-router-dom';
 
 const defaultContextValue: AuthContextType = {
     token: '',
+    username: '',
     userType: 'customer',
     isLoggedIn: false,
     handleLoggedInContext: (_data: LoggedInUserData) => {},
@@ -15,6 +17,7 @@ const AuthContext = createContext(defaultContextValue);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loggedInUserData, setLoggedInUserData] = useState<LoggedInUserData | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loggedInUserData = localStorage.getItem(LOGGED_IN_USER_DATA);
@@ -34,10 +37,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const handleLoggedOutContext = () => {
         setLoggedInUserData(null);
         localStorage.removeItem(LOGGED_IN_USER_DATA);
+        navigate('/auth');
     };
 
     const value: AuthContextType = {
-        token: loggedInUserData?.token || null,
+        username: loggedInUserData?.username || '',
+        token: loggedInUserData?.token || '',
         userType: loggedInUserData?.userType || undefined,
         isLoggedIn: !!(loggedInUserData && loggedInUserData.token),
         handleLoggedInContext,

@@ -21,8 +21,8 @@ const getUserController = async (req: AuthenticatedRequest, res: Response, next:
         next(unauthorizedError);
         return;
     }
-    const allUsers = await getUser(req.user.userId, parseInt(req.params.id, 10));  
-    res.status(200).json(allUsers);
+    const user = await getUser(req.user.userId, parseInt(req.params.id, 10));  
+    res.status(200).json(user);
 };
 
 const postUserController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

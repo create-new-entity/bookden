@@ -6,6 +6,7 @@ import ThemeSwitch from '../components/ThemeSwitch.tsx';
 import { ADMIN, ALL_TYPES_OF_USERS, SUPERADMIN } from '../constants/utilConstants.ts';
 import useAuthContext from './AuthContext.tsx';
 import type { UserType } from '../types/Users.ts';
+import { useNavigate } from 'react-router-dom';
 
 const defaultContextValue: NavContextValue = {
     options: [],
@@ -24,6 +25,7 @@ const NavContext = createContext(defaultContextValue);
 
 export const NavProvider = ({ children }: { children: ReactNode }) => {
     const [showNavDrawer, setShowNavDrawer] = useState(false);
+    const navigate = useNavigate();
     const { userType, handleLoggedOutContext } = useAuthContext();
     
     const [options, setOptions] = useState<NavOption[]>([]);
@@ -33,13 +35,19 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             const defaultOptions = [
                 {
                     name: 'profile',
-                    action: () => console.log('Clicked Profile.'),
+                    action: () => {
+                        navigate('/profile');
+                        setShowNavDrawer(false);
+                    },
                     component: <Typography variant='body1'>Profile</Typography>,
                     access: ALL_TYPES_OF_USERS
                 },
                 {
                     name: 'adminTools',
-                    action: () => console.log('Clicked Admin Tools'),
+                    action: () => {
+                        console.log('Clicked Admin Tools');
+                        setShowNavDrawer(false);
+                    },
                     component: <Typography>Admin Tools</Typography>,
                     access: [SUPERADMIN, ADMIN]
                 },
@@ -58,7 +66,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             ].filter(filterOutUnAuthorizedOptions(userType));
             setOptions(defaultOptions);
         }
-    }, [userType, handleLoggedOutContext]);
+    }, [userType, handleLoggedOutContext, navigate]);
     
     const value: NavContextValue = {
         options,

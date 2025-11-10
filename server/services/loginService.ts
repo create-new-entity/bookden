@@ -23,11 +23,11 @@ const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
     throw internalServerError; // configs.ENV_VARIABLES.JWT_SECRET is not defined.
 };
 
-const login = async (username: string, password: string): Promise<{ token: string, userType: UserTypes } | undefined> => {
+const login = async (username: string, password: string): Promise<{ token: string, userType: UserTypes, username: string } | undefined> => {
     const dbPool = await getPGDBPool();
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
-        SELECT user_id, password_hash, user_type
+        SELECT user_id, username, password_hash, user_type
         FROM users
         WHERE username=${username}
     `);
@@ -38,7 +38,7 @@ const login = async (username: string, password: string): Promise<{ token: strin
     const isPasswordCorrect = await bcrypt.compare(password, passwordHash);
     if(isPasswordCorrect) {
         const token = getToken({ username, userId, userType });
-        return { token, userType };
+        return { token, userType, username: user.username };
     }
     else {
         const invalidPasswordError = new AuthenticationError(errorMessages[errorNames.invalidPassword]);

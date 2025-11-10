@@ -48,7 +48,7 @@ export const getTheme = (mode: ThemeMode) => {
                     },
                     background: {
                         default: customColors.lightBackgroundDefault,
-                        paper: customColors.lightBackgroundPaper,
+                        paper: customColors.lightPrimaryLight,
                     },
                     text: {
                         primary: customColors.lightTextPrimary,

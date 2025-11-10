@@ -4,6 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import useNavContext from '../contexts/NavContext';
 import useThemeModeContext from '../contexts/ThemeModeContext';
+import { useNavigate } from 'react-router-dom';
 
 const styles = {
     stack: {
@@ -46,6 +47,7 @@ const NavBar = () => {
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
     const { isLightMode } = useThemeModeContext();
+    const navigate = useNavigate();
 
     return (
         <AppBar position='sticky'>
@@ -54,7 +56,7 @@ const NavBar = () => {
                     <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
                         <MenuIcon fontSize='large'/>
                     </IconButton>
-                    <Button sx={styles.logoButton} onClick={() => console.log('Clicked home logo')}>
+                    <Button sx={styles.logoButton} onClick={() => navigate('/')}>
                         <Box sx={{ height: '2.5rem' }}>
                             <img
                                 src={ isLightMode ? '/assets/book-den-black.svg' : '/assets/book-den-white.svg'}

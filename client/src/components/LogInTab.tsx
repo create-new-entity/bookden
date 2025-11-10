@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import type { AxiosErrorResponse } from '../types/UtilTypes';
 
 import type { LoginFormInputs } from '../types/LogIn';
-import { customColors } from '../theme/colors';
 import { NOTIFICATION_DELAY } from '../constants';
 import useAuthentication from '../hooks/useAuthentication';
 

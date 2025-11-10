@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 
 import type { SignUpFormInputs, SignUpPayload } from '../types/LogIn';
-import { customColors } from '../theme/colors';
 import type { AxiosErrorResponse } from '../types/UtilTypes';
 import { NOTIFICATION_DELAY } from '../constants';
 import useAuthentication from '../hooks/useAuthentication';
