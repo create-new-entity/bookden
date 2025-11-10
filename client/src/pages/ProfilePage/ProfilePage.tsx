@@ -1,22 +1,22 @@
-import { Avatar, Badge, Container, IconButton, Paper, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
-import useAvatarContext from '../contexts/AvatarContext';
-import useAuthContext from '../contexts/AuthContext';
-import { useEffect } from 'react';
+import { Avatar, Badge, Container, Paper, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import useAvatarContext from '../../contexts/AvatarContext';
+import useAuthContext from '../../contexts/AuthContext';
+import { useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAvatar from '../hooks/useAvatar';
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import DeleteIcon from '@mui/icons-material/Delete';
+import useAvatar from '../../hooks/useAvatar';
+import { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './UtilityComponents';
+
 
 const AVATAR_DIMENSIONS = '13rem';
-const ICON_BUTTONS_STACK_OFFSET_LEFT = -0.2;
-const ICON_BUTTONS_STACK_OFFSET_TOP = 1;
+const ICON_BUTTONS_STACK_OFFSET_LEFT = -0.3;
+const ICON_BUTTONS_STACK_OFFSET_TOP = 1.5;
+
 
 type ProfilePageStyles = {
     container: SxProps<Theme>;
     paper: SxProps<Theme>;
     rootStack: SxProps<Theme>;
     avatar: SxProps<Theme>;
-    iconButton: SxProps<Theme>;
     iconButtonsStack: SxProps<Theme>;
 };
 
@@ -36,9 +36,6 @@ const getProfilePageStyles = (_theme: Theme): ProfilePageStyles => {
             width: AVATAR_DIMENSIONS,
             height: AVATAR_DIMENSIONS
         },
-        iconButton: {
-            padding: 0
-        },
         iconButtonsStack: {
             position: 'relative',
             top: `${ICON_BUTTONS_STACK_OFFSET_TOP}rem`,
@@ -47,19 +44,13 @@ const getProfilePageStyles = (_theme: Theme): ProfilePageStyles => {
     };
 };
 
-const UpdateOrDeleteAvatarButtonsStack = () => {
+
+const WrapperStack = ({ children }: { children: ReactNode }) => {
     const theme = useTheme();
     const styles = getProfilePageStyles(theme);
-    const { deleteAvatarMutation } = useAvatar();
-
     return (
         <Stack sx={styles.iconButtonsStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'}>
-            <IconButton sx={styles.iconButton} onClick={() => console.log('Change avatar')}>
-                <ChangeCircleIcon/>
-            </IconButton>
-            <IconButton sx={styles.iconButton} onClick={() => deleteAvatarMutation.mutate() }>
-                <DeleteIcon/>
-            </IconButton>
+            {children}
         </Stack>
     );
 };
@@ -80,7 +71,17 @@ const ProfilePage = () => {
         }
     }, [navigate, hasExistingLoggedInUser]);
 
-    const badgeContent = isPlaceHolderAvatar ? null : <UpdateOrDeleteAvatarButtonsStack/>;
+    const updateOrDeleteAvatarOptions = (
+        <WrapperStack>
+            <UpdateOrDeleteAvatarButtonsStack/>
+        </WrapperStack>
+    );
+    const addAvatarOption = (
+        <WrapperStack>
+            <AddAvatarButton/>
+        </WrapperStack>
+    );
+    const badgeContent = isPlaceHolderAvatar ? addAvatarOption : updateOrDeleteAvatarOptions;
 
     return (
         <Container sx={styles.container}>

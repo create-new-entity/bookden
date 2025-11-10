@@ -1,8 +1,8 @@
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
-import { deleteAvatar, getAvatar } from '../api/avatar.ts';
+import { addOrUpdate, deleteAvatar, getAvatar } from '../api/avatar.ts';
 import useAuthContext from '../contexts/AuthContext.tsx';
 import { useEffect } from 'react';
 import useAvatarContext from '../contexts/AvatarContext.tsx';
@@ -12,7 +12,8 @@ import { PLACE_HOLDER_AVATAR } from '../constants/utilConstants.ts';
 const useAvatar = () => {
 
     const { token } = useAuthContext();
-    const { setAvatarUrl } = useAvatarContext();
+    const { avatarUrl, setAvatarUrl } = useAvatarContext();
+    const queryClient = useQueryClient();
 
     const getAvatarResult = useQuery<Blob, AxiosError>({
         queryKey: ['avatar', token],
@@ -27,11 +28,25 @@ const useAvatar = () => {
     const deleteAvatarMutation = useMutation<void, AxiosErrorResponse>({
         mutationFn: () => deleteAvatar(token),
         onSuccess: () => {
-            setAvatarUrl(PLACE_HOLDER_AVATAR);
+            setAvatarUrl(() => {
+                URL.revokeObjectURL(avatarUrl);
+                return PLACE_HOLDER_AVATAR;
+            });
+            queryClient.invalidateQueries({ queryKey: ['avatar', token] });
         },
         onError: (err) => {
             console.error('Avatar deletion failed.', err);
         },
+    });
+
+    const addOrUpdateMutation = useMutation<void, AxiosErrorResponse, File>({
+        mutationFn: (newAvatar: File) => addOrUpdate(newAvatar, token),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['avatar', token] });
+        },
+        onError: (err) => {
+            console.error('Avatar add or update failed.', err);
+        }
     });
 
     useEffect(() => {
@@ -53,7 +68,7 @@ const useAvatar = () => {
 
     }, [getAvatarResult.isSuccess, getAvatarResult.isError, getAvatarResult.data, setAvatarUrl]);
 
-    return { getAvatarResult, deleteAvatarMutation };
+    return { getAvatarResult, deleteAvatarMutation, addOrUpdateMutation };
 };
 
 export default useAvatar;

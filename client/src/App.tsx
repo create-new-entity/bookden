@@ -6,7 +6,7 @@ import NavDrawer from './components/NavDrawer';
 import useAuthContext from './contexts/AuthContext';
 import useNavContext from './contexts/NavContext';
 import { useEffect } from 'react';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 
 const App = () => {
     const { handleLoggedOutContext } = useAuthContext();

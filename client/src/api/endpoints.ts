@@ -6,4 +6,4 @@ export const AUTH = {
     signUp: `${API_BASE}/api/users`,
 };
 
-export const avatar = `${API_BASE}/api/avatar`;
+export const avatarApi = `${API_BASE}/api/avatar`;
