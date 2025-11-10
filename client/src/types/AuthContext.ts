@@ -8,4 +8,8 @@ export interface AuthContextType {
   isLoggedIn: boolean;
   handleLoggedInContext: (loggedInUserData: LoggedInUserData) => void;
   handleLoggedOutContext: () => void;
+  hasExistingLoggedInUser: () => {
+    isUserLoggedIn: boolean;
+    existingLoggedInData: LoggedInUserData | null;
+  }
 }
