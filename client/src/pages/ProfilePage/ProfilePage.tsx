@@ -20,14 +20,18 @@ type ProfilePageStyles = {
     iconButtonsStack: SxProps<Theme>;
 };
 
-const getProfilePageStyles = (_theme: Theme): ProfilePageStyles => {
+const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
     return {
         container: {
             height: '90vh'
         },
         paper: {
             height: '95%',
-            padding: '1rem'
+            width: '90%',
+            padding: '1rem',
+            [theme.breakpoints.between('xs', 'lg')]: {
+                backgroundColor: theme.palette.action.hover
+            },
         },
         rootStack: {
             height: '100%'
@@ -85,7 +89,7 @@ const ProfilePage = () => {
 
     return (
         <Container sx={styles.container}>
-            <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'}>
+            <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>
                 <Paper sx={styles.paper} elevation={2}>
                     <Stack direction={'column'} justifyContent={'center'} alignItems={'center'}>
                         <Badge badgeContent={badgeContent}>
