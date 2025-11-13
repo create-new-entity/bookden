@@ -1,10 +1,14 @@
-import { AppBar, Autocomplete, Avatar, Box, Button, IconButton, Menu, MenuItem, Stack, TextField, Toolbar } from '@mui/material';
+import {
+    AppBar, Autocomplete, Avatar, Box,
+    Button, IconButton, Menu, MenuItem,
+    Stack, TextField, Toolbar
+} from '@mui/material';
 import { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
-import useNavContext from '../contexts/NavContext';
-import useThemeModeContext from '../contexts/ThemeModeContext';
 import { useNavigate } from 'react-router-dom';
+
+import { useNavContext, useThemeModeContext } from '../../contexts';
 
 const styles = {
     stack: {

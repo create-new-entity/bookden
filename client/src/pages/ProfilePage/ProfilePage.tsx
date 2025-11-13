@@ -1,10 +1,10 @@
 import { Avatar, Badge, Container, Paper, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
-import useAvatarContext from '../../contexts/AvatarContext';
-import useAuthContext from '../../contexts/AuthContext';
 import { useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import useAvatar from '../../hooks/useAvatar';
 import { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './UtilityComponents';
+import { useAuthContext, useAvatarContext } from '../../contexts';
 
 
 const AVATAR_DIMENSIONS = '13rem';

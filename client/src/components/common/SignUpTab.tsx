@@ -5,10 +5,9 @@ import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 
-import type { SignUpFormInputs, SignUpPayload } from '../types/LogIn';
-import type { AxiosErrorResponse } from '../types/UtilTypes';
-import { NOTIFICATION_DELAY } from '../constants';
-import useAuthentication from '../hooks/useAuthentication';
+import { useAuthentication } from '../../hooks';
+import { NOTIFICATION_DELAY } from '../../constants';
+import type { AxiosErrorResponse, SignUpPayload, SignUpFormInputs } from '../../types';
 
 
 const styles: Record<string, React.CSSProperties> = {

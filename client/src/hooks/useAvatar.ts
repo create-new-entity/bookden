@@ -1,13 +1,12 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-
-import { addOrUpdate, deleteAvatar, getAvatar } from '../api/avatar.ts';
-import useAuthContext from '../contexts/AuthContext.tsx';
 import { useEffect } from 'react';
-import useAvatarContext from '../contexts/AvatarContext.tsx';
-import type { AxiosErrorResponse } from '../types/UtilTypes.ts';
-import { PLACE_HOLDER_AVATAR } from '../constants/utilConstants.ts';
+
+import { useAvatarContext, useAuthContext } from '../contexts';
+import type { AxiosErrorResponse } from '../types';
+import { PLACE_HOLDER_AVATAR } from '../constants';
+import { addOrUpdate, deleteAvatar, getAvatar } from '../api';
 
 const useAvatar = () => {
 

@@ -1,6 +1,7 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Box, Tab, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
+
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
 

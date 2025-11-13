@@ -1,6 +1,7 @@
-import AuthenticationTabs from '../components/AuthenticationTabs';
-import { customColors } from '../theme/colors';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
+
+import { customColors } from '../theme';
+import { AuthenticationTabs } from '../components';
 
 const styles: Record<string, React.CSSProperties> = {
     rootContainer : {

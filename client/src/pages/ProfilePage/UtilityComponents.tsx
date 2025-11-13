@@ -5,8 +5,7 @@ import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import useAvatar from '../../hooks/useAvatar';
-
+import { useAvatar } from '../../hooks';
 
 type IconButtonStyles = {
     iconButton: SxProps<Theme>;

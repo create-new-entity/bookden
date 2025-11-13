@@ -3,11 +3,10 @@ import { useForm } from 'react-hook-form';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
-import type { AxiosErrorResponse } from '../types/UtilTypes';
 
-import type { LoginFormInputs } from '../types/LogIn';
-import { NOTIFICATION_DELAY } from '../constants';
-import useAuthentication from '../hooks/useAuthentication';
+import type { LoginFormInputs, AxiosErrorResponse } from '../../types';
+import { useAuthentication } from '../../hooks';
+import { NOTIFICATION_DELAY } from '../../constants';
 
 const styles: Record<string, React.CSSProperties> = {
     paper: {

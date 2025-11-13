@@ -213,7 +213,4 @@ export const getTheme = (mode: ThemeMode) => {
     return createTheme(theme, additionalThemeOptions);
 };
 
-
-const theme = getTheme('light');
-
-export default theme;
+export default getTheme('light');

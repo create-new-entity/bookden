@@ -1,12 +1,12 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { NavContextValue, NavOption } from '../types/NavContext.ts';
 import { Typography } from '@mui/material';
-import ThemeSwitch from '../components/ThemeSwitch.tsx';
-import { ADMIN, ALL_TYPES_OF_USERS, SUPERADMIN } from '../constants/utilConstants.ts';
-import useAuthContext from './AuthContext.tsx';
-import type { UserType } from '../types/Users.ts';
 import { useNavigate } from 'react-router-dom';
+
+import { ThemeSwitch } from '../components';
+import type { UserType, NavContextValue, NavOption } from '../types';
+import useAuthContext from './AuthContext.tsx';
+import { ADMIN, ALL_TYPES_OF_USERS, SUPERADMIN } from '../constants';
 
 const defaultContextValue: NavContextValue = {
     options: [],

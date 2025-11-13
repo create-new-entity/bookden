@@ -3,10 +3,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter } from 'react-router-dom';
 
-import { AuthProvider } from '../contexts/AuthContext.tsx';
-import { NavProvider } from '../contexts/NavContext.tsx';
-import useThemeModeContext, { ThemeModeProvider } from '../contexts/ThemeModeContext.tsx';
-import { AvatarProvider } from '../contexts/AvatarContext.tsx';
+import {
+    NavProvider,
+    AvatarProvider,
+    AuthProvider,
+    ThemeModeProvider,
+    useThemeModeContext
+} from '../../contexts';
 
 const queryClient = new QueryClient();
 
@@ -33,7 +36,7 @@ const WrapperComponent = ({ children }: Props) => {
     );
 };
 
-export const AppProviders = ({ children }: Props) => {
+const AppProviders = ({ children }: Props) => {
     return (
         <QueryClientProvider client={queryClient}>
             <ThemeModeProvider>
@@ -44,3 +47,5 @@ export const AppProviders = ({ children }: Props) => {
         </QueryClientProvider>
     );
 };
+
+export default AppProviders;

@@ -1,5 +1,5 @@
 
-export * from './AuthContext';
-export * from './AvatarContext';
-export * from './NavContext';
-export * from './ThemeModeContext';
+export { default as useAuthContext, AuthProvider } from './AuthContext';
+export { default as useAvatarContext, AvatarProvider } from './AvatarContext';
+export { default as useNavContext, NavProvider } from './NavContext';
+export { default as useThemeModeContext, ThemeModeProvider } from './ThemeModeContext';

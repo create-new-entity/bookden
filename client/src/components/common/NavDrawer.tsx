@@ -1,5 +1,6 @@
 import { Box, Drawer, List, ListItem, ListItemButton } from '@mui/material';
-import useNavContext from '../contexts/NavContext';
+
+import { useNavContext } from '../../contexts';
 
 const NavDrawer = () => {
     const { options, showNavDrawer, setShowNavDrawer } = useNavContext();

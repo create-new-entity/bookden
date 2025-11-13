@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import useAuthContext from '../contexts/AuthContext';
 import { useEffect } from 'react';
+
 import { LOGGED_IN_USER_DATA } from '../constants';
+import { useAuthContext } from '../contexts';
 
 
 const HomePage = () => {

@@ -1,8 +1,9 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { isLoggedInUserData, type AuthContextType, type LoggedInUserData } from '../types/index.ts';
-import { LOGGED_IN_USER_DATA } from '../constants/authContext.ts';
 import { useNavigate } from 'react-router-dom';
+
+import { LOGGED_IN_USER_DATA } from '../constants';
+import { isLoggedInUserData, type AuthContextType, type LoggedInUserData } from '../types';
 
 
 /*

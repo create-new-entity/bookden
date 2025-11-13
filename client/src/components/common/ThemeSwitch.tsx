@@ -1,8 +1,8 @@
 import { Stack, Switch } from '@mui/material';
-import useThemeModeContext from '../contexts/ThemeModeContext';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeNightIcon from '@mui/icons-material/ModeNight';
-import useNavContext from '../contexts/NavContext';
+
+import { useNavContext, useThemeModeContext } from '../../contexts';
 
 const ThemeSwitch = () => {
     const {  isLightMode, handleThemeModeSwitch } = useThemeModeContext();

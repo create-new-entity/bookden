@@ -1,12 +1,9 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import LogInPage from './pages/LogInPage';
-import HomePage from './pages/HomePage';
-import NavBar from './components/NavBar';
-import NavDrawer from './components/NavDrawer';
-import useAuthContext from './contexts/AuthContext';
-import useNavContext from './contexts/NavContext';
 import { useEffect } from 'react';
-import ProfilePage from './pages/ProfilePage/ProfilePage';
+
+import { HomePage, LogInPage, ProfilePage } from './pages';
+import { useAuthContext, useNavContext } from './contexts';
+import { NavBar, NavDrawer } from './components';
 
 const App = () => {
     const { handleLoggedOutContext } = useAuthContext();
