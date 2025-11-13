@@ -9,12 +9,30 @@ import { useAuthContext } from '../../contexts';
 
 type Styles = {
     rootStack: SxProps<Theme>;
+    usernameEmailStack: SxProps<Theme>;
+    container: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
     return {
         rootStack: {
             padding: '0.5rem'
+        },
+        usernameEmailStack: {
+            flexDirection: {
+                md: 'row',
+                xs: 'column'
+            },
+            justifyContent: {
+                md: 'space-between',
+                xs: 'flex-start'
+            }
+        },
+        container: {
+            width: {
+                xs: '100%'
+            },
+            flexGrow: 1
         }
     };
 };
@@ -63,12 +81,12 @@ const UpdateUserForm = () => {
     return (
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
             <Stack sx={styles.rootStack} gap={'1.5rem'}>
-                <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} gap={'1rem'}>
-                    <Box sx={{ flexGrow: 1}}>
+                <Stack sx={styles.usernameEmailStack} alignItems={'center'} gap={'1rem'}>
+                    <Box sx={styles.container}>
                         <Typography>Username</Typography>
                         <TextField fullWidth {...register(USERNAME_FIELD)} error={!!formState.errors[USERNAME_FIELD]}/>
                     </Box>
-                    <Box sx={{ flexGrow: 1}}>
+                    <Box sx={styles.container}>
                         <Typography>Email</Typography>
                         <TextField fullWidth {...register(EMAIL_FIELD)} error={!!formState.errors[EMAIL_FIELD]}/>
                     </Box>
@@ -76,13 +94,17 @@ const UpdateUserForm = () => {
                 <ErrorText isError={!!formState.errors[USERNAME_FIELD]} errorMessage={formState.errors[USERNAME_FIELD]?.message || ''}/>
                 <ErrorText isError={!!formState.errors[EMAIL_FIELD]} errorMessage={formState.errors[EMAIL_FIELD]?.message || ''}/>
                 
-                <Typography>New Password</Typography>
-                <TextField {...register(NEW_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
-                <ErrorText isError={!!formState.errors[NEW_PASSWORD]} errorMessage={formState.errors[NEW_PASSWORD]?.message || ''}/>
+                <Box>
+                    <Typography>New Password</Typography>
+                    <TextField fullWidth {...register(NEW_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
+                    <ErrorText isError={!!formState.errors[NEW_PASSWORD]} errorMessage={formState.errors[NEW_PASSWORD]?.message || ''}/>
+                </Box>
                 
-                <Typography>Confirm Password</Typography>
-                <TextField disabled={!isNewPasswordDirty} {...register(CONFIRM_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
-                <ErrorText isError={!!formState.errors[CONFIRM_PASSWORD]} errorMessage={formState.errors[CONFIRM_PASSWORD]?.message || ''}/>
+                <Box>
+                    <Typography>Confirm Password</Typography>
+                    <TextField fullWidth disabled={!isNewPasswordDirty} {...register(CONFIRM_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
+                    <ErrorText isError={!!formState.errors[CONFIRM_PASSWORD]} errorMessage={formState.errors[CONFIRM_PASSWORD]?.message || ''}/>
+                </Box>
                 
                 <Stack direction={'row'} justifyContent={'center'} alignItems={'center'}>
                     <Button disabled={isError || !formState.isDirty} type='submit' variant='contained'>Update Profile</Button>

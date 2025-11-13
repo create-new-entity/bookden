@@ -14,7 +14,6 @@ const ICON_BUTTONS_STACK_OFFSET_TOP = 1.5;
 
 
 type ProfilePageStyles = {
-    container: SxProps<Theme>;
     paper: SxProps<Theme>;
     rootStack: SxProps<Theme>;
     avatar: SxProps<Theme>;
@@ -23,9 +22,6 @@ type ProfilePageStyles = {
 
 const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
     return {
-        container: {
-            height: '90vh'
-        },
         paper: {
             width: '90%',
             padding: '1rem',
@@ -34,7 +30,7 @@ const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
             },
         },
         rootStack: {
-            marginTop: '0.5rem'
+            height: '90vh'
         },
         avatar: {
             width: AVATAR_DIMENSIONS,
@@ -88,18 +84,16 @@ const ProfilePage = () => {
     const badgeContent = isPlaceHolderAvatar ? addAvatarOption : updateOrDeleteAvatarOptions;
 
     return (
-        <Container sx={styles.container}>
-            <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>
-                <Paper sx={styles.paper} elevation={2}>
-                    <Stack direction={'column'} justifyContent={'center'} alignItems={'center'}>
-                        <Badge badgeContent={badgeContent}>
-                            <Avatar sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
-                        </Badge>
-                        <UpdateUserForm/>
-                    </Stack>
-                </Paper>
-            </Stack>
-        </Container>
+        <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>
+            <Paper sx={styles.paper} elevation={2}>
+                <Stack direction={'column'} justifyContent={'center'} alignItems={'center'}>
+                    <Badge badgeContent={badgeContent}>
+                        <Avatar sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
+                    </Badge>
+                    <UpdateUserForm/>
+                </Stack>
+            </Paper>
+        </Stack>
     );
 };
 
