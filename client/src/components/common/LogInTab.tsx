@@ -1,12 +1,12 @@
 import { Button, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 
 import type { LoginFormInputs, AxiosErrorResponse } from '../../types';
 import { useAuthentication } from '../../hooks';
 import { NOTIFICATION_DELAY } from '../../constants';
+import { LogInResolver } from '../../validations';
 
 const styles: Record<string, React.CSSProperties> = {
     paper: {
@@ -31,14 +31,9 @@ const initialValues = {
     password: ''
 };
 
-const loginResolver = z.object({
-    username: z.string().trim().toLowerCase().min(6).max(30),
-    password: z.string().min(6).max(250)
-});
-
 const LogInTab = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
-        resolver: zodResolver(loginResolver),
+        resolver: zodResolver(LogInResolver),
         defaultValues: initialValues
     });
 

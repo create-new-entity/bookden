@@ -1,7 +1,7 @@
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 
-import { customColors } from '../theme';
 import { AuthenticationTabs } from '../components';
+import { useThemeModeContext } from '../contexts';
 
 const styles: Record<string, React.CSSProperties> = {
     rootContainer : {
@@ -9,7 +9,6 @@ const styles: Record<string, React.CSSProperties> = {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: customColors.paperYellow,
         height: '100vh',
     },
     imageContainer: {
@@ -36,6 +35,7 @@ const styles: Record<string, React.CSSProperties> = {
 const LogInPage = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const { isLightMode } = useThemeModeContext();
     
     return (
         <Box sx={styles.rootContainer}>
@@ -44,16 +44,16 @@ const LogInPage = () => {
                 <Box sx={styles.imageContainer}>
                     <Box sx={styles.bookdenLogo}>
                         <img
-                            src="/assets/book-den-black.svg"
-                            alt="Book Den Logo"
+                            src={ isLightMode ? '/assets/book-den-black.svg' : '/assets/book-den-white.svg' }
+                            alt='Book Den Logo'
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                     </Box>
                     <img
                         style={styles.image}
-                        src="/assets/bookden_illustration.png"
-                        alt="Books background"
-                        className="w-full h-auto object-cover"
+                        src='/assets/bookden_illustration.png'
+                        alt='Books background'
+                        className='w-full h-auto object-cover'
                     />
                 </Box>
             }

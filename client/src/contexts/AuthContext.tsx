@@ -34,6 +34,7 @@ const hasExistingLoggedInUser = () => {
 const defaultContextValue: AuthContextType = {
     token: '',
     username: '',
+    email: '',
     userType: 'customer',
     isLoggedIn: false,
     handleLoggedInContext: (_data: LoggedInUserData) => {},
@@ -69,6 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         username: loggedInUserData?.username || '',
         token: loggedInUserData?.token || '',
         userType: loggedInUserData?.userType || undefined,
+        email: loggedInUserData?.email || '',
         isLoggedIn: !!(loggedInUserData && loggedInUserData.token),
         handleLoggedInContext,
         handleLoggedOutContext,

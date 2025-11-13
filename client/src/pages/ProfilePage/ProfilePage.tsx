@@ -1,10 +1,11 @@
-import { Avatar, Badge, Container, Paper, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { Avatar, Badge, Container, Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
 import { useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useAvatar from '../../hooks/useAvatar';
 import { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './UtilityComponents';
 import { useAuthContext, useAvatarContext } from '../../contexts';
+import UpdateUserForm from './UpdateUserForm';
 
 
 const AVATAR_DIMENSIONS = '13rem';
@@ -26,7 +27,6 @@ const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
             height: '90vh'
         },
         paper: {
-            height: '95%',
             width: '90%',
             padding: '1rem',
             [theme.breakpoints.between('xs', 'lg')]: {
@@ -34,7 +34,7 @@ const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
             },
         },
         rootStack: {
-            height: '100%'
+            marginTop: '0.5rem'
         },
         avatar: {
             width: AVATAR_DIMENSIONS,
@@ -61,7 +61,7 @@ const WrapperStack = ({ children }: { children: ReactNode }) => {
 
 const ProfilePage = () => {
     const { avatarUrl, isPlaceHolderAvatar } = useAvatarContext();
-    const { username, hasExistingLoggedInUser } = useAuthContext();
+    const { hasExistingLoggedInUser } = useAuthContext();
     const navigate = useNavigate();
     const theme = useTheme();
     const styles = getProfilePageStyles(theme);
@@ -95,7 +95,7 @@ const ProfilePage = () => {
                         <Badge badgeContent={badgeContent}>
                             <Avatar sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
                         </Badge>
-                        <Typography>Username: {username}</Typography>
+                        <UpdateUserForm/>
                     </Stack>
                 </Paper>
             </Stack>

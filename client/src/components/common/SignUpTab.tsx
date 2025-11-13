@@ -1,13 +1,13 @@
 
 import { Button, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 
 import { useAuthentication } from '../../hooks';
 import { NOTIFICATION_DELAY } from '../../constants';
 import type { AxiosErrorResponse, SignUpPayload, SignUpFormInputs } from '../../types';
+import { SignUpUserResolver } from '../../validations';
 
 
 const styles: Record<string, React.CSSProperties> = {
@@ -35,24 +35,9 @@ const initialValues = {
     confirmPassword: ''
 };
 
-const signUpResolver = z.object({
-    username: z.string().trim().toLowerCase().min(6).max(30),
-    password: z.string().trim().min(6).max(250),
-    email: z.email('Please enter a valid email address.').trim().toLowerCase().min(5).max(250),
-    confirmPassword: z.string()
-}).superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
-        ctx.addIssue({
-            code: 'custom',
-            path: ['confirmPassword'],
-            message: 'Passwords do not match.',
-        });
-    }
-});
-
 const SignUpTab = () => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm<SignUpFormInputs>({
-        resolver: zodResolver(signUpResolver),
+        resolver: zodResolver(SignUpUserResolver),
         defaultValues: initialValues
     });
 

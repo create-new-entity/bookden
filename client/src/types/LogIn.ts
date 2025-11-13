@@ -24,6 +24,7 @@ export type LoggedInUserData = {
   token: string;
   userType: UserType;
   username: string;
+  email: string;
 };
 
 export const isString = (text: unknown): text is string => {
