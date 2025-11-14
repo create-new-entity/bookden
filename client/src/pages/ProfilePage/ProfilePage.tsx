@@ -1,4 +1,4 @@
-import { Avatar, Badge, Container, Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+import { Avatar, Badge, Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
 import { useEffect, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 

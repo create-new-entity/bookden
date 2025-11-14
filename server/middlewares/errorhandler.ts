@@ -10,9 +10,8 @@ export const errorHandler = ( error: unknown, _req: Request, res: Response, _nex
     console.error(error);
 
     if (error instanceof ZodError) {
-        const formatted = error.errors.map(e => e.message).join(', ');
         return res.status(400).json({
-            message: `${errorMessages[errorNames.validationFailed]}: ${formatted}`,
+            message: `${error.errors[0].message}`
         });
     }
 

@@ -2,7 +2,7 @@
 
 import axios, { type AxiosRequestConfig } from 'axios';
 
-import { avatarApi } from './endpoints';
+import { avatarUrl } from './endpoints';
 
 export const getAvatar = async (token: string | null): Promise<Blob> => {
     const requestConfig: AxiosRequestConfig = {
@@ -11,7 +11,7 @@ export const getAvatar = async (token: string | null): Promise<Blob> => {
             Authorization: `Bearer ${token}`,
         }
     };
-    const response = await axios.get(avatarApi, requestConfig);
+    const response = await axios.get(avatarUrl, requestConfig);
     return response.data;
 };
 
@@ -21,7 +21,7 @@ export const deleteAvatar = async (token: string | null): Promise<void> => {
             Authorization: `Bearer ${token}`,
         }
     };
-    await axios.delete(avatarApi, requestConfig);
+    await axios.delete(avatarUrl, requestConfig);
 };
 
 export const addOrUpdate = async (newAvatar: File, token: string | null): Promise<void> => {
@@ -33,5 +33,5 @@ export const addOrUpdate = async (newAvatar: File, token: string | null): Promis
             Authorization: `Bearer ${token}`
         }
     };
-    await axios.put(avatarApi, formData, requestConfig);
+    await axios.put(avatarUrl, formData, requestConfig);
 };
