@@ -26,7 +26,7 @@ const NavContext = createContext(defaultContextValue);
 export const NavProvider = ({ children }: { children: ReactNode }) => {
     const [showNavDrawer, setShowNavDrawer] = useState(false);
     const navigate = useNavigate();
-    const { userType, handleLoggedOutContext } = useAuthContext();
+    const { userType, clearAuthentication } = useAuthContext();
     
     const [options, setOptions] = useState<NavOption[]>([]);
 
@@ -59,14 +59,14 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 },
                 {
                     name: 'logout',
-                    action: handleLoggedOutContext,
+                    action: clearAuthentication,
                     component: <Typography>Logout</Typography>,
                     access: ALL_TYPES_OF_USERS
                 }
             ].filter(filterOutUnAuthorizedOptions(userType));
             setOptions(defaultOptions);
         }
-    }, [userType, handleLoggedOutContext, navigate]);
+    }, [userType, clearAuthentication, navigate]);
     
     const value: NavContextValue = {
         options,

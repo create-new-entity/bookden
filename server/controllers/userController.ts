@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { ADMIN, AuthenticatedRequest, CUSTOMER } from '../types';
 import { AuthenticationError, UnauthorizedError } from '../errors';
-import { canCreateUser, createUser, deleteUser, getAllUsers, getUser, updateUser } from '../services';
+import { canCreateUser, createUser, deleteUser, getAllUsers, getMySelf, getUser, updateUser } from '../services';
 import { UpdateUser, User } from '../validation';
 
 
@@ -23,6 +23,16 @@ const getUserController = async (req: AuthenticatedRequest, res: Response, next:
     }
     const user = await getUser(req.user.userId, parseInt(req.params.id, 10));  
     res.status(200).json(user);
+};
+
+const getMeController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    if(!req.user) {
+        const unauthorizedError = new UnauthorizedError();
+        next(unauthorizedError);
+        return;
+    }
+    const me = await getMySelf(req.user.userId);  
+    res.status(200).json(me);
 };
 
 const postUserController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -74,6 +84,7 @@ const deleteUserController = async (req: AuthenticatedRequest, res: Response, ne
 export {
     getAllUsersController,
     getUserController,
+    getMeController,
     postUserController,
     patchUserController,
     deleteUserController

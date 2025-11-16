@@ -9,12 +9,12 @@ import { loginApi, signUpApi } from '../api';
 
 const useAuthentication = () => {
     const navigate = useNavigate();
-    const { handleLoggedInContext } = useAuthContext();
-
-    const loginMutation = useMutation<LoggedInUserData, AxiosErrorResponse, LoginFormInputs>({
+    const { saveToken } = useAuthContext();
+    
+    const loginMutation = useMutation<Pick<LoggedInUserData, 'token'>, AxiosErrorResponse, LoginFormInputs>({
         mutationFn: loginApi,
         onSuccess: (data) => {
-            handleLoggedInContext(data);
+            saveToken(data.token);
             navigate('/');
         },
         onError: (err) => {

@@ -1,19 +1,23 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { AxiosResponse } from 'axios';
+
 import type { AxiosErrorResponse } from '../types';
 import type { UpdateUserPayload } from '../types/UpdateUser';
 import { updateProfile } from '../api/profile';
-import type { AxiosResponse } from 'axios';
 import { useAuthContext } from '../contexts';
 
 
 const useUpdateProfile = () => {
     const { token } = useAuthContext();
+    const queryClient = useQueryClient();
     const updateProfileMutation = useMutation<AxiosResponse, AxiosErrorResponse, UpdateUserPayload>({
         mutationFn: (updateUserPayload: UpdateUserPayload) => {
             return updateProfile(updateUserPayload, token);
         },
         onSuccess: () => {
-            console.log('update successful');
+            queryClient.invalidateQueries({
+                queryKey: ['me']
+            });
         },
         onError: (error) => {
             console.log('error', error);

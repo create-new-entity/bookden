@@ -72,6 +72,24 @@ const getUser = async (requestorUserId: number, targetUserId: number) => {
     return foundUser;
 };
 
+const getMySelf = async (requestorUserId: number) => {
+    const dbPool = await getPGDBPool();
+
+    const result = await dbPool.query(sqlTag.typeAlias('User')`
+        SELECT username, email, user_type, user_id
+        FROM users
+        WHERE user_id = ${requestorUserId};
+    `);
+
+    const foundUser = camelcaseKeys(result.rows[0], { deep: true });
+    
+    if(foundUser.userId !== requestorUserId) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+    return foundUser;
+};
+
 const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): boolean => {
     /*
          Superadmin can create Admins.
@@ -230,6 +248,7 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
 export {
     getAllUsers,
     getUser,
+    getMySelf,
     createUser,
     canCreateUser,
     updateUser,

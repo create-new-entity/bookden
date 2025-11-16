@@ -4,6 +4,7 @@ import { asyncHandler, tokenExtractor } from '../middlewares';
 import {
     deleteUserController,
     getAllUsersController,
+    getMeController,
     getUserController,
     patchUserController,
     postUserController
@@ -14,6 +15,7 @@ export const userBaseUrl = '/api/users';
 
 const userRouter = Router();
 userRouter.get('/', tokenExtractor, asyncHandler(getAllUsersController));
+userRouter.get('/me', tokenExtractor, asyncHandler(getMeController));
 userRouter.get('/:id', tokenExtractor, asyncHandler(getUserController));
 userRouter.post('/', tokenExtractor, asyncHandler(postUserController));
 userRouter.patch('/', tokenExtractor, asyncHandler(patchUserController));

@@ -4,6 +4,7 @@ import React from 'react';
 
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
+import { useThemeModeContext } from '../../contexts';
 
 const styles: Record<string, React.CSSProperties> = {
     rootContainer: {
@@ -39,6 +40,7 @@ const styles: Record<string, React.CSSProperties> = {
 const AuthenticationTabs = () => {
     const [value, setValue] = React.useState('logIn');
     const theme = useTheme();
+    const { isLightMode } = useThemeModeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -52,12 +54,12 @@ const AuthenticationTabs = () => {
                     <>
                         <Box sx={styles.bookdenLogo}>
                             <img
-                                src="/assets/book-den-black.svg"
+                                src={isLightMode ? '/assets/book-den-black.svg' : '/assets/book-den-white.svg'}
                                 alt="Book Den Logo"
                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             />
                         </Box>
-                        <Typography variant='body1' color='secondary.contrastText'>Find and grab your next favourite book.</Typography>
+                        <Typography variant='body1'>Find and grab your next favourite book.</Typography>
                     </>
                 }
                 <Box>

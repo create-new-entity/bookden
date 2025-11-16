@@ -3,7 +3,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { useNavigate } from 'react-router-dom';
 
 import { LOGGED_IN_USER_DATA } from '../constants';
-import { isLoggedInUserData, type AuthContextType, type LoggedInUserData } from '../types';
+import { isLoggedInUserData, type AuthContextType } from '../types';
+import useMe from '../hooks/useMe';
 
 
 /*
@@ -37,43 +38,56 @@ const defaultContextValue: AuthContextType = {
     email: '',
     userType: 'customer',
     isLoggedIn: false,
-    handleLoggedInContext: (_data: LoggedInUserData) => {},
-    handleLoggedOutContext: () => {},
+    saveToken: (_token: string) => {},
+    clearAuthentication: () => {},
     hasExistingLoggedInUser
 };
 
 const AuthContext = createContext(defaultContextValue);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [loggedInUserData, setLoggedInUserData] = useState<LoggedInUserData | null>(null);
+    const me = useMe();
+    const [token, setToken] = useState<string>('');
     const navigate = useNavigate();
 
     useEffect(() => {
         const { isUserLoggedIn, existingLoggedInData } = hasExistingLoggedInUser();
         if(isUserLoggedIn) {
-            setLoggedInUserData(existingLoggedInData);
+            setToken(existingLoggedInData?.token || '');
         }
     }, []);
 
-    const handleLoggedInContext = (newLoggedInUserData: LoggedInUserData) => {
-        setLoggedInUserData(newLoggedInUserData);
-        localStorage.setItem(LOGGED_IN_USER_DATA, JSON.stringify(newLoggedInUserData));
+    useEffect(() => {
+        if(me.isSuccess && !me.isLoading && token) {
+            localStorage.setItem(LOGGED_IN_USER_DATA, JSON.stringify({
+                username: me.data?.username || '',
+                email: me.data?.email,
+                userType: me.data?.userType,
+                token
+            }));
+        }
+    }, [me.isSuccess, me.isLoading, token, me.data?.username, me.data?.email, me.data?.userType]);
+    
+
+    const saveToken = (token: string) => {
+        setToken(token);
     };
 
-    const handleLoggedOutContext = () => {
-        setLoggedInUserData(null);
+
+    const clearAuthentication = () => {
+        setToken('');
         localStorage.removeItem(LOGGED_IN_USER_DATA);
         navigate('/auth');
     };
 
     const value: AuthContextType = {
-        username: loggedInUserData?.username || '',
-        token: loggedInUserData?.token || '',
-        userType: loggedInUserData?.userType || undefined,
-        email: loggedInUserData?.email || '',
-        isLoggedIn: !!(loggedInUserData && loggedInUserData.token),
-        handleLoggedInContext,
-        handleLoggedOutContext,
+        username: me.data?.username || '',
+        token,
+        userType: me.data?.userType || undefined,
+        email: me.data?.email || '',
+        isLoggedIn: !!token,
+        saveToken,
+        clearAuthentication,
         hasExistingLoggedInUser
     };
 

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import camelcaseKeys from 'camelcase-keys';
 
 import configs from '../configs';
-import { JWTSignPayload, UserTypes } from '../types';
+import { JWTSignPayload } from '../types';
 import {
     AuthenticationError,
     AppError,
@@ -23,7 +23,7 @@ const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
     throw internalServerError; // configs.ENV_VARIABLES.JWT_SECRET is not defined.
 };
 
-const login = async (username: string, password: string): Promise<{ token: string, userType: UserTypes, username: string, email: string } | undefined> => {
+const login = async (username: string, password: string): Promise<{ token: string } | undefined> => {
     const dbPool = await getPGDBPool();
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
@@ -33,12 +33,12 @@ const login = async (username: string, password: string): Promise<{ token: strin
     `);
 
     const user = camelcaseKeys(result.rows[0], { deep: true });
-    const { userId, passwordHash, userType, email } = user;
+    const { userId, passwordHash, userType } = user;
 
     const isPasswordCorrect = await bcrypt.compare(password, passwordHash);
     if(isPasswordCorrect) {
         const token = getToken({ username, userId, userType });
-        return { token, userType, username, email };
+        return { token };
     }
     else {
         const invalidPasswordError = new AuthenticationError(errorMessages[errorNames.invalidPassword]);

@@ -7,8 +7,8 @@ export interface AuthContextType {
   email: string;
   userType: UserType | undefined;
   isLoggedIn: boolean;
-  handleLoggedInContext: (loggedInUserData: LoggedInUserData) => void;
-  handleLoggedOutContext: () => void;
+  saveToken: (token: string) => void;
+  clearAuthentication: () => void;
   hasExistingLoggedInUser: () => {
     isUserLoggedIn: boolean;
     existingLoggedInData: LoggedInUserData | null;

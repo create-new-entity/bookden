@@ -62,7 +62,6 @@ const ProfilePage = () => {
     const theme = useTheme();
     const styles = getProfilePageStyles(theme);
 
-
     useAvatar();
     useEffect(() => {
         const { isUserLoggedIn } = hasExistingLoggedInUser();

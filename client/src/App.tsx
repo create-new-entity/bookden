@@ -6,7 +6,7 @@ import { useAuthContext, useNavContext } from './contexts';
 import { NavBar, NavDrawer } from './components';
 
 const App = () => {
-    const { handleLoggedOutContext } = useAuthContext();
+    const { clearAuthentication } = useAuthContext();
     const { setOptions, setShowNavDrawer } = useNavContext();
     const location = useLocation();
 
@@ -18,7 +18,7 @@ const App = () => {
                         ...o,
                         action: () => {
                             setShowNavDrawer(false);
-                            handleLoggedOutContext();
+                            clearAuthentication();
                         }
                     };
                 }
@@ -26,7 +26,7 @@ const App = () => {
             });
             return newOptions;
         });
-    }, [setOptions, setShowNavDrawer, handleLoggedOutContext]);
+    }, [setOptions, setShowNavDrawer, clearAuthentication]);
 
     const isLoginPage = location.pathname === '/auth';
 
