@@ -42,7 +42,8 @@ const SignUpTab = () => {
     });
 
     const { loginMutation, signUpMutation } = useAuthentication();
-    const formValues = watch();
+    const username = watch('username');
+    const password = watch('password');
     const [signUpFailed, setSignUpFailed] = useState<AxiosErrorResponse | null>(null);
 
     useEffect(() => {
@@ -55,20 +56,20 @@ const SignUpTab = () => {
     }, [signUpMutation.failureReason, signUpMutation.status]);
 
     useEffect(() => {
-        if(signUpMutation.status === 'success') {
-            loginMutation.mutate({ username: formValues.username, password: formValues.password });
+        if(signUpMutation.status === 'success' && loginMutation.isIdle) {
+            loginMutation.mutate({ username, password });
         }
-    }, [signUpMutation.status, formValues.username, formValues.password, loginMutation]);
+    }, [signUpMutation.status, username, password, loginMutation]);
 
     const onSubmit = (formData: SignUpFormInputs) => {
-        const signUpPaylod: SignUpPayload = {
+        const signUpPayload: SignUpPayload = {
             username: formData.username,
             password: formData.password,
             email: formData.email,
             userType: 'customer',
             isActive: true
         };
-        signUpMutation.mutate(signUpPaylod);
+        signUpMutation.mutate(signUpPayload);
     };
 
     const usernameHasError = !!errors.username?.message;
@@ -93,6 +94,7 @@ const SignUpTab = () => {
                     placeholder='Email'
                     fullWidth
                     {...register('email')}
+                    error={emailHasError}
                 />
                 {
                     emailHasError &&
@@ -114,7 +116,7 @@ const SignUpTab = () => {
                     fullWidth
                     {...register('confirmPassword')}
                     type='password'
-                    error={passwordHasError}
+                    error={confirmPasswordHasError}
                 />
                 {
                     confirmPasswordHasError &&

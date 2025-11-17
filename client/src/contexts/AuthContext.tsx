@@ -46,8 +46,8 @@ const defaultContextValue: AuthContextType = {
 const AuthContext = createContext(defaultContextValue);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const me = useMe();
     const [token, setToken] = useState<string>('');
+    const me = useMe(token);
     const navigate = useNavigate();
 
     useEffect(() => {
