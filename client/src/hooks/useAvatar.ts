@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { useEffect } from 'react';
 
-import { useAvatarContext, useAuthContext } from '../contexts';
+import { useAvatarContext, useAuthContext, useNotificationContext } from '../contexts';
 import type { AxiosErrorResponse } from '../types';
 import { PLACE_HOLDER_AVATAR } from '../constants';
 import { addOrUpdate, deleteAvatar, getAvatar } from '../api';
@@ -13,6 +13,7 @@ const useAvatar = () => {
     const { token } = useAuthContext();
     const { avatarUrl, setAvatarUrl } = useAvatarContext();
     const queryClient = useQueryClient();
+    const { handleShowNotification } = useNotificationContext();
 
     const getAvatarResult = useQuery<Blob, AxiosError>({
         queryKey: ['avatar', token],
@@ -42,9 +43,11 @@ const useAvatar = () => {
         mutationFn: (newAvatar: File) => addOrUpdate(newAvatar, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['avatar', token] });
+            handleShowNotification('Avatar updated.');
         },
         onError: (err) => {
-            console.error('Avatar add or update failed.', err);
+            const message = `${err.response?.data.message}. Image size should be smaller than 2MB.`;
+            handleShowNotification(message);
         }
     });
 
