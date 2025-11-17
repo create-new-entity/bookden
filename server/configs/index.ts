@@ -1,7 +1,5 @@
-import ENV_VARIABLES from './config';
-import pgDBPoolUtitlities from './db';
-import { isTestEnvironment } from './config';
+import * as db from './db';
+import * as config from './config';
+import * as sqlTags from './sqlTag';
 
-const configs = { ENV_VARIABLES, pgDBPoolUtitlities, isTestEnvironment };
-
-export default configs;
+export default { db, ...config, ...sqlTags };

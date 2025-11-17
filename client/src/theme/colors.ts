@@ -1,13 +1,13 @@
 export const customColors = {
     // Light mode
-    lightPrimaryMain: '#7AA77A',
-    lightPrimaryLight: '#BFE0BF',
-    lightPrimaryDark: '#4F7A4F',
+    lightPrimaryMain: '#8A6BBE',        // muted purple
+    lightPrimaryLight: '#B19EE0',
+    lightPrimaryDark: '#5F4290',
     lightPrimaryText: '#FFFFFF',
 
-    lightSecondaryMain: '#D8B48D',
-    lightSecondaryLight: '#F5E1D0',
-    lightSecondaryDark: '#AB7B56',
+    lightSecondaryMain: '#D57A88',      // dusty rose
+    lightSecondaryLight: '#EFA1A8',
+    lightSecondaryDark: '#B04D5C',
     lightSecondaryText: '#1B1B1B',
 
     lightErrorMain: '#D9534F',
@@ -31,21 +31,22 @@ export const customColors = {
     lightSuccessText: '#FFFFFF',
 
     // Light mode background & text
-    lightBackgroundDefault: '#efffcfff',
-    lightBackgroundPaper: '#FFFFFF',
-    lightTextPrimary: '#121416',
-    lightTextSecondary: '#5B6460',
+    lightBackgroundDefault: '#F5F3F7',   // app background
+    lightBackgroundPaper: '#FFFFFF',     // cards, modals
+    lightBackgroundSurface: '#E0DCEC',   // menus, TextField, dropdowns
 
+    lightTextPrimary: '#212121',
+    lightTextSecondary: '#666666',
 
     // Dark mode
-    darkPrimaryMain: '#A6D2A1',
-    darkPrimaryLight: '#D9F0D5',
-    darkPrimaryDark: '#7CA77A',
+    darkPrimaryMain: '#A78ED1',
+    darkPrimaryLight: '#CBB7E5',
+    darkPrimaryDark: '#7A5FA3',
     darkPrimaryText: '#0B0B0B',
 
-    darkSecondaryMain: '#E3C9AD',
-    darkSecondaryLight: '#F6EBD9',
-    darkSecondaryDark: '#B7946B',
+    darkSecondaryMain: '#E68796',
+    darkSecondaryLight: '#F0B0B9',
+    darkSecondaryDark: '#C25363',
     darkSecondaryText: '#0B0B0B',
 
     darkErrorMain: '#F08E8A',
@@ -69,11 +70,14 @@ export const customColors = {
     darkSuccessText: '#0B0B0B',
 
     // Dark mode background & text
-    darkBackgroundDefault: '#0F1411',
-    darkBackgroundPaper: '#111417',
-    darkTextPrimary: '#ECEFE9',
-    darkTextSecondary: '#BFC8C0',
-
+    darkBackgroundDefault: '#1C1A23',
+    darkBackgroundPaper: '#25232D',
+    darkBackgroundSurface: '#2B2935',
+    darkTextPrimary: '#EAE9F0',
+    darkTextSecondary: '#BFBFC5',
+    
+    lightActionDisabledBackground: '#E0DCEC',
+    darkActionDisabledBackground: '#383545',
 
     // Other
     paperYellow: '#F6DA8A',

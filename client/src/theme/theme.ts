@@ -49,11 +49,12 @@ export const getTheme = (mode: ThemeMode) => {
                     background: {
                         default: customColors.lightBackgroundDefault,
                         paper: customColors.lightBackgroundPaper,
-                    },
+                        elevated: customColors.lightBackgroundSurface
+                    },                      
                     text: {
                         primary: customColors.lightTextPrimary,
                         secondary: customColors.lightTextSecondary,
-                    },
+                    }
                 }
                 : {
                     primary: {
@@ -95,14 +96,16 @@ export const getTheme = (mode: ThemeMode) => {
                     background: {
                         default: customColors.darkBackgroundDefault,
                         paper: customColors.darkBackgroundPaper,
+                        elevated: customColors.darkBackgroundSurface
                     },
                     text: {
                         primary: customColors.darkTextPrimary,
                         secondary: customColors.darkTextSecondary,
-                    },
+                    }
                 }),
         }
     };
+    const isLightMode = mode === 'light';
     const additionalThemeOptions: ThemeOptions = {
         typography: {
             fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
@@ -150,6 +153,11 @@ export const getTheme = (mode: ThemeMode) => {
                     disableFocusRipple: true,
                     disableTouchRipple: true,
                     disableElevation: true
+                },
+                styleOverrides: {
+                    root: {
+                        maxWidth: 'fit-content'
+                    }
                 }
             },
             MuiTab: {
@@ -179,14 +187,20 @@ export const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        boxShadow: 'none'
+                        backgroundColor: theme.palette.background.paper
                     }
                 }
             },
             MuiMenu: {
                 defaultProps: {
                     autoFocus: false
-                }
+                },
+                styleOverrides: {
+                    paper: {
+                        backgroundColor: theme.palette.background.elevated,
+                        boxShadow: 'none'
+                    }
+                },
             },
             MuiMenuItem: {
                 defaultProps: {
@@ -206,6 +220,15 @@ export const getTheme = (mode: ThemeMode) => {
                     disableFocusRipple: true,
                     disableTouchRipple: true
                 }
+            },
+            MuiOutlinedInput: {
+                styleOverrides: {
+                    root: {
+                        '&.Mui-disabled': {
+                            backgroundColor: isLightMode ? customColors.lightActionDisabledBackground : customColors.darkActionDisabledBackground
+                        }
+                    }
+                }
             }
         }
     };
@@ -213,7 +236,4 @@ export const getTheme = (mode: ThemeMode) => {
     return createTheme(theme, additionalThemeOptions);
 };
 
-
-const theme = getTheme('light');
-
-export default theme;
+export default getTheme('light');

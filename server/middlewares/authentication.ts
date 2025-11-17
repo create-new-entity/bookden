@@ -1,7 +1,8 @@
 import { NextFunction, Response } from 'express';
-import { errorMessages, errorNames } from './errorhandler';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest, JWTSignPayload } from '../types/Authentication';
+
+import { AuthenticatedRequest, JWTSignPayload } from '../types';
+import { AuthenticationError, errorMessages, errorNames } from '../errors';
 
 export const tokenExtractor = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
@@ -16,17 +17,15 @@ export const tokenExtractor = (req: AuthenticatedRequest, _res: Response, next: 
             }
             catch(error) {
                 if(error instanceof jwt.TokenExpiredError) {
-                    error.message = errorMessages[errorNames.tokenExpired];
-                    next(error);
+                    const authenticationError = new AuthenticationError(errorMessages[errorNames.tokenExpired]);
+                    next(authenticationError);
                     return;
                 }
                 else if(error instanceof jwt.JsonWebTokenError) {
-                    error.message = errorMessages[errorNames.invalidToken];
-                    next(error);
+                    const authenticationError = new AuthenticationError(errorMessages[errorNames.tokenInvalid]);
+                    next(authenticationError);
                     return;
                 }
-                next(error);
-                return;
             }
         }
     }

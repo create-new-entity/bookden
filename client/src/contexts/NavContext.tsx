@@ -1,11 +1,12 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { NavContextValue, NavOption } from '../types/NavContext.ts';
 import { Typography } from '@mui/material';
-import ThemeSwitch from '../components/ThemeSwitch.tsx';
-import { ADMIN, ALL_TYPES_OF_USERS, SUPERADMIN } from '../constants/utilConstants.ts';
+import { useNavigate } from 'react-router-dom';
+
+import { ThemeSwitch } from '../components';
+import type { UserType, NavContextValue, NavOption } from '../types';
 import useAuthContext from './AuthContext.tsx';
-import type { UserType } from '../types/Users.ts';
+import { ADMIN, ALL_TYPES_OF_USERS, SUPERADMIN } from '../constants';
 
 const defaultContextValue: NavContextValue = {
     options: [],
@@ -24,7 +25,8 @@ const NavContext = createContext(defaultContextValue);
 
 export const NavProvider = ({ children }: { children: ReactNode }) => {
     const [showNavDrawer, setShowNavDrawer] = useState(false);
-    const { userType, handleLoggedOutContext } = useAuthContext();
+    const navigate = useNavigate();
+    const { userType, clearAuthentication } = useAuthContext();
     
     const [options, setOptions] = useState<NavOption[]>([]);
 
@@ -33,13 +35,19 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             const defaultOptions = [
                 {
                     name: 'profile',
-                    action: () => console.log('Clicked Profile.'),
+                    action: () => {
+                        navigate('/profile');
+                        setShowNavDrawer(false);
+                    },
                     component: <Typography variant='body1'>Profile</Typography>,
                     access: ALL_TYPES_OF_USERS
                 },
                 {
                     name: 'adminTools',
-                    action: () => console.log('Clicked Admin Tools'),
+                    action: () => {
+                        console.log('Clicked Admin Tools');
+                        setShowNavDrawer(false);
+                    },
                     component: <Typography>Admin Tools</Typography>,
                     access: [SUPERADMIN, ADMIN]
                 },
@@ -51,14 +59,14 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 },
                 {
                     name: 'logout',
-                    action: handleLoggedOutContext,
+                    action: clearAuthentication,
                     component: <Typography>Logout</Typography>,
                     access: ALL_TYPES_OF_USERS
                 }
             ].filter(filterOutUnAuthorizedOptions(userType));
             setOptions(defaultOptions);
         }
-    }, [userType, handleLoggedOutContext]);
+    }, [userType, clearAuthentication, navigate]);
     
     const value: NavContextValue = {
         options,

@@ -1,19 +1,12 @@
 import { Router } from 'express';
-import login from '../controllers/login';
+
+import { asyncHandler } from '../middlewares';
+import { postLoginController } from '../controllers';
 
 export const loginBaseUrl = '/api/login';
 
 const loginRouter = Router();
 
-loginRouter.post('/', async (req, res, next) => {
-    try {
-        const { username, password } = req.body;
-        const result = await login(username, password);
-        res.status(200).json(result);
-    }
-    catch (error) {
-        next(error);
-    }
-});
+loginRouter.post('/', asyncHandler(postLoginController));
 
 export default loginRouter;
