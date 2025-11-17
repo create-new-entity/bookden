@@ -1,7 +1,7 @@
 import { Button, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { LoginFormInputs, AxiosErrorResponse } from '../../types';
 import { useAuthentication } from '../../hooks';
@@ -38,16 +38,22 @@ const LogInTab = () => {
     });
 
     const [loginFailed, setLoginFailed] = useState<AxiosErrorResponse | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { loginMutation } = useAuthentication();
 
     useEffect(() => {
         if(loginMutation.status === 'error') {
             setLoginFailed(loginMutation.failureReason);
-            setTimeout(() => {
+            timeoutRef.current = setTimeout(() => {
                 setLoginFailed(null);
             }, NOTIFICATION_DELAY);
         }
+        return () => {
+            if(timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
     }, [loginMutation.failureReason, loginMutation.status]);
 
     const onSubmit = (formData: LoginFormInputs) => {
@@ -82,11 +88,17 @@ const LogInTab = () => {
                     <Typography color='error'>{errors.password?.message}</Typography>
                 }
                 {
-                    loginFailed && loginFailed.response &&
+                    loginFailed && loginFailed.response?.data.message &&
                     <Typography color='error'>{loginFailed.response.data.message}</Typography>
                 }
                 <Box sx={styles.loginButtonContainer}>
-                    <Button type='submit' variant='contained'>Log In</Button>
+                    <Button 
+                        type='submit' 
+                        variant='contained'
+                        disabled={loginMutation.isPending}
+                    >
+                        {loginMutation.isPending ? 'Logging In...' : 'Log In'}
+                    </Button>
                 </Box>
             </Paper>
         </form>

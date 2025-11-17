@@ -7,7 +7,7 @@ import { UpdateUserResolver, type UpdateUserFormData } from '../../validations';
 import { CustomTextField as TextField } from '../../components';
 import { useAuthContext } from '../../contexts';
 import useUpdateProfile from '../../hooks/useUpdateProfile';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NOTIFICATION_DELAY } from '../../constants';
 
 type Styles = {
@@ -61,6 +61,7 @@ const UpdateUserForm = () => {
     const updateProfile = useUpdateProfile();
     const styles = getStyles(theme);
     const [responseErr, setResponseErr] = useState('');
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isResponseError = !!responseErr;
 
     const defaultValues: UpdateUserFormData = {
@@ -76,10 +77,24 @@ const UpdateUserForm = () => {
     });
 
     useEffect(() => {
-        setResponseErr(updateProfile.error?.response?.data.message || '');
-        setTimeout(() => {
+        if(updateProfile.error?.response?.data.message) {
+            setResponseErr(updateProfile.error.response.data.message);
+            timeoutRef.current = setTimeout(() => {
+                setResponseErr('');
+            }, NOTIFICATION_DELAY);
+        }
+        else {
             setResponseErr('');
-        }, NOTIFICATION_DELAY);
+            if(timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
+        }
+        return () => {
+            if(timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
     }, [updateProfile.error?.response?.data.message]);
 
     useEffect(() => {
@@ -131,7 +146,7 @@ const UpdateUserForm = () => {
                 
                 <Box>
                     <Typography>Confirm Password</Typography>
-                    <TextField type='password' fullWidth disabled={!isNewPasswordDirty} {...register(CONFIRM_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
+                    <TextField type='password' fullWidth disabled={!isNewPasswordDirty} {...register(CONFIRM_PASSWORD)} error={!!formState.errors[CONFIRM_PASSWORD]}/>
                     <ErrorText isError={!!formState.errors[CONFIRM_PASSWORD]} errorMessage={formState.errors[CONFIRM_PASSWORD]?.message || ''}/>
                 </Box>
                 
@@ -140,7 +155,13 @@ const UpdateUserForm = () => {
                         isResponseError &&
                         <ErrorText isError={isResponseError} errorMessage={responseErr}/>
                     }
-                    <Button disabled={isError || !formState.isDirty} type='submit' variant='contained'>Update Profile</Button>
+                    <Button 
+                        disabled={isError || !formState.isDirty || updateProfile.isPending} 
+                        type='submit' 
+                        variant='contained'
+                    >
+                        {updateProfile.isPending ? 'Updating...' : 'Update Profile'}
+                    </Button>
                 </Stack>
             </Stack>
         </form>

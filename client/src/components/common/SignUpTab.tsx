@@ -2,7 +2,7 @@
 import { Button, TextField, Paper, Box, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useAuthentication } from '../../hooks';
 import { NOTIFICATION_DELAY } from '../../constants';
@@ -45,21 +45,29 @@ const SignUpTab = () => {
     const username = watch('username');
     const password = watch('password');
     const [signUpFailed, setSignUpFailed] = useState<AxiosErrorResponse | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         if(signUpMutation.status === 'error') {
             setSignUpFailed(signUpMutation.failureReason);
-            setTimeout(() => {
+            timeoutRef.current = setTimeout(() => {
                 setSignUpFailed(null);
             }, NOTIFICATION_DELAY);
         }
+        return () => {
+            if(timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
     }, [signUpMutation.failureReason, signUpMutation.status]);
 
     useEffect(() => {
         if(signUpMutation.status === 'success' && loginMutation.isIdle) {
             loginMutation.mutate({ username, password });
         }
-    }, [signUpMutation.status, username, password, loginMutation]);
+        // Falsely complaining about missing dependencies. Hence disabling the rule here.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [signUpMutation.status, username, password, loginMutation.isIdle]);
 
     const onSubmit = (formData: SignUpFormInputs) => {
         const signUpPayload: SignUpPayload = {
@@ -127,7 +135,13 @@ const SignUpTab = () => {
                     <Typography color='error'>{signUpFailed.response?.data.message}</Typography>
                 }
                 <Box sx={styles.loginButtonContainer}>
-                    <Button type='submit' variant='contained'>Sign Up</Button>
+                    <Button 
+                        type='submit' 
+                        variant='contained'
+                        disabled={signUpMutation.isPending || loginMutation.isPending}
+                    >
+                        {signUpMutation.isPending || loginMutation.isPending ? 'Signing Up...' : 'Sign Up'}
+                    </Button>
                 </Box>
             </Paper>
         </form>
