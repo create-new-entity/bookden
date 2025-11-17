@@ -70,7 +70,7 @@ const UpdateUserForm = () => {
         [CONFIRM_PASSWORD]: ''
     };
     
-    const { formState, register, handleSubmit } = useForm<UpdateUserFormData>({
+    const { formState, register, handleSubmit, getValues, reset } = useForm<UpdateUserFormData>({
         defaultValues,
         resolver: zodResolver(UpdateUserResolver)
     });
@@ -81,6 +81,23 @@ const UpdateUserForm = () => {
             setResponseErr('');
         }, NOTIFICATION_DELAY);
     }, [updateProfile.error?.response?.data.message]);
+
+    useEffect(() => {
+        /*
+            What bug does this useEffect fix:
+            1. Let's say current email is superadmin1@gmail.com
+            2. Change to superadmin@gmail.com
+            3. Hit update -> update succesful
+            4. Change email back to superadmin1@gmail.com -> Update button still disabled -> Not good
+
+            Fix:
+            After a succesful update, change the default values of the form to the latest updated values.
+            This useEffect does that.
+        */
+        if(updateProfile.isSuccess) {
+            reset(getValues());
+        }
+    }, [updateProfile.isSuccess, getValues, reset]);
 
     const onSubmit = (formData: UpdateUserFormData) => {
         updateProfile.mutate(formData);

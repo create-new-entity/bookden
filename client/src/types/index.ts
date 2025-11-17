@@ -5,3 +5,4 @@ export * from './LogIn';
 export * from './NavContext';
 export * from './Users';
 export * from './UtilTypes';
+export * from './Notification';

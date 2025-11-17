@@ -8,7 +8,8 @@ import {
     AvatarProvider,
     AuthProvider,
     ThemeModeProvider,
-    useThemeModeContext
+    useThemeModeContext,
+    NotificationProvider
 } from '../../contexts';
 
 const queryClient = new QueryClient();
@@ -24,13 +25,15 @@ const WrapperComponent = ({ children }: Props) => {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <BrowserRouter>
-                <AuthProvider>
-                    <AvatarProvider>
-                        <NavProvider>
-                            {children}
-                        </NavProvider>
-                    </AvatarProvider>
-                </AuthProvider>
+                <NotificationProvider>
+                    <AuthProvider>
+                        <AvatarProvider>
+                            <NavProvider>
+                                {children}
+                            </NavProvider>
+                        </AvatarProvider>
+                    </AuthProvider>
+                </NotificationProvider>
             </BrowserRouter>
         </ThemeProvider>
     );
