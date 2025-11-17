@@ -71,10 +71,19 @@ const UpdateUserForm = () => {
         [CONFIRM_PASSWORD]: ''
     };
     
-    const { formState, register, handleSubmit, getValues, reset } = useForm<UpdateUserFormData>({
+    const { formState, register, handleSubmit, getValues, reset, watch, clearErrors, resetField } = useForm<UpdateUserFormData>({
         defaultValues,
         resolver: zodResolver(UpdateUserResolver)
     });
+
+    const newPassword = watch(NEW_PASSWORD);
+
+    useEffect(() => {
+        if(!newPassword) {
+            clearErrors(CONFIRM_PASSWORD);
+            resetField(CONFIRM_PASSWORD);
+        }
+    }, [newPassword, clearErrors, resetField]);
 
     useEffect(() => {
         if(updateProfile.error?.response?.data.message) {

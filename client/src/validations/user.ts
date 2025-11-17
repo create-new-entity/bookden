@@ -41,7 +41,7 @@ type SignUpUserData = z.infer<typeof SignUpUserResolverWithoutRefine>;
 type UpdateUserData = z.infer<typeof UpdateUserResolverWithoutRefine>;
 
 const isPasswordAndConfirmPasswordSame = (data: SignUpUserData | UpdateUserData, ctx: RefinementCtx) => {
-    if (data.password !== data.confirmPassword) {
+    if (data.password && data.password !== data.confirmPassword) {
         ctx.addIssue({
             code: 'custom',
             path: ['confirmPassword'],
