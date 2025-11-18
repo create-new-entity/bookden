@@ -8,9 +8,9 @@ import { isTestEnvironment } from './config';
 
 const DB_URL = (() => {
     if (isTestEnvironment()) {
-        return process.env.LOCAL_TEST_DB_URL;
+        return process.env.TEST_DB_URL;
     }
-    return process.env.LOCAL_DB_URL;
+    return process.env.DB_URL;
 })();
 
 type PoolOptions = Pick<ClientConfiguration, 'maximumPoolSize' | 'connectionTimeout' | 'connectionRetryLimit'>;

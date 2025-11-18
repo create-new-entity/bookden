@@ -1,0 +1,61 @@
+
+services:
+
+  local-postgres-database:
+    image: bitnami/postgresql:latest
+    environment:
+      - POSTGRESQL_USERNAME=admin
+      - POSTGRESQL_PASSWORD=password
+      - POSTGRESQL_DATABASE=bookden_dev
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 5s       # check every 5 seconds
+      timeout: 5s        # fail if check takes longer than 5s
+      retries: 10        # try 10 times before marking unhealthy
+
+
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    depends_on:
+      local-postgres-database:
+        condition: service_healthy   # Just waiting for the database to start is not enough. We need to wait until it is ready to accept connections.
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    environment: # This whole file is for local dev. Nothing serious here.
+      - DB_ADMIN=admin
+      - DB_PASSWORD=password
+      - DB_URL=postgresql://admin:password@local-postgres-database:5432/bookden_dev
+      - TEST_DB_URL=postgresql://admin:password@local-postgres-database:5432/bookden_test
+      - PORT=3000
+      - FIRST_SUPERADMIN_USERNAME=superadmin
+      - FIRST_SUPERADMIN_PASSWORD=password
+      - JWT_SECRET=secret
+
+
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - 5173:5173
+    depends_on:
+      - server
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+
+
+
+volumes:
+  pgdata:

@@ -2,9 +2,9 @@ import { ADMIN, CUSTOMER, SUPERADMIN } from '../../types';
 
 
 export const seedSuperAdminUser = {
-    username: 'superadmin1',
+    username: 'superadmin',
     password: 'password',
-    email: 'superadmin1@gmail.com',
+    email: 'superadmin@gmail.com',
     userType: SUPERADMIN
 };
 

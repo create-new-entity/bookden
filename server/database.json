@@ -6,25 +6,25 @@
     "development": {
         "driver": "pg",
         "user": {
-            "ENV": "LOCAL_DB_ADMIN"
+            "ENV": "DB_ADMIN"
         },
         "password": {
-            "ENV": "LOCAL_DB_PASSWORD"
+            "ENV": "DB_PASSWORD"
         },
-        "host": "localhost",
+        "host": "local-postgres-database",
         "port": "5432",
-        "database": "bookden"
+        "database": "bookden_dev"
     },
     "test": {
         "driver": "pg",
         "user": {
-            "ENV": "LOCAL_DB_ADMIN"
+            "ENV": "DB_ADMIN"
         },
         "password": {
-            "ENV": "LOCAL_DB_PASSWORD"
+            "ENV": "DB_PASSWORD"
         },
-        "host": "localhost",
+        "host": "local-postgres-database",
         "port": "5432",
-        "database": "test_db"
+        "database": "bookden_test"
     }
 }
