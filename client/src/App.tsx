@@ -6,6 +6,7 @@ import { useAuthContext, useNavContext, useNotificationContext } from './context
 import { NavBar, NavDrawer } from './components';
 import { Snackbar } from '@mui/material';
 import { NOTIFICATION_DELAY } from './constants';
+import AdminToolsPage from './pages/AdminToolsPage';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
@@ -45,6 +46,7 @@ const App = () => {
             <Routes>
                 <Route path="/auth" element={<LogInPage/>} />
                 <Route path="/profile" element={<ProfilePage/>}/>
+                <Route path="/admin-tools" element={<AdminToolsPage/>} />
                 <Route path="/" element={<HomePage/>} />
             </Routes>
             <Snackbar

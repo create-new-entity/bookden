@@ -45,7 +45,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 {
                     name: 'adminTools',
                     action: () => {
-                        console.log('Clicked Admin Tools');
+                        navigate('/admin-tools');
                         setShowNavDrawer(false);
                     },
                     component: <Typography>Admin Tools</Typography>,
