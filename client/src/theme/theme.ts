@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import { customColors } from './colors';
+import { LARGE_SVG_ICON_FONT_SIZE } from '../constants';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -227,6 +228,13 @@ export const getTheme = (mode: ThemeMode) => {
                         '&.Mui-disabled': {
                             backgroundColor: isLightMode ? customColors.lightActionDisabledBackground : customColors.darkActionDisabledBackground
                         }
+                    }
+                }
+            },
+            MuiSvgIcon: {
+                styleOverrides: {
+                    fontSizeLarge: {
+                        fontSize: LARGE_SVG_ICON_FONT_SIZE
                     }
                 }
             }

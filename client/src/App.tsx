@@ -1,12 +1,11 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
-import { HomePage, LogInPage, ProfilePage } from './pages';
+import { AdminToolsPage, HomePage, LogInPage, ProfilePage } from './pages';
 import { useAuthContext, useNavContext, useNotificationContext } from './contexts';
 import { NavBar, NavDrawer } from './components';
 import { Snackbar } from '@mui/material';
 import { NOTIFICATION_DELAY } from './constants';
-import AdminToolsPage from './pages/AdminToolsPage';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
