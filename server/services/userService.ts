@@ -125,6 +125,10 @@ const createUser = async (newUserData: NewUserPayload) => {
     const dbPool = await getPGDBPool();
     newUserData.password = await getPasswordHash(newUserData.password);
     const snakeCasedData = convertToSnakeCaseDeep(newUserData);
+
+    // Unique constraints are there. Want to have better error messaging though.
+    await checkDuplicateUsername(snakeCasedData.username);
+    await checkDuplicateEmail(snakeCasedData.email);
     
     await dbPool.query(sqlTag.typeAlias('User')`
         INSERT INTO users (username, password_hash, email, user_type)
@@ -137,15 +141,17 @@ const createUser = async (newUserData: NewUserPayload) => {
     `);
 };
 
-const checkDuplicateUsername = async (userId: number, username: string): Promise<void> => {
+const checkDuplicateUsername = async (username: string, userId?: number): Promise<void> => {
     const dbPool = await getPGDBPool();
+
+    const userIdFragment = userId ? sqlTag.fragment`AND u.user_id != ${userId}` : sqlTag.fragment``;
 
     const found = await dbPool.maybeOne(sqlTag.typeAlias('User')`
         SELECT 1
         FROM users u
         WHERE
             u.username = ${username}
-            AND u.user_id != ${userId}
+            ${userIdFragment}
     `);
     
     if(found) {
@@ -154,15 +160,17 @@ const checkDuplicateUsername = async (userId: number, username: string): Promise
     }
 };
 
-const checkDuplicateEmail = async (userId: number, email: string): Promise<void> => {
+const checkDuplicateEmail = async (email: string, userId?: number): Promise<void> => {
     const dbPool = await getPGDBPool();
+
+    const userIdFragment = userId ? sqlTag.fragment`AND u.user_id != ${userId}` : sqlTag.fragment``;
 
     const found = await dbPool.maybeOne(sqlTag.typeAlias('User')`
         SELECT 1
         FROM users u
         WHERE
             u.email = ${email}
-            AND u.user_id != ${userId}
+            ${userIdFragment}
     `);
     
     if(found) {
