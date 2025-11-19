@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import camelcaseKeys from 'camelcase-keys';
 
-import configs from '../configs';
 import { JWTSignPayload } from '../types';
 import {
     AuthenticationError,
@@ -13,14 +12,15 @@ import {
 import { TOKEN_VALIDITY_SECONDS } from '../constants';
 import { getPGDBPool } from '../configs/db';
 import { sqlTag } from '../configs/sqlTag';
+import { ENV_VARIABLES } from '../configs';
 
 
 const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
-    if(configs.ENV_VARIABLES.JWT_SECRET) {
-        return jwt.sign({ username, userId, userType }, configs.ENV_VARIABLES.JWT_SECRET, { expiresIn: TOKEN_VALIDITY_SECONDS });
+    if(ENV_VARIABLES.JWT_SECRET) {
+        return jwt.sign({ username, userId, userType }, ENV_VARIABLES.JWT_SECRET, { expiresIn: TOKEN_VALIDITY_SECONDS });
     }
     const internalServerError = new AppError(errorMessages[errorNames.envVarUndefined], 500, false);
-    throw internalServerError; // configs.ENV_VARIABLES.JWT_SECRET is not defined.
+    throw internalServerError; // ENV_VARIABLES.JWT_SECRET is not defined.
 };
 
 const login = async (username: string, password: string): Promise<{ token: string } | undefined> => {

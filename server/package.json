@@ -6,8 +6,10 @@
   "scripts": {
     "tsc": "tsc",
     "lint": "eslint",
-    "migrate:up:test": "cross-env NODE_ENV=test ./node_modules/.bin/db-migrate up",
-    "migrate:up:dev": "cross-env NODE_ENV=development ./node_modules/.bin/db-migrate up",
+    "pre:migrate:up:test": "cross-env NODE_ENV=test tsx ./scripts/pre-migrate.ts",
+    "pre:migrate:up:dev": "cross-env NODE_ENV=development tsx ./scripts/pre-migrate.ts",
+    "migrate:up:test": "npm run pre:migrate:up:test && cross-env NODE_ENV=test ./node_modules/.bin/db-migrate up",
+    "migrate:up:dev": "npm run pre:migrate:up:dev && cross-env NODE_ENV=development ./node_modules/.bin/db-migrate up",
     "dev": "npm run migrate:up:dev && cross-env NODE_ENV=development tsx watch index.ts",
     "test": "npm run migrate:up:test && cross-env NODE_ENV=test jest"
   },
@@ -34,6 +36,7 @@
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.9.1",
+    "@types/pg": "^8.15.6",
     "@types/supertest": "^6.0.3",
     "eslint": "^9.38.0",
     "globals": "^16.4.0",

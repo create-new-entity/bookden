@@ -1,8 +1,7 @@
-import configs from './configs';
 import app from './app';
-import { endConnectionPool, initPGDBPool } from './configs/db';
+import { endConnectionPool, ENV_VARIABLES, initPGDBPool } from './configs';
 
-const PORT = configs.ENV_VARIABLES.PORT;
+const PORT = ENV_VARIABLES.PORT;
 
 const start = async () => {
     await initPGDBPool();

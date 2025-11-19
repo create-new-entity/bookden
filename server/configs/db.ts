@@ -4,6 +4,7 @@ import {
     ClientConfiguration,
     DatabasePool
 } from 'slonik';
+
 import { isTestEnvironment } from './config';
 
 const DB_URL = (() => {
