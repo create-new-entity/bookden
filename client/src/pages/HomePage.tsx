@@ -8,11 +8,16 @@ import { useAuthContext } from '../contexts';
 const HomePage = () => {
     const { isLoggedIn } = useAuthContext();
     const navigate = useNavigate();
+
     useEffect(() => {
         if(!localStorage.getItem(LOGGED_IN_USER_DATA) && !isLoggedIn) {
             navigate('/auth');
         }
     }, [navigate, isLoggedIn]);
+
+    useEffect(() => {
+        document.title = 'Home';
+    }, []);
 
     return (
         <div>

@@ -70,6 +70,10 @@ const ProfilePage = () => {
         }
     }, [navigate, hasExistingLoggedInUser]);
 
+    useEffect(() => {
+        document.title = 'Profile';
+    }, []);
+
     const updateOrDeleteAvatarOptions = (
         <WrapperStack>
             <UpdateOrDeleteAvatarButtonsStack/>
