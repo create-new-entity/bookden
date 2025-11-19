@@ -191,11 +191,11 @@ const updateUser = async (userId: number, updateUserData: UpdateUserPayload): Pr
 
     // Unique constraints are there. Want to have better error messaging though.
     if(updatedData.username) {
-        await checkDuplicateUsername(userId, updatedData.username);
+        await checkDuplicateUsername(updatedData.username, userId);
     }
     updatedData.email = snakeCasedData.email;
     if(updatedData.email) {
-        await checkDuplicateEmail(userId, updatedData.email);
+        await checkDuplicateEmail(updatedData.email, userId);
     }
 
 
