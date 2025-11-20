@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 build/
 .DS_Store
+
+
+e2e/test-results/
