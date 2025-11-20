@@ -2,8 +2,7 @@ import apiSupertest from 'supertest';
 import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './seeds';
 import app from '../../app';
 import { testBaseUrl } from '../../routes/testRoutes';
-import { getPGDBPool } from '../../configs/db';
-import { sqlTag } from '../../configs/sqlTag';
+import { getPGDBPool, sqlTag } from '../../configs';
 
 
 export const clearDB = async () => {

@@ -10,9 +10,7 @@ import {
     errorNames
 } from '../errors';
 import { TOKEN_VALIDITY_SECONDS } from '../constants';
-import { getPGDBPool } from '../configs/db';
-import { sqlTag } from '../configs/sqlTag';
-import { ENV_VARIABLES } from '../configs';
+import { ENV_VARIABLES, getPGDBPool, sqlTag } from '../configs';
 
 
 const getToken = ({ username, userId, userType }: JWTSignPayload): string => {
