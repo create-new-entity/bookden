@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
+    "build": "cross-env NODE_ENV=production tsc",
     "lint": "eslint",
     "pre:migrate:up:test": "cross-env NODE_ENV=test tsx ./scripts/pre-migrate.ts",
     "pre:migrate:up:dev": "cross-env NODE_ENV=development tsx ./scripts/pre-migrate.ts",
