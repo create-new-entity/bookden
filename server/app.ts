@@ -12,6 +12,8 @@ import {
     testRouter,
     avatarBaseUrl,
     avatarRouter,
+    healthBaseUrl,
+    healthRouter,
 } from './routes';
 import { errorHandler } from './middlewares';
 
@@ -20,9 +22,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+
+
 app.use(userBaseUrl, userRouter);
 app.use(loginBaseUrl, loginRouter);
 app.use(avatarBaseUrl, avatarRouter);
+app.use(healthBaseUrl, healthRouter);
 
 if(isTestEnvironment()) {
     app.use(testBaseUrl, testRouter);

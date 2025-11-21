@@ -9,3 +9,6 @@ export { default as avatarRouter } from './avatarRoutes';
 
 export * from './testRoutes';
 export { default as testRouter } from './testRoutes';
+
+export * from './healthRoutes';
+export { default as healthRouter } from './healthRoutes';
