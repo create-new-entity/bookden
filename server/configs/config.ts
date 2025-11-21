@@ -7,4 +7,5 @@ export const ENV_VARIABLES = {
     PORT, JWT_SECRET, NODE_ENV
 };
 
+export const isProductionEnvironment = () => NODE_ENV === 'production';
 export const isTestEnvironment = () => NODE_ENV === 'test';
