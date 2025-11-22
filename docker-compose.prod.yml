@@ -28,6 +28,8 @@ services:
         condition: service_healthy   # Just waiting for the database to start is not enough. We need to wait until it is ready to accept connections.
     networks:
       - bookden-network
+    ports:
+      - '3001:3000'
 
   client:
     image: imranpavel/bookden-client:latest
@@ -37,6 +39,8 @@ services:
       - server
     networks:
       - bookden-network
+    ports:
+      - '3002:80'
 
 
 networks:
