@@ -9,6 +9,9 @@ RUN npm ci
 
 COPY client ./
 
+# This is ok. Because Vite automatically loads .env.* files at build time.
+COPY env/prod/client.env .env.production
+
 RUN npm run build
 
 
