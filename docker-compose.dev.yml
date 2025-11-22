@@ -2,11 +2,12 @@
 services:
 
   local-postgres-database:
-    image: bitnami/postgresql:latest
+    image: postgres:16-alpine
     environment:
-      - POSTGRESQL_USERNAME=admin
-      - POSTGRESQL_PASSWORD=password
-      - POSTGRESQL_DATABASE=bookden_dev
+      - POSTGRES_DB=bookden_dev
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+
     ports:
       - 5432:5432
     volumes:
