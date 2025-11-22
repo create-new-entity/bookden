@@ -6,7 +6,7 @@ services:
     container_name: bookden-postgres
     restart: always
     env_file:
-      - ./env/prod/postgres.env
+      - ./env/postgres.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -22,7 +22,7 @@ services:
     container_name: bookden-server
     restart: always
     env_file:
-      - ./env/prod/server.env
+      - ./env/server.env
     depends_on:
       postgres:
         condition: service_healthy   # Just waiting for the database to start is not enough. We need to wait until it is ready to accept connections.
