@@ -15,7 +15,7 @@ on:
 jobs:
 
   lint_and_test:
-    name: lint and test server
+    name: lint and test (server and client)
     runs-on: ubuntu-24.04
 
     services:
@@ -64,4 +64,16 @@ jobs:
           JWT_SECRET: secret
           NODE_ENV: test
         run: npm run test:bail
+
+      - name: Install client deps
+        working-directory: client
+        run: npm ci
+
+      - name: Lint client
+        working-directory: client
+        run: npm run lint
+
+      - name: Test client
+        working-directory: client
+        run: npm run test
         
