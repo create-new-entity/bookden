@@ -53,6 +53,7 @@ const NavBar = () => {
     const { isLightMode } = useThemeModeContext();
     const navigate = useNavigate();
 
+
     return (
         <AppBar position='sticky'>
             <Toolbar>
@@ -63,7 +64,7 @@ const NavBar = () => {
                     <Button sx={styles.logoButton} onClick={() => navigate('/')}>
                         <Box sx={{ height: '2.5rem' }}>
                             <img
-                                src={ isLightMode ? '/assets/book-den-black.svg' : '/assets/book-den-white.svg'}
+                                src={ isLightMode ? `${import.meta.env.BASE_URL}assets/book-den-black.svg` : `${import.meta.env.BASE_URL}assets/book-den-white.svg` }
                                 alt="Book Den Logo"
                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             />

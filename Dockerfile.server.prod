@@ -16,11 +16,18 @@ ENV NODE_ENV=production
 
 # Only want to copy the node_modules and build artifacts from the build stage. Not the source code.
 COPY server/package*.json ./
+
 RUN npm ci --omit=dev
 COPY --from=build /app/build ./build
 
-# Expose whatever port your server uses
+# Copy the database.json and migrations folder.
+COPY server/database.json ./database.json
+COPY server/migrations ./migrations
+
+COPY server/run-prod.sh ./run-prod.sh
+RUN chmod +x run-prod.sh
+
+
 EXPOSE 3000
 
-# Adjust entrypoint if different
-CMD ["node", "build/index.js"]
+CMD ["./run-prod.sh"]
