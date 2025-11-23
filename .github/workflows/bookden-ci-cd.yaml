@@ -15,7 +15,7 @@ on:
 jobs:
 
   lint_and_test:
-    name: lint and testserver
+    name: lint and test server
     runs-on: ubuntu-24.04
 
     services:
