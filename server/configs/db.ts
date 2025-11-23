@@ -1,13 +1,13 @@
 
-import camelcaseKeys from 'camelcase-keys';
 import {
     createPool,
     ClientConfiguration,
-    DatabasePool,
-    sql as slonikSql,
-    ValueExpression
+    DatabasePool
 } from 'slonik';
-import { isTestEnvironment } from './config';
+
+import { isProductionEnvironment, isTestEnvironment } from './config';
+import { AppError, errorMessages, errorNames } from '../errors';
+
 
 type PoolOptions = Pick<ClientConfiguration, 'maximumPoolSize' | 'connectionTimeout' | 'connectionRetryLimit'>;
 
@@ -17,58 +17,58 @@ const poolOptions: PoolOptions = {
     connectionRetryLimit: 5,
 };
 
-let pgDBPool: DatabasePool | undefined;
+let pgDBPool: DatabasePool;
+let isPoolActive = false;
 
-const DB_URL = (() => {
-    if (isTestEnvironment()) {
-        return process.env.LOCAL_TEST_DB_URL;
+const getDBUrl = (): string => {
+    const {
+        DB_ADMIN,
+        DB_PASSWORD,
+        DB_HOST,
+        DB_PORT,
+        DB_NAME,
+        DB_URL,
+        TEST_DB_URL
+    } = process.env;
+
+    if(isProductionEnvironment()) {
+        return `postgresql://${DB_ADMIN}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
     }
-    return process.env.LOCAL_DB_URL;
-})();
+    else if(isTestEnvironment()) {
+        if(TEST_DB_URL) {
+            return TEST_DB_URL;
+        }
+        const internalServerError = new AppError(errorMessages[errorNames.envVarUndefined], 500, false);
+        throw internalServerError; // TEST_DB_URL is not defined.
+    }
+    else {
+        if(DB_URL) {
+            return DB_URL; // development environment
+        }
+        const internalServerError = new AppError(errorMessages[errorNames.envVarUndefined], 500, false);
+        throw internalServerError; // DB_URL is not defined.
+    }
+};
 
-const getPGDBPool = () => {
+export const initPGDBPool = async (): Promise<DatabasePool> => {
+    const DB_URL = getDBUrl();
+    console.log(`NODE_ENV: ${process.env.NODE_ENV}\nDB Connection URL: ${DB_URL}`);
+    pgDBPool = await createPool(DB_URL + '', poolOptions);
+    console.log('PostgreSQL connection pool initialized.');
+    isPoolActive = true;
     return pgDBPool;
 };
 
-const endConnectionPool = async () => {
-    await pgDBPool?.end();
-    pgDBPool = undefined;
+export const getPGDBPool = async (): Promise<DatabasePool> => {
+    if(isPoolActive && pgDBPool) {
+        return pgDBPool;
+    }
+    return initPGDBPool();
 };
 
-const sql = async (template: TemplateStringsArray, ...values: ValueExpression[]) => {
-    const result = await pgDBPool!.any(slonikSql.unsafe(template, ...values));
-    return result.map((row) => camelcaseKeys(row, { deep: true }));
-};
-
-const sqlOne = async (template: TemplateStringsArray, ...values: ValueExpression[]) => {
-    const result = await pgDBPool!.one(slonikSql.unsafe(template, ...values));
-    return camelcaseKeys(result, { deep: true });
-};
-
-const sqlFragment = slonikSql.fragment;
-
-const initPGDBPool = async () => {
-    try {
-        console.log(`NODE_ENV: ${process.env.NODE_ENV}\nDB Connection URL: ${DB_URL}`);
-        pgDBPool = await createPool(DB_URL + '', poolOptions);
-        console.log('PostgreSQL connection pool initialized.');
-    } catch (error) {
-        console.error('Error initializing PostgreSQL connection pool:', error);
+export const endConnectionPool = async () => {
+    if(isPoolActive && pgDBPool) {
+        await pgDBPool.end();
+        isPoolActive = false;
     }
 };
-
-const queryVariants = {
-    sql,
-    sqlOne,
-    sqlFragment
-};
-
-const pgDBPoolUtitlities = {
-    getPGDBPool,
-    endConnectionPool,
-    queryVariants,
-    initPGDBPool
-};
-
-export default pgDBPoolUtitlities;
-

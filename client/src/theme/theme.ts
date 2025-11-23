@@ -1,14 +1,9 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import { customColors } from './colors';
+import { LARGE_SVG_ICON_FONT_SIZE } from '../constants';
 
 type ThemeMode = 'light' | 'dark';
-
-const disableRipple = {
-    disableRipple: true,
-    disableFocusRipple: true,
-    disableTouchRipple: true
-};
 
 export const getTheme = (mode: ThemeMode) => {
     const theme = {
@@ -55,11 +50,12 @@ export const getTheme = (mode: ThemeMode) => {
                     background: {
                         default: customColors.lightBackgroundDefault,
                         paper: customColors.lightBackgroundPaper,
-                    },
+                        elevated: customColors.lightBackgroundSurface
+                    },                      
                     text: {
                         primary: customColors.lightTextPrimary,
                         secondary: customColors.lightTextSecondary,
-                    },
+                    }
                 }
                 : {
                     primary: {
@@ -101,14 +97,16 @@ export const getTheme = (mode: ThemeMode) => {
                     background: {
                         default: customColors.darkBackgroundDefault,
                         paper: customColors.darkBackgroundPaper,
+                        elevated: customColors.darkBackgroundSurface
                     },
                     text: {
                         primary: customColors.darkTextPrimary,
                         secondary: customColors.darkTextSecondary,
-                    },
+                    }
                 }),
         }
     };
+    const isLightMode = mode === 'light';
     const additionalThemeOptions: ThemeOptions = {
         typography: {
             fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
@@ -152,18 +150,29 @@ export const getTheme = (mode: ThemeMode) => {
             },
             MuiButton: {
                 defaultProps: {
-                    ...disableRipple,
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true,
                     disableElevation: true
+                },
+                styleOverrides: {
+                    root: {
+                        maxWidth: 'fit-content'
+                    }
                 }
             },
             MuiTab: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiIconButton: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiAppBar: {
@@ -179,30 +188,54 @@ export const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        boxShadow: 'none'
+                        backgroundColor: theme.palette.background.paper
                     }
                 }
             },
-            MuiMenuItem: {
+            MuiMenu: {
                 defaultProps: {
-                    ...disableRipple
+                    autoFocus: false
                 },
                 styleOverrides: {
-                    root: {
-                        '&:hover': {
-                            backgroundColor: 'transparent'
-                        }
+                    paper: {
+                        backgroundColor: theme.palette.background.elevated,
+                        boxShadow: 'none'
                     }
+                },
+            },
+            MuiMenuItem: {
+                defaultProps: {
+                    disableRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiListItemButton: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableTouchRipple: true
                 }
             },
             MuiSwitch: {
                 defaultProps: {
-                    ...disableRipple
+                    disableRipple: true,
+                    disableFocusRipple: true,
+                    disableTouchRipple: true
+                }
+            },
+            MuiOutlinedInput: {
+                styleOverrides: {
+                    root: {
+                        '&.Mui-disabled': {
+                            backgroundColor: isLightMode ? customColors.lightActionDisabledBackground : customColors.darkActionDisabledBackground
+                        }
+                    }
+                }
+            },
+            MuiSvgIcon: {
+                styleOverrides: {
+                    fontSizeLarge: {
+                        fontSize: LARGE_SVG_ICON_FONT_SIZE
+                    }
                 }
             }
         }
@@ -211,7 +244,4 @@ export const getTheme = (mode: ThemeMode) => {
     return createTheme(theme, additionalThemeOptions);
 };
 
-
-const theme = getTheme('light');
-
-export default theme;
+export default getTheme('light');

@@ -13,7 +13,11 @@ export default defineConfig([
         },
         extends: ['js/recommended'],
         languageOptions: {
-            globals: globals.browser
+            globals: globals.browser,
+            parserOptions: {
+                project: './tsconfig.json',
+                tsconfigRootDir: __dirname,
+            }
         },
         rules: {
             'no-await-in-loop': 'error',
@@ -41,6 +45,6 @@ export default defineConfig([
                 }
             ]
         }
-    },
+    },    
     globalIgnores(['migrations/', 'build'])
 ]);

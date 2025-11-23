@@ -1,7 +1,10 @@
-import { loginBaseUrl, userBaseUrl } from '../../routes';
 import apiSupertest from 'supertest';
+import path from 'path';
+
+import { loginBaseUrl, userBaseUrl } from '../../routes';
 import app from '../../app';
 import { NewUserPayload, UpdateUserPayload } from '../../types';
+import { avatarBaseUrl } from '../../routes/avatarRoutes';
 
 
 export const login = async (loginPayload: { username: string, password: string }): Promise<string> => {
@@ -25,7 +28,7 @@ export const createUser = async (user: NewUserPayload, expectedCode: number, tok
 
 export const updateUser = async (user: UpdateUserPayload, expectedCode: number, token: string) => {
     await apiSupertest(app)
-        .put(userBaseUrl)
+        .patch(userBaseUrl)
         .set({
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -34,7 +37,7 @@ export const updateUser = async (user: UpdateUserPayload, expectedCode: number, 
         .expect(expectedCode);
 };
 
-export const deleteUser = async (userId: string, expectedCode: number, token: string) => {
+export const deleteUser = async (userId: number, expectedCode: number, token: string) => {
     await apiSupertest(app)
         .delete(`${userBaseUrl}/${userId}`)
         .set({
@@ -51,5 +54,16 @@ export const getUsers = async (expectedCode: number, token: string) => {
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         })
+        .expect(expectedCode);
+};
+
+export const updateAvatar = async (expectedCode: number, token: string) => {
+    const filePath = path.resolve(__dirname, '../files/batman1.jpeg');
+    return await apiSupertest(app)
+        .put(avatarBaseUrl)
+        .set({
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        })
+        .attach('avatar', filePath)
         .expect(expectedCode);
 };

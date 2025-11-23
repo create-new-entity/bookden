@@ -1,2 +1,4 @@
-export * from './login';
-export * from './user';
+export * from './avatarController';
+export * from './loginController';
+export * from './userController';
+export * from './healthController';

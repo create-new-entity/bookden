@@ -1,19 +1,20 @@
 import { useMutation } from '@tanstack/react-query';
-import { loginApi, signUpApi } from '../api/auth.ts';
-import type { LoginFormInputs, SignUpPayload } from '../types/index.ts';
 import { useNavigate } from 'react-router-dom';
-import useAuthContext from '../contexts/AuthContext.tsx';
-import type { AxiosErrorResponse } from '../types/UtilTypes.ts';
 import type { AxiosResponse } from 'axios';
+
+import type { AxiosErrorResponse, LoggedInUserData, LoginFormInputs, SignUpPayload } from '../types';
+import { useAuthContext } from '../contexts';
+import { loginApi, signUpApi } from '../api';
+
 
 const useAuthentication = () => {
     const navigate = useNavigate();
-    const { handleLoggedInContext } = useAuthContext();
-
-    const loginMutation = useMutation<string, AxiosErrorResponse, LoginFormInputs>({
+    const { saveToken } = useAuthContext();
+    
+    const loginMutation = useMutation<Pick<LoggedInUserData, 'token'>, AxiosErrorResponse, LoginFormInputs>({
         mutationFn: loginApi,
-        onSuccess: (token) => {
-            handleLoggedInContext(token);
+        onSuccess: (data) => {
+            saveToken(data.token);
             navigate('/');
         },
         onError: (err) => {

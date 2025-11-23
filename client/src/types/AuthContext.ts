@@ -1,10 +1,16 @@
-// import type { UserTypes } from "./Users";
-
+import type { LoggedInUserData } from '.';
+import type { UserType } from './Users';
 
 export interface AuthContextType {
-  token: string | null;
-//   userType: UserTypes | null;
+  username: string;
+  token: string;
+  email: string;
+  userType: UserType | undefined;
   isLoggedIn: boolean;
-  handleLoggedInContext: (token: string) => void;
-  handleLoggedOutContext: () => void;
+  saveToken: (token: string) => void;
+  clearAuthentication: () => void;
+  hasExistingLoggedInUser: () => {
+    isUserLoggedIn: boolean;
+    existingLoggedInData: LoggedInUserData | null;
+  }
 }

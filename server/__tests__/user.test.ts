@@ -1,14 +1,16 @@
-import pgDBPoolUtitlities from '../configs/db';
+    
+import {
+    EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409,
+    clearDB, createSomeSeedUsers, createUser, deleteUser, getUsers, login, seedAdminUser,
+    seedCustomerUser, seedSuperAdminUser, updateAvatar, updateUser
+} from './testUtils';
 import { ADMIN, CUSTOMER, SUPERADMIN, User } from '../types';
-import { EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_500 } from './testUtils/constants';
-import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
-import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
-import { createUser, deleteUser, getUsers, login, updateUser } from './testUtils/userUtils';
+import { endConnectionPool, initPGDBPool } from '../configs';
 
 describe('User accounts related tests', () => {
 
     beforeAll(async () => {
-        await pgDBPoolUtitlities.initPGDBPool();
+        await initPGDBPool();
     });
 
     beforeEach(async () => {
@@ -42,7 +44,7 @@ describe('User accounts related tests', () => {
                 password: 'password'
             };
             const token = await login(loginPayload);
-            await createUser(seedAdminUser, EXPECT_500, token);  // Should be error -> has same username.
+            await createUser(seedAdminUser, EXPECT_409, token);  // Should be error -> has same username.
             await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
         });
 
@@ -146,7 +148,7 @@ describe('User accounts related tests', () => {
             };
             await createUser(newAdminUser, EXPECT_403, token);
         });
-        test('customer can not create a superadmin user.', async () => {
+        test('Customer can not create a superadmin user.', async () => {
             const loginPayload = {
                 username: seedCustomerUser.username,
                 password: 'password'
@@ -223,7 +225,58 @@ describe('User accounts related tests', () => {
                 password: 'password'
             };
             const token = await login(loginPayload);
-            await updateUser(user, EXPECT_500, token);
+            await updateUser(user, EXPECT_409, token);
+        });
+
+        test('UPDATE fails if email is duplicate.', async () => {
+            const user = {
+                username: seedAdminUser.username,
+                password: seedAdminUser.password,
+                email: 'customer1@gmail.com'
+            };
+            const loginPayload = {
+                username: seedAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            await updateUser(user, EXPECT_409, token);
+        });
+
+        describe('Update with partial data works.', () => {
+            test('UPDATE succeeds if only email is provided.', async () => {
+                const user = {
+                    email: 'admin_changed@gmail.com'
+                };
+                const loginPayload = {
+                    username: seedAdminUser.username,
+                    password: 'password'
+                };
+                const token = await login(loginPayload);
+                await updateUser(user, EXPECT_200, token);
+            });
+
+            test('UPDATE succeeds if only password is provided.', async () => {
+                const NEW_PASSWORD = 'new_password';
+                const user = {
+                    password: NEW_PASSWORD
+                };
+                const loginPayload = {
+                    username: seedAdminUser.username,
+                    password: 'password'
+                };
+                const token = await login(loginPayload);
+                await updateUser(user, EXPECT_200, token);
+                await login({ ...loginPayload, password: NEW_PASSWORD });
+            });
+        });
+
+        test('UPDATE avatar', async () => {
+            const loginPayload = {
+                username: seedAdminUser.username,
+                password: seedAdminUser.password
+            };
+            const token = await login(loginPayload);
+            await updateAvatar(EXPECT_200, token);
         });
     });
 
@@ -448,6 +501,6 @@ describe('User accounts related tests', () => {
     });
 
     afterAll(async () => {
-        pgDBPoolUtitlities.endConnectionPool();
+        await endConnectionPool();
     });
 });

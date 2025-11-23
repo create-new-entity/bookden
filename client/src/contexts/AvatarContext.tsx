@@ -1,0 +1,35 @@
+import { createContext, useContext, useState, type ReactNode } from 'react';
+import { PLACE_HOLDER_AVATAR } from '../constants';
+import type { AvatarContextValue } from '../types';
+
+const defaultValue: AvatarContextValue = {
+    avatarUrl: PLACE_HOLDER_AVATAR,
+    setAvatarUrl: () => {},
+    isPlaceHolderAvatar: true
+};
+
+const AvatarContext = createContext(defaultValue);
+
+export const AvatarProvider = ({ children } : { children: ReactNode }) => {
+    const [avatarUrl, setAvatarUrl] = useState<string>(defaultValue.avatarUrl);
+    
+    const value = {
+        avatarUrl,
+        setAvatarUrl,
+        isPlaceHolderAvatar: avatarUrl === PLACE_HOLDER_AVATAR
+    };
+
+    return (
+        <AvatarContext.Provider value={value}>
+            {children}
+        </AvatarContext.Provider>
+    );
+};
+
+const useAvatarContext = () => {
+    return useContext(AvatarContext);
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export default useAvatarContext;
+

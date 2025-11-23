@@ -1,7 +1,7 @@
 
-const API_BASE = 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_BASE;
 
-export const AUTH = {
-    logIn: `${API_BASE}/api/login`,
-    signUp: `${API_BASE}/api/users`
-};
+
+export const loginUrl = `${API_BASE}/login`;
+export const usersUrl = `${API_BASE}/users`;
+export const avatarUrl = `${API_BASE}/avatar`;

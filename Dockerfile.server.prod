@@ -1,0 +1,33 @@
+
+
+FROM node:22 AS build
+WORKDIR /app
+
+COPY server/package*.json ./
+RUN npm ci
+
+COPY server ./
+RUN npm run build
+
+FROM node:22
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Only want to copy the node_modules and build artifacts from the build stage. Not the source code.
+COPY server/package*.json ./
+
+RUN npm ci --omit=dev
+COPY --from=build /app/build ./build
+
+# Copy the database.json and migrations folder.
+COPY server/database.json ./database.json
+COPY server/migrations ./migrations
+
+COPY server/run-prod.sh ./run-prod.sh
+RUN chmod +x run-prod.sh
+
+
+EXPOSE 3000
+
+CMD ["./run-prod.sh"]

@@ -1,16 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "outDir": "./build",
-    "module": "ES2020",   
+    "module": "CommonJS",
     "moduleResolution": "node",
-    "skipLibCheck": true,
+    "outDir": "./build",
+    
     "strict": true,
-    "allowUnreachableCode": false,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "allowUnreachableCode": false,
+    "verbatimModuleSyntax": false
   }
 }
