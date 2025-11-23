@@ -42,6 +42,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Install root deps (for Playwright)
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
           
       - name: Install server dependencies
         working-directory: server
@@ -76,4 +82,28 @@ jobs:
       - name: Test client
         working-directory: client
         run: npm run test
+
+      - name: Start App (docker compose)
+        run: docker compose -f docker-compose.dev.yml up -d
+
+      - name: Wait for server health
+        run: |
+          echo "Waiting for backend..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/api/health >/dev/null; then
+              echo "Backend ready!"
+              exit 0
+            fi
+            echo "Retry..."
+            sleep 2
+          done
+          echo "Backend never became ready"
+          exit 1
+
+      - name: Run Playwright E2E
+        run: npm run e2e
+
+      - name: Stop App
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down
         
