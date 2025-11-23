@@ -1,0 +1,51 @@
+
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bookden-postgres
+    restart: always
+    env_file:
+      - ./env/postgres.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bookden-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    image: imranpavel/bookden-server:latest
+    container_name: bookden-server
+    restart: always
+    env_file:
+      - ./env/server.env
+    depends_on:
+      postgres:
+        condition: service_healthy   # Just waiting for the database to start is not enough. We need to wait until it is ready to accept connections.
+    networks:
+      - bookden-network
+    ports:
+      - '3001:3000'
+
+  client:
+    image: imranpavel/bookden-client:latest
+    container_name: bookden-client
+    restart: always
+    depends_on:
+      - server
+    networks:
+      - bookden-network
+    ports:
+      - '3002:80'
+
+
+networks:
+  bookden-network:  # Let's have an isolated network for the app.
+    driver: bridge
+
+volumes:
+  postgres_data:

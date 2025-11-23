@@ -24,7 +24,7 @@ const WrapperComponent = ({ children }: Props) => {
         */
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <BrowserRouter>
+            <BrowserRouter basename={import.meta.env.VITE_BASE_PATH}>
                 <NotificationProvider>
                     <AuthProvider>
                         <AvatarProvider>

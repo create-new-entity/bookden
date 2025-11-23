@@ -1,5 +1,6 @@
 
 import bcrypt from 'bcrypt';
+import camelcaseKeys from 'camelcase-keys';
 
 import { SALT_ROUNDS } from '../constants';
 import {
@@ -16,9 +17,8 @@ import {
     UserDBRow
 } from '../types';
 import { convertToSnakeCaseDeep } from '../utilities';
-import { sqlTag } from '../configs/sqlTag';
-import { getPGDBPool } from '../configs/db';
-import camelcaseKeys from 'camelcase-keys';
+import { getPGDBPool, sqlTag } from '../configs';
+
 
 const mapDate = (user: UserDBRow): User => {
     return {

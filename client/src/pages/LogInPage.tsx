@@ -49,14 +49,14 @@ const LogInPage = () => {
                 <Box sx={styles.imageContainer}>
                     <Box sx={styles.bookdenLogo}>
                         <img
-                            src={ isLightMode ? '/assets/book-den-black.svg' : '/assets/book-den-white.svg' }
+                            src={ isLightMode ? `${import.meta.env.BASE_URL}assets/book-den-black.svg` : `${import.meta.env.BASE_URL}assets/book-den-white.svg` }
                             alt='Book Den Logo'
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                     </Box>
                     <img
                         style={styles.image}
-                        src='/assets/bookden_illustration.png'
+                        src={`${import.meta.env.BASE_URL}assets/bookden_illustration.png`}
                         alt='Books background'
                         className='w-full h-auto object-cover'
                     />

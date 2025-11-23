@@ -7,4 +7,4 @@ export const SUPERADMIN = 'superadmin' as const;
 
 export const ALL_TYPES_OF_USERS: UserType[] = [CUSTOMER, ADMIN, SUPERADMIN];
 
-export const PLACE_HOLDER_AVATAR = '/assets/images/avatarPlaceholder.png';
+export const PLACE_HOLDER_AVATAR = `${import.meta.env.BASE_URL}assets/images/avatarPlaceholder.png`;

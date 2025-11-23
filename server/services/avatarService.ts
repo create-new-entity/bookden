@@ -1,5 +1,4 @@
-import { getPGDBPool } from '../configs/db';
-import { sqlTag } from '../configs/sqlTag';
+import { getPGDBPool, sqlTag } from '../configs';
 
 const saveAvatar = async (userId: number, buffer: Buffer, mimetype: string) => {
     const dbPool = await getPGDBPool();

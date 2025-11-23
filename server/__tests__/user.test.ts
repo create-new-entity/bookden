@@ -1,9 +1,11 @@
-import { endConnectionPool, initPGDBPool } from '../configs/db';
+    
+import {
+    EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409,
+    clearDB, createSomeSeedUsers, createUser, deleteUser, getUsers, login, seedAdminUser,
+    seedCustomerUser, seedSuperAdminUser, updateAvatar, updateUser
+} from './testUtils';
 import { ADMIN, CUSTOMER, SUPERADMIN, User } from '../types';
-import { EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409, EXPECT_500 } from './testUtils/constants';
-import { clearDB, createSomeSeedUsers } from './testUtils/dbUtils';
-import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './testUtils/seeds';
-import { createUser, deleteUser, getUsers, login, updateAvatar, updateUser } from './testUtils/userUtils';
+import { endConnectionPool, initPGDBPool } from '../configs';
 
 describe('User accounts related tests', () => {
 
@@ -42,7 +44,7 @@ describe('User accounts related tests', () => {
                 password: 'password'
             };
             const token = await login(loginPayload);
-            await createUser(seedAdminUser, EXPECT_500, token);  // Should be error -> has same username.
+            await createUser(seedAdminUser, EXPECT_409, token);  // Should be error -> has same username.
             await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
         });
 
