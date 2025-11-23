@@ -56,6 +56,7 @@ jobs:
         env:
           DB_ADMIN: admin
           DB_PASSWORD: password
+          DB_HOST: localhost
           TEST_DB_URL: postgresql://admin:password@localhost:5432/bookden_test
           PORT: 3000
           FIRST_SUPERADMIN_USERNAME: superadmin
