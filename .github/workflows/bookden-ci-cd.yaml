@@ -60,14 +60,14 @@ jobs:
       - name: Test server
         working-directory: server
         env:
-          DB_ADMIN: admin
-          DB_PASSWORD: password
+          DB_ADMIN: ${{ secrets.DB_ADMIN }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: localhost
-          TEST_DB_URL: postgresql://admin:password@localhost:5432/bookden_test
+          TEST_DB_URL: postgresql://${{ secrets.DB_ADMIN }}:${{ secrets.DB_PASSWORD }}@localhost:5432/bookden_test
           PORT: 3000
-          FIRST_SUPERADMIN_USERNAME: superadmin
-          FIRST_SUPERADMIN_PASSWORD: password
-          JWT_SECRET: secret
+          FIRST_SUPERADMIN_USERNAME: ${{ secrets.FIRST_SUPERADMIN_USERNAME }}
+          FIRST_SUPERADMIN_PASSWORD: ${{ secrets.FIRST_SUPERADMIN_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           NODE_ENV: test
         run: npm run test:bail
 
