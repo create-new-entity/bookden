@@ -29,15 +29,22 @@ jobs:
           node-version: '22'
 
 
-      # Server lint and test
-      - name: Install server dependencies
-        working-directory: server
+      - name: Install root deps (for Playwright e2e tests)
         run: npm ci
 
-      - name: Lint server
-        working-directory: server
-        run: npm run lint
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
 
+
+      # The idea is to:
+      # 1. Generate env files for docker compose
+      # 2. Start app in dev mode
+      # 3. Lint and test server and client inside Docker containers
+      # 4. Run Playwright e2e tests
+      # 5. Stop app
+
+
+      # Generate env files for docker compose
       - name: Generate env files for docker compose
         run: |
           mkdir -p env/dev
@@ -61,8 +68,19 @@ jobs:
           echo "VITE_BASE_PATH=/" >> env/dev/client.env
 
 
+      # Start app in dev mode
       - name: Start App (docker compose dev mode)
-        run: docker compose -f docker-compose.dev.yml up -d --build
+        run: docker compose -f docker-compose.dev.yml up -d --build --remove-orphans
+
+      
+
+      # Tests of server and client follows below.
+      # At the end of this job, we will run Playwright e2e tests on CI host.
+
+      # Server lint and test
+
+      - name: Server Lint (inside Docker)
+        run: docker compose -f docker-compose.dev.yml exec -T server npm run lint
 
       - name: Test server (Running tests inside server container). # It is easier this way. Otherwise will need to create another postgres service on CI level, which is unnecessary.
         run: docker compose -f docker-compose.dev.yml exec -T server npm run test  # -T means no TTY (to avoid interactive mode)
@@ -70,27 +88,17 @@ jobs:
       # End of server lint and test
 
       # Client lint and test
-      - name: Install client deps
-        working-directory: client
-        run: npm ci
+      
+      - name: Client Lint (inside Docker)
+        run: docker compose -f docker-compose.dev.yml exec -T client npm run lint
 
-      - name: Lint client
-        working-directory: client
-        run: npm run lint
+      - name: Client Tests (inside Docker)
+        run: docker compose -f docker-compose.dev.yml exec -T client npm run test
 
-      - name: Test client
-        working-directory: client
-        run: npm run test
       # End of client lint and test
 
 
       # Playwright e2e tests
-
-      - name: Install root deps (for Playwright e2e tests)
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
 
       - name: Wait for server health
         run: |
