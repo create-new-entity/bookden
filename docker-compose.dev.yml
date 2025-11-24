@@ -9,7 +9,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d bookden_dev"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d $POSTGRES_DB"] # In CI/CD pipeline, for simplicity we run tests inside docker containers. This dev compose is for dev though. So I'll use $POSTGRES_DB to dyanmically set bookden_dev or bookden_test.
       interval: 5s
       timeout: 5s
       retries: 10
