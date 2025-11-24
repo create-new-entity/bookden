@@ -4,8 +4,6 @@ services:
     image: postgres:16-alpine
     env_file:
       - ./env/dev/postgres.env
-    ports:
-      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
