@@ -6,7 +6,6 @@ on:
     branches:
       - development
       - production
-      - automated-deployment # remove later. keeping it now for testing purposes.
   pull_request:
     branches: [development, production]
 
@@ -137,7 +136,7 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-24.04
     needs: lint_and_test
-    if: github.ref == 'refs/heads/automated-deployment' # Deploy to production if the branch is production, will change back to production soon. Now testing.
+    if: github.ref == 'refs/heads/production' # Deploy to production if the branch is production.
 
     steps:
 
