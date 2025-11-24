@@ -57,7 +57,6 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/server.env
           echo "DB_HOST=local-postgres-database" >> env/dev/server.env
           echo "DB_PORT=5432" >> env/dev/server.env
-          echo "TEST_DB_URL=postgresql://${{ secrets.DB_ADMIN }}:${{ secrets.DB_PASSWORD }}@local-postgres-database:5432/bookden_test" >> env/dev/server.env
           echo "PORT=3000" >> env/dev/server.env
           echo "FIRST_SUPERADMIN_USERNAME=${{ secrets.FIRST_SUPERADMIN_USERNAME }}" >> env/dev/server.env
           echo "FIRST_SUPERADMIN_PASSWORD=${{ secrets.FIRST_SUPERADMIN_PASSWORD }}" >> env/dev/server.env
