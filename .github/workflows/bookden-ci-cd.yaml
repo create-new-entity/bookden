@@ -97,9 +97,13 @@ jobs:
 
       # End of client lint and test
 
+      - name: Show server logs
+        if: always()
+        run: docker compose -f docker-compose.dev.yml logs server
 
       # Playwright e2e tests
 
+      
       - name: Wait for server health
         run: |
           echo "Waiting for backend..."
@@ -113,6 +117,11 @@ jobs:
           done
           echo "Backend never became ready"
           exit 1
+
+
+      - name: Show postgres logs
+        if: always()
+        run: docker compose -f docker-compose.dev.yml logs local-postgres-database
 
       - name: Run Playwright E2E
         run: npm run e2e
