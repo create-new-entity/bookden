@@ -53,6 +53,7 @@ jobs:
           echo "POSTGRES_USER=${{ secrets.DB_ADMIN }}" >> env/dev/postgres.env
           echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/postgres.env
 
+          echo "DB_NAME=bookden_test" > env/dev/server.env
           echo "DB_ADMIN=${{ secrets.DB_ADMIN }}" > env/dev/server.env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/server.env
           echo "DB_HOST=local-postgres-database" >> env/dev/server.env
