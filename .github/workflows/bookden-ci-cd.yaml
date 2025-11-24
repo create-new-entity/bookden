@@ -174,6 +174,9 @@ jobs:
           push: true
           tags: |
             imranpavel/bookden-client:latest
+          build-args: |
+            VITE_API_BASE=${{ secrets.PROD_VITE_API_BASE }}
+            VITE_BASE_PATH=${{ secrets.PROD_VITE_BASE_PATH }}
 
 
       - name: Deploy to Droplet

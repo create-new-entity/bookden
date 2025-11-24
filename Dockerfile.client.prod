@@ -9,8 +9,12 @@ RUN npm ci
 
 COPY client ./
 
-# This is ok. Because Vite automatically loads .env.* files at build time.
-COPY env/prod/client.env .env.production
+# Inject Vite env from CI build args
+ARG VITE_API_BASE
+ARG VITE_BASE_PATH
+
+ENV VITE_API_BASE=$VITE_API_BASE
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
 
 RUN npm run build
 
