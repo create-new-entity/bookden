@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 import { AuthenticationTabs } from '../components';
 import { useThemeModeContext } from '../contexts';
@@ -54,7 +54,6 @@ const LogInPage = () => {
                             style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                         />
                     </Box>
-                    <Typography variant='body1'>Just testing</Typography>
                     <img
                         style={styles.image}
                         src={`${import.meta.env.BASE_URL}assets/bookden_illustration.png`}
