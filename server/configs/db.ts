@@ -11,7 +11,7 @@ type PoolOptions = Pick<ClientConfiguration, 'maximumPoolSize' | 'connectionTime
 const poolOptions: PoolOptions = {
     maximumPoolSize: 10,
     connectionTimeout: 5000,
-    connectionRetryLimit: 5,
+    connectionRetryLimit: 5
 };
 
 let pgDBPool: DatabasePool;

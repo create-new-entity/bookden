@@ -12,10 +12,8 @@ const getAllUsersController = async (req: AuthenticatedRequest<GetUsersQueryPara
         return;
     }
 
-    const validated = GetUsersQueryParamsSchema.parse(req.query);
-    console.log('validated', validated);
-
-    const allUsers = await getAllUsers();
+    const queryFilteringOptions = GetUsersQueryParamsSchema.parse(req.query);
+    const allUsers = await getAllUsers(queryFilteringOptions);
     res.status(200).json(allUsers);
 };
 

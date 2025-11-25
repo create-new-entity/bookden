@@ -2,7 +2,7 @@
 import bcrypt from 'bcrypt';
 import camelcaseKeys from 'camelcase-keys';
 
-import { SALT_ROUNDS } from '../constants';
+import { SALT_ROUNDS, USERS_PAGINATION_LIMIT } from '../constants';
 import {
     errorMessages,
     errorNames,
@@ -14,7 +14,8 @@ import {
     UserTypes,
     JWTSignPayload,
     ADMIN, CUSTOMER, UpdateUserPayload, User,
-    UserDBRow
+    UserDBRow,
+    GetUsersQueryParams
 } from '../types';
 import { convertToSnakeCaseDeep } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
@@ -32,21 +33,27 @@ const mapDate = (user: UserDBRow): User => {
     };
 };
 
-const getAllUsers = async (userType?: UserTypes | undefined): Promise<User[]> => {
+const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<User[]> => {
     const dbPool = await getPGDBPool();
 
+    const { userType, search, sortBy } = queryFilteringOptions;
+
+    const page = (queryFilteringOptions.page && parseInt(queryFilteringOptions.page, 10)) || 1;
+    const sortOrder = (queryFilteringOptions.sortOrder && queryFilteringOptions.sortOrder.toLowerCase() === 'asc') ? sqlTag.fragment`ASC`  : sqlTag.fragment`DESC`;
+    const userTypeFragment = userType ? sqlTag.fragment`AND user_type=${userType}` : sqlTag.fragment``;
+    const searchFragment = search ? sqlTag.fragment`AND username ILIKE ${ '%' + search + '%'}` : sqlTag.fragment``;
+    const sortByFragment = sortBy ? sqlTag.fragment`ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`ORDER BY created_at DESC`;
+    const pageFragment = page ? sqlTag.fragment`OFFSET ${(page - 1) * USERS_PAGINATION_LIMIT}` : sqlTag.fragment``;
+
     const result = await dbPool.query(sqlTag.typeAlias('User')`
-        SELECT
-            user_id,
-            username,
-            email,
-            user_type,
-            created_at,
-            updated_at,
-            deleted_at
+        SELECT user_id, username, email, user_type, created_at
         FROM users
         WHERE deleted_at IS NULL
-        ${userType ? sqlTag.fragment`AND user_type='${userType}'` : sqlTag.fragment``}
+        ${searchFragment}
+        ${userTypeFragment}
+        ${sortByFragment}
+        LIMIT ${USERS_PAGINATION_LIMIT}
+        ${pageFragment}
     `);
 
     const users = result.rows;
