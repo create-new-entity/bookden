@@ -1,17 +1,8 @@
 import { z } from 'zod';
-import { userTypes } from '../constants';
 import { CamelCaseDeep } from './Utilities';
+import { GetUsersQueryParamsSchema } from '../validation';
+import { UserTypeAlias } from '../typeAliases';
 
-export const UserTypeAlias = z.object({
-    user_id: z.number(),
-    username: z.string(),
-    email: z.string(),
-    password_hash: z.string(),
-    user_type: z.enum(userTypes),
-    deleted_at: z.string().nullable(),
-    updated_at: z.string().nullable(),
-    created_at: z.string(),
-});
 
 export type UserDBRow = z.infer<typeof UserTypeAlias>;
 
@@ -48,14 +39,4 @@ export const SUPERADMIN: UserTypes = 'superadmin';
 export const ADMIN: UserTypes = 'admin';
 export const CUSTOMER: UserTypes = 'customer';
 
-type UsersSortByOptions = 'username' | 'email' | 'userType' | 'createdAt';
-
-type UsersSortOrderOptions = 'asc' | 'desc';
-
-export type GetUsersQueryParams = {
-    search?: string;
-    userType?: UserTypes;
-    sortBy?: UsersSortByOptions;
-    sortOrder?: UsersSortOrderOptions;
-    page?: string;
-};
+export type GetUsersQueryParams = z.infer<typeof GetUsersQueryParamsSchema>;
