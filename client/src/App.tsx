@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
-import { AdminToolsPage, HomePage, LogInPage, ProfilePage } from './pages';
+import { AdminToolsPage, HomePage, LogInPage, ProfilePage, UserManagementPage } from './pages';
 import { useAuthContext, useNavContext, useNotificationContext } from './contexts';
 import { NavBar, NavDrawer } from './components';
 import { Snackbar } from '@mui/material';
@@ -45,6 +45,7 @@ const App = () => {
             <Routes>
                 <Route path="/auth" element={<LogInPage/>} />
                 <Route path="/profile" element={<ProfilePage/>}/>
+                <Route path="/user-management" element={<UserManagementPage/>} />
                 <Route path="/admin-tools" element={<AdminToolsPage/>} />
                 <Route path="/" element={<HomePage/>} />
             </Routes>

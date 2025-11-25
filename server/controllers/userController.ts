@@ -1,11 +1,11 @@
 import { NextFunction, Response } from 'express';
-import { ADMIN, AuthenticatedRequest, CUSTOMER } from '../types';
+import { ADMIN, AuthenticatedRequest, CUSTOMER, GetUsersQueryParams } from '../types';
 import { AuthenticationError, UnauthorizedError } from '../errors';
 import { canCreateUser, createUser, deleteUser, getAllUsers, getMySelf, getUser, updateUser } from '../services';
 import { UpdateUser, User } from '../validation';
 
 
-const getAllUsersController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const getAllUsersController = async (req: AuthenticatedRequest<GetUsersQueryParams>, res: Response, next: NextFunction) => {
     if(!req.user || req.user.userType === CUSTOMER) {
         const unauthorizedError = new UnauthorizedError();
         next(unauthorizedError);

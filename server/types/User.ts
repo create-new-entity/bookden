@@ -47,3 +47,15 @@ export type UserTypes = 'superadmin' | 'admin' | 'customer';
 export const SUPERADMIN: UserTypes = 'superadmin';
 export const ADMIN: UserTypes = 'admin';
 export const CUSTOMER: UserTypes = 'customer';
+
+type UsersSortByOptions = 'username' | 'email' | 'userType' | 'createdAt';
+
+type UsersSortOrderOptions = 'asc' | 'desc';
+
+export type GetUsersQueryParams = {
+    search?: string;
+    userType?: UserTypes;
+    sortBy?: UsersSortByOptions;
+    sortOrder?: UsersSortOrderOptions;
+    page?: string;
+};

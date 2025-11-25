@@ -5,6 +5,7 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BarChartIcon from '@mui/icons-material/BarChart';
 
 import AdminToolCard from './AdminToolCard';
+import { useNavigate } from 'react-router-dom';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -49,10 +50,15 @@ const getStyles = (theme: Theme): Styles => {
 const AdminToolsPage = () => {
     const theme = useTheme();
     const styles = getStyles(theme);
+    const navigate = useNavigate();
 
     useEffect(() => {
         document.title = 'Admin Tools';
     }, []);
+
+    const handleUserManagementClick = () => {
+        navigate('/user-management');
+    };
 
     return (
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'center'}>
@@ -64,7 +70,7 @@ const AdminToolsPage = () => {
                         title='User Management'
                         subtitle='Find users, review their details, and remove accounts when needed.'
                         iconAndTextStackStyles={styles.iconAndTextStack}
-                        onClick={() => {}}
+                        onClick={handleUserManagementClick}
                         paperStyles={styles.toolPaper}
                     />
                     <AdminToolCard
