@@ -26,12 +26,14 @@ const NavContext = createContext(defaultContextValue);
 export const NavProvider = ({ children }: { children: ReactNode }) => {
     const [showNavDrawer, setShowNavDrawer] = useState(false);
     const navigate = useNavigate();
-    const { userType, clearAuthentication } = useAuthContext();
+    const { clearAuthentication, hasExistingLoggedInUser } = useAuthContext();
+    const { isUserLoggedIn, existingLoggedInData } = hasExistingLoggedInUser();
+    const userType = existingLoggedInData?.userType;
     
     const [options, setOptions] = useState<NavOption[]>([]);
 
     useEffect(() => {
-        if(userType) {
+        if(userType && isUserLoggedIn) {
             const defaultOptions = [
                 {
                     name: 'profile',
@@ -66,7 +68,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             ].filter(filterOutUnAuthorizedOptions(userType));
             setOptions(defaultOptions);
         }
-    }, [userType, clearAuthentication, navigate]);
+    }, [userType, clearAuthentication, navigate, isUserLoggedIn]);
     
     const value: NavContextValue = {
         options,

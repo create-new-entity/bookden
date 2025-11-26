@@ -19,7 +19,7 @@ type Styles = {
 const getStyles = (theme: Theme): Styles => {
     return {
         rootStack: {
-            height: '90vh',
+            height: '85vh',
             marginTop: '2rem',
             gap: '1.5rem'
         },

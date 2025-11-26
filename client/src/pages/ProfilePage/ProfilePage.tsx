@@ -61,14 +61,14 @@ const ProfilePage = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const styles = getProfilePageStyles(theme);
+    const { isUserLoggedIn } = hasExistingLoggedInUser();
 
     useAvatar();
     useEffect(() => {
-        const { isUserLoggedIn } = hasExistingLoggedInUser();
         if(!isUserLoggedIn) {
             navigate('/auth');
         }
-    }, [navigate, hasExistingLoggedInUser]);
+    }, [navigate, hasExistingLoggedInUser, isUserLoggedIn]);
 
     useEffect(() => {
         document.title = 'Profile';
