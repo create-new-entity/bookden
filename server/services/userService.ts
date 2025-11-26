@@ -41,7 +41,11 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const page = (queryFilteringOptions.page && parseInt(queryFilteringOptions.page, 10)) || 1;
     const sortOrder = (queryFilteringOptions.sortOrder && queryFilteringOptions.sortOrder.toLowerCase() === 'asc') ? sqlTag.fragment`ASC`  : sqlTag.fragment`DESC`;
     const userTypeFragment = userType ? sqlTag.fragment`AND user_type=${userType}` : sqlTag.fragment``;
-    const searchFragment = search ? sqlTag.fragment`AND username ILIKE ${ '%' + search + '%'}` : sqlTag.fragment``;
+    const searchFragment = search ? sqlTag.fragment`
+        AND (
+            username ILIKE  ${'%' + search + '%'}
+            OR email ILIKE  ${'%' + search + '%'}
+        )` : sqlTag.fragment``;
     const sortByFragment = sortBy ? sqlTag.fragment`ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`ORDER BY created_at DESC`;
     const pageFragment = page ? sqlTag.fragment`OFFSET ${(page - 1) * USERS_PAGINATION_LIMIT}` : sqlTag.fragment``;
 
