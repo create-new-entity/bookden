@@ -83,7 +83,7 @@ const getUser = async (requestorUserId: number, targetUserId: number) => {
     return foundUser;
 };
 
-const getMySelf = async (requestorUserId: number) => {
+const getMyself = async (requestorUserId: number) => {
     const dbPool = await getPGDBPool();
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
@@ -111,21 +111,21 @@ const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): b
          user, they have tobe superadmin and they should be
          creating an admin.
      */
-    const hierrarchy: Record<UserTypes, UserTypes[]>= {
+    const hierarchy: Record<UserTypes, UserTypes[]>= {
         superadmin: [ADMIN],
         admin: [],
         customer: [],
     };
-    return hierrarchy[creatorUserType].includes(targetUserType);
+    return hierarchy[creatorUserType].includes(targetUserType);
 };
 
 const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): boolean => {
-    const hierrarchy: Record<UserTypes, UserTypes[]>= {
+    const hierarchy: Record<UserTypes, UserTypes[]>= {
         superadmin: [ADMIN, CUSTOMER],
         admin: [CUSTOMER],
         customer: [],
     };
-    return hierrarchy[deletorUserType].includes(targetUserType);
+    return hierarchy[deletorUserType].includes(targetUserType);
 };
 
 const getPasswordHash = async (textPassword: string): Promise<string> => {
@@ -267,7 +267,7 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
 export {
     getAllUsers,
     getUser,
-    getMySelf,
+    getMyself,
     createUser,
     canCreateUser,
     updateUser,

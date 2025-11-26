@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { ADMIN, AuthenticatedRequest, CUSTOMER, GetUsersQueryParams } from '../types';
 import { AuthenticationError, UnauthorizedError } from '../errors';
-import { canCreateUser, createUser, deleteUser, getAllUsers, getMySelf, getUser, updateUser } from '../services';
+import { canCreateUser, createUser, deleteUser, getAllUsers, getMyself, getUser, updateUser } from '../services';
 import { GetUsersQueryParamsSchema, UpdateUser, User } from '../validation';
 
 
@@ -33,7 +33,7 @@ const getMeController = async (req: AuthenticatedRequest, res: Response, next: N
         next(unauthorizedError);
         return;
     }
-    const me = await getMySelf(req.user.userId);  
+    const me = await getMyself(req.user.userId);  
     res.status(200).json(me);
 };
 
