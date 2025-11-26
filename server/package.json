@@ -56,6 +56,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "camelcase-keys": "^10.0.0",
+    "change-case": "^5.4.4",
     "cors": "^2.8.5",
     "cross-env": "^10.1.0",
     "db-migrate": "^0.11.14",

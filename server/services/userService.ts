@@ -17,7 +17,7 @@ import {
     UserDBRow,
     GetUsersQueryParams
 } from '../types';
-import { convertToSnakeCaseDeep } from '../utilities';
+import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
 
 
@@ -36,8 +36,8 @@ const mapDate = (user: UserDBRow): User => {
 const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<User[]> => {
     const dbPool = await getPGDBPool();
 
-    const { userType, search, sortBy } = queryFilteringOptions;
-
+    const { userType, search } = queryFilteringOptions;
+    const sortBy = queryFilteringOptions.sortBy ? convertStringToSnakeCase(queryFilteringOptions.sortBy): '';
     const page = (queryFilteringOptions.page && parseInt(queryFilteringOptions.page, 10)) || 1;
     const sortOrder = (queryFilteringOptions.sortOrder && queryFilteringOptions.sortOrder.toLowerCase() === 'asc') ? sqlTag.fragment`ASC`  : sqlTag.fragment`DESC`;
     const userTypeFragment = userType ? sqlTag.fragment`AND user_type=${userType}` : sqlTag.fragment``;
@@ -49,6 +49,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const sortByFragment = sortBy ? sqlTag.fragment`ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`ORDER BY created_at DESC`;
     const pageFragment = page ? sqlTag.fragment`OFFSET ${(page - 1) * USERS_PAGINATION_LIMIT}` : sqlTag.fragment``;
 
+
     const result = await dbPool.query(sqlTag.typeAlias('User')`
         SELECT user_id, username, email, user_type, created_at
         FROM users
@@ -59,9 +60,9 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
         LIMIT ${USERS_PAGINATION_LIMIT}
         ${pageFragment}
     `);
+    
 
     const users = result.rows;
-    
     return users.map(mapDate);
 };
 
