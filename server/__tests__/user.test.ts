@@ -1,4 +1,6 @@
     
+import * as R from 'ramda';
+
 import {
     EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409,
     adminUsersSeedData,
@@ -7,6 +9,7 @@ import {
 } from './testUtils';
 import { User } from '../types';
 import { endConnectionPool, initPGDBPool } from '../configs';
+import { USERS_PAGINATION_LIMIT } from '../constants';
 
 describe('User accounts related tests', () => {
 
@@ -64,6 +67,65 @@ describe('User accounts related tests', () => {
             };
             const token = await login(loginPayload);
             await createUser(newAdminUser, EXPECT_400, token);
+        });
+    });
+
+    describe('GET users cases', () => {
+        test('GET users by superadmin works.', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const response = await getUsers(EXPECT_200, token);
+            expect(response.body).toHaveLength(10);  // Due to pagination, 10 users are returned.
+        });
+
+        test('GET users and filter by username or email works', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const response = await getUsers(EXPECT_200, token, 'search=admin_alpha');
+
+            // 6 because in the seed data, 3 users have username starting with 'admin_alpha' and 3 users have email starting with 'admin_alpha'.
+            expect(response.body).toHaveLength(6);
+        });
+
+        test.only('GET users and filter by userType works', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const response = await getUsers(EXPECT_200, token, 'userType=admin');
+            const users = response.body as User[];
+
+            expect(users).toHaveLength(10);
+            expect(users.every(user => user.userType === 'admin')).toBe(true);
+        });
+
+        test.only('GET users and filter by userType and pagination', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
+            const secondPageAdminUsersInDescendingOrder = adminUsersSeedData.slice().sort((a, b) => b.username.localeCompare(a.username)).slice(USERS_PAGINATION_LIMIT, USERS_PAGINATION_LIMIT * 2);
+            const secondPageUsers = secondPageAdminUsersInDescendingOrder.map(user => R.omit(['password'], user));
+            
+            
+            const loginPayload = {
+                username: existingAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+
+            const response = await getUsers(EXPECT_200, token, 'userType=admin&page=2&sortBy=username&sortOrder=desc');
+            const users = response.body as User[];
+            
+            expect(users).toHaveLength(10);
+            const usersWithoutIds = users.map(user => {
+                return R.omit(['userId', 'createdAt', 'updatedAt', 'deletedAt'], user);
+            });
+            expect(usersWithoutIds).toEqual(secondPageUsers);
         });
     });
 

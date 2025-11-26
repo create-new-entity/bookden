@@ -25,7 +25,9 @@ export const seedCustomerUser = {
     userType: CUSTOMER
 };
 
-export const adminUsersSeedData = allAdminUsersSeedData.slice(0, 15).map(user => ({ ...user, password: 'password' })) as NewUserPayload[];
-export const customerUsersSeedData = allCustomerUsersSeedData.slice(0, 15).map(user => ({ ...user, password: 'password' })) as NewUserPayload[];
+const MAX_USERS_PER_TYPE_FOR_TESTING = 20;
+
+export const adminUsersSeedData = allAdminUsersSeedData.slice(0, MAX_USERS_PER_TYPE_FOR_TESTING).map(user => ({ ...user, password: 'password' })) as NewUserPayload[];
+export const customerUsersSeedData = allCustomerUsersSeedData.slice(0, MAX_USERS_PER_TYPE_FOR_TESTING).map(user => ({ ...user, password: 'password' })) as NewUserPayload[];
 
 export const allUsersSeedData = [...adminUsersSeedData, ...customerUsersSeedData];
