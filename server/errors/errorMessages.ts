@@ -15,6 +15,7 @@ const VALIDATION_FAILED = 'ValidationFailed' as const;
 const UNSUPPORTED_AVATAR_EXTENSION = 'UnsupportedAvatarExtension' as const;
 const NO_FILE_UPLOADED = 'NoFileUploaded' as const;
 const AVATAR_NOT_FOUND = 'AvatarNotFound' as const;
+const INVALID_AUTH_HEADER = 'InvalidAuthHeader' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -34,6 +35,7 @@ export const errorNames = {
     unsupportedAvatarExtension: UNSUPPORTED_AVATAR_EXTENSION,
     noFileUploaded: NO_FILE_UPLOADED,
     avatarNotFound: AVATAR_NOT_FOUND,
+    invalidAuthHeader: INVALID_AUTH_HEADER,
 };
 
 export const errorMessages = {
@@ -53,7 +55,8 @@ export const errorMessages = {
     [VALIDATION_FAILED]: 'Validation failed',
     [UNSUPPORTED_AVATAR_EXTENSION]: 'Only JPEG, PNG, and WebP are allowed',
     [NO_FILE_UPLOADED]: 'No file uploaded',
-    [AVATAR_NOT_FOUND]: 'Avatar not found'
+    [AVATAR_NOT_FOUND]: 'Avatar not found',
+    [INVALID_AUTH_HEADER]: 'Invalid Authorization header format'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;
