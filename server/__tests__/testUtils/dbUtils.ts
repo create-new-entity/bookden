@@ -1,9 +1,8 @@
 import apiSupertest from 'supertest';
-import { seedAdminUser, seedCustomerUser, seedSuperAdminUser } from './seeds';
+import { allUsersSeedData, seedSuperAdminUser } from './seeds';
 import app from '../../app';
 import { testBaseUrl } from '../../routes/testRoutes';
 import { getPGDBPool, sqlTag } from '../../configs';
-
 
 export const clearDB = async () => {
     const pgDBpool = await getPGDBPool();
@@ -23,13 +22,10 @@ export const createSomeSeedUsers = async () => {
         .send(seedSuperAdminUser)
         .expect(201);
 
-    await apiSupertest(app)
-        .post(`${testBaseUrl}/users`)
-        .send(seedAdminUser)
-        .expect(201);
-    
-    await apiSupertest(app)
-        .post(`${testBaseUrl}/users`)
-        .send(seedCustomerUser)
-        .expect(201);
+    for await (const user of allUsersSeedData) {
+        await apiSupertest(app)
+            .post(`${testBaseUrl}/users`)
+            .send({ ...user, password: 'password' })
+            .expect(201);
+    }
 };

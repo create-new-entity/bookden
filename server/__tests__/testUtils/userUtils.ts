@@ -8,6 +8,7 @@ import { avatarBaseUrl } from '../../routes/avatarRoutes';
 
 
 export const login = async (loginPayload: { username: string, password: string }): Promise<string> => {
+    console.log('loginPayload', loginPayload);
     const response = await apiSupertest(app)
         .post(loginBaseUrl)
         .send(loginPayload)
@@ -47,9 +48,9 @@ export const deleteUser = async (userId: number, expectedCode: number, token: st
         .expect(expectedCode);
 };
 
-export const getUsers = async (expectedCode: number, token: string) => {
+export const getUsers = async (expectedCode: number, token: string, queryParams?: string) => {
     return await apiSupertest(app)
-        .get(userBaseUrl)
+        .get(queryParams ? `${userBaseUrl}?${queryParams}` : userBaseUrl)
         .set({
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
