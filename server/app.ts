@@ -16,6 +16,7 @@ import {
     healthRouter,
 } from './routes';
 import { errorHandler } from './middlewares';
+import { globalRateLimiter, loginRateLimiter } from './middlewares/rateLimit';
 
 const app = express();
 
@@ -23,11 +24,13 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
+app.use(healthBaseUrl, healthRouter);
+app.use(globalRateLimiter);
 
 app.use(userBaseUrl, userRouter);
-app.use(loginBaseUrl, loginRouter);
+app.use(loginBaseUrl, loginRateLimiter, loginRouter);
 app.use(avatarBaseUrl, avatarRouter);
-app.use(healthBaseUrl, healthRouter);
+
 
 if(isTestEnvironment()) {
     app.use(testBaseUrl, testRouter);

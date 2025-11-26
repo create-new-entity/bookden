@@ -7,3 +7,6 @@ export const userTypes = ['customer', 'admin', 'superadmin'] as const;
 export const usersSortOrderOptions = ['asc', 'desc'] as const;
 export const usersSortByOptions = ['username', 'email', 'userType', 'createdAt'] as const;
 export const USERS_PAGINATION_LIMIT = 10;
+export const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
+export const LOGIN_RATE_LIMIT_MAX = 30;
+export const GLOBAL_RATE_LIMIT_MAX = 200;
