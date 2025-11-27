@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useNavContext, useThemeModeContext } from '../../contexts';
 import CustomAutoComplete from './CustomAutoComplete';
+import useBookSearchVisibility from '../../hooks/useBookSearchVisibility';
 
 const styles = {
     stack: {
@@ -52,6 +53,7 @@ const NavBar = () => {
     const { setShowNavDrawer, options } = useNavContext();
     const { isLightMode } = useThemeModeContext();
     const navigate = useNavigate();
+    const showBookSearch = useBookSearchVisibility();
 
 
     return (
@@ -70,10 +72,14 @@ const NavBar = () => {
                             />
                         </Box>
                     </Button>
-                    <CustomAutoComplete
-                        id='navSearchBox'
-                        sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
-                    />
+                    {
+                        showBookSearch && (
+                            <CustomAutoComplete
+                                id='navSearchBox'
+                                sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
+                            />
+                        )
+                    }
                     <Avatar sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                         setAnchorElement(e.currentTarget);
                         setMenuOpen(true);

@@ -1,3 +1,5 @@
+
+import { CustomAutoComplete } from '../components';
 import useUsersList from '../hooks/useUsersList';
 
 
@@ -8,6 +10,7 @@ const UserManagementPage = () => {
     console.log('usersList', usersList.data);
     return (
         <div style={{ marginTop: '2rem', overflowY: 'auto', maxHeight: 'calc(100vh - 7rem)' }}> 
+            <CustomAutoComplete id='userManagementSearchBox'/>
             {
                 usersList.data?.map((user) => (
                     <div key={user.userId}>

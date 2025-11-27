@@ -6,11 +6,13 @@ import { useAuthContext, useNavContext, useNotificationContext } from './context
 import { NavBar, NavDrawer } from './components';
 import { Snackbar } from '@mui/material';
 import { NOTIFICATION_DELAY } from './constants';
+import { ADMIN_TOOLS, AUTH, HOME, PROFILE, USER_MANAGEMENT } from './constants/routes';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
     const { setOptions, setShowNavDrawer } = useNavContext();
     const location = useLocation();
+    // console.log('location', location);
     const { open, onClose, message, anchorOrigin } = useNotificationContext();
 
     useEffect(() => {
@@ -43,11 +45,11 @@ const App = () => {
                 </>
             }
             <Routes>
-                <Route path="/auth" element={<LogInPage/>} />
-                <Route path="/profile" element={<ProfilePage/>}/>
-                <Route path="/user-management" element={<UserManagementPage/>} />
-                <Route path="/admin-tools" element={<AdminToolsPage/>} />
-                <Route path="/" element={<HomePage/>} />
+                <Route path={AUTH} element={<LogInPage/>} />
+                <Route path={PROFILE} element={<ProfilePage/>}/>
+                <Route path={USER_MANAGEMENT} element={<UserManagementPage/>} />
+                <Route path={ADMIN_TOOLS} element={<AdminToolsPage/>} />
+                <Route path={HOME} element={<HomePage/>} />
             </Routes>
             <Snackbar
                 autoHideDuration={NOTIFICATION_DELAY}
