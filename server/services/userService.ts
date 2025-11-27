@@ -15,7 +15,8 @@ import {
     JWTSignPayload,
     ADMIN, CUSTOMER, UpdateUserPayload, User,
     UserDBRow,
-    GetUsersQueryParams
+    GetUsersQueryParams,
+    PaginatedUsers
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
@@ -33,7 +34,7 @@ const mapDate = (user: UserDBRow): User => {
     };
 };
 
-const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<User[]> => {
+const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<PaginatedUsers> => {
     const dbPool = await getPGDBPool();
 
     const { userType, search } = queryFilteringOptions;
@@ -46,7 +47,10 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
             username ILIKE  ${'%' + search + '%'}
             OR email ILIKE  ${'%' + search + '%'}
         )` : sqlTag.fragment``;
-    const sortByFragment = sortBy ? sqlTag.fragment`ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`ORDER BY created_at DESC`;
+
+    const defaultSortByIdentifier = sqlTag.identifier(['created_at']);
+    const sortByFragment = sortBy ? sqlTag.fragment`ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`ORDER BY ${defaultSortByIdentifier} DESC`;
+    
     const pageFragment = page ? sqlTag.fragment`OFFSET ${(page - 1) * USERS_PAGINATION_LIMIT}` : sqlTag.fragment``;
 
 
@@ -60,10 +64,33 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
         LIMIT ${USERS_PAGINATION_LIMIT}
         ${pageFragment}
     `);
-    
 
+    const totalResult = await dbPool.one(sqlTag.typeAlias('Total')`
+        SELECT COUNT(user_id)::int AS total
+        FROM users
+        WHERE deleted_at IS NULL
+        ${searchFragment}
+        ${userTypeFragment}
+    `);
+    const totalUsers = totalResult.total;
+
+    const totalPages = Math.ceil(totalUsers / USERS_PAGINATION_LIMIT);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+    
     const users = result.rows;
-    return users.map(mapDate);
+    
+    return {
+        users: users.map(mapDate),
+        pagination: {
+            page,
+            limit: USERS_PAGINATION_LIMIT,
+            total: totalUsers,
+            totalPages,
+            hasNextPage,
+            hasPreviousPage
+        }
+    };
 };
 
 const getUser = async (requestorUserId: number, targetUserId: number) => {

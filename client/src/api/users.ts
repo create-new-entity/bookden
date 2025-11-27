@@ -1,6 +1,6 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 import { usersUrl } from './endpoints';
-import type { User } from '../types';
+import type { PaginatedUsers, User } from '../types';
 import { removeEmptyValues } from '../utility';
 
 type GetUsersListParams = {
@@ -11,7 +11,7 @@ type GetUsersListParams = {
     userType: string;
 };
 
-export const getUsersList = async (params: GetUsersListParams, token: string): Promise<User[]> => {
+export const getUsersList = async (params: GetUsersListParams, token: string): Promise<PaginatedUsers> => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`

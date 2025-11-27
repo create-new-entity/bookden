@@ -12,7 +12,7 @@ const UserManagementPage = () => {
         <div style={{ marginTop: '2rem', overflowY: 'auto', maxHeight: 'calc(100vh - 7rem)' }}> 
             <CustomAutoComplete id='userManagementSearchBox'/>
             {
-                usersList.data?.map((user) => (
+                usersList.data?.users.map((user) => (
                     <div key={user.userId}>
                         <h2>{user.username}</h2>
                         <p>{user.email}</p>

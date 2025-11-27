@@ -12,3 +12,7 @@ export const UserTypeAlias = z.object({
     updated_at: z.string().nullable(),
     created_at: z.string(),
 });
+
+export const TotalTypeAlias = z.object({
+    total: z.number(),
+});

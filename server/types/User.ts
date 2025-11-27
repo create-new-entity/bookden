@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { CamelCaseDeep } from './Utilities';
 import { GetUsersQueryParamsSchema } from '../validation';
 import { UserTypeAlias } from '../typeAliases';
+import { Pagination } from './Pagination';
 
 
 export type UserDBRow = z.infer<typeof UserTypeAlias>;
@@ -21,6 +22,11 @@ export type User = CamelCaseDeep<Omit<UserDBRow, 'created_at' | 'updated_at' | '
     createdAt: Date;
     updatedAt: Date | null;
     deletedAt: Date | null;
+};
+
+export type PaginatedUsers = {
+    users: User[];
+    pagination: Pagination;
 };
   
 export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt'> {

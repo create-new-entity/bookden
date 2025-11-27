@@ -11,7 +11,7 @@ const useUsersList = () => {
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState(CREATED_AT);
     const [sortOrder, setSortOrder] = useState(DESC);
-    const [userType, setUserType] = useState('admin');
+    const [userType, setUserType] = useState('customer');
     const { token } = useAuthContext();
 
     const queryFn = () => {
