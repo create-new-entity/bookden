@@ -1,45 +1,56 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Box, Tab, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Tab, Typography, useMediaQuery, useTheme, type SxProps, type Theme } from '@mui/material';
 import React from 'react';
 
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
 import { useThemeModeContext } from '../../contexts';
 
-const styles: Record<string, React.CSSProperties> = {
-    rootContainer: {
-        alignSelf: 'stretch',
-        flex: 1,
+type Styles = {
+    rootContainer: SxProps<Theme>;
+    tabPanelsContainer: SxProps<Theme>;
+    tabPanel: SxProps<Theme>;
+    bookdenLogo: SxProps<Theme>;
+};
 
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-
-        padding: '0.5rem',
-        paddingTop: '13rem'
-    },
-
-    tabPanelsContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignSelf: 'stretch'
-    },
-    tabPanel: {
-        padding: 0,
-        flex: 1
-    },
-
-    bookdenLogo: {
-        height: '5rem'
-    }
+const getStyles = (theme: Theme): Styles => {
+    return {
+        rootContainer: {
+            alignSelf: 'stretch',
+            flex: 1,
+    
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.palette.success.light,
+    
+            padding: '0.5rem',
+            marginTop: '-5rem'
+        },
+    
+        tabPanelsContainer: {
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignSelf: 'stretch'
+        },
+        tabPanel: {
+            padding: 0,
+            flex: 1
+        },
+    
+        bookdenLogo: {
+            height: '5rem'
+        }
+    };
 };
 
 
 const AuthenticationTabs = () => {
     const [value, setValue] = React.useState('logIn');
     const theme = useTheme();
+    const styles = getStyles(theme);
     const { isLightMode } = useThemeModeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 

@@ -17,3 +17,5 @@ export const USERS_SORT_BY_OPTIONS = [USERNAME, EMAIL, USER_TYPE, CREATED_AT] as
 export const ALL_TYPES_OF_USERS: UserType[] = [CUSTOMER, ADMIN, SUPERADMIN];
 
 export const PLACE_HOLDER_AVATAR = `${import.meta.env.BASE_URL}assets/images/avatarPlaceholder.png`;
+
+export const MAX_NUMBER_OF_RECENT_SEARCH_VALUES = 5;

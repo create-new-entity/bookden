@@ -237,6 +237,17 @@ export const getTheme = (mode: ThemeMode) => {
                         fontSize: LARGE_SVG_ICON_FONT_SIZE
                     }
                 }
+            },
+            MuiAutocomplete: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                        borderRadius: '0.5rem'
+                    },
+                    paper: {
+                        backgroundColor: theme.palette.background.elevated,
+                    }
+                }
             }
         }
     };

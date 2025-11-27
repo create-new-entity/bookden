@@ -1,14 +1,14 @@
 import {
-    AppBar, Autocomplete, Avatar, Box,
+    AppBar, Avatar, Box,
     Button, IconButton, Menu, MenuItem,
-    Stack, TextField, Toolbar
+    Stack, Toolbar
 } from '@mui/material';
 import { useState } from 'react';
-import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 
 import { useNavContext, useThemeModeContext } from '../../contexts';
+import CustomAutoComplete from './CustomAutoComplete';
 
 const styles = {
     stack: {
@@ -70,12 +70,9 @@ const NavBar = () => {
                             />
                         </Box>
                     </Button>
-                    <Autocomplete
+                    <CustomAutoComplete
+                        id='navSearchBox'
                         sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
-                        options={[]}
-                        renderInput={(params) => <TextField {...params} sx={{
-                            borderRadius: '0.5rem'
-                        }} slotProps={{ input: { startAdornment: <SearchIcon/>}}}/>}
                     />
                     <Avatar sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                         setAnchorElement(e.currentTarget);
