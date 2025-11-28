@@ -8,8 +8,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 
 import { useNavContext, useThemeModeContext } from '../../contexts';
-import CustomAutoComplete from './CustomAutoComplete';
 import useBookSearchVisibility from '../../hooks/useBookSearchVisibility';
+import { CustomAutoComplete } from '../custom';
 
 const styles = {
     stack: {

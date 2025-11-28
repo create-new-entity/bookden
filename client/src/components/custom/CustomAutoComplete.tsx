@@ -6,7 +6,7 @@ import { isString } from '../../types';
 import { MAX_NUMBER_OF_RECENT_SEARCH_VALUES } from '../../constants';
 
 
-type CustomAutoComplete = {
+type CustomAutoCompleteProps = {
     id: string;
     sx?: SxProps<Theme>;
 } & Omit<AutocompleteProps<
@@ -17,7 +17,7 @@ type CustomAutoComplete = {
     >, 'renderInput' | 'options'>;
 
 
-const CustomAutoComplete = (props: CustomAutoComplete) => {
+const CustomAutoComplete = (props: CustomAutoCompleteProps) => {
     const [previouslySearchedValues, setPreviouslySearchedValues] = useLocalStorage<string[]>(props.id, []);
     
     return (

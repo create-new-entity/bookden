@@ -7,4 +7,3 @@ export { default as NavBar } from './NavBar';
 export { default as NavDrawer } from './NavDrawer';
 export { default as SignUpTab } from './SignUpTab';
 export { default as ThemeSwitch } from './ThemeSwitch';
-export { default as CustomAutoComplete } from './CustomAutoComplete';
