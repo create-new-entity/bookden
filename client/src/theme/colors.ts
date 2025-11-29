@@ -1,7 +1,7 @@
 export const customColors = {
     // Light mode
     lightPrimaryMain: '#8A6BBE',        // muted purple
-    lightPrimaryLight: '#B19EE0',
+    lightPrimaryLight: '#E7E1FB',
     lightPrimaryDark: '#5F4290',
     lightPrimaryText: '#FFFFFF',
 

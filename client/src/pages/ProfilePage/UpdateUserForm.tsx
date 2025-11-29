@@ -4,11 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as R from 'ramda';
 
 import { UpdateUserResolver, type UpdateUserFormData } from '../../validations';
-import { CustomTextField as TextField } from '../../components';
+import { CustomTextField } from '../../components/custom';
 import { useAuthContext } from '../../contexts';
-import useUpdateProfile from '../../hooks/useUpdateProfile';
 import { useEffect, useRef, useState } from 'react';
 import { NOTIFICATION_DELAY } from '../../constants';
+import { useUpdateProfile } from '../../hooks';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -137,11 +137,11 @@ const UpdateUserForm = () => {
                 <Stack sx={styles.usernameEmailStack} alignItems={'center'} gap={'1rem'}>
                     <Box sx={styles.container}>
                         <Typography>Username</Typography>
-                        <TextField fullWidth {...register(USERNAME_FIELD)} error={!!formState.errors[USERNAME_FIELD]}/>
+                        <CustomTextField fullWidth {...register(USERNAME_FIELD)} error={!!formState.errors[USERNAME_FIELD]}/>
                     </Box>
                     <Box sx={styles.container}>
                         <Typography>Email</Typography>
-                        <TextField fullWidth {...register(EMAIL_FIELD)} error={!!formState.errors[EMAIL_FIELD]}/>
+                        <CustomTextField fullWidth {...register(EMAIL_FIELD)} error={!!formState.errors[EMAIL_FIELD]}/>
                     </Box>
                 </Stack>
                 <ErrorText isError={!!formState.errors[USERNAME_FIELD]} errorMessage={formState.errors[USERNAME_FIELD]?.message || ''}/>
@@ -149,13 +149,13 @@ const UpdateUserForm = () => {
                 
                 <Box>
                     <Typography>New Password</Typography>
-                    <TextField type='password' fullWidth {...register(NEW_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
+                    <CustomTextField type='password' fullWidth {...register(NEW_PASSWORD)} error={!!formState.errors[NEW_PASSWORD]}/>
                     <ErrorText isError={!!formState.errors[NEW_PASSWORD]} errorMessage={formState.errors[NEW_PASSWORD]?.message || ''}/>
                 </Box>
                 
                 <Box>
                     <Typography>Confirm Password</Typography>
-                    <TextField type='password' fullWidth disabled={!isNewPasswordDirty} {...register(CONFIRM_PASSWORD)} error={!!formState.errors[CONFIRM_PASSWORD]}/>
+                    <CustomTextField type='password' fullWidth disabled={!isNewPasswordDirty} {...register(CONFIRM_PASSWORD)} error={!!formState.errors[CONFIRM_PASSWORD]}/>
                     <ErrorText isError={!!formState.errors[CONFIRM_PASSWORD]} errorMessage={formState.errors[CONFIRM_PASSWORD]?.message || ''}/>
                 </Box>
                 
