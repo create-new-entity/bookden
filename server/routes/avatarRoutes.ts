@@ -15,6 +15,12 @@ avatarRouter.put(
 );
 
 avatarRouter.get(
+    '/users/:userId',
+    tokenExtractor,
+    asyncHandler(getAvatarController)
+);
+
+avatarRouter.get(
     '/',
     tokenExtractor,
     asyncHandler(getAvatarController)

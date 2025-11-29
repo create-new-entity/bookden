@@ -20,6 +20,7 @@ import {
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
+import { avatarBaseUrl } from '../routes';
 
 
 const mapDate = (user: UserDBRow): User => {
@@ -31,6 +32,13 @@ const mapDate = (user: UserDBRow): User => {
         createdAt: new Date(user.created_at),
         updatedAt: user.updated_at ? new Date(user.updated_at) : null,
         deletedAt: user.deleted_at ? new Date(user.deleted_at) : null
+    };
+};
+
+const mapAvatarUrl = (user: User): User & { avatarUrl: string } => {
+    return {
+        ...user,
+        avatarUrl: `${avatarBaseUrl}/users/${user.userId}`
     };
 };
 
@@ -81,7 +89,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const users = result.rows;
     
     return {
-        users: users.map(mapDate),
+        users: users.map(mapDate).map(mapAvatarUrl),
         pagination: {
             page,
             limit: USERS_PAGINATION_LIMIT,
