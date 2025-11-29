@@ -248,6 +248,13 @@ export const getTheme = (mode: ThemeMode) => {
                         backgroundColor: theme.palette.background.elevated,
                     }
                 }
+            },
+            MuiSelect: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                    }
+                }
             }
         }
     };
