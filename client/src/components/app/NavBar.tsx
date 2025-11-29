@@ -1,49 +1,57 @@
 import {
     AppBar, Avatar, Box,
     Button, IconButton, Menu, MenuItem,
-    Stack, Toolbar
+    Stack, Toolbar,
+    useTheme,
+    type Theme
 } from '@mui/material';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 
 import { useNavContext, useThemeModeContext } from '../../contexts';
-import useBookSearchVisibility from '../../hooks/useBookSearchVisibility';
 import { CustomAutoComplete } from '../custom';
+import { useBookSearchVisibility } from '../../hooks';
+import { NAV_BAR_Z_INDEX } from '../../constants';
 
-const styles = {
-    stack: {
-        width: '100%',
-        height: '100%',
-        justifyContent: {
-            xs: 'flex-start',
-            sm: 'space-between'
+const getStyles = (_theme: Theme) => {
+    return {
+        appBar: {
+            zIndex: NAV_BAR_Z_INDEX
         },
-        alignItems: 'center'
-    },
-    menuIcon: {
-        display: { sm: 'none' }
-    },
-    logoButton: {
-        position: {
-            xs: 'absolute',
-            sm: 'static'
+        stack: {
+            width: '100%',
+            height: '100%',
+            justifyContent: {
+                xs: 'flex-start',
+                sm: 'space-between'
+            },
+            alignItems: 'center'
         },
-        left: {
-            xs: '50%',
-            sm: 'auto'
+        menuIcon: {
+            display: { sm: 'none' }
         },
-        transform: {
-            xs: 'translateX(-50%)',
-            sm: 'none'
-        }
-    },
-    searchBox: {
-        position: 'absolute',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: '40%'
-    },
+        logoButton: {
+            position: {
+                xs: 'absolute',
+                sm: 'static'
+            },
+            left: {
+                xs: '50%',
+                sm: 'auto'
+            },
+            transform: {
+                xs: 'translateX(-50%)',
+                sm: 'none'
+            }
+        },
+        searchBox: {
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '40%'
+        },
+    };
 };
 
 
@@ -54,10 +62,11 @@ const NavBar = () => {
     const { isLightMode } = useThemeModeContext();
     const navigate = useNavigate();
     const showBookSearch = useBookSearchVisibility();
-
+    const theme = useTheme();
+    const styles = getStyles(theme);
 
     return (
-        <AppBar position='sticky'>
+        <AppBar sx={styles.appBar} position='sticky'>
             <Toolbar>
                 <Stack direction={'row'} sx={styles.stack}>
                     <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
@@ -77,6 +86,7 @@ const NavBar = () => {
                             <CustomAutoComplete
                                 id='navSearchBox'
                                 sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
+                                handleChange={() => {}}
                             />
                         )
                     }
