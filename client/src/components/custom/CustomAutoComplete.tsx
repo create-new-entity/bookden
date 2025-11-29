@@ -11,6 +11,7 @@ type CustomAutoCompleteProps = {
     id: string;
     sx?: SxProps<Theme>;
     handleChange: (value: string) => void;
+    placeholder: string;
 } & Omit<AutocompleteProps<
         string, // Type of the option
         false,   // Multi selection not allowed
@@ -21,7 +22,7 @@ type CustomAutoCompleteProps = {
 
 const CustomAutoComplete = (props: CustomAutoCompleteProps) => {
     const [previouslySearchedValues, setPreviouslySearchedValues] = useLocalStorage<string[]>(props.id, []);
-    const { handleChange } = props;
+    const { handleChange, placeholder } = props;
 
     const save = (value: string) => {
         handleChange(value);
@@ -55,6 +56,7 @@ const CustomAutoComplete = (props: CustomAutoCompleteProps) => {
                         ...params.InputProps,
                         startAdornment: <IconButton><SearchIcon/></IconButton>
                     }}
+                    placeholder={placeholder}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             e.stopPropagation();

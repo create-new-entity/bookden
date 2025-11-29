@@ -69,6 +69,7 @@ const UserManagementPage = () => {
                     handleChange={(value) => {
                         setSearch(value);
                     }}
+                    placeholder='Search by username or email'
                 />
                 <SelectSortBy sortBy={sortBy} setSortBy={setSortBy} />
                 <SelectUserType userType={userType} setUserType={setUserType} />
