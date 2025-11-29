@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { LOGGED_IN_USER_DATA } from '../constants';
 import { isLoggedInUserData, type AuthContextType } from '../types';
-import useMe from '../hooks/useMe';
+import { useMe } from '../hooks';
 
 
 /*
