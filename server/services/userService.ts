@@ -54,14 +54,16 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestor
             OR email ILIKE  ${'%' + search + '%'}
         )` : sqlTag.fragment``;
 
-    const defaultSortByIdentifier = sqlTag.identifier(['created_at']);
-    const sortByFragment = sortBy ? sqlTag.fragment`ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`ORDER BY ${defaultSortByIdentifier} DESC`;
+    const defaultSortByIsNotNull = sqlTag.fragment`AND ${sqlTag.identifier(['created_at'])} IS NOT NULL`;
+    const sortByIsNotNull = sqlTag.fragment`AND ${sqlTag.identifier([sortBy])} IS NOT NULL`;
+    const sortByNotNull = sortBy ? sortByIsNotNull : defaultSortByIsNotNull;
+    const sortByFragment = sortBy ? sqlTag.fragment`${sortByIsNotNull} ORDER BY ${sqlTag.identifier([sortBy])} ${sortOrder}` : sqlTag.fragment`${defaultSortByIsNotNull} ORDER BY ${sqlTag.identifier(['created_at'])} DESC`;
     
     const pageFragment = page ? sqlTag.fragment`OFFSET ${(page - 1) * USERS_PAGINATION_LIMIT}` : sqlTag.fragment``;
 
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
-        SELECT user_id, username, email, user_type, created_at
+        SELECT user_id, username, email, user_type, created_at, updated_at, deleted_at
         FROM users
         WHERE user_type != 'superadmin'
         ${searchFragment}
@@ -77,6 +79,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestor
         WHERE user_type != 'superadmin'
         ${searchFragment}
         ${userTypeFragment}
+        ${sortByNotNull}
     `);
     const totalUsers = totalResult.total;
 
@@ -157,7 +160,7 @@ const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): b
     const hierarchy: Record<UserTypes, UserTypes[]>= {
         superadmin: [ADMIN, CUSTOMER],
         admin: [CUSTOMER],
-        customer: [],
+        customer: [CUSTOMER] // Deletes his own account.
     };
     return hierarchy[deletorUserType].includes(targetUserType);
 };
@@ -271,26 +274,18 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
     const notSameTypeButAuthorizedToDelete = notSameTypeUser && canDeleteUser(user.userType, targetUser.userType);
     
     /* 
-        Only a customer can delete his own account.
+        A customer can delete his own account.
         Admin can delete customer accounts.
         Superadmin is not allowed to delete himself. He can delete customer or admin users.
     */
     const customerTypeAndAllowedToDelete = (user.userType === targetUser.userType && user.userType === CUSTOMER) && (user.userId === targetUser.userId);
     const isAllowedToDelete = notSameTypeButAuthorizedToDelete || customerTypeAndAllowedToDelete;
     if(isAllowedToDelete) {
-        if(customerTypeAndAllowedToDelete) {
-            await dbPool.query(sqlTag.typeAlias('User')`
-                UPDATE users
-                SET deleted_at = NOW()
-                WHERE user_id = ${targetUserId}
-            `);
-        }
-        else {
-            await dbPool.query(sqlTag.typeAlias('User')`
-                DELETE FROM users
-                WHERE user_id = ${targetUserId};
-            `);
-        }
+        await dbPool.query(sqlTag.typeAlias('User')`
+            UPDATE users
+            SET deleted_at = NOW()
+            WHERE user_id = ${targetUserId}
+        `);
     }
     else {
         const forbiddenActionError = new UnauthorizedError();

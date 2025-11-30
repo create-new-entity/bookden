@@ -1,9 +1,9 @@
-import { Box, Card, CardContent, CardMedia, Stack, Typography } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip } from '@mui/material';
 
 import type { User } from '../../types';
 import { useAvatarBlob } from '../../hooks';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
-import { BORDER_RADIUS } from '../../constants';
+import { BORDER_RADIUS, DEFAULT_GAP, USERTYPE_CHIP_COLORS, USERTYPE_LABELS } from '../../constants';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -72,7 +72,13 @@ const UserCard = ({ item }: UserCardProps) => {
                 <CardContent sx={styles.cardContent}>
                     <Typography variant='h6'>{user.username}</Typography>
                     <Typography variant='body1'>{user.email}</Typography>
-                    <Typography variant='body1'>{user.userType}</Typography>
+                    <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
+                        <Chip sx={{ backgroundColor: USERTYPE_CHIP_COLORS[user.userType as keyof typeof USERTYPE_CHIP_COLORS] }} label={USERTYPE_LABELS[user.userType as keyof typeof USERTYPE_LABELS]} size='small' />
+                        {
+                            user.deletedAt &&
+                            <Chip label='Deleted' color='error' size='small' />
+                        }
+                    </Stack>
                     <Typography variant='body1'>{user.createdAt}</Typography>
                 </CardContent>
             </Stack>

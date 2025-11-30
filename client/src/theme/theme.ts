@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
-import { customColors } from './colors';
+import { customColors } from '../constants';
 import {
     BORDER_RADIUS,
     LARGE_SVG_ICON_FONT_SIZE,
@@ -280,6 +280,13 @@ export const getTheme = (mode: ThemeMode) => {
                     hidePrevButton: true,
                     shape: 'rounded',
                     variant: 'outlined'
+                }
+            },
+            MuiChip: {
+                styleOverrides: {
+                    sizeSmall: {
+                        fontSize: '0.6rem'
+                    }
                 }
             }
         }

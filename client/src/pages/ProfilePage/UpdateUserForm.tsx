@@ -7,8 +7,10 @@ import { UpdateUserResolver, type UpdateUserFormData } from '../../validations';
 import { CustomTextField } from '../../components/custom';
 import { useAuthContext } from '../../contexts';
 import { useEffect, useRef, useState } from 'react';
-import { NOTIFICATION_DELAY } from '../../constants';
+import { CUSTOMER, DEFAULT_GAP, NOTIFICATION_DELAY } from '../../constants';
 import { useUpdateProfile } from '../../hooks';
+import { deleteOwnAccount } from '../../api/profile';
+import { useNavigate } from 'react-router-dom';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -57,12 +59,13 @@ const ErrorText = ({ isError, errorMessage }: { isError: boolean, errorMessage: 
 
 const UpdateUserForm = () => {
     const theme = useTheme();
-    const { username, email } = useAuthContext();
+    const { username, email, userType, token, userId, clearAuthentication } = useAuthContext();
     const updateProfile = useUpdateProfile();
     const styles = getStyles(theme);
     const [responseErr, setResponseErr] = useState('');
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isResponseError = !!responseErr;
+    const isCustomer = userType === CUSTOMER;
 
     const defaultValues: UpdateUserFormData = {
         [USERNAME_FIELD]: username || '',
@@ -129,6 +132,15 @@ const UpdateUserForm = () => {
 
     const isNewPasswordDirty = formState.dirtyFields[NEW_PASSWORD];
     const isError = !R.isEmpty(formState.errors);
+
+    const handleDeleteAccount = async () => {
+        try {
+            await deleteOwnAccount(token, userId);
+            clearAuthentication();
+        } catch (error) {
+            console.error('Failed to delete account.', error);
+        }
+    };
     
 
     return (
@@ -164,13 +176,25 @@ const UpdateUserForm = () => {
                         isResponseError &&
                         <ErrorText isError={isResponseError} errorMessage={responseErr}/>
                     }
-                    <Button 
-                        disabled={isError || !formState.isDirty || updateProfile.isPending} 
-                        type='submit' 
-                        variant='contained'
-                    >
-                        {updateProfile.isPending ? 'Updating...' : 'Update Profile'}
-                    </Button>
+                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} gap={DEFAULT_GAP}>
+                        {
+                            isCustomer &&
+                            <Button
+                                variant='contained'
+                                color='error'
+                                onClick={handleDeleteAccount}
+                            >
+                                Delete Account
+                            </Button>
+                        }
+                        <Button 
+                            disabled={isError || !formState.isDirty || updateProfile.isPending} 
+                            type='submit' 
+                            variant='contained'
+                        >
+                            {updateProfile.isPending ? 'Updating...' : 'Update Profile'}
+                        </Button>
+                    </Stack>
                 </Stack>
             </Stack>
         </form>

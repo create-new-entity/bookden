@@ -12,7 +12,6 @@ const App = () => {
     const { clearAuthentication } = useAuthContext();
     const { setOptions, setShowNavDrawer } = useNavContext();
     const location = useLocation();
-    // console.log('location', location);
     const { open, onClose, message, anchorOrigin } = useNotificationContext();
 
     useEffect(() => {

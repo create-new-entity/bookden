@@ -82,5 +82,6 @@ export const customColors = {
     // Other
     paperYellow: '#F6DA8A',
     paleMint: '#C9E4CA',
-    sageGreen: '#9FBF90'
+    sageGreen: '#9FBF90',
+    lavendarSteel: '#D6D1E7'
 };

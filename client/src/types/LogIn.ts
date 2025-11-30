@@ -21,6 +21,7 @@ export interface SignUpPayload extends SignUp {
 }
 
 export type LoggedInUserData = {
+  userId: number;
   token: string;
   userType: UserType;
   username: string;

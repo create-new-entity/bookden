@@ -23,3 +23,12 @@ export const getMe = async (token: string): Promise<Omit<LoggedInUserData, 'toke
     const response = await axios.get(`${usersUrl}/me`, requestConfig);
     return response.data;
 };
+
+export const deleteOwnAccount = async (token: string, userId: number) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.delete(`${usersUrl}/${userId}`, requestConfig);
+};
