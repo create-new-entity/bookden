@@ -1,6 +1,6 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 import { usersUrl } from './endpoints';
-import type { PaginatedUsers, User } from '../types';
+import type { PaginatedUsers } from '../types';
 import { removeEmptyValues } from '../utility';
 
 type GetUsersListParams = {

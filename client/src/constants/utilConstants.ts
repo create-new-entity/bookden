@@ -31,3 +31,7 @@ export const USERS_LIST_SORT_BY_OPTIONS_TEXTS = {
 } as const;
 
 export const USER_INPUT_DELAY = 700;
+
+export const GRID_VIEW = 'grid' as const;
+export const LIST_VIEW = 'list' as const;
+export const VIEW_OPTIONS = [GRID_VIEW, LIST_VIEW] as const;

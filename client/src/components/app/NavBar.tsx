@@ -87,6 +87,7 @@ const NavBar = () => {
                                 id='navSearchBox'
                                 sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
                                 handleChange={() => {}}
+                                placeholder='Search books'
                             />
                         )
                     }

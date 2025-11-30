@@ -2,15 +2,22 @@
 
 import { Stack, useTheme, type Theme } from '@mui/material';
 
-import { useUsersList } from '../hooks';
+import { useUsersList, useViewOptions } from '../hooks';
 import {
     CONTENT_MARGIN,
     MARGIN_TOP_TO_AVOID_NAV_BAR,
     NAV_BAR_Z_INDEX,
     STACK_DEFAULT_GAP
 } from '../constants';
-import { SelectSortBy, SelectSortOrder, SelectUserType, CustomAutoComplete } from '../components';
-import UserCard from '../components/app/UserCard';
+import {
+    SelectSortBy,
+    SelectSortOrder,
+    SelectUserType,
+    CustomAutoComplete,
+    ViewOptions,
+    UserCard,
+    Items
+} from '../components';
 
 
 const getStyles = (theme: Theme) => {
@@ -50,6 +57,8 @@ const UserManagementPage = () => {
         setSearch
     } = useUsersList();
 
+    const { viewOption, setViewOption } = useViewOptions();
+
     return (
         <Stack
             sx={styles.rootStack}
@@ -78,16 +87,14 @@ const UserManagementPage = () => {
                 <SelectSortBy sortBy={sortBy} setSortBy={setSortBy} />
                 <SelectUserType userType={userType} setUserType={setUserType} />
                 <SelectSortOrder sortOrder={sortOrder} setSortOrder={setSortOrder} />
+                <ViewOptions viewOption={viewOption} setViewOption={setViewOption} />
             </Stack>
-            <Stack gap={'10px'}>
-                {
-                    usersList.data?.users.map((user) => {
-                        return (
-                            <UserCard key={user.userId} user={user} />
-                        );
-                    })
-                }
-            </Stack>
+            <Items
+                items={usersList.data?.users || []}
+                ItemComponent={UserCard}
+                getKey={(user) => user.userId}
+                viewOption={viewOption}
+            />
         </Stack>
     );
 };

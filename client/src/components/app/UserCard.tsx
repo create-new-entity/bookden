@@ -18,10 +18,11 @@ const getStyles = (_theme: Theme): Styles => {
 
 
 type UserCardProps = {
-    user: User;
+    item: User;
 };
 
-const UserCard = ({ user }: UserCardProps) => {
+const UserCard = ({ item }: UserCardProps) => {
+    const user = item;
     const { objectUrl } = useAvatarBlob(user.userId);
     const theme = useTheme();
     const styles = getStyles(theme);
