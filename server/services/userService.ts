@@ -20,7 +20,6 @@ import {
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
-import { avatarBaseUrl } from '../routes';
 
 
 const mapDate = (user: UserDBRow): User => {
