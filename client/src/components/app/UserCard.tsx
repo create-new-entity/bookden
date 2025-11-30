@@ -3,6 +3,7 @@ import { Box, Card, CardContent, CardMedia, Stack, Typography } from '@mui/mater
 import type { User } from '../../types';
 import { useAvatarBlob } from '../../hooks';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
+import { BORDER_RADIUS } from '../../constants';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -11,20 +12,22 @@ type Styles = {
     cardContent: SxProps<Theme>;
 };
 
-const getStyles = (_theme: Theme): Styles => {
+const getStyles = (theme: Theme): Styles => {
     return {
+        card: {
+            backgroundColor: theme.palette.primary.light,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+        },
         rootStack: {
             paddingLeft: '10px',
             height: '100%'
         },
-        card: {
-            height: '10rem',
-            width: '25rem'
-        },
         cardMedia: {
-            width: '6rem',
-            height: '6rem',
-            borderRadius: '50%',
+            width: '100px',
+            height: '100px',
+            borderRadius: BORDER_RADIUS,
             '& img': {
                 width: '100%',
                 height: '100%',

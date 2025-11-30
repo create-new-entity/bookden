@@ -1,10 +1,11 @@
 
 
-import { Box, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+import { Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
 
 import { useSetTabTitle, useUsersList, useViewOptions } from '../hooks';
 import {
     CONTENT_MARGIN,
+    GRID_VIEW,
     MARGIN_TOP_TO_AVOID_NAV_BAR,
     NAV_BAR_Z_INDEX,
     STACK_DEFAULT_GAP
@@ -14,7 +15,6 @@ import {
     SelectSortOrder,
     SelectUserType,
     CustomAutoComplete,
-    ViewOptions,
     UserCard,
     Items
 } from '../components';
@@ -73,8 +73,7 @@ const UserManagementPage = () => {
         setSearch,
         setPage
     } = useUsersList();
-
-    const { viewOption, setViewOption } = useViewOptions();
+    
     useSetTabTitle('User Management');
 
     return (
@@ -105,10 +104,15 @@ const UserManagementPage = () => {
                 <SelectSortBy sortBy={sortBy} setSortBy={setSortBy} />
                 <SelectUserType userType={userType} setUserType={setUserType} />
                 <SelectSortOrder sortOrder={sortOrder} setSortOrder={setSortOrder} />
-                <ViewOptions viewOption={viewOption} setViewOption={setViewOption} />
             </Stack>
             {
-                usersList.data &&
+                usersList.data && usersList.data.data.length === 0 &&
+                <Typography variant='body1'>
+                    No users found matching your search criteria.
+                </Typography>
+            }
+            {
+                usersList.data && usersList.data.data.length > 0 &&
                 <CustomPagination<User>
                     sx={styles.topPagination}
                     paginatedDataList={usersList.data}
@@ -120,10 +124,10 @@ const UserManagementPage = () => {
                 items={usersList.data?.data || []}
                 ItemComponent={UserCard}
                 getKey={(user) => user.userId}
-                viewOption={viewOption}
+                viewOption={GRID_VIEW}
             />
             {
-                usersList.data &&
+                usersList.data && usersList.data.data.length > 0 &&
                 <CustomPagination<User>
                     paginatedDataList={usersList.data}
                     setPage={setPage}

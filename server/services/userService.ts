@@ -57,7 +57,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const result = await dbPool.query(sqlTag.typeAlias('User')`
         SELECT user_id, username, email, user_type, created_at
         FROM users
-        WHERE deleted_at IS NULL
+        WHERE user_type != 'superadmin'
         ${searchFragment}
         ${userTypeFragment}
         ${sortByFragment}
@@ -68,7 +68,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const totalResult = await dbPool.one(sqlTag.typeAlias('Total')`
         SELECT COUNT(user_id)::int AS total
         FROM users
-        WHERE deleted_at IS NULL
+        WHERE user_type != 'superadmin'
         ${searchFragment}
         ${userTypeFragment}
     `);
