@@ -12,7 +12,6 @@ export type User = {
     createdAt: string;
     updatedAt: string;
     deletedAt: string;
-    avatarUrl?: string;
 };
 
 export type UserTypeOptions = UserType | 'all';

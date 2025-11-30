@@ -35,13 +35,6 @@ const mapDate = (user: UserDBRow): User => {
     };
 };
 
-const mapAvatarUrl = (user: User): User & { avatarUrl: string } => {
-    return {
-        ...user,
-        avatarUrl: `${avatarBaseUrl}/users/${user.userId}`
-    };
-};
-
 const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<PaginatedUsers> => {
     const dbPool = await getPGDBPool();
 
@@ -89,7 +82,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const users = result.rows;
     
     return {
-        users: users.map(mapDate).map(mapAvatarUrl),
+        users: users.map(mapDate),
         pagination: {
             page,
             limit: USERS_PAGINATION_LIMIT,
