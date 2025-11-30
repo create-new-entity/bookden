@@ -34,10 +34,16 @@ const mapDate = (user: UserDBRow): User => {
     };
 };
 
-const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<PaginatedDataList<User>> => {
+const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestorType: UserTypes): Promise<PaginatedDataList<User>> => {
     const dbPool = await getPGDBPool();
 
-    const { userType, search } = queryFilteringOptions;
+    const { search } = queryFilteringOptions;
+
+    let userType = queryFilteringOptions.userType;
+    if(requestorType === ADMIN) {
+        userType = CUSTOMER;
+    }
+    
     const sortBy = queryFilteringOptions.sortBy ? convertStringToSnakeCase(queryFilteringOptions.sortBy): '';
     const page = (queryFilteringOptions.page && parseInt(queryFilteringOptions.page, 10)) || 1;
     const sortOrder = (queryFilteringOptions.sortOrder && queryFilteringOptions.sortOrder.toLowerCase() === 'asc') ? sqlTag.fragment`ASC`  : sqlTag.fragment`DESC`;

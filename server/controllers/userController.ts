@@ -13,7 +13,7 @@ const getAllUsersController = async (req: AuthenticatedRequest<GetUsersQueryPara
     }
 
     const queryFilteringOptions = GetUsersQueryParamsSchema.parse(req.query);
-    const allUsers = await getAllUsers(queryFilteringOptions);
+    const allUsers = await getAllUsers(queryFilteringOptions, req.user.userType);
     res.status(200).json(allUsers);
 };
 

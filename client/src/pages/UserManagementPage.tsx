@@ -2,13 +2,14 @@
 
 import { Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
 
-import { useSetTabTitle, useUsersList, useViewOptions } from '../hooks';
+import { useSetTabTitle, useUsersList } from '../hooks';
 import {
     CONTENT_MARGIN,
     GRID_VIEW,
     MARGIN_TOP_TO_AVOID_NAV_BAR,
     NAV_BAR_Z_INDEX,
-    STACK_DEFAULT_GAP
+    STACK_DEFAULT_GAP,
+    SUPERADMIN
 } from '../constants';
 import {
     SelectSortBy,
@@ -20,6 +21,7 @@ import {
 } from '../components';
 import CustomPagination from '../components/custom/CustomPagination';
 import type { User } from '../types';
+import { useAuthContext } from '../contexts';
 
 
 type Styles = {
@@ -73,6 +75,9 @@ const UserManagementPage = () => {
         setSearch,
         setPage
     } = useUsersList();
+    const { userType: clientUserType } = useAuthContext();
+
+    const isClientSuperAdmin = clientUserType === SUPERADMIN;
     
     useSetTabTitle('User Management');
 
@@ -102,7 +107,7 @@ const UserManagementPage = () => {
                     placeholder='Search by username or email'
                 />
                 <SelectSortBy sortBy={sortBy} setSortBy={setSortBy} />
-                <SelectUserType userType={userType} setUserType={setUserType} />
+                { isClientSuperAdmin && <SelectUserType userType={userType} setUserType={setUserType} /> }
                 <SelectSortOrder sortOrder={sortOrder} setSortOrder={setSortOrder} />
             </Stack>
             {

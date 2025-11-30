@@ -17,7 +17,7 @@ const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx }: ItemsProps<
     const isListView = viewOption === LIST_VIEW;
     const gridSizes = isListView ? LIST_VIEW_GRID_SIZES : ITEMS_GRID_SIZES;
     return (
-        <Grid container spacing={4} sx={sx}>
+        <Grid container spacing={4} sx={{ width: '100%', ...sx }}>
             {
                 items.map((item) => (
                     <Grid size={gridSizes} key={getKey(item)}>
