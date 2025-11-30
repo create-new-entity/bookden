@@ -1,11 +1,11 @@
 import { Avatar, Badge, Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
-import { useEffect, type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './UtilityComponents';
 import { useAuthContext, useAvatarContext } from '../../contexts';
 import UpdateUserForm from './UpdateUserForm';
-import { useAvatar } from '../../hooks';
+import { useAvatar, useSetTabTitle } from '../../hooks';
 
 
 const AVATAR_DIMENSIONS = '13rem';
@@ -70,9 +70,7 @@ const ProfilePage = () => {
         }
     }, [navigate, hasExistingLoggedInUser, isUserLoggedIn]);
 
-    useEffect(() => {
-        document.title = 'Profile';
-    }, []);
+    useSetTabTitle('Profile');
 
     const updateOrDeleteAvatarOptions = (
         <WrapperStack>

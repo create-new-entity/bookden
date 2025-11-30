@@ -2,7 +2,7 @@
 
 import { Stack, useTheme, type Theme } from '@mui/material';
 
-import { useUsersList, useViewOptions } from '../hooks';
+import { useSetTabTitle, useUsersList, useViewOptions } from '../hooks';
 import {
     CONTENT_MARGIN,
     MARGIN_TOP_TO_AVOID_NAV_BAR,
@@ -58,6 +58,7 @@ const UserManagementPage = () => {
     } = useUsersList();
 
     const { viewOption, setViewOption } = useViewOptions();
+    useSetTabTitle('User Management');
 
     return (
         <Stack

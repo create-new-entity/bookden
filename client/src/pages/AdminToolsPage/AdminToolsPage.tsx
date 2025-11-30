@@ -1,11 +1,11 @@
 import { Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
-import { useEffect } from 'react';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BarChartIcon from '@mui/icons-material/BarChart';
 
 import AdminToolCard from './AdminToolCard';
 import { useNavigate } from 'react-router-dom';
+import { useSetTabTitle } from '../../hooks';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -52,9 +52,7 @@ const AdminToolsPage = () => {
     const styles = getStyles(theme);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        document.title = 'Admin Tools';
-    }, []);
+    useSetTabTitle('Admin Tools');
 
     const handleUserManagementClick = () => {
         navigate('/user-management');

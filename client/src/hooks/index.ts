@@ -8,5 +8,5 @@ export { default as useUpdateProfile } from './useUpdateProfile';
 export { default as useUsersList } from './useUsersList';
 export { default as useAvatarBlob } from './useAvatarBlob';
 export { default as useViewOptions } from './useViewOptions';
-
+export { default as useSetTabTitle } from './useSetTabTitle';
 
