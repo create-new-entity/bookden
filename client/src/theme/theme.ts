@@ -1,7 +1,14 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
+
 import { customColors } from './colors';
-import { LARGE_SVG_ICON_FONT_SIZE } from '../constants';
+import {
+    BORDER_RADIUS,
+    LARGE_SVG_ICON_FONT_SIZE,
+    PLACE_HOLDER_AVATAR,
+    PLACE_HOLDER_AVATAR_CARD_MEDIA_HEIGHT,
+    PLACE_HOLDER_AVATAR_CARD_MEDIA_WIDTH
+} from '../constants';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -253,6 +260,16 @@ export const getTheme = (mode: ThemeMode) => {
                 styleOverrides: {
                     root: {
                         backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                    }
+                }
+            },
+            MuiCardMedia: {
+                defaultProps: {
+                    image: PLACE_HOLDER_AVATAR,
+                    sx: {
+                        width: PLACE_HOLDER_AVATAR_CARD_MEDIA_WIDTH,
+                        height: PLACE_HOLDER_AVATAR_CARD_MEDIA_HEIGHT,
+                        borderRadius: BORDER_RADIUS
                     }
                 }
             }

@@ -1,29 +1,31 @@
 
 
-import { Box, Stack, Typography, useTheme, type Theme } from '@mui/material';
+import { Stack, useTheme, type Theme } from '@mui/material';
 
 import { useUsersList } from '../hooks';
 import {
     CONTENT_MARGIN,
     MARGIN_TOP_TO_AVOID_NAV_BAR,
-    STACK_DEFAULT_GAP,
-    VERTICALLY_AVAILABLE_HEIGHT_WITHOUT_NAV_BAR
+    NAV_BAR_Z_INDEX,
+    STACK_DEFAULT_GAP
 } from '../constants';
 import { SelectSortBy, SelectSortOrder, SelectUserType, CustomAutoComplete } from '../components';
+import UserCard from '../components/app/UserCard';
 
 
-const getStyles = (_theme: Theme) => {
+const getStyles = (theme: Theme) => {
     return {
         rootStack: {
-            height: VERTICALLY_AVAILABLE_HEIGHT_WITHOUT_NAV_BAR,
-            marginTop: MARGIN_TOP_TO_AVOID_NAV_BAR,
             marginLeft: CONTENT_MARGIN,
             marginRight: CONTENT_MARGIN
         },
         searchBoxesStack: {
             width: '100%',
             height: 'fit-content',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            backgroundColor: theme.palette.background.default,
+            paddingTop: '1rem',
+            paddingBottom: '1rem'
         },
         searchBox: {
             flexGrow: 1
@@ -61,9 +63,11 @@ const UserManagementPage = () => {
                 justifyContent={'space-between'}
                 alignItems={'flex-start'}
                 gap={STACK_DEFAULT_GAP}
+                position={'sticky'}
+                top={MARGIN_TOP_TO_AVOID_NAV_BAR}
+                zIndex={NAV_BAR_Z_INDEX}
             >
-                <CustomAutoComplete
-                    id='userManagementSearchBox'
+                <CustomAutoComplete id='userManagementSearchBox'
                     sx={styles.searchBox}
                     value={search}
                     handleChange={(value) => {
@@ -75,16 +79,11 @@ const UserManagementPage = () => {
                 <SelectUserType userType={userType} setUserType={setUserType} />
                 <SelectSortOrder sortOrder={sortOrder} setSortOrder={setSortOrder} />
             </Stack>
-            <Stack>
+            <Stack gap={'10px'}>
                 {
                     usersList.data?.users.map((user) => {
                         return (
-                            <Box key={user.userId}>
-                                <Typography>{user.username}</Typography>
-                                <Typography>{user.email}</Typography>
-                                <Typography>{user.userType}</Typography>
-                                <Typography>{user.createdAt}</Typography>
-                            </Box>
+                            <UserCard key={user.userId} user={user} />
                         );
                     })
                 }
