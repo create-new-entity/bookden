@@ -9,4 +9,4 @@ export const usersSortByOptions = ['username', 'email', 'userType', 'createdAt']
 export const USERS_PAGINATION_LIMIT = 28;
 export const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
 export const LOGIN_RATE_LIMIT_MAX = 30;
-export const GLOBAL_RATE_LIMIT_MAX = 300;
+export const GLOBAL_RATE_LIMIT_MAX = 1000;

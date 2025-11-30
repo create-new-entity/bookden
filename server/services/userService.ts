@@ -16,7 +16,7 @@ import {
     ADMIN, CUSTOMER, UpdateUserPayload, User,
     UserDBRow,
     GetUsersQueryParams,
-    PaginatedUsers
+    PaginatedDataList
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
@@ -34,7 +34,7 @@ const mapDate = (user: UserDBRow): User => {
     };
 };
 
-const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<PaginatedUsers> => {
+const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<PaginatedDataList<User>> => {
     const dbPool = await getPGDBPool();
 
     const { userType, search } = queryFilteringOptions;
@@ -81,7 +81,7 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams): Promise<
     const users = result.rows;
     
     return {
-        users: users.map(mapDate),
+        data: users.map(mapDate),
         pagination: {
             page,
             limit: USERS_PAGINATION_LIMIT,

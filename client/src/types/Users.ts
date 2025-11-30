@@ -31,7 +31,7 @@ export type UsersListLocalOptions = {
 
 export type SortByOptions = keyof typeof USERS_LIST_SORT_BY_OPTIONS_TEXTS;
 
-export type PaginatedUsers = {
-    users: User[];
+export type PaginatedDataList<DataType> = {
+    data: DataType[];
     pagination: Pagination;
 };

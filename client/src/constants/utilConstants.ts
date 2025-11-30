@@ -1,4 +1,4 @@
-import type { UserType } from '../types';
+import type { PaginatedDataList, UserType } from '../types';
 
 export const NOTIFICATION_DELAY = 4000;
 export const CUSTOMER = 'customer' as const;

@@ -272,6 +272,15 @@ export const getTheme = (mode: ThemeMode) => {
                         borderRadius: BORDER_RADIUS
                     }
                 }
+            },
+            MuiPagination: {
+                defaultProps: {
+                    color: 'primary',
+                    hideNextButton: true,
+                    hidePrevButton: true,
+                    shape: 'rounded',
+                    variant: 'outlined'
+                }
             }
         }
     };

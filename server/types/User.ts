@@ -24,11 +24,11 @@ export type User = CamelCaseDeep<Omit<UserDBRow, 'created_at' | 'updated_at' | '
     deletedAt: Date | null;
 };
 
-export type PaginatedUsers = {
-    users: User[];
+export type PaginatedDataList<DataType> = {
+    data: DataType[];
     pagination: Pagination;
 };
-  
+
 export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
     password: string;
 };

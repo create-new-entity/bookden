@@ -1,6 +1,6 @@
 
 
-import { Stack, useTheme, type Theme } from '@mui/material';
+import { Box, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
 
 import { useSetTabTitle, useUsersList, useViewOptions } from '../hooks';
 import {
@@ -18,9 +18,19 @@ import {
     UserCard,
     Items
 } from '../components';
+import CustomPagination from '../components/custom/CustomPagination';
+import type { User } from '../types';
 
 
-const getStyles = (theme: Theme) => {
+type Styles = {
+    rootStack: SxProps<Theme>;
+    searchBoxesStack: SxProps<Theme>;
+    searchBox: SxProps<Theme>;
+    items: SxProps<Theme>;
+    topPagination: SxProps<Theme>;
+};
+
+const getStyles = (theme: Theme): Styles => {
     return {
         rootStack: {
             marginLeft: CONTENT_MARGIN,
@@ -36,6 +46,12 @@ const getStyles = (theme: Theme) => {
         },
         searchBox: {
             flexGrow: 1
+        },
+        items: {
+            marginBottom: '1rem'
+        },
+        topPagination: {
+            marginBottom: '1rem'
         }
     };
 };
@@ -54,7 +70,8 @@ const UserManagementPage = () => {
         sortOrder,
         setSortOrder,
         search,
-        setSearch
+        setSearch,
+        setPage
     } = useUsersList();
 
     const { viewOption, setViewOption } = useViewOptions();
@@ -90,12 +107,28 @@ const UserManagementPage = () => {
                 <SelectSortOrder sortOrder={sortOrder} setSortOrder={setSortOrder} />
                 <ViewOptions viewOption={viewOption} setViewOption={setViewOption} />
             </Stack>
+            {
+                usersList.data &&
+                <CustomPagination<User>
+                    sx={styles.topPagination}
+                    paginatedDataList={usersList.data}
+                    setPage={setPage}
+                />
+            }
             <Items
-                items={usersList.data?.users || []}
+                sx={styles.items}
+                items={usersList.data?.data || []}
                 ItemComponent={UserCard}
                 getKey={(user) => user.userId}
                 viewOption={viewOption}
             />
+            {
+                usersList.data &&
+                <CustomPagination<User>
+                    paginatedDataList={usersList.data}
+                    setPage={setPage}
+                />
+            }
         </Stack>
     );
 };
