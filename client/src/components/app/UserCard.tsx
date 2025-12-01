@@ -1,9 +1,12 @@
-import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
+import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 
 import type { User } from '../../types';
 import { useAvatarBlob } from '../../hooks';
-import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { BORDER_RADIUS, DEFAULT_GAP, USERTYPE_CHIP_COLORS, USERTYPE_LABELS } from '../../constants';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useAuthContext, useNotificationContext } from '../../contexts';
+import { deleteUser } from '../../api/profile';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -18,7 +21,17 @@ const getStyles = (theme: Theme): Styles => {
             backgroundColor: theme.palette.primary.light,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            '& .MuiIconButton-root': {
+                display: 'none',
+                padding: 0
+            },
+            '&:not(:hover) .MuiIconButton-root': {
+                display: 'none'
+            },
+            '&:hover .MuiIconButton-root': {
+                display: 'block'
+            }
         },
         rootStack: {
             paddingLeft: '10px',
@@ -43,13 +56,22 @@ const getStyles = (theme: Theme): Styles => {
 
 type UserCardProps = {
     item: User;
+    onItemDelete?: () => void;
 };
 
-const UserCard = ({ item }: UserCardProps) => {
+const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     const user = item;
     const { objectUrl } = useAvatarBlob(user.userId);
+    const { token } = useAuthContext();
     const theme = useTheme();
     const styles = getStyles(theme);
+    const { handleShowNotification } = useNotificationContext();
+
+    const handleDeleteUser = async () => {
+        await deleteUser(token, user.userId);
+        onItemDelete?.();
+        handleShowNotification('User deleted successfully.');
+    };
 
     return (
         <Card sx={styles.card}>
@@ -70,7 +92,10 @@ const UserCard = ({ item }: UserCardProps) => {
                         />
                 }
                 <CardContent sx={styles.cardContent}>
-                    <Typography variant='h6'>{user.username}</Typography>
+                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                        <Typography variant='h6'>{user.username}</Typography>
+                        <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
+                    </Stack>
                     <Typography variant='body1'>{user.email}</Typography>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                         <Chip sx={{ backgroundColor: USERTYPE_CHIP_COLORS[user.userType as keyof typeof USERTYPE_CHIP_COLORS] }} label={USERTYPE_LABELS[user.userType as keyof typeof USERTYPE_LABELS]} size='small' />

@@ -22,6 +22,7 @@ import {
 import CustomPagination from '../components/custom/CustomPagination';
 import type { User } from '../types';
 import { useAuthContext } from '../contexts';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 type Styles = {
@@ -63,6 +64,8 @@ const getStyles = (theme: Theme): Styles => {
 const UserManagementPage = () => {
     const theme = useTheme();
     const styles = getStyles(theme);
+    const queryClient = useQueryClient();
+    const { token } = useAuthContext();
     const {
         usersList,
         userType,
@@ -73,9 +76,16 @@ const UserManagementPage = () => {
         setSortOrder,
         search,
         setSearch,
+        page,
         setPage
     } = useUsersList();
     const { userType: clientUserType } = useAuthContext();
+    const queryKey = ['usersList', search, page, sortBy, sortOrder, userType, token];
+    
+
+    const handleQueryClientInvalidation = () => {
+        queryClient.invalidateQueries({ queryKey });
+    };
 
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
     
@@ -130,6 +140,7 @@ const UserManagementPage = () => {
                 ItemComponent={UserCard}
                 getKey={(user) => user.userId}
                 viewOption={GRID_VIEW}
+                onItemDelete={handleQueryClientInvalidation}
             />
             {
                 usersList.data && usersList.data.data.length > 0 &&

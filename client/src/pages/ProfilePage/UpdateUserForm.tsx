@@ -9,7 +9,7 @@ import { useAuthContext } from '../../contexts';
 import { useEffect, useRef, useState } from 'react';
 import { CUSTOMER, DEFAULT_GAP, NOTIFICATION_DELAY } from '../../constants';
 import { useUpdateProfile } from '../../hooks';
-import { deleteOwnAccount } from '../../api/profile';
+import { deleteUser } from '../../api/profile';
 import { useNavigate } from 'react-router-dom';
 
 type Styles = {
@@ -135,7 +135,7 @@ const UpdateUserForm = () => {
 
     const handleDeleteAccount = async () => {
         try {
-            await deleteOwnAccount(token, userId);
+            await deleteUser(token, userId);
             clearAuthentication();
         } catch (error) {
             console.error('Failed to delete account.', error);
