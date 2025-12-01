@@ -1,9 +1,12 @@
 import type { UserType } from '../types';
 
 export const NOTIFICATION_DELAY = 4000;
+export const ALL = 'all' as const;
 export const CUSTOMER = 'customer' as const;
 export const ADMIN = 'admin' as const;
 export const SUPERADMIN = 'superadmin' as const;
+
+export const SELECT_USER_TYPE_OPTIONS = [ALL, CUSTOMER, ADMIN] as const;
 
 export const USERTYPE_LABELS = {
     [CUSTOMER]: 'Customer',
@@ -14,6 +17,7 @@ export const USERTYPE_LABELS = {
 
 export const ASC = 'asc' as const;
 export const DESC = 'desc' as const;
+export const USERS_SORT_ORDER_OPTIONS = [ASC, DESC] as const;
 
 export const USERNAME = 'username' as const;
 export const EMAIL = 'email' as const;

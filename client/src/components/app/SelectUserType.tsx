@@ -1,19 +1,20 @@
 
 import type { UserTypeOptions } from '../../types';
-import { ADMIN, CUSTOMER, MINIMUM_WIDTH_FOR_SELECT_USER_TYPE } from '../../constants';
+import { ADMIN, ALL, CUSTOMER, MINIMUM_WIDTH_FOR_SELECT_USER_TYPE } from '../../constants';
 import type { SelectOption } from '../custom/CustomSelect';
 import { CustomSelect } from '../custom';
+import type { UserSearchParams } from '../../validations/userSearchParams';
 
 
 type SelectUserTypeProps = {
     userType: UserTypeOptions;
-    setUserType: React.Dispatch<React.SetStateAction<UserTypeOptions>>;
+    updateParams: (params: Partial<UserSearchParams>) => void;
 };
 
 
-const SelectUserType = ({ userType, setUserType }: SelectUserTypeProps) => {
+const SelectUserType = ({ userType, updateParams }: SelectUserTypeProps) => {
     const options: Array<SelectOption<UserTypeOptions>> = [
-        { optionValue: 'all', optionLabel: 'All' },
+        { optionValue: ALL, optionLabel: 'All' },
         { optionValue: CUSTOMER, optionLabel: 'Customer' },
         { optionValue: ADMIN, optionLabel: 'Admin' },
     ];
@@ -24,7 +25,7 @@ const SelectUserType = ({ userType, setUserType }: SelectUserTypeProps) => {
             inputLabelText="User Type"
             value={userType}
             onChange={(event) => {
-                setUserType(event.target.value);
+                updateParams({ userType: event.target.value, page: 1 });
             }}
             options={options}
         />

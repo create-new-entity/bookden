@@ -1,4 +1,4 @@
-import type { USERS_LIST_SORT_BY_OPTIONS_TEXTS } from '../constants';
+import type { SELECT_USER_TYPE_OPTIONS, USERS_LIST_SORT_BY_OPTIONS_TEXTS } from '../constants';
 import type { Pagination } from './Pagination';
 import type { SortOrder } from './UtilTypes';
 
@@ -14,7 +14,7 @@ export type User = {
     deletedAt: string;
 };
 
-export type UserTypeOptions = UserType | 'all';
+export type UserTypeOptions = (typeof SELECT_USER_TYPE_OPTIONS)[number];
 export type UsersListLocalOptions = {
     search: string;
     page: number;

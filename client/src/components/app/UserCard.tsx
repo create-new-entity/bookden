@@ -66,6 +66,7 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     const theme = useTheme();
     const styles = getStyles(theme);
     const { handleShowNotification } = useNotificationContext();
+    const isAlreadyDeleted = user.deletedAt !== null;
 
     const handleDeleteUser = async () => {
         await deleteUser(token, user.userId);
@@ -94,7 +95,10 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                 <CardContent sx={styles.cardContent}>
                     <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                         <Typography variant='h6'>{user.username}</Typography>
-                        <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
+                        {
+                            !isAlreadyDeleted &&
+                            <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
+                        }
                     </Stack>
                     <Typography variant='body1'>{user.email}</Typography>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>

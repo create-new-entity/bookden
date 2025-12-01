@@ -11,15 +11,16 @@ import {
 } from '../../constants';
 import type { SelectOption } from '../custom/CustomSelect';
 import { CustomSelect } from '../custom';
+import type { UserSearchParams } from '../../validations/userSearchParams';
 
 
 type SelectSortByProps = {
     sortBy: SortByOptions;
-    setSortBy: React.Dispatch<React.SetStateAction<SortByOptions>>;
+    updateParams: (params: Partial<UserSearchParams>) => void;
 };
 
 
-const SelectSortBy = ({ sortBy, setSortBy }: SelectSortByProps) => {
+const SelectSortBy = ({ sortBy, updateParams }: SelectSortByProps) => {
     const options: Array<SelectOption<SortByOptions>> = [
         { optionValue: USERNAME, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[USERNAME] },
         { optionValue: EMAIL, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[EMAIL] },
@@ -34,7 +35,7 @@ const SelectSortBy = ({ sortBy, setSortBy }: SelectSortByProps) => {
             inputLabelText="Sort By"
             value={sortBy}
             onChange={(event) => {
-                setSortBy(event.target.value);
+                updateParams({ sortBy: event.target.value, page: 1 });
             }}
             options={options}
         />

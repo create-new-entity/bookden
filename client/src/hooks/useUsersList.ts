@@ -2,18 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getUsersList } from '../api';
 import { useAuthContext } from '../contexts';
-import type { SortByOptions, SortOrder, UserTypeOptions } from '../types';
-import { useState } from 'react';
-import { CREATED_AT, DESC } from '../constants';
+import useUsersListDeepLinking from './useUsersListDeepLinking';
 
 
 const useUsersList = () => {
     const { token } = useAuthContext();
-    const [search, setSearch] = useState('');
-    const [page, setPage] = useState(1);
-    const [sortBy, setSortBy] = useState<SortByOptions>(CREATED_AT);
-    const [sortOrder, setSortOrder] = useState<SortOrder>(DESC);
-    const [userType, setUserType] = useState<UserTypeOptions>('all');
+    const { params, updateParams } = useUsersListDeepLinking();
+
+    const { search, page, sortBy, sortOrder, userType } = params;
 
     const queryFn = () => {
         const userTypeQuery = userType === 'all' ? '' : userType;
@@ -25,7 +21,7 @@ const useUsersList = () => {
         queryFn
     });
     
-    return { usersList, search, setSearch, page, setPage, sortBy, setSortBy, sortOrder, setSortOrder, userType, setUserType };
+    return { usersList, params, updateParams };
 };
 
 export default useUsersList;

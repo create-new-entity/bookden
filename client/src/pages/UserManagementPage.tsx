@@ -1,6 +1,7 @@
 
 
 import { Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { useSetTabTitle, useUsersList } from '../hooks';
 import {
@@ -17,12 +18,11 @@ import {
     SelectUserType,
     CustomAutoComplete,
     UserCard,
-    Items
+    Items,
+    CustomPagination
 } from '../components';
-import CustomPagination from '../components/custom/CustomPagination';
 import type { User } from '../types';
 import { useAuthContext } from '../contexts';
-import { useQueryClient } from '@tanstack/react-query';
 
 
 type Styles = {
@@ -66,21 +66,10 @@ const UserManagementPage = () => {
     const styles = getStyles(theme);
     const queryClient = useQueryClient();
     const { token } = useAuthContext();
-    const {
-        usersList,
-        userType,
-        setUserType,
-        sortBy,
-        setSortBy,
-        sortOrder,
-        setSortOrder,
-        search,
-        setSearch,
-        page,
-        setPage
-    } = useUsersList();
+    const { usersList, params, updateParams } = useUsersList();
+    const { search, sortBy, sortOrder, userType } = params;
     const { userType: clientUserType } = useAuthContext();
-    const queryKey = ['usersList', search, page, sortBy, sortOrder, userType, token];
+    const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
     
 
     const handleQueryClientInvalidation = () => {
@@ -112,13 +101,13 @@ const UserManagementPage = () => {
                     sx={styles.searchBox}
                     value={search}
                     handleChange={(value) => {
-                        setSearch(value);
+                        updateParams({ search: value });
                     }}
                     placeholder='Search by username or email'
                 />
-                <SelectSortBy sortBy={sortBy} setSortBy={setSortBy} />
-                { isClientSuperAdmin && <SelectUserType userType={userType} setUserType={setUserType} /> }
-                <SelectSortOrder sortOrder={sortOrder} setSortOrder={setSortOrder} />
+                <SelectSortBy sortBy={sortBy} updateParams={updateParams} />
+                { isClientSuperAdmin && <SelectUserType userType={userType} updateParams={updateParams} /> }
+                <SelectSortOrder sortOrder={sortOrder} updateParams={updateParams} />
             </Stack>
             {
                 usersList.data && usersList.data.data.length === 0 &&
@@ -127,11 +116,11 @@ const UserManagementPage = () => {
                 </Typography>
             }
             {
-                usersList.data && usersList.data.data.length > 0 &&
+                usersList.data &&
                 <CustomPagination<User>
                     sx={styles.topPagination}
                     paginatedDataList={usersList.data}
-                    setPage={setPage}
+                    updateParams={updateParams}
                 />
             }
             <Items
@@ -143,10 +132,10 @@ const UserManagementPage = () => {
                 onItemDelete={handleQueryClientInvalidation}
             />
             {
-                usersList.data && usersList.data.data.length > 0 &&
+                usersList.data &&
                 <CustomPagination<User>
                     paginatedDataList={usersList.data}
-                    setPage={setPage}
+                    updateParams={updateParams}
                 />
             }
         </Stack>
