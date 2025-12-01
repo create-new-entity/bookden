@@ -9,6 +9,6 @@ export const BORDER_RADIUS = '20px';
 
 export const USERTYPE_CHIP_COLORS = {
     [CUSTOMER]: customColors.sageGreen,
-    [ADMIN]: customColors.lavendarSteel,
+    [ADMIN]: customColors.darkSecondaryLight,
     [SUPERADMIN]: customColors.lavendarSteel
 } as const;
