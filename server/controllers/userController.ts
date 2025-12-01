@@ -23,7 +23,7 @@ const getUserController = async (req: AuthenticatedRequest, res: Response, next:
         next(unauthorizedError);
         return;
     }
-    const user = await getUser(req.user.userId, parseInt(req.params.id, 10));  
+    const user = await getUser(req.user, parseInt(req.params.id, 10));  
     res.status(200).json(user);
 };
 

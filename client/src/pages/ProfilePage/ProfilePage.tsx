@@ -6,9 +6,8 @@ import { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './UtilityComp
 import { useAuthContext, useAvatarContext } from '../../contexts';
 import UpdateUserForm from './UpdateUserForm';
 import { useAvatar, useSetTabTitle } from '../../hooks';
+import { AVATAR_DIMENSIONS } from '../../constants';
 
-
-const AVATAR_DIMENSIONS = '13rem';
 const ICON_BUTTONS_STACK_OFFSET_LEFT = -0.3;
 const ICON_BUTTONS_STACK_OFFSET_TOP = 1.5;
 
@@ -33,8 +32,8 @@ const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
             height: '90vh'
         },
         avatar: {
-            width: AVATAR_DIMENSIONS,
-            height: AVATAR_DIMENSIONS
+            width: `${AVATAR_DIMENSIONS}px`,
+            height: `${AVATAR_DIMENSIONS}px`
         },
         iconButtonsStack: {
             position: 'relative',

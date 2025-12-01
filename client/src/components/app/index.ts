@@ -13,3 +13,4 @@ export { default as SelectSortOrder } from './SelectSortOrder';
 export { default as Items } from './Items';
 export { default as ViewOptions } from './ViewOptions';
 export { default as UserCard } from './UserCard';
+export { default as UserTypeChip } from './UserTypeChip';

@@ -1,12 +1,15 @@
 import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import type { User } from '../../types';
 import { useAvatarBlob } from '../../hooks';
-import { BORDER_RADIUS, DEFAULT_GAP, USERTYPE_CHIP_COLORS, USERTYPE_LABELS } from '../../constants';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
 import { deleteUser } from '../../api/profile';
+import UserTypeChip from './UserTypeChip';
+
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -75,43 +78,45 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     };
 
     return (
-        <Card sx={styles.card}>
-            <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={'15px'}>
-                {
-                    objectUrl ? 
-                        <Box sx={styles.cardMedia}>
+        <Link to={`/users/${user.userId}`}>
+            <Card sx={styles.card}>
+                <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={'15px'}>
+                    {
+                        objectUrl ? 
+                            <Box sx={styles.cardMedia}>
+                                <CardMedia
+                                    sx={styles.cardMedia}
+                                    component='img'
+                                    image={objectUrl}
+                                />
+                            </Box>
+                            :
                             <CardMedia
                                 sx={styles.cardMedia}
                                 component='img'
-                                image={objectUrl}
                             />
-                        </Box>
-                        :
-                        <CardMedia
-                            sx={styles.cardMedia}
-                            component='img'
-                        />
-                }
-                <CardContent sx={styles.cardContent}>
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography variant='h6'>{user.username}</Typography>
-                        {
-                            !isAlreadyDeleted &&
-                            <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
-                        }
-                    </Stack>
-                    <Typography variant='body1'>{user.email}</Typography>
-                    <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                        <Chip sx={{ backgroundColor: USERTYPE_CHIP_COLORS[user.userType as keyof typeof USERTYPE_CHIP_COLORS] }} label={USERTYPE_LABELS[user.userType as keyof typeof USERTYPE_LABELS]} size='small' />
-                        {
-                            user.deletedAt &&
-                            <Chip label='Deleted' color='error' size='small' />
-                        }
-                    </Stack>
-                    <Typography variant='body1'>{user.createdAt}</Typography>
-                </CardContent>
-            </Stack>
-        </Card>
+                    }
+                    <CardContent sx={styles.cardContent}>
+                        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                            <Typography variant='h6'>{user.username}</Typography>
+                            {
+                                !isAlreadyDeleted &&
+                                <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
+                            }
+                        </Stack>
+                        <Typography variant='body1'>{user.email}</Typography>
+                        <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
+                            <UserTypeChip userType={user.userType} />
+                            {
+                                user.deletedAt &&
+                                <Chip label='Deleted' color='error' size='small' />
+                            }
+                        </Stack>
+                        <Typography variant='body1'>{user.createdAt}</Typography>
+                    </CardContent>
+                </Stack>
+            </Card>
+        </Link>
     );
 };
 

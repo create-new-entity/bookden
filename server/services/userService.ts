@@ -7,7 +7,8 @@ import {
     errorMessages,
     errorNames,
     ConflictError,
-    UnauthorizedError
+    UnauthorizedError,
+    NotFoundError
 } from '../errors';
 import {
     NewUserPayload,
@@ -102,21 +103,31 @@ const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestor
     };
 };
 
-const getUser = async (requestorUserId: number, targetUserId: number) => {
+const getUser = async (requestorUser: JWTSignPayload, targetUserId: number) => {
     const dbPool = await getPGDBPool();
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
-        SELECT username, email, user_type, user_id
+        SELECT username, email, user_type, user_id, created_at, updated_at, deleted_at
         FROM users
         WHERE user_id = ${targetUserId};
     `);
 
-    const foundUser = camelcaseKeys(result.rows[0], { deep: true });
+    const foundRow = result.rows[0];
     
-    if(foundUser.userId !== requestorUserId) {
+    if(!foundRow) {
+        const notFoundError = new NotFoundError();
+        throw notFoundError;
+    }
+
+    const foundUser = camelcaseKeys(foundRow, { deep: true });
+
+    const canViewUser = canViewUserInUserManagement(requestorUser.userType, foundUser.userType);
+    
+    if(!canViewUser) {
         const unauthorizedError = new UnauthorizedError();
         throw unauthorizedError;
     }
+    
     return foundUser;
 };
 
@@ -163,6 +174,15 @@ const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): b
         customer: [CUSTOMER] // Deletes his own account.
     };
     return hierarchy[deletorUserType].includes(targetUserType);
+};
+
+const canViewUserInUserManagement = (requestorUserType: UserTypes, targetUserType: UserTypes): boolean => {
+    const hierarchy: Record<UserTypes, UserTypes[]>= {
+        superadmin: [ADMIN, CUSTOMER],
+        admin: [CUSTOMER],
+        customer: [] // Don't have access to user management at all.
+    };
+    return hierarchy[requestorUserType].includes(targetUserType);
 };
 
 const getPasswordHash = async (textPassword: string): Promise<string> => {

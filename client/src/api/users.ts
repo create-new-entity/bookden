@@ -20,3 +20,14 @@ export const getUsersList = async (params: GetUsersListParams, token: string): P
     const response = await axios.get(usersUrl, { params: removeEmptyValues(params), ...requestConfig });
     return response.data;
 };
+
+
+export const getUser = async (userId: number, token: string): Promise<User> => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const response = await axios.get(`${usersUrl}/${userId}`, requestConfig);
+    return response.data;
+};
