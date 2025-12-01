@@ -71,11 +71,14 @@ exports.up = async function(db) {
     const { username, email, userType } = allUniqueSeedUsers[i];
     const hashedPassword = bcrypt.hashSync('password', saltRounds);
 
+    const baseTime = new Date();
+    const createdAt = new Date(baseTime.getTime() + i * 1000); // Add 1 second for each user to avoid having the same created_at for the same user
+
     const result = await db.runSql(
-      `INSERT INTO users (username, email, password_hash, user_type)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO users (username, email, password_hash, user_type, created_at)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING user_id`,
-      [username, email, hashedPassword, userType]
+      [username, email, hashedPassword, userType, createdAt]
     );
     
     const userId = result.rows[0].user_id;
