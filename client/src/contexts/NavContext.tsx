@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeSwitch } from '../components';
 import type { UserType, NavContextValue, NavOption } from '../types';
 import useAuthContext from './AuthContext.tsx';
-import { ADMIN, ALL_TYPES_OF_USERS, SUPERADMIN } from '../constants';
+import { ADMIN, ADMIN_TOOLS, ALL_TYPES_OF_USERS, SUPERADMIN, UPDATE_PROFILE } from '../constants';
 
 const defaultContextValue: NavContextValue = {
     options: [],
@@ -38,7 +38,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 {
                     name: 'profile',
                     action: () => {
-                        navigate('/profile');
+                        navigate(UPDATE_PROFILE);
                         setShowNavDrawer(false);
                     },
                     component: <Typography variant='body1'>Profile</Typography>,
@@ -47,7 +47,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 {
                     name: 'adminTools',
                     action: () => {
-                        navigate('/admin-tools');
+                        navigate(ADMIN_TOOLS);
                         setShowNavDrawer(false);
                     },
                     component: <Typography>Admin Tools</Typography>,

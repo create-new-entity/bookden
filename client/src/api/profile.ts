@@ -2,10 +2,10 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 
 import { usersUrl } from './endpoints';
-import type { UpdateUserPayload } from '../types/UpdateUser';
+import type { UpdateUserFormData } from '../validations';
 import type { LoggedInUserData } from '../types';
 
-export const updateProfile = (newUserData: UpdateUserPayload, token: string) => {
+export const updateProfile = (newUserData: UpdateUserFormData, token: string) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
@@ -22,13 +22,4 @@ export const getMe = async (token: string): Promise<Omit<LoggedInUserData, 'toke
     };
     const response = await axios.get(`${usersUrl}/me`, requestConfig);
     return response.data;
-};
-
-export const deleteUser = async (token: string, userId: number) => {
-    const requestConfig: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    };
-    await axios.delete(`${usersUrl}/${userId}`, requestConfig);
 };

@@ -42,7 +42,8 @@ const getStyles = (theme: Theme): Styles => {
             gap: '0.5rem'
         },
         iconButton: {
-            alignSelf: 'stretch'
+            alignSelf: 'stretch',
+            borderRadius: 'unset'
         }
     };
 };

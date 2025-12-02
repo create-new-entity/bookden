@@ -46,3 +46,10 @@ export const USER_INPUT_DELAY = 700;
 export const GRID_VIEW = 'grid' as const;
 export const LIST_VIEW = 'list' as const;
 export const VIEW_OPTIONS = [GRID_VIEW, LIST_VIEW] as const;
+
+export const MIN_USERNAME_LENGTH = 6;
+export const MAX_USERNAME_LENGTH = 30;
+export const MIN_PASSWORD_LENGTH = 6;
+export const MAX_PASSWORD_LENGTH = 250;
+export const MIN_EMAIL_LENGTH = 6;
+export const MAX_EMAIL_LENGTH = 250;

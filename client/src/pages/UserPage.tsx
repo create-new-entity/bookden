@@ -19,7 +19,7 @@ import { useAuthContext, useNotificationContext } from '../contexts';
 import { useAvatarBlob } from '../hooks';
 import { AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR } from '../constants';
 import { UserTypeChip } from '../components/app';
-import { deleteUser } from '../api/profile';
+import { deleteUser } from '../api';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -35,8 +35,7 @@ const getStyles = (theme: Theme): Styles => {
             marginTop: MARGIN_TOP_TO_AVOID_NAV_BAR
         },
         paper: {
-            width: '90%',
-            backgroundColor: theme.palette.primary.light
+            width: '90%'
         },
         avatar: {
             [theme.breakpoints.up('sm')]: {

@@ -12,3 +12,5 @@ export const USERTYPE_CHIP_COLORS = {
     [ADMIN]: customColors.darkSecondaryLight,
     [SUPERADMIN]: customColors.lavendarSteel
 } as const;
+
+export const DEFAULT_SPACING = 8;

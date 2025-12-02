@@ -2,7 +2,8 @@ import type { SELECT_USER_TYPE_OPTIONS, USERS_LIST_SORT_BY_OPTIONS_TEXTS } from 
 import type { Pagination } from './Pagination';
 import type { SortOrder } from './UtilTypes';
 
-export type UserType = 'superadmin' | 'admin' | 'customer';
+export type AdminOrCustomer = 'admin' | 'customer';
+export type UserType = 'superadmin' | AdminOrCustomer;
 
 export type User = {
     userId: number;
@@ -35,3 +36,19 @@ export type PaginatedDataList<DataType> = {
     data: DataType[];
     pagination: Pagination;
 };
+
+
+
+export type CreateUserPayload = {
+    username: string;
+    email: string;
+    password: string;
+};
+
+export type UpdateUserPayload = Partial<CreateUserPayload>;
+
+export type CreateOrUpdateFormFields = Pick<CreateUserPayload, 'username' | 'email' | 'password'> & {
+    confirmPassword: string;
+};
+
+export type CreateOrUpdateUserMode = 'update' | 'create';

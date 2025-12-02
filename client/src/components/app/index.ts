@@ -14,3 +14,7 @@ export { default as Items } from './Items';
 export { default as ViewOptions } from './ViewOptions';
 export { default as UserCard } from './UserCard';
 export { default as UserTypeChip } from './UserTypeChip';
+export { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './Avatar';
+export { default as UserFormFields } from './UserFormFields';
+export { default as UpdateUserForm } from './UpdateUserForm';
+export { default as CreateAdminUserForm } from './CreateAdminUserForm';

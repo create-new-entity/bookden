@@ -7,7 +7,7 @@ import type { User } from '../../types';
 import { useAvatarBlob } from '../../hooks';
 import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
-import { deleteUser } from '../../api/profile';
+import { deleteUser } from '../../api';
 import UserTypeChip from './UserTypeChip';
 
 
@@ -18,10 +18,9 @@ type Styles = {
     cardContent: SxProps<Theme>;
 };
 
-const getStyles = (theme: Theme): Styles => {
+const getStyles = (_theme: Theme): Styles => {
     return {
         card: {
-            backgroundColor: theme.palette.primary.light,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',

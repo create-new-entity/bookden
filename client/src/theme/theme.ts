@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
-import { customColors } from '../constants';
+import { customColors, DEFAULT_SPACING } from '../constants';
 import {
     BORDER_RADIUS,
     LARGE_SVG_ICON_FONT_SIZE,
@@ -14,6 +14,7 @@ type ThemeMode = 'light' | 'dark';
 
 export const getTheme = (mode: ThemeMode) => {
     const theme = {
+        spacing: DEFAULT_SPACING,
         palette: {
             mode,
             ...(mode === 'light'
@@ -180,6 +181,11 @@ export const getTheme = (mode: ThemeMode) => {
                     disableRipple: true,
                     disableFocusRipple: true,
                     disableTouchRipple: true
+                },
+                styleOverrides: {
+                    root: {
+                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                    }
                 }
             },
             MuiAppBar: {
@@ -195,7 +201,7 @@ export const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        backgroundColor: theme.palette.background.paper
+                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
                     }
                 }
             },

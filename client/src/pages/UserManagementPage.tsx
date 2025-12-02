@@ -1,11 +1,13 @@
 
 
-import { Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { IconButton, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { Add } from '@mui/icons-material';
 
 import { useSetTabTitle, useUsersList } from '../hooks';
 import {
     CONTENT_MARGIN,
+    CREATE_ADMIN_USER,
     GRID_VIEW,
     MARGIN_TOP_TO_AVOID_NAV_BAR,
     NAV_BAR_Z_INDEX,
@@ -23,6 +25,7 @@ import {
 } from '../components';
 import type { User } from '../types';
 import { useAuthContext } from '../contexts';
+import { useNavigate } from 'react-router-dom';
 
 
 type Styles = {
@@ -69,6 +72,7 @@ const UserManagementPage = () => {
     const { usersList, params, updateParams } = useUsersList();
     const { search, sortBy, sortOrder, userType } = params;
     const { userType: clientUserType } = useAuthContext();
+    const navigate = useNavigate();
     const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
     
 
@@ -91,7 +95,7 @@ const UserManagementPage = () => {
                 sx={styles.searchBoxesStack}
                 direction={'row'}
                 justifyContent={'space-between'}
-                alignItems={'flex-start'}
+                alignItems={'center'}
                 gap={STACK_DEFAULT_GAP}
                 position={'sticky'}
                 top={MARGIN_TOP_TO_AVOID_NAV_BAR}
@@ -108,6 +112,11 @@ const UserManagementPage = () => {
                 <SelectSortBy sortBy={sortBy} updateParams={updateParams} />
                 { isClientSuperAdmin && <SelectUserType userType={userType} updateParams={updateParams} /> }
                 <SelectSortOrder sortOrder={sortOrder} updateParams={updateParams} />
+                <IconButton onClick={() => {
+                    navigate(CREATE_ADMIN_USER);
+                }}>
+                    <Add />
+                </IconButton>
             </Stack>
             {
                 usersList.data && usersList.data.data.length === 0 &&

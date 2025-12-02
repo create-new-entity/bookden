@@ -1,3 +1,5 @@
+
+
 import { useRef, type ReactNode, type RefObject } from 'react';
 import { IconButton, useTheme } from '@mui/material';
 import type { Theme, SxProps } from '@mui/material/styles';
@@ -24,7 +26,7 @@ type AddUpdateAvatarWrapperProps = {
     children: ReactNode;
 };
 
-export const AddUpdateAvatarWrapper = ({ inputRef, children }: AddUpdateAvatarWrapperProps) => {
+const AddUpdateAvatarWrapper = ({ inputRef, children }: AddUpdateAvatarWrapperProps) => {
     const { addOrUpdateMutation } = useAvatar();
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

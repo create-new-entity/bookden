@@ -2,11 +2,10 @@ import { Avatar, Badge, Paper, Stack, useTheme, type SxProps, type Theme } from 
 import { type ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './UtilityComponents';
-import { useAuthContext, useAvatarContext } from '../../contexts';
-import UpdateUserForm from './UpdateUserForm';
-import { useAvatar, useSetTabTitle } from '../../hooks';
-import { AVATAR_DIMENSIONS } from '../../constants';
+import { AddAvatarButton, CreateAdminUserForm, UpdateOrDeleteAvatarButtonsStack, UpdateUserForm } from '../components';
+import { useAuthContext, useAvatarContext } from '../contexts';
+import { useAvatar, useSetTabTitle } from '../hooks';
+import { AVATAR_DIMENSIONS } from '../constants';
 
 const ICON_BUTTONS_STACK_OFFSET_LEFT = -0.3;
 const ICON_BUTTONS_STACK_OFFSET_TOP = 1.5;
@@ -54,7 +53,12 @@ const WrapperStack = ({ children }: { children: ReactNode }) => {
     );
 };
 
-const ProfilePage = () => {
+export type CreateAdminOrUpdateAnyUserProfilePageProps = {
+    mode: 'update' | 'create';
+};
+
+const CreateAdminOrUpdateAnyUserProfilePage = (props: CreateAdminOrUpdateAnyUserProfilePageProps) => {
+    const { mode } = props;
     const { avatarUrl, isPlaceHolderAvatar } = useAvatarContext();
     const { hasExistingLoggedInUser } = useAuthContext();
     const navigate = useNavigate();
@@ -69,7 +73,7 @@ const ProfilePage = () => {
         }
     }, [navigate, hasExistingLoggedInUser, isUserLoggedIn]);
 
-    useSetTabTitle('Profile');
+    useSetTabTitle('Update Profile');
 
     const updateOrDeleteAvatarOptions = (
         <WrapperStack>
@@ -87,14 +91,29 @@ const ProfilePage = () => {
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>
             <Paper sx={styles.paper} elevation={2}>
                 <Stack direction={'column'} justifyContent={'center'} alignItems={'center'}>
-                    <Badge badgeContent={badgeContent}>
-                        <Avatar sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
-                    </Badge>
-                    <UpdateUserForm/>
+                    {
+                        mode === 'update'
+                            ?
+                            <>
+                                <Badge badgeContent={badgeContent}>
+                                    <Avatar sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
+                                </Badge>
+                                <UpdateUserForm/>
+                            </>
+                            :
+                            null
+                    }
+                    {
+                        mode === 'create'
+                            ?
+                            <CreateAdminUserForm/>
+                            :
+                            null
+                    }
                 </Stack>
             </Paper>
         </Stack>
     );
 };
 
-export default ProfilePage;
+export default CreateAdminOrUpdateAnyUserProfilePage;

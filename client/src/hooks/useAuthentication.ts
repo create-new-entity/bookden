@@ -4,7 +4,7 @@ import type { AxiosResponse } from 'axios';
 
 import type { AxiosErrorResponse, LoggedInUserData, LoginFormInputs, SignUpPayload } from '../types';
 import { useAuthContext } from '../contexts';
-import { loginApi, signUpApi } from '../api';
+import { login, signUp } from '../api';
 
 
 const useAuthentication = () => {
@@ -12,7 +12,7 @@ const useAuthentication = () => {
     const { saveToken } = useAuthContext();
     
     const loginMutation = useMutation<Pick<LoggedInUserData, 'token'>, AxiosErrorResponse, LoginFormInputs>({
-        mutationFn: loginApi,
+        mutationFn: login,
         onSuccess: (data) => {
             saveToken(data.token);
             navigate('/');
@@ -23,7 +23,7 @@ const useAuthentication = () => {
     });
 
     const signUpMutation = useMutation<AxiosResponse, AxiosErrorResponse, SignUpPayload>({
-        mutationFn: signUpApi
+        mutationFn: signUp
     });
 
     return {

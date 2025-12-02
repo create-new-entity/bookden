@@ -1,12 +1,27 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { Snackbar } from '@mui/material';
 
-import { AdminToolsPage, HomePage, LogInPage, ProfilePage, UserManagementPage, UserPage } from './pages';
+import {
+    AdminToolsPage,
+    CreateAdminOrUpdateAnyUserProfilePage,
+    HomePage,
+    LogInPage,
+    UserManagementPage,
+    UserPage
+} from './pages';
 import { useAuthContext, useNavContext, useNotificationContext } from './contexts';
 import { NavBar, NavDrawer } from './components';
-import { Snackbar } from '@mui/material';
-import { NOTIFICATION_DELAY } from './constants';
-import { ADMIN_TOOLS, AUTH, HOME, PROFILE, USER, USER_MANAGEMENT } from './constants/routes';
+import {
+    ADMIN_TOOLS,
+    AUTH,
+    CREATE_ADMIN_USER,
+    HOME,
+    UPDATE_PROFILE,
+    USER,
+    USER_MANAGEMENT,
+    NOTIFICATION_DELAY
+} from './constants';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
@@ -45,7 +60,8 @@ const App = () => {
             }
             <Routes>
                 <Route path={AUTH} element={<LogInPage/>} />
-                <Route path={PROFILE} element={<ProfilePage/>}/>
+                <Route path={UPDATE_PROFILE} element={<CreateAdminOrUpdateAnyUserProfilePage mode='update'/>}/>
+                <Route path={CREATE_ADMIN_USER} element={<CreateAdminOrUpdateAnyUserProfilePage mode='create'/>}/>
                 <Route path={USER} element={<UserPage/>}/>
                 <Route path={USER_MANAGEMENT} element={<UserManagementPage/>} />
                 <Route path={ADMIN_TOOLS} element={<AdminToolsPage/>} />
