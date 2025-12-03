@@ -144,7 +144,7 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
                             color='error'
                             onClick={handleDeleteAccount}
                         >
-                            Delete Account
+                            Delete Profile
                         </Button>
                     }
                     <Button 
