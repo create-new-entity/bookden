@@ -1,3 +1,6 @@
+
+name: bookden-dev
+
 services:
 
   local-postgres-database:

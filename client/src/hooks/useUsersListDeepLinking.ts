@@ -1,9 +1,15 @@
 import { useSearchParams } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 
-import { UserSearchParamsSchema } from '../validations';
+import { UserSearchParamsSchema, type UserSearchParams } from '../validations';
 
-const useUsersListDeepLinking = () => {
+
+export type UseUsersListDeepLinkingReturn = {
+    params: UserSearchParams;
+    updateParams: (params: Partial<UserSearchParams>) => void;
+};
+
+const useUsersListDeepLinking = (): UseUsersListDeepLinkingReturn => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const parsedParams = useMemo(() => {

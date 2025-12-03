@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 import {
     ALL,
-    CREATED_AT,
     DESC,
     SELECT_USER_TYPE_OPTIONS,
+    USERNAME,
     USERS_SORT_BY_OPTIONS,
     USERS_SORT_ORDER_OPTIONS
 } from '../constants';
@@ -13,7 +13,7 @@ import {
 export const UserSearchParamsSchema = z.object({
     search: z.string().default(''),
     page: z.coerce.number().int().positive().default(1),
-    sortBy: z.enum(USERS_SORT_BY_OPTIONS).default(CREATED_AT),
+    sortBy: z.enum(USERS_SORT_BY_OPTIONS).default(USERNAME),
     sortOrder: z.enum(USERS_SORT_ORDER_OPTIONS).default(DESC),
     userType: z.enum(SELECT_USER_TYPE_OPTIONS).default(ALL)
 });

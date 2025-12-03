@@ -12,7 +12,8 @@ const useAvatarBlob = (userId: number) => {
     const userAvatarBlobResult = useQuery<Blob, AxiosError>({
         queryKey: ['avatar', token, userId],
         queryFn: () => getUserAvatarBlob(token, userId),
-        enabled: !!token && !!userId
+        enabled: !!token && !!userId,
+        retry: false
     });
 
     useEffect(() => {

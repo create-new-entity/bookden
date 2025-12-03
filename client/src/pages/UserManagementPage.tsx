@@ -1,31 +1,32 @@
 
 
-import { IconButton, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { IconButton, Stack, Tooltip, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { Add } from '@mui/icons-material';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 
-import { useSetTabTitle, useUsersList } from '../hooks';
+import { useResponsive, useSetTabTitle, useUsersList } from '../hooks';
 import {
     CONTENT_MARGIN,
     CREATE_ADMIN_USER,
+    DEFAULT_GAP,
     GRID_VIEW,
-    MARGIN_TOP_TO_AVOID_NAV_BAR,
-    NAV_BAR_Z_INDEX,
-    STACK_DEFAULT_GAP,
     SUPERADMIN
 } from '../constants';
 import {
-    SelectSortBy,
-    SelectSortOrder,
-    SelectUserType,
-    CustomAutoComplete,
     UserCard,
     Items,
-    CustomPagination
+    CustomPagination,
+    UsersListFilterDesktop,
+    UsersListFilterMobile,
+    CustomModal,
+    type CustomModalRef
 } from '../components';
 import type { User } from '../types';
 import { useAuthContext } from '../contexts';
-import { useNavigate } from 'react-router-dom';
+
 
 
 type Styles = {
@@ -34,6 +35,7 @@ type Styles = {
     searchBox: SxProps<Theme>;
     items: SxProps<Theme>;
     topPagination: SxProps<Theme>;
+    filterIconStack: SxProps<Theme>;
 };
 
 const getStyles = (theme: Theme): Styles => {
@@ -58,6 +60,16 @@ const getStyles = (theme: Theme): Styles => {
         },
         topPagination: {
             marginBottom: '1rem'
+        },
+        filterIconStack: {
+            width: '100%',
+            [theme.breakpoints.down('md')]: {
+                display: 'flex'
+            },
+            [theme.breakpoints.up('md')]: {
+                display: 'none'
+            },
+            padding: `${DEFAULT_GAP}px`
         }
     };
 };
@@ -72,82 +84,98 @@ const UserManagementPage = () => {
     const { usersList, params, updateParams } = useUsersList();
     const { search, sortBy, sortOrder, userType } = params;
     const { userType: clientUserType } = useAuthContext();
+    const isClientSuperAdmin = clientUserType === SUPERADMIN;
     const navigate = useNavigate();
+    const { isDesktop } = useResponsive();
+    const modalRef = useRef<CustomModalRef | null>(null);
     const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
     
 
     const handleQueryClientInvalidation = () => {
         queryClient.invalidateQueries({ queryKey });
     };
-
-    const isClientSuperAdmin = clientUserType === SUPERADMIN;
+    
+    const openFilterModal = () => {
+        console.log('Attempting to open filter modal');
+        modalRef.current?.openModal();
+    };
     
     useSetTabTitle('User Management');
 
     return (
-        <Stack
-            sx={styles.rootStack}
-            direction={'column'}
-            justifyContent={'flex-start'}
-            alignItems={'center'}
-        >    
+        <>
             <Stack
-                sx={styles.searchBoxesStack}
-                direction={'row'}
-                justifyContent={'space-between'}
+                sx={styles.rootStack}
+                direction={'column'}
+                justifyContent={'flex-start'}
                 alignItems={'center'}
-                gap={STACK_DEFAULT_GAP}
-                position={'sticky'}
-                top={MARGIN_TOP_TO_AVOID_NAV_BAR}
-                zIndex={NAV_BAR_Z_INDEX}
             >
-                <CustomAutoComplete id='userManagementSearchBox'
-                    sx={styles.searchBox}
-                    value={search}
-                    handleChange={(value) => {
-                        updateParams({ search: value });
-                    }}
-                    placeholder='Search by username or email'
+                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
+                    <IconButton onClick={openFilterModal}>
+                        <FilterAltIcon />
+                    </IconButton>
+                    {
+                        isClientSuperAdmin && (
+                            <Tooltip title='Add a new admin'>
+                                <IconButton onClick={() => {
+                                    navigate(CREATE_ADMIN_USER);
+                                }}>
+                                    <Add />
+                                </IconButton>
+                            </Tooltip>
+                        )
+                    }
+                </Stack>
+                {
+                    isDesktop &&
+                    <UsersListFilterDesktop
+                        search={search}
+                        sortBy={sortBy}
+                        sortOrder={sortOrder}
+                        userType={userType}
+                        updateParams={updateParams}
+                    />
+                }
+                {
+                    usersList.data && usersList.data.data.length === 0 &&
+                    <Typography variant='body1'>
+                        No users found matching your search criteria.
+                    </Typography>
+                }
+                {
+                    usersList.data &&
+                    <CustomPagination<User>
+                        sx={styles.topPagination}
+                        paginatedDataList={usersList.data}
+                        updateParams={updateParams}
+                    />
+                }
+                <Items
+                    sx={styles.items}
+                    items={usersList.data?.data || []}
+                    ItemComponent={UserCard}
+                    getKey={(user) => user.userId}
+                    viewOption={GRID_VIEW}
+                    onItemDelete={handleQueryClientInvalidation}
                 />
-                <SelectSortBy sortBy={sortBy} updateParams={updateParams} />
-                { isClientSuperAdmin && <SelectUserType userType={userType} updateParams={updateParams} /> }
-                <SelectSortOrder sortOrder={sortOrder} updateParams={updateParams} />
-                <IconButton onClick={() => {
-                    navigate(CREATE_ADMIN_USER);
-                }}>
-                    <Add />
-                </IconButton>
+                {
+                    usersList.data &&
+                    <CustomPagination<User>
+                        paginatedDataList={usersList.data}
+                        updateParams={updateParams}
+                    />
+                }
             </Stack>
-            {
-                usersList.data && usersList.data.data.length === 0 &&
-                <Typography variant='body1'>
-                    No users found matching your search criteria.
-                </Typography>
-            }
-            {
-                usersList.data &&
-                <CustomPagination<User>
-                    sx={styles.topPagination}
-                    paginatedDataList={usersList.data}
+            <CustomModal ref={modalRef}>
+                <UsersListFilterMobile
+                    search={search}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    userType={userType}
                     updateParams={updateParams}
                 />
-            }
-            <Items
-                sx={styles.items}
-                items={usersList.data?.data || []}
-                ItemComponent={UserCard}
-                getKey={(user) => user.userId}
-                viewOption={GRID_VIEW}
-                onItemDelete={handleQueryClientInvalidation}
-            />
-            {
-                usersList.data &&
-                <CustomPagination<User>
-                    paginatedDataList={usersList.data}
-                    updateParams={updateParams}
-                />
-            }
-        </Stack>
+            </CustomModal>
+        </>
     );
 };
 

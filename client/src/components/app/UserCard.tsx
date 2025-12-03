@@ -19,6 +19,10 @@ type Styles = {
 };
 
 const getStyles = (_theme: Theme): Styles => {
+    const rootStackPaddingLeft = '10px';
+    const rootStacDefaultGap = `${DEFAULT_GAP}px`;
+    const IMAGE_WIDTH_HEIGHT = '100px';
+
     return {
         card: {
             whiteSpace: 'nowrap',
@@ -40,17 +44,21 @@ const getStyles = (_theme: Theme): Styles => {
             height: '100%'
         },
         cardMedia: {
-            width: '100px',
-            height: '100px',
+            width: IMAGE_WIDTH_HEIGHT,
+            height: IMAGE_WIDTH_HEIGHT,
             borderRadius: BORDER_RADIUS,
             '& img': {
-                width: '100%',
-                height: '100%',
+                width: IMAGE_WIDTH_HEIGHT,
+                height: IMAGE_WIDTH_HEIGHT,
                 objectFit: 'cover'
             }
         },
         cardContent: {
-            flex: 1
+            flex: 1,
+            maxWidth: `calc(100% - ${IMAGE_WIDTH_HEIGHT} - ${rootStackPaddingLeft} - ${rootStacDefaultGap})`,
+            paddingLeft: 0,
+            paddingRight: 0,
+            paddingBottom: 0
         }
     };
 };
@@ -79,7 +87,7 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     return (
         <Link to={`/users/${user.userId}`}>
             <Card sx={styles.card}>
-                <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={'15px'}>
+                <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                     {
                         objectUrl ? 
                             <Box sx={styles.cardMedia}>

@@ -1,11 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import { getUsersList } from '../api';
 import { useAuthContext } from '../contexts';
 import useUsersListDeepLinking from './useUsersListDeepLinking';
+import type { UserSearchParams } from '../validations';
+import type { PaginatedDataList, User } from '../types';
 
 
-const useUsersList = () => {
+export type UseUsersListReturn = {
+    usersList: UseQueryResult<PaginatedDataList<User>, Error>;
+    params: UserSearchParams;
+    updateParams: (params: Partial<UserSearchParams>) => void;
+};
+
+const useUsersList = (): UseUsersListReturn => {
     const { token } = useAuthContext();
     const { params, updateParams } = useUsersListDeepLinking();
 
