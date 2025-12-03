@@ -10,7 +10,8 @@ import {
     Typography,
     useTheme,
     type SxProps,
-    type Theme
+    type Theme,
+    Box
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -27,6 +28,8 @@ type Styles = {
     avatar: SxProps<Theme>;
     containerStack: SxProps<Theme>;
     chipStack: SxProps<Theme>;
+    detailsStack: SxProps<Theme>;
+    textContainer: SxProps<Theme>;
 };
 
 const getStyles = (theme: Theme): Styles => {
@@ -38,7 +41,11 @@ const getStyles = (theme: Theme): Styles => {
             width: '90%'
         },
         avatar: {
-            [theme.breakpoints.up('sm')]: {
+            [theme.breakpoints.down('sm')]: {
+                width: `${AVATAR_DIMENSIONS * 0.5}px`,
+                height: `${AVATAR_DIMENSIONS * 0.5}px`,
+            },
+            [theme.breakpoints.between('sm', 'md')]: {
                 width: `${AVATAR_DIMENSIONS}px`,
                 height: `${AVATAR_DIMENSIONS}px`,
             },
@@ -58,6 +65,14 @@ const getStyles = (theme: Theme): Styles => {
         },
         chipStack: {
             height: '40px'
+        },
+        detailsStack: {
+            flexGrow: 1
+        },
+        textContainer: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         }
     };
 };
@@ -95,27 +110,33 @@ const UserPage = () => {
                     :
                     <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                         <Paper sx={styles.paper}>
-                            <Stack sx={styles.containerStack} direction={'row'} justifyContent={'center'} alignItems={'center'} gap={`${DEFAULT_GAP * 10}px`}>
+                            <Stack sx={styles.containerStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP * 2}px`}>
                                 <Avatar sx={styles.avatar} src={avatarBlobUrl || PLACE_HOLDER_AVATAR} />
-                                <Stack direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
-                                    <Typography variant='body1'>{user.username}</Typography>
-                                    <Typography variant='body1'>{user.email}</Typography>
-                                    <Stack sx={styles.chipStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                                        <UserTypeChip userType={user.userType} />
-                                        {
-                                            user.deletedAt &&
-                                            <Chip label='Deleted' color='error' size='small' />
-                                        }
-                                        {
-                                            !user.deletedAt &&
-                                            <IconButton onClick={handleDeleteUser}>
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        }
+                                <Stack sx={styles.detailsStack} direction={'row'} justifyContent={'center'} alignItems={'center'}>
+                                    <Stack direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
+                                        <Box sx={styles.textContainer}>
+                                            <Typography variant='body1'>{user.username}</Typography>
+                                            <Typography variant='body1'>{user.email}</Typography>
+                                        </Box>
+                                        <Stack sx={styles.chipStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
+                                            <UserTypeChip userType={user.userType} />
+                                            {
+                                                user.deletedAt &&
+                                                <Chip label='Deleted' color='error' size='small' />
+                                            }
+                                            {
+                                                !user.deletedAt &&
+                                                <IconButton onClick={handleDeleteUser}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            }
+                                        </Stack>
+                                        <Box sx={styles.textContainer}>
+                                            <Typography variant='body1'>Created At: {user.createdAt}</Typography>
+                                            <Typography variant='body1'>Updated At: {user.updatedAt}</Typography>
+                                            <Typography variant='body1'>Deleted At: {user.deletedAt}</Typography>
+                                        </Box>
                                     </Stack>
-                                    <Typography variant='body1'>Created At: {user.createdAt}</Typography>
-                                    <Typography variant='body1'>Updated At: {user.updatedAt}</Typography>
-                                    <Typography variant='body1'>Deleted At: {user.deletedAt}</Typography>
                                 </Stack>
                             </Stack>
                         </Paper>
