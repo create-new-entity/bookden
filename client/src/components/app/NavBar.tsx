@@ -70,7 +70,7 @@ const NavBar = () => {
             <Toolbar>
                 <Stack direction={'row'} sx={styles.stack}>
                     <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
-                        <MenuIcon fontSize='large'/>
+                        <MenuIcon/>
                     </IconButton>
                     <Button sx={styles.logoButton} onClick={() => navigate('/')}>
                         <Box sx={{ height: '2.5rem' }}>
