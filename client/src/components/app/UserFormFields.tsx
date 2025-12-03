@@ -100,7 +100,7 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
         if(mode === 'create') {
             return isPending ? 'Creating Admin User...' : 'Create Admin User';
         }
-        return isPending ? 'Updating Admin User...' : 'Update Admin User';
+        return isPending ? 'Updating Profiling...' : 'Update Profile';
     };
     
     return (
