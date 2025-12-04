@@ -2,8 +2,8 @@
 name: bookden-dev
 
 services:
-
   local-postgres-database:
+    container_name: local-postgres-database
     image: postgres:16-alpine
     env_file:
       - ./env/dev/postgres.env
@@ -16,6 +16,7 @@ services:
       retries: 10
 
   server:
+    container_name: bookden-dev-server
     build:
       context: ./server
       dockerfile: Dockerfile.dev
@@ -31,6 +32,7 @@ services:
       - ./env/dev/server.env
 
   client:
+    container_name: bookden-dev-client
     build:
       context: ./client
       dockerfile: Dockerfile.dev

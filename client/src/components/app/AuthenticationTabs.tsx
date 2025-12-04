@@ -77,8 +77,8 @@ const AuthenticationTabs = () => {
                 }
                 <Box>
                     <TabList onChange={handleChange}>
-                        <Tab label="Log In" value={'logIn'} />
-                        <Tab label="Sign Up" value={'signUp'} />
+                        <Tab data-testid='login-tab' label="Log In" value={'logIn'} />
+                        <Tab data-testid='signup-tab' label="Sign Up" value={'signUp'} />
                     </TabList>
                 </Box>
                 <Box sx={styles.tabPanelsContainer}>

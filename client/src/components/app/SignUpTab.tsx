@@ -89,6 +89,11 @@ const SignUpTab = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Paper sx={styles.paper}>
                 <TextField
+                    slotProps={{
+                        htmlInput: {
+                            'data-testid': 'signup-username'
+                        }
+                    }}
                     placeholder='Username'
                     fullWidth
                     {...register('username')}
@@ -99,6 +104,11 @@ const SignUpTab = () => {
                     <Typography color='error'>{errors.username?.message}</Typography>
                 }
                 <TextField
+                    slotProps={{
+                        htmlInput: {
+                            'data-testid': 'signup-email'
+                        }
+                    }}
                     placeholder='Email'
                     fullWidth
                     {...register('email')}
@@ -109,6 +119,11 @@ const SignUpTab = () => {
                     <Typography color='error'>{errors.email?.message}</Typography>
                 }
                 <TextField
+                    slotProps={{
+                        htmlInput: {
+                            'data-testid': 'signup-password'
+                        }
+                    }}
                     placeholder='Password'
                     fullWidth
                     {...register('password')}
@@ -120,6 +135,11 @@ const SignUpTab = () => {
                     <Typography color='error'>{errors.password?.message}</Typography>
                 }
                 <TextField
+                    slotProps={{
+                        htmlInput: {
+                            'data-testid': 'signup-confirm-password'
+                        }
+                    }}
                     placeholder='Confirm Password'
                     fullWidth
                     {...register('confirmPassword')}
@@ -136,6 +156,7 @@ const SignUpTab = () => {
                 }
                 <Box sx={styles.loginButtonContainer}>
                     <Button 
+                        data-testid='signup-submit'
                         type='submit' 
                         variant='contained'
                         disabled={signUpMutation.isPending || loginMutation.isPending}

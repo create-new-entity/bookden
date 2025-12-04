@@ -67,12 +67,22 @@ const LogInTab = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Paper sx={styles.paper}>
                 <TextField
+                    slotProps={{
+                        htmlInput: {
+                            'data-testid': 'login-username'
+                        }
+                    }}
                     placeholder='Username'
                     fullWidth
                     {...register('username')}
                     error={usernameHasError}
                 />
                 <TextField
+                    slotProps={{
+                        htmlInput: {
+                            'data-testid': 'login-password'
+                        }
+                    }}
                     placeholder='Password'
                     fullWidth
                     {...register('password')}
@@ -93,6 +103,7 @@ const LogInTab = () => {
                 }
                 <Box sx={styles.loginButtonContainer}>
                     <Button 
+                        data-testid='login-submit'
                         type='submit' 
                         variant='contained'
                         disabled={loginMutation.isPending}
