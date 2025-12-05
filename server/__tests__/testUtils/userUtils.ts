@@ -47,9 +47,10 @@ export const deleteUser = async (userId: number, expectedCode: number, token: st
         .expect(expectedCode);
 };
 
-export const getUsers = async (expectedCode: number, token: string) => {
+
+export const getUsers = async (expectedCode: number, token: string, queryParams?: string) => {
     return await apiSupertest(app)
-        .get(userBaseUrl)
+        .get(queryParams ? `${userBaseUrl}?${queryParams}` : userBaseUrl)
         .set({
             'Content-Type': 'application/json',
             ...(token ? { 'Authorization': `Bearer ${token}` } : {})

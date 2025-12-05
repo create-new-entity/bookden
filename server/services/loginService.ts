@@ -30,6 +30,11 @@ const login = async (username: string, password: string): Promise<{ token: strin
         WHERE username=${username}
     `);
 
+    if(!result.rows[0]) {
+        const userNotFoundError = new AuthenticationError(errorMessages[errorNames.userNotFound]);
+        throw userNotFoundError;
+    }
+
     const user = camelcaseKeys(result.rows[0], { deep: true });
     const { userId, passwordHash, userType } = user;
 

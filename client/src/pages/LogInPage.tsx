@@ -2,7 +2,7 @@ import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 import { AuthenticationTabs } from '../components';
 import { useThemeModeContext } from '../contexts';
-import { useEffect } from 'react';
+import { useSetTabTitle } from '../hooks';
 
 const styles: Record<string, React.CSSProperties> = {
     rootContainer : {
@@ -38,9 +38,7 @@ const LogInPage = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { isLightMode } = useThemeModeContext();
 
-    useEffect(() => {
-        document.title = 'Authentication';
-    }, []);
+    useSetTabTitle('Authentication');
     
     return (
         <Box sx={styles.rootContainer}>

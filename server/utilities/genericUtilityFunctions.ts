@@ -1,4 +1,5 @@
 import snakecaseKeys from 'snakecase-keys';
+import * as changeCase from 'change-case';
 
 import { isRecord, SnakeCaseDeepObject } from '../types';
 import { AppError, errorMessages, errorNames } from '../errors';
@@ -9,4 +10,10 @@ export const convertToSnakeCaseDeep = <T extends object>(obj: T): SnakeCaseDeepO
     }
     const internalServerError = new AppError(errorMessages[errorNames.internalServerError], 500, false);
     throw internalServerError;
+};
+
+
+
+export const convertStringToSnakeCase = (str: string): string => {
+    return changeCase.snakeCase(str);
 };

@@ -56,8 +56,14 @@ const getAvatarController = async (req: AuthenticatedRequest, res: Response, _ne
     if (!req.user) {
         throw new AuthenticationError();
     }
-    const userId = req.user.userId;
-    const avatars = await getAvatar(userId);
+    const requestorUserId = req.user.userId;
+
+    let targetUserId = requestorUserId;
+    if(req.params.userId) {
+        targetUserId = parseInt(req.params.userId, 10); // It means the requestor wants to get the avatar of another user.
+    }
+
+    const avatars = await getAvatar(targetUserId);
     const avatar = camelcaseKeys(avatars.rows[0], { deep: true });
 
     if(!avatar) {

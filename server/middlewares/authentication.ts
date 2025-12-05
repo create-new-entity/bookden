@@ -4,9 +4,13 @@ import jwt from 'jsonwebtoken';
 import { AuthenticatedRequest, JWTSignPayload } from '../types';
 import { AuthenticationError, errorMessages, errorNames } from '../errors';
 
-export const tokenExtractor = (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
+export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
     if(authHeader) {
+        if (!authHeader.startsWith('Bearer ')) {
+            res.status(401).json({ message: errorMessages[errorNames.invalidAuthHeader] });
+            return;
+        }
         const token = authHeader.split('Bearer ')[1];
         if(token) {
             try {

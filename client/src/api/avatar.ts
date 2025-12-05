@@ -2,7 +2,18 @@
 
 import axios, { type AxiosRequestConfig } from 'axios';
 
-import { avatarUrl } from './endpoints';
+import { avatarUrl, userAvatarUrl } from './endpoints';
+
+export const getUserAvatarBlob = async (token: string | null, userId: number) => {
+    const requestConfig: AxiosRequestConfig = {
+        responseType: 'blob',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    };
+    const response = await axios.get(`${userAvatarUrl}/${userId}`, requestConfig);
+    return response.data;
+};
 
 export const getAvatar = async (token: string | null): Promise<Blob> => {
     const requestConfig: AxiosRequestConfig = {
