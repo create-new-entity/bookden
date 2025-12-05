@@ -4,10 +4,9 @@ name: Bookden CI/CD
 on:
   push:
     branches:
-      - development
       - production
   pull_request:
-    branches: [development, production]
+    branches: [development]
 
 
 
