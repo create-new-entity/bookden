@@ -1,10 +1,11 @@
 import { Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
-import { useEffect } from 'react';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BarChartIcon from '@mui/icons-material/BarChart';
 
 import AdminToolCard from './AdminToolCard';
+import { useNavigate } from 'react-router-dom';
+import { useSetTabTitle } from '../../hooks';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -18,7 +19,7 @@ type Styles = {
 const getStyles = (theme: Theme): Styles => {
     return {
         rootStack: {
-            height: '90vh',
+            height: '85vh',
             marginTop: '2rem',
             gap: '1.5rem'
         },
@@ -41,7 +42,8 @@ const getStyles = (theme: Theme): Styles => {
             gap: '0.5rem'
         },
         iconButton: {
-            alignSelf: 'stretch'
+            alignSelf: 'stretch',
+            borderRadius: 'unset'
         }
     };
 };
@@ -49,25 +51,30 @@ const getStyles = (theme: Theme): Styles => {
 const AdminToolsPage = () => {
     const theme = useTheme();
     const styles = getStyles(theme);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        document.title = 'Admin Tools';
-    }, []);
+    useSetTabTitle('Admin Tools');
+
+    const handleUserManagementClick = () => {
+        navigate('/user-management');
+    };
 
     return (
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'center'}>
             <Paper sx={styles.rootPaper} elevation={2}>
                 <Stack sx={styles.toolsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'center'}>
                     <AdminToolCard
+                        data-testid='user-management-card'
                         icon={<PeopleAltIcon fontSize='large'/>}
                         iconButtonStyles={styles.iconButton}
                         title='User Management'
                         subtitle='Find users, review their details, and remove accounts when needed.'
                         iconAndTextStackStyles={styles.iconAndTextStack}
-                        onClick={() => {}}
+                        onClick={handleUserManagementClick}
                         paperStyles={styles.toolPaper}
                     />
                     <AdminToolCard
+                        data-testid='book-management-card'
                         icon={<MenuBookIcon fontSize='large'/>}
                         iconButtonStyles={styles.iconButton}
                         title='Book Management'
@@ -77,6 +84,7 @@ const AdminToolsPage = () => {
                         paperStyles={styles.toolPaper}
                     />
                     <AdminToolCard
+                        data-testid='analytics-card'
                         icon={<BarChartIcon fontSize='large'/>}
                         iconButtonStyles={styles.iconButton}
                         title='Analytics'

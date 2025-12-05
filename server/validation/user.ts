@@ -1,5 +1,7 @@
 import * as z from 'zod';
 import { ADMIN, CUSTOMER } from '../types';
+import { usersSortByOptions, usersSortOrderOptions, userTypes } from '../constants';
+
 
 export const User = z.object({
     username: z.string().min(6).max(30),
@@ -37,4 +39,19 @@ export const UpdateUser = z.object({
                 });
             }
         })
+});
+
+
+export const GetUsersQueryParamsSchema = z.object({
+    search: z.string().optional(),
+    userType: z.enum(userTypes).optional(),
+    sortBy: z.enum(usersSortByOptions).optional(),
+    sortOrder: z.enum(usersSortOrderOptions).optional(),
+    page: z.string().optional(),
+});
+
+
+export const LoginSchema = z.object({
+    username: z.string().min(6).max(30),
+    password: z.string().min(6).max(30),
 });

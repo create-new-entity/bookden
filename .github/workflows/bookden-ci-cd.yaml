@@ -4,7 +4,6 @@ name: Bookden CI/CD
 on:
   push:
     branches:
-      - development
       - production
   pull_request:
     branches: [development, production]
@@ -100,9 +99,11 @@ jobs:
         if: always()
         run: docker compose -f docker-compose.dev.yml logs server
 
-      # Playwright e2e tests
 
-      
+
+
+      # Playwright e2e tests
+            
       - name: Wait for server health
         run: |
           echo "Waiting for backend..."

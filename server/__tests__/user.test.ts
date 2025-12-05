@@ -1,11 +1,15 @@
     
+import * as R from 'ramda';
+
 import {
     EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409,
-    clearDB, createSomeSeedUsers, createUser, deleteUser, getUsers, login, seedAdminUser,
+    adminUsersSeedData,
+    clearDB, createSomeSeedUsers, createUser, customerUsersSeedData, deleteUser, getUsers, login, seedAdminUser,
     seedCustomerUser, seedSuperAdminUser, updateAvatar, updateUser
 } from './testUtils';
-import { ADMIN, CUSTOMER, SUPERADMIN, User } from '../types';
+import { PaginatedDataList, User } from '../types';
 import { endConnectionPool, initPGDBPool } from '../configs';
+import { USERS_PAGINATION_LIMIT } from '../constants';
 
 describe('User accounts related tests', () => {
 
@@ -16,6 +20,7 @@ describe('User accounts related tests', () => {
     beforeEach(async () => {
         await clearDB();
         await createSomeSeedUsers();
+        console.log('test users created');
     });
 
     test('New superadmin user can not be created.', async () => {
@@ -34,8 +39,10 @@ describe('User accounts related tests', () => {
 
     describe('payload validation tests.', () => {
         test('username should be unique.', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
+
             const newAdminUser = {
-                ...seedAdminUser,
+                ...existingAdminUser,
                 username: 'admin2',
                 email: 'admin2@gmail.com'
             };
@@ -44,7 +51,7 @@ describe('User accounts related tests', () => {
                 password: 'password'
             };
             const token = await login(loginPayload);
-            await createUser(seedAdminUser, EXPECT_409, token);  // Should be error -> has same username.
+            await createUser(existingAdminUser, EXPECT_409, token);  // Should be error -> has same username.
             await createUser(newAdminUser, EXPECT_201, token);   // Should be 201 -> different username and email.
         });
 
@@ -60,6 +67,67 @@ describe('User accounts related tests', () => {
             };
             const token = await login(loginPayload);
             await createUser(newAdminUser, EXPECT_400, token);
+        });
+    });
+
+    describe('GET users cases', () => {
+        test('GET users by superadmin works.', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const response = await getUsers(EXPECT_200, token);
+            const { data: users } = response.body as PaginatedDataList<User>;
+            expect(users.length).toBeLessThanOrEqual(USERS_PAGINATION_LIMIT);
+        });
+
+        test('GET users and filter by username or email works', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const response = await getUsers(EXPECT_200, token, 'search=admin_alpha');
+            const { data: users } = response.body as PaginatedDataList<User>;
+
+            // 6 because in the seed data, 3 users have username starting with 'admin_alpha' and 3 users have email starting with 'admin_alpha'.
+            expect(users.length).toBe(6);
+        });
+
+        test('GET users and filter by userType works', async () => {
+            const loginPayload = {
+                username: seedSuperAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+            const response = await getUsers(EXPECT_200, token, 'userType=admin');
+            const { data: users } = response.body as PaginatedDataList<User>;
+
+            expect(users.length).toBeLessThanOrEqual(USERS_PAGINATION_LIMIT);
+            expect(users.every(user => user.userType === 'admin')).toBe(true);
+        });
+
+        test('GET users and filter by userType and pagination', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
+            const secondPageAdminUsersInDescendingOrder = adminUsersSeedData.slice().sort((a, b) => b.username.localeCompare(a.username)).slice(USERS_PAGINATION_LIMIT, USERS_PAGINATION_LIMIT * 2);
+            const secondPageUsers = secondPageAdminUsersInDescendingOrder.map(user => R.omit(['password'], user));
+            
+            
+            const loginPayload = {
+                username: existingAdminUser.username,
+                password: 'password'
+            };
+            const token = await login(loginPayload);
+
+            const response = await getUsers(EXPECT_200, token, 'userType=admin&page=2&sortBy=username&sortOrder=desc');
+            const { data: users } = response.body as PaginatedDataList<User>;
+            
+            expect(users.length).toBeLessThanOrEqual(USERS_PAGINATION_LIMIT);
+            const usersWithoutIds = users.map(user => {
+                return R.omit(['userId', 'createdAt', 'updatedAt', 'deletedAt'], user);
+            });
+            expect(usersWithoutIds).toEqual(secondPageUsers);
         });
     });
 
@@ -107,25 +175,28 @@ describe('User accounts related tests', () => {
 
     describe('CREATE user by admin users cases.', () => {
         test('admins can not create admin users.', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
             const loginPayload = {
-                username: seedAdminUser.username,
+                username: existingAdminUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
             const newAdminUser = {
-                ...seedAdminUser,
+                ...existingAdminUser,
                 username: 'admin2',
                 email: 'admin2@gmail.com'
             };
             await createUser(newAdminUser, EXPECT_403, token);
         });
         test('admins can not create customer users.', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
+            const existingCustomerUser = customerUsersSeedData[0];
             const loginPayload = {
-                username: seedAdminUser.username,
+                username: existingAdminUser.username,
                 password: 'password'
             };
             const newCustomerUser = {
-                ...seedCustomerUser,
+                ...existingCustomerUser,
                 username: 'customer2',
                 email: 'customer2@gmail.com'
             };
@@ -136,21 +207,25 @@ describe('User accounts related tests', () => {
 
     describe('CREATE user by customer cases.', () => {
         test('customer can not create an admin user.', async () => {
+            const existingCustomerUser = customerUsersSeedData[0];
+            const existingAdminUser = adminUsersSeedData[0];
+
             const loginPayload = {
-                username: seedCustomerUser.username,
+                username: existingCustomerUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
             const newAdminUser = {
-                ...seedAdminUser,
+                ...existingAdminUser,
                 username: 'admin2',
                 email: 'admin2@gmail.com'
             };
             await createUser(newAdminUser, EXPECT_403, token);
         });
         test('Customer can not create a superadmin user.', async () => {
+            const existingCustomerUser = customerUsersSeedData[0];
             const loginPayload = {
-                username: seedCustomerUser.username,
+                username: existingCustomerUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
@@ -162,8 +237,9 @@ describe('User accounts related tests', () => {
             await createUser(newSuperAdminUser, EXPECT_400, token);
         });
         test('customer sign up works.', async () => {
+            const existingCustomerUser = customerUsersSeedData[0];
             const newCustomerUser = {
-                ...seedCustomerUser,
+                ...existingCustomerUser,
                 username: 'customer2',
                 email: 'customer2@gmail.com'
             };
@@ -192,8 +268,9 @@ describe('User accounts related tests', () => {
                 password: 'new_password',
                 email: 'randomNewMail@gmail.com'
             };
+            const existingAdminUser = adminUsersSeedData[0];
             const loginPayload = {
-                username: seedAdminUser.username,
+                username: existingAdminUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
@@ -201,13 +278,14 @@ describe('User accounts related tests', () => {
         });
 
         test('customer user can update own data.', async () => {
+            const existingCustomerUser = customerUsersSeedData[0];
             const user = {
                 username: 'customer_updated',
                 password: 'new_password',
                 email: 'randomNewMail@gmail.com'
             };
             const loginPayload = {
-                username: seedCustomerUser.username,
+                username: existingCustomerUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
@@ -215,8 +293,9 @@ describe('User accounts related tests', () => {
         });
 
         test('UPDATE fails if username is duplicate.', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
             const user = {
-                username: seedAdminUser.username,
+                username: existingAdminUser.username,
                 password: 'new_password',
                 email: 'randomNewMail@gmail.com'
             };
@@ -229,13 +308,15 @@ describe('User accounts related tests', () => {
         });
 
         test('UPDATE fails if email is duplicate.', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
+            const existingCustomerUser = customerUsersSeedData[0];
             const user = {
-                username: seedAdminUser.username,
-                password: seedAdminUser.password,
-                email: 'customer1@gmail.com'
+                username: existingAdminUser.username,
+                password: 'password',
+                email: existingCustomerUser.email
             };
             const loginPayload = {
-                username: seedAdminUser.username,
+                username: existingAdminUser.username,
                 password: 'password'
             };
             const token = await login(loginPayload);
@@ -244,11 +325,12 @@ describe('User accounts related tests', () => {
 
         describe('Update with partial data works.', () => {
             test('UPDATE succeeds if only email is provided.', async () => {
+                const existingAdminUser = adminUsersSeedData[0];
                 const user = {
                     email: 'admin_changed@gmail.com'
                 };
                 const loginPayload = {
-                    username: seedAdminUser.username,
+                    username: existingAdminUser.username,
                     password: 'password'
                 };
                 const token = await login(loginPayload);
@@ -256,12 +338,13 @@ describe('User accounts related tests', () => {
             });
 
             test('UPDATE succeeds if only password is provided.', async () => {
+                const existingAdminUser = adminUsersSeedData[0];
                 const NEW_PASSWORD = 'new_password';
                 const user = {
                     password: NEW_PASSWORD
                 };
                 const loginPayload = {
-                    username: seedAdminUser.username,
+                    username: existingAdminUser.username,
                     password: 'password'
                 };
                 const token = await login(loginPayload);
@@ -271,9 +354,10 @@ describe('User accounts related tests', () => {
         });
 
         test('UPDATE avatar', async () => {
+            const existingAdminUser = adminUsersSeedData[0];
             const loginPayload = {
-                username: seedAdminUser.username,
-                password: seedAdminUser.password
+                username: existingAdminUser.username,
+                password: 'password'
             };
             const token = await login(loginPayload);
             await updateAvatar(EXPECT_200, token);
@@ -282,22 +366,6 @@ describe('User accounts related tests', () => {
 
     describe('DELETE users.', () => {
         describe('DELETE user by superadmin cases.', () => {
-            test('superadmin can not delete superadmin.', async () => {
-                const loginPayload = {
-                    username: seedSuperAdminUser.username,
-                    password: seedSuperAdminUser.password
-                };
-                const token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
-                const existingSuperAdminuser = allUsers.find(u => u.userType === SUPERADMIN);
-                if(existingSuperAdminuser) {
-                    await deleteUser(existingSuperAdminuser.userId, EXPECT_403, token);
-                }
-                else {
-                    fail('Could not find a user to delete.');
-                }
-            });
 
             test('superadmin can delete admin.', async () => {
                 const loginPayload = {
@@ -305,14 +373,13 @@ describe('User accounts related tests', () => {
                     password: seedSuperAdminUser.password
                 };
                 const token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
-                const existingAdminUser = allUsers.find(u => u.userType === ADMIN);
-                if(existingAdminUser) {
-                    await deleteUser(existingAdminUser.userId, EXPECT_204, token);
+                const response = await getUsers(EXPECT_200, token, 'userType=admin');
+                const { data: adminUsers } = response.body as PaginatedDataList<User>;
+                if(adminUsers[1]) {
+                    await deleteUser(adminUsers[1].userId, EXPECT_204, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
 
@@ -322,38 +389,37 @@ describe('User accounts related tests', () => {
                     password: seedSuperAdminUser.password
                 };
                 const token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
-                const existingCustomerUser = allUsers.find(u => u.userType === CUSTOMER);
-                if(existingCustomerUser) {
-                    await deleteUser(existingCustomerUser.userId, EXPECT_204, token);
+                const response = await getUsers(EXPECT_200, token, 'userType=customer');
+                const { data: customerUsers } = response.body as PaginatedDataList<User>;
+                if(customerUsers[0]) {
+                    await deleteUser(customerUsers[0].userId, EXPECT_204, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
         });
 
         describe('DELETE user by admin cases.', () => {
             test('admin can not delete superadmin.', async () => {
+                
                 let loginPayload = {
                     username: seedSuperAdminUser.username,
                     password: seedSuperAdminUser.password
                 };
                 let token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
+                const response = await getUsers(EXPECT_200, token, 'userType=admin');
+                const { data: adminUsers } = response.body as PaginatedDataList<User>;
                 loginPayload = {
-                    username: seedAdminUser.username,
-                    password: seedAdminUser.password
+                    username: adminUsers[0].username,
+                    password: 'password'
                 };
                 token = await login(loginPayload);
-                const existingSuperAdminuser = allUsers.find(u => u.userType === SUPERADMIN);
-                if(existingSuperAdminuser) {
-                    await deleteUser(existingSuperAdminuser.userId, EXPECT_403, token);
+                if(adminUsers[1]) {
+                    await deleteUser(adminUsers[1].userId, EXPECT_403, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
 
@@ -363,19 +429,18 @@ describe('User accounts related tests', () => {
                     password: seedSuperAdminUser.password
                 };
                 let token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
+                const response = await getUsers(EXPECT_200, token, 'userType=admin');
+                const { data: adminUsers } = response.body as PaginatedDataList<User>;
                 loginPayload = {
-                    username: seedAdminUser.username,
-                    password: seedAdminUser.password
+                    username: adminUsers[0].username,
+                    password: 'password'  
                 };
                 token = await login(loginPayload);
-                const existingAdminUser = allUsers.find(u => u.userType === ADMIN);
-                if(existingAdminUser) {
-                    await deleteUser(existingAdminUser.userId, EXPECT_403, token);
+                if(adminUsers[1]) {
+                    await deleteUser(adminUsers[1].userId, EXPECT_403, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
 
@@ -385,65 +450,45 @@ describe('User accounts related tests', () => {
                     password: seedSuperAdminUser.password
                 };
                 let token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
+                let response = await getUsers(EXPECT_200, token, 'userType=admin');
+                const { data: adminUsers } = response.body as PaginatedDataList<User>;
                 loginPayload = {
-                    username: seedAdminUser.username,
-                    password: seedAdminUser.password
+                    username: adminUsers[0].username,
+                    password: 'password'
                 };
                 token = await login(loginPayload);
-                const existingCustomerUser = allUsers.find(u => u.userType === CUSTOMER);
-                if(existingCustomerUser) {
-                    await deleteUser(existingCustomerUser.userId, EXPECT_204, token);
+                response = await getUsers(EXPECT_200, token, 'userType=customer');
+                const { data: customerUsers } = response.body as PaginatedDataList<User>;
+                if(customerUsers[0]) {
+                    await deleteUser(customerUsers[0].userId, EXPECT_204, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
         });
 
         describe('DELETE user by customer cases.', () => {
-            test('customer can not delete superadmin.', async () => {
-                let loginPayload = {
-                    username: seedSuperAdminUser.username,
-                    password: seedSuperAdminUser.password
-                };
-                let token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
-                loginPayload = {
-                    username: seedCustomerUser.username,
-                    password: seedCustomerUser.password
-                };
-                token = await login(loginPayload);
-                const existingSuperAdminuser = allUsers.find(u => u.userType === SUPERADMIN);
-                if(existingSuperAdminuser) {
-                    await deleteUser(existingSuperAdminuser.userId, EXPECT_403, token);
-                }
-                else {
-                    fail('Could not find a user to delete.');
-                }
-            });
 
             test('customer can not delete admin.', async () => {
+                const existingCustomerUser = customerUsersSeedData[0];
                 let loginPayload = {
                     username: seedSuperAdminUser.username,
                     password: seedSuperAdminUser.password
                 };
                 let token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
+                const response = await getUsers(EXPECT_200, token, 'userType=admin');
+                const { data: adminUsers } = response.body as PaginatedDataList<User>;
                 loginPayload = {
-                    username: seedCustomerUser.username,
-                    password: seedCustomerUser.password
+                    username: existingCustomerUser.username,
+                    password: existingCustomerUser.password
                 };
                 token = await login(loginPayload);
-                const existingAdminUser = allUsers.find(u => u.userType === ADMIN);
-                if(existingAdminUser) {
-                    await deleteUser(existingAdminUser.userId, EXPECT_403, token);
+                if(adminUsers[0]) {
+                    await deleteUser(adminUsers[0].userId, EXPECT_403, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
 
@@ -454,47 +499,48 @@ describe('User accounts related tests', () => {
                 };
                 let token = await login(loginPayload);
 
+                const existingCustomerUser = customerUsersSeedData[0];
+
                 const newCustomer = {
-                    ...seedCustomerUser,
+                    ...existingCustomerUser,
                     username: 'new_customer',
                     email: 'new_customer@gmail.com'
                 };
                 await createUser(newCustomer, 201);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
+                const response = await getUsers(EXPECT_200, token, 'userType=customer');
+                const { data: customerUsers } = response.body as PaginatedDataList<User>;
                 loginPayload = {
-                    username: seedCustomerUser.username,
-                    password: seedCustomerUser.password
+                    username: existingCustomerUser.username,
+                    password: existingCustomerUser.password
                 };
                 token = await login(loginPayload);
-                const existingOtherCustomerUser = allUsers.find(u => u.username === newCustomer.username);
-                if(existingOtherCustomerUser) {
-                    await deleteUser(existingOtherCustomerUser.userId, EXPECT_403, token);
+                if(customerUsers[0]) {
+                    await deleteUser(customerUsers[0].userId, EXPECT_403, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
 
             test('customer can delete own account.', async () => {
+                const existingCustomerUser = customerUsersSeedData[0];
                 let loginPayload = {
                     username: seedSuperAdminUser.username,
                     password: seedSuperAdminUser.password
                 };
                 let token = await login(loginPayload);
-                const response = await getUsers(EXPECT_200, token);
-                const allUsers = response.body as User[];
+                const response = await getUsers(EXPECT_200, token, `search=${existingCustomerUser.username}`);
+                const { data: customerUsers } = response.body as PaginatedDataList<User>;
                 loginPayload = {
-                    username: seedCustomerUser.username,
-                    password: seedCustomerUser.password
+                    username: existingCustomerUser.username,
+                    password: existingCustomerUser.password
                 };
                 token = await login(loginPayload);
-                const existingCustomerUser = allUsers.find(u => u.username === seedCustomerUser.username);
-                if(existingCustomerUser) {
-                    await deleteUser(existingCustomerUser.userId, EXPECT_204, token);
+                if(customerUsers[0] ) {
+                    await deleteUser(customerUsers[0].userId, EXPECT_204, token);
                 }
                 else {
-                    fail('Could not find a user to delete.');
+                    throw new Error('Could not find a user to delete.');
                 }
             });
         });

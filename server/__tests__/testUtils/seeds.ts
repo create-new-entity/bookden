@@ -1,4 +1,7 @@
-import { ADMIN, CUSTOMER, SUPERADMIN } from '../../types';
+import { ADMIN, CUSTOMER, NewUserPayload, SUPERADMIN } from '../../types';
+
+import allAdminUsersSeedData from './../../seed/seedData/admins_seed_data.json';
+import allCustomerUsersSeedData from './../../seed/seedData/customers_seed_data.json';
 
 
 export const seedSuperAdminUser = {
@@ -21,3 +24,10 @@ export const seedCustomerUser = {
     email: 'customer1@gmail.com',
     userType: CUSTOMER
 };
+
+const MAX_USERS_PER_TYPE_FOR_TESTING = 20;
+
+export const adminUsersSeedData = allAdminUsersSeedData.slice(0, MAX_USERS_PER_TYPE_FOR_TESTING).map(user => ({ ...user, password: 'password' })) as NewUserPayload[];
+export const customerUsersSeedData = allCustomerUsersSeedData.slice(0, MAX_USERS_PER_TYPE_FOR_TESTING).map(user => ({ ...user, password: 'password' })) as NewUserPayload[];
+
+export const allUsersSeedData = [...adminUsersSeedData, ...customerUsersSeedData];

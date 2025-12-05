@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { LOGGED_IN_USER_DATA } from '../constants';
 import { isLoggedInUserData, type AuthContextType } from '../types';
-import useMe from '../hooks/useMe';
+import { useMe } from '../hooks';
 
 
 /*
@@ -33,6 +33,7 @@ const hasExistingLoggedInUser = () => {
 };
 
 const defaultContextValue: AuthContextType = {
+    userId: -1,
     token: '',
     username: '',
     email: '',
@@ -81,6 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const value: AuthContextType = {
+        userId: me.data?.userId || 0,
         username: me.data?.username || '',
         token,
         userType: me.data?.userType || undefined,

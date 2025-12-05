@@ -1,17 +1,19 @@
 import { NextFunction, Response } from 'express';
-import { ADMIN, AuthenticatedRequest, CUSTOMER } from '../types';
+import { ADMIN, AuthenticatedRequest, CUSTOMER, GetUsersQueryParams } from '../types';
 import { AuthenticationError, UnauthorizedError } from '../errors';
-import { canCreateUser, createUser, deleteUser, getAllUsers, getMySelf, getUser, updateUser } from '../services';
-import { UpdateUser, User } from '../validation';
+import { canCreateUser, createUser, deleteUser, getAllUsers, getMyself, getUser, updateUser } from '../services';
+import { GetUsersQueryParamsSchema, UpdateUser, User } from '../validation';
 
 
-const getAllUsersController = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+const getAllUsersController = async (req: AuthenticatedRequest<GetUsersQueryParams>, res: Response, next: NextFunction) => {
     if(!req.user || req.user.userType === CUSTOMER) {
         const unauthorizedError = new UnauthorizedError();
         next(unauthorizedError);
         return;
     }
-    const allUsers = await getAllUsers();
+
+    const queryFilteringOptions = GetUsersQueryParamsSchema.parse(req.query);
+    const allUsers = await getAllUsers(queryFilteringOptions, req.user.userType);
     res.status(200).json(allUsers);
 };
 
@@ -21,7 +23,7 @@ const getUserController = async (req: AuthenticatedRequest, res: Response, next:
         next(unauthorizedError);
         return;
     }
-    const user = await getUser(req.user.userId, parseInt(req.params.id, 10));  
+    const user = await getUser(req.user, parseInt(req.params.id, 10));  
     res.status(200).json(user);
 };
 
@@ -31,7 +33,7 @@ const getMeController = async (req: AuthenticatedRequest, res: Response, next: N
         next(unauthorizedError);
         return;
     }
-    const me = await getMySelf(req.user.userId);  
+    const me = await getMyself(req.user.userId);  
     res.status(200).json(me);
 };
 

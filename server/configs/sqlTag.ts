@@ -1,9 +1,10 @@
 import { createSqlTag } from 'slonik';
-import { AvatarTypeAlias, UserTypeAlias } from '../types';
+import { AvatarTypeAlias, TotalTypeAlias, UserTypeAlias } from '../typeAliases';
 
 export const sqlTag = createSqlTag({
     typeAliases: {
         Avatar: AvatarTypeAlias,
-        User: UserTypeAlias
+        User: UserTypeAlias,
+        Total: TotalTypeAlias
     }
 });

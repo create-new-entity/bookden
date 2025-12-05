@@ -2,6 +2,7 @@ import type { LoggedInUserData } from '.';
 import type { UserType } from './Users';
 
 export interface AuthContextType {
+  userId: number;
   username: string;
   token: string;
   email: string;
