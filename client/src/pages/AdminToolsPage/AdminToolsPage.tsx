@@ -64,6 +64,7 @@ const AdminToolsPage = () => {
             <Paper sx={styles.rootPaper} elevation={2}>
                 <Stack sx={styles.toolsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'center'}>
                     <AdminToolCard
+                        data-testid='user-management-card'
                         icon={<PeopleAltIcon fontSize='large'/>}
                         iconButtonStyles={styles.iconButton}
                         title='User Management'
@@ -73,6 +74,7 @@ const AdminToolsPage = () => {
                         paperStyles={styles.toolPaper}
                     />
                     <AdminToolCard
+                        data-testid='book-management-card'
                         icon={<MenuBookIcon fontSize='large'/>}
                         iconButtonStyles={styles.iconButton}
                         title='Book Management'
@@ -82,6 +84,7 @@ const AdminToolsPage = () => {
                         paperStyles={styles.toolPaper}
                     />
                     <AdminToolCard
+                        data-testid='analytics-card'
                         icon={<BarChartIcon fontSize='large'/>}
                         iconButtonStyles={styles.iconButton}
                         title='Analytics'

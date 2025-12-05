@@ -86,7 +86,7 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
 
     return (
         <Link to={`/users/${user.userId}`}>
-            <Card sx={styles.card}>
+            <Card sx={styles.card} data-testid={'user-card'}>
                 <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                     {
                         objectUrl ? 

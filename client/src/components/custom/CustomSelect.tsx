@@ -13,6 +13,7 @@ type CustomSelectProps<V extends string | number> = {
     value: V;
     onChange: (event: SelectChangeEvent<V>) => void;
     options: SelectOption<V>[];
+    'data-testid'?: string;
 };
 
 
@@ -25,6 +26,7 @@ const CustomSelect = <V extends string | number>(props: CustomSelectProps<V>) =>
             <Select
                 labelId={`select-${id}-label`}
                 id={`select-${id}`}
+                data-testid={`${props['data-testid']}`}
                 value={value}
                 label={inputLabelText}
                 onChange={onChange}

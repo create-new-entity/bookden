@@ -24,7 +24,8 @@ const SelectSortOrder = ({ sortOrder, updateParams }: SelectSortOrderProps) => {
     ];
     return (
         <CustomSelect<SortOrder>
-            id="sort-order"
+            id='sort-order'
+            data-testid='sort-order-select'
             formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_SELECT_SORT_ORDER }}
             inputLabelText="Sort Order"
             value={sortOrder}

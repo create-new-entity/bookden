@@ -1,11 +1,11 @@
 
 
 import { test, expect } from '@playwright/test';
-import { HOME_PAGE_URL } from '../constants';
+import { AUTH_PAGE_URL, HOME_PAGE_URL } from '../constants';
 
 test.describe('Authentication Page', () => {
   test('User can log in successfully', async ({ page }) => {
-    await page.goto('/auth');
+    await page.goto(AUTH_PAGE_URL);
 
     await expect(page.getByTestId('login-username')).toBeVisible();
     await expect(page.getByTestId('login-password')).toBeVisible();
