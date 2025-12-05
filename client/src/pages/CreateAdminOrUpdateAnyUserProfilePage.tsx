@@ -96,7 +96,7 @@ const CreateAdminOrUpdateAnyUserProfilePage = (props: CreateAdminOrUpdateAnyUser
                             ?
                             <>
                                 <Badge badgeContent={badgeContent}>
-                                    <Avatar sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
+                                    <Avatar data-testid='profile-avatar' sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
                                 </Badge>
                                 <UpdateUserForm/>
                             </>

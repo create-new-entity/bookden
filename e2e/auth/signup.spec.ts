@@ -16,8 +16,8 @@ test.describe('Authentication Page', () => {
     await expect(page.getByTestId('signup-confirm-password')).toBeVisible();
     await expect(page.getByTestId('signup-submit')).toBeVisible();
 
-    await page.getByTestId('signup-username').fill('testuser');
-    await page.getByTestId('signup-email').fill('testuser@gmail.com');
+    await page.getByTestId('signup-username').fill('zoe_kendall2');
+    await page.getByTestId('signup-email').fill('zoe_kendall2@gmail.com');
     await page.getByTestId('signup-password').fill('password');
     await page.getByTestId('signup-confirm-password').fill('password');
     await page.getByTestId('signup-submit').click();

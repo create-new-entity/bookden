@@ -19,7 +19,7 @@ export default async function globalSetup() {
     const CHECK_IS_DB_READY = `bash -c "for i in {1..30}; do pg_isready -U admin && exit 0; sleep 1; done; exit 1"`
     
     sh(`docker exec -i ${DB_CONTAINER_NAME} ${CHECK_IS_DB_READY}`);
-
+    
     const DROP_TEST_DB_IF_EXISTS = `psql -U admin -d postgres -c "DROP DATABASE IF EXISTS bookden_test;"`;
     // Drop existing test db. Migration will re run and populate with seed data from scratch.
     sh(`docker exec -i ${DB_CONTAINER_NAME} ${DROP_TEST_DB_IF_EXISTS}`);

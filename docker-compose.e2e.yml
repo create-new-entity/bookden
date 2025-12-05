@@ -1,0 +1,10 @@
+
+# I want to over ride some envs of server when running e2e locally.
+# Server in dev mode use bookden_dev DB, but in e2e mode we use bookden_test DB.
+# This compose file is used to override the envs of server when running e2e tests locally.
+# Otherwise e2e runs migrations in one db and server listens and tries to run queries in another db.
+
+services:
+  server:
+    env_file:
+      - ./env/e2e/server.env

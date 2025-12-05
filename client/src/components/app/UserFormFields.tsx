@@ -108,12 +108,12 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
             <Stack sx={styles.usernameEmailStack} alignItems={'center'} gap={'1rem'}>
                 <Box sx={styles.container}>
                     <Typography>Username</Typography>
-                    <CustomTextField fullWidth {...register(usernameFieldName)} error={!!formState.errors[usernameFieldName]}/>
+                    <CustomTextField slotProps={{ htmlInput: { 'data-testid': 'username-field' } }} fullWidth {...register(usernameFieldName)} error={!!formState.errors[usernameFieldName]}/>
                     <ErrorText isError={!!formState.errors[usernameFieldName]} errorMessage={String(formState.errors[usernameFieldName]?.message)}/>
                 </Box>
                 <Box sx={styles.container}>
                     <Typography>Email</Typography>
-                    <CustomTextField fullWidth {...register(emailFieldName)} error={!!formState.errors[emailFieldName]}/>
+                    <CustomTextField slotProps={{ htmlInput: { 'data-testid': 'email-field' } }} fullWidth {...register(emailFieldName)} error={!!formState.errors[emailFieldName]}/>
                     <ErrorText isError={!!formState.errors[emailFieldName]} errorMessage={String(formState.errors[emailFieldName]?.message)}/>
                 </Box>
             </Stack>
@@ -121,13 +121,13 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
             
             <Box>
                 <Typography>New Password</Typography>
-                <CustomTextField type='password' fullWidth {...register(passwordFieldName)} error={!!formState.errors[passwordFieldName]}/>
+                <CustomTextField slotProps={{ htmlInput: { 'data-testid': 'new-password-field' } }} type='password' fullWidth {...register(passwordFieldName)} error={!!formState.errors[passwordFieldName]}/>
                 <ErrorText isError={!!formState.errors[passwordFieldName]} errorMessage={String(formState.errors[passwordFieldName]?.message)}/>
             </Box>
             
             <Box>
                 <Typography>Confirm Password</Typography>
-                <CustomTextField type='password' fullWidth disabled={!isNewPasswordDirty} {...register(confirmPasswordFieldName)} error={!!formState.errors[confirmPasswordFieldName]}/>
+                <CustomTextField slotProps={{ htmlInput: { 'data-testid': 'confirm-password-field' } }} type='password' fullWidth disabled={!isNewPasswordDirty} {...register(confirmPasswordFieldName)} error={!!formState.errors[confirmPasswordFieldName]}/>
                 <ErrorText isError={!!formState.errors[confirmPasswordFieldName]} errorMessage={String(formState.errors[confirmPasswordFieldName]?.message)}/>
             </Box>
             
@@ -140,6 +140,7 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
                     {
                         isCustomer &&
                         <Button
+                            data-testid='delete-profile-button'
                             variant='contained'
                             color='error'
                             onClick={handleDeleteAccount}
@@ -148,6 +149,7 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
                         </Button>
                     }
                     <Button 
+                        data-testid='submit-button'
                         disabled={isError || !formState.isDirty || isPending} 
                         type='submit' 
                         variant='contained'

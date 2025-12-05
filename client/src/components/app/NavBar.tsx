@@ -91,7 +91,7 @@ const NavBar = () => {
                             />
                         )
                     }
-                    <Avatar sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                    <Avatar data-testid='user-avatar' sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                         setAnchorElement(e.currentTarget);
                         setMenuOpen(true);
                     }}/>
@@ -107,6 +107,7 @@ const NavBar = () => {
                             options.map((option) => {
                                 return (
                                     <MenuItem
+                                        data-testid={`${option.name}-menu-item`}
                                         key={option.name}
                                         onClick={option.action}
                                     >
