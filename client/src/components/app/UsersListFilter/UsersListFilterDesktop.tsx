@@ -66,7 +66,7 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
                 sx={styles.searchBox}
                 value={search}
                 handleChange={(value) => {
-                    updateParams({ search: value });
+                    updateParams({ search: value, page: 1 });
                 }}
                 placeholder='Search by username or email'
             />
