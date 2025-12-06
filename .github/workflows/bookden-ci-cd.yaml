@@ -195,8 +195,11 @@ jobs:
             echo "Stopping existing containers..."
             docker compose -f docker-compose.prod.yml down
 
-            echo "Starting new containers and pulling latest images..."
-            docker compose -f docker-compose.prod.yml up -d --pull always --force-recreate
+            echo "Remove Bookden Postgres data volume (fresh DB). After all it is just a portfolio project."
+            docker volume rm bookden-prod_postgres_data || true
+
+            echo "Starting new containers with fresh DB..."
+            docker compose -f docker-compose.prod.yml up -d --pull always --force-recreate      
 
             echo "Running SAFE cleanup..."
             docker container prune -f
