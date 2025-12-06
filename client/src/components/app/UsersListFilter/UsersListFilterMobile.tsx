@@ -67,7 +67,7 @@ const UsersListFilterMobile = (props: UsersListFilterMobileProps) => {
                     <CustomAutoComplete id='userManagementSearchBox'
                         value={search}
                         handleChange={(value) => {
-                            updateParams({ search: value });
+                            updateParams({ search: value, page: 1 });
                         }}
                         placeholder='username or email'
                     />
