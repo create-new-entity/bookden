@@ -17,6 +17,7 @@ import {
 } from './routes';
 import { errorHandler } from './middlewares';
 import { globalRateLimiter, loginRateLimiter } from './middlewares/rateLimit';
+import bookRouter, { bookBaseUrl } from './routes/bookRoutes';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(globalRateLimiter);
 app.use(userBaseUrl, userRouter);
 app.use(loginBaseUrl, loginRateLimiter, loginRouter);
 app.use(avatarBaseUrl, avatarRouter);
+app.use(bookBaseUrl, bookRouter);
 
 
 if(isTestEnvironment()) {

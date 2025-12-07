@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS books (
     authors JSONB NOT NULL DEFAULT '[]',
     isbn VARCHAR(32),
     price NUMERIC(10, 2) NOT NULL,
-    date_published VARCHAR(32),
+    year_published INTEGER,
     language VARCHAR(16),
     pages INTEGER,
 

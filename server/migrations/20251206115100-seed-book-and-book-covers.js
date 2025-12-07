@@ -8,6 +8,18 @@ var dbm;
 var type;
 var seed;
 
+function extractYear(raw) {
+  const DEFAULT_YEAR = 2000;
+
+  if (!raw || typeof raw !== "string") return DEFAULT_YEAR;
+
+  const match = raw.match(/\b(19|20)\d{2}\b/);
+  if (match) return Number(match[0]);
+
+  return DEFAULT_YEAR;
+}
+
+
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
   * This enables us to not have to rely on NODE_PATH.
@@ -45,6 +57,8 @@ exports.up = async function(db) {
   
       // Add 1 second for each book to avoid having the same created_at for the same book
       const createdAt = new Date(baseTime.getTime() + i * 1000);
+
+      const datePublishedYear = extractYear(date_published);
   
       const result = await db.runSql(
         `INSERT INTO books (
@@ -53,14 +67,14 @@ exports.up = async function(db) {
           authors,
           isbn,
           price,
-          date_published,
+          year_published,
           language,
           pages,
           created_at
         )
         VALUES ($1, $2, $3::jsonb, $4, $5, $6, $7, $8, $9)
         RETURNING book_id, isbn;`,
-        [title, synopsis, JSON.stringify(authors ?? []), isbn, Number(price ?? 20.00), date_published, language, pages, createdAt]
+        [title, synopsis, JSON.stringify(authors ?? []), isbn, Number(price ?? 20.00), datePublishedYear, language, pages, createdAt]
       );
   
       const bookId = result.rows[0].book_id;
