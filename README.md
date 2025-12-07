@@ -1,5 +1,8 @@
 
 
+
+### ** This repo is currently work in progress state. **
+----------------------
 ### How to run locally
 <ol>
     <li>To start, from root folder run: docker-compose -f docker-compose.dev.yml up --build</li>
