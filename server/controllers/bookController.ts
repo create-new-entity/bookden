@@ -2,19 +2,21 @@ import { Response } from 'express';
 import QueryString from 'qs';
 import * as R from 'ramda';
 
-import { ADMIN, AuthenticatedRequest, CreateBookPayload, SUPERADMIN } from '../types';
+import { ADMIN, AuthenticatedRequest, CreateBookPayload, GetBooksQueryParams, SUPERADMIN } from '../types';
 import { createBook, deleteBook, getAllBooks, getBook, updateBook } from '../services';
 import { AuthenticationError, BadRequestError, UnauthorizedError } from '../errors';
 import { UpdateBookPayload } from '../types';
-import { CreateBookPayloadSchema, UpdateBookPayloadSchema } from '../validation';
+import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
 
 
-const getAllBooksController = async (req: AuthenticatedRequest, res: Response) => {
+const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryParams>, res: Response) => {
     let includeDeleted = false;
     if(req.user) {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
-    const books = await getAllBooks(includeDeleted);
+    const validatedQueryParams = GetBooksQueryParamsSchema.parse(req.query);
+    const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
+    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder);
     res.status(200).json(books);
 };
 
@@ -29,6 +31,7 @@ const getBookController = async (req: AuthenticatedRequest, res: Response) => {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
     const book = await getBook(bookId, includeDeleted);
+    console.log('got book', book);
     res.status(200).json(book);
 };
 

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { booksSortByOptions, sortOrderOptions } from '../constants';
 
 
 export const UpdateBookPayloadSchema = z.object({
@@ -22,4 +23,12 @@ export const CreateBookPayloadSchema = z.object({
     yearPublished: z.number().int().gte(1300, { message: 'Year must be at least 1300' }).lte(2025, { message: 'Year cannot exceed 2025' }),
     language: z.string().min(1, { message: 'Language must be a non-empty string' }),
     pages: z.number().min(1, { message: 'Pages must be a positive number' }).max(1500, { message: 'Pages must be less than 1500' }),
+});
+
+
+export const GetBooksQueryParamsSchema = z.object({
+    search: z.string().optional(),
+    sortBy: z.enum(booksSortByOptions).optional(),
+    sortOrder: z.enum(sortOrderOptions).optional(),
+    page: z.string().optional(),
 });
