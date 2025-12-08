@@ -4,7 +4,7 @@ import * as R from 'ramda';
 
 import { ADMIN, AuthenticatedRequest, CreateBookPayload, GetBooksQueryParams, SUPERADMIN } from '../types';
 import { createBook, deleteBook, getAllBooks, getBook, updateBook } from '../services';
-import { AuthenticationError, BadRequestError, UnauthorizedError } from '../errors';
+import { AuthenticationError, BadRequestError, NotFoundError, UnauthorizedError } from '../errors';
 import { UpdateBookPayload } from '../types';
 import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
 
@@ -31,7 +31,10 @@ const getBookController = async (req: AuthenticatedRequest, res: Response) => {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
     const book = await getBook(bookId, includeDeleted);
-    console.log('got book', book);
+    if(!book) {
+        const bookNotFoundError = new NotFoundError();
+        throw bookNotFoundError;
+    }
     res.status(200).json(book);
 };
 
@@ -77,7 +80,7 @@ const updateBookController = async (req: AuthenticatedRequest<QueryString.Parsed
 
     const validated = UpdateBookPayloadSchema.parse(req.body);
     if(R.isEmpty(validated)) {
-        const badRequestError = new BadRequestError('No fields to update');
+        const badRequestError = new BadRequestError();
         throw badRequestError;
     }
 
@@ -99,7 +102,7 @@ const deleteBookController = async (req: AuthenticatedRequest, res: Response) =>
 
     const bookId = parseInt(req.params.id, 10);
     if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
-        const invalidBookIdError = new BadRequestError('Invalid book ID');
+        const invalidBookIdError = new BadRequestError();
         throw invalidBookIdError;
     }
 

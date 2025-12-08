@@ -28,3 +28,9 @@ CREATE TABLE IF NOT EXISTS book_covers (
 );
 
 ALTER TABLE books ADD CONSTRAINT books_isbn_unique UNIQUE (isbn);
+
+/*
+    Case-insensitive unique index on title column.
+*/
+CREATE UNIQUE INDEX IF NOT EXISTS books_title_unique_ci
+ON books (LOWER(title));

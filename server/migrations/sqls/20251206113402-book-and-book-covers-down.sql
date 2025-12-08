@@ -1,5 +1,6 @@
 
 
+DROP INDEX IF EXISTS books_title_unique_ci;
 
 ALTER TABLE books DROP CONSTRAINT IF EXISTS books_isbn_unique;
 
