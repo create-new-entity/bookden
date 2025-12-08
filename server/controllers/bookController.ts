@@ -4,7 +4,7 @@ import * as R from 'ramda';
 
 import { ADMIN, AuthenticatedRequest, CreateBookPayload, GetBooksQueryParams, SUPERADMIN } from '../types';
 import { createBook, deleteBook, getAllBooks, getBook, updateBook } from '../services';
-import { AuthenticationError, BadRequestError, NotFoundError, UnauthorizedError } from '../errors';
+import { AuthenticationError, BadRequestError, errorMessages, errorNames, NotFoundError, UnauthorizedError } from '../errors';
 import { UpdateBookPayload } from '../types';
 import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
 
@@ -74,7 +74,7 @@ const updateBookController = async (req: AuthenticatedRequest<QueryString.Parsed
 
     const bookId = parseInt(req.params.id, 10);
     if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
-        const invalidBookIdError = new BadRequestError('Invalid book ID');
+        const invalidBookIdError = new BadRequestError(errorMessages[errorNames.invalidBookId]);
         throw invalidBookIdError;
     }
 

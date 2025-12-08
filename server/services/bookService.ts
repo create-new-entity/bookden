@@ -50,7 +50,6 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
 const getBook = async (bookId: number, includeDeleted: boolean = false) => {
     const dbPool = await getPGDBPool();
     const deletedAtFragment = includeDeleted ? sqlTag.fragment`` : sqlTag.fragment`AND deleted_at IS NULL`;
-    console.log('bookId', bookId);
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
         SELECT
             book_id, title, synopsis,
@@ -69,7 +68,6 @@ const createBook = async (createBookData: CreateBookPayload): Promise<Book> => {
     const snakeCasedData = convertToSnakeCaseDeep(createBookData);
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
         INSERT INTO books (
-            book_id,
             title,
             synopsis,
             authors,
@@ -82,14 +80,26 @@ const createBook = async (createBookData: CreateBookPayload): Promise<Book> => {
         VALUES (
             ${snakeCasedData.title},
             ${snakeCasedData.synopsis},
-            ${snakeCasedData.authors}::jsonb,
+            ${JSON.stringify(snakeCasedData.authors)}::jsonb,
             ${snakeCasedData.isbn},
             ${snakeCasedData.price},
             ${snakeCasedData.year_published},
             ${snakeCasedData.language},
             ${snakeCasedData.pages}
-        );
-        RETURNING book_id, title, synopsis, authors, isbn, price, year_published, language, pages, created_at, updated_at, deleted_at;
+        )
+        RETURNING
+            book_id,
+            title,
+            synopsis,
+            authors,
+            isbn,
+            price,
+            year_published,
+            language,
+            pages,
+            created_at,
+            updated_at,
+            deleted_at;
     `);
     return camelcaseKeys(result.rows[0], { deep: true });
 };

@@ -74,7 +74,7 @@ exports.up = async function(db) {
         )
         VALUES ($1, $2, $3::jsonb, $4, $5, $6, $7, $8, $9)
         RETURNING book_id, isbn;`,
-        [title, synopsis, JSON.stringify(authors ?? []), isbn, Number(price ?? 20.00), datePublishedYear, language, pages, createdAt]
+        [title, synopsis, JSON.stringify(authors ?? []), isbn, Number(price ?? 20.00), datePublishedYear, language ?? 'en', pages ?? 100, createdAt]
       );
   
       const bookId = result.rows[0].book_id;

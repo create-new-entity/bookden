@@ -20,7 +20,10 @@ export const CreateBookPayloadSchema = z.object({
     authors: z.array(z.string()).min(1, { message: 'At least one author is required' }),
     isbn: z.string().min(1, { message: 'ISBN must be a non-empty string' }),
     price: z.number().min(0, { message: 'Price must be a non-negative number' }),
-    yearPublished: z.number().int().gte(1300, { message: 'Year must be at least 1300' }).lte(2025, { message: 'Year cannot exceed 2025' }),
+    yearPublished: z.number()
+        .int()
+        .gte(1300, { message: 'Year must be at least 1300' })
+        .lte(2025, { message: 'Year cannot exceed 2025' }),
     language: z.string().min(1, { message: 'Language must be a non-empty string' }),
     pages: z.number().min(1, { message: 'Pages must be a positive number' }).max(1500, { message: 'Pages must be less than 1500' }),
 });
