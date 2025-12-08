@@ -2,6 +2,7 @@
 
 
 import { z } from 'zod';
+import { imageMimeTypes } from '../constants';
 
 export const BookTypeAlias = z.object({
     book_id: z.number(),
@@ -23,3 +24,12 @@ export const BookTypeAlias = z.object({
     created_at: z.string()
 });
 
+
+export const BookCoverTypeAlias = z.object({
+    book_id: z.number(),
+    book_cover_id: z.number(),
+    image_data: z.instanceof(Buffer),
+    mime_type: z.enum(imageMimeTypes),
+    created_at: z.string().nullable(),
+    updated_at: z.string()
+});

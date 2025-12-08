@@ -63,43 +63,41 @@ const getBook = async (bookId: number, includeDeleted: boolean = false) => {
     return camelcaseKeys(result.rows[0], { deep: true });
 };
 
-const createBook = async (createBookData: CreateBookPayload): Promise<Book> => {
+const createBook = async (createBookData: CreateBookPayload, coverImage: Buffer, coverImageMimeType: string): Promise<Book> => {
     const dbPool = await getPGDBPool();
     const snakeCasedData = convertToSnakeCaseDeep(createBookData);
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
-        INSERT INTO books (
-            title,
-            synopsis,
-            authors,
-            isbn,
-            price,
-            year_published,
-            language,
-            pages
-        )
-        VALUES (
-            ${snakeCasedData.title},
-            ${snakeCasedData.synopsis},
-            ${JSON.stringify(snakeCasedData.authors)}::jsonb,
-            ${snakeCasedData.isbn},
-            ${snakeCasedData.price},
-            ${snakeCasedData.year_published},
-            ${snakeCasedData.language},
-            ${snakeCasedData.pages}
-        )
-        RETURNING
-            book_id,
-            title,
-            synopsis,
-            authors,
-            isbn,
-            price,
-            year_published,
-            language,
-            pages,
-            created_at,
-            updated_at,
-            deleted_at;
+        WITH
+            inserted_book AS (
+                INSERT INTO books (
+                    title, synopsis, authors, isbn,
+                    price, year_published, language, pages
+                )
+                VALUES (
+                    ${snakeCasedData.title}, ${snakeCasedData.synopsis}, ${JSON.stringify(snakeCasedData.authors)}::jsonb, ${snakeCasedData.isbn},
+                    ${snakeCasedData.price}, ${snakeCasedData.year_published}, ${snakeCasedData.language}, ${snakeCasedData.pages}
+                )
+                RETURNING
+                    book_id, title, synopsis, authors,
+                    isbn, price, year_published, language,
+                    pages, created_at, updated_at, deleted_at
+            ),
+            insert_cover AS (
+                INSERT INTO book_covers (
+                    book_id,
+                    image_data,
+                    mime_type
+                )
+                SELECT
+                    book_id,
+                    ${sqlTag.binary(coverImage)},
+                    ${coverImageMimeType}
+                FROM inserted_book
+                RETURNING book_id
+            )
+
+        SELECT *
+        FROM inserted_book;
     `);
     return camelcaseKeys(result.rows[0], { deep: true });
 };
@@ -149,6 +147,15 @@ const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => 
     `);
 };
 
+const updateBookCover = async (bookId: number, coverImage: Buffer, coverImageMimeType: string) => {
+    const dbPool = await getPGDBPool();
+    await dbPool.query(sqlTag.typeAlias('BookCover')`
+        UPDATE book_covers
+        SET image_data = ${sqlTag.binary(coverImage)}, mime_type = ${coverImageMimeType}
+        WHERE book_id = ${bookId};
+    `);
+};
+
 const deleteBook = async (bookId: number) => {
     const dbPool = await getPGDBPool();
     await dbPool.query(sqlTag.typeAlias('Book')`
@@ -158,10 +165,40 @@ const deleteBook = async (bookId: number) => {
     `);
 };
 
+const deleteBookCover = async (bookId: number) => {
+    const dbPool = await getPGDBPool();
+    await dbPool.query(sqlTag.typeAlias('BookCover')`
+        DELETE FROM book_covers
+        WHERE book_id = ${bookId};
+    `);
+};
+
+const getBookCover = async (bookId: number, includeDeleted: boolean = false) => {
+    const innerJoinToFindUnDeleted = sqlTag.fragment`
+        INNER JOIN books b
+            ON bc.book_id = b.book_id
+            AND b.deleted_at IS NULL
+    `;
+
+    const dbPool = await getPGDBPool();
+    const joinFragment = includeDeleted ? sqlTag.fragment`` : innerJoinToFindUnDeleted;
+    
+    const result = await dbPool.query(sqlTag.typeAlias('BookCover')`
+        SELECT book_cover_id, bc.book_id, image_data, mime_type, bc.created_at, bc.updated_at
+        FROM book_covers bc
+        ${joinFragment}
+        WHERE bc.book_id = ${bookId};
+    `);
+    return camelcaseKeys(result.rows[0], { deep: true });
+};
+
 export {
     getAllBooks,
     getBook,
     createBook,
     updateBook,
-    deleteBook
+    deleteBook,
+    getBookCover,
+    updateBookCover,
+    deleteBookCover
 };

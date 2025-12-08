@@ -10,6 +10,10 @@ export type Book = CamelCaseKeys<BookDBRow>;
 export type UpdateBookPayload = z.infer<typeof UpdateBookPayloadSchema>;
 export type CreateBookPayload = z.infer<typeof CreateBookPayloadSchema>;
 
+export type CreateBookRequestBody = {
+    payload: string;
+};
+
 
 export type BooksSortByOptions = 'title' | 'authors' | 'yearPublished' | 'createdAt' | 'updatedAt' | 'deletedAt';
 export type BooksSortOrderOptions = 'asc' | 'desc';

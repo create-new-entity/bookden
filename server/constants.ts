@@ -4,8 +4,8 @@ export const TOKEN_VALIDITY_SECONDS = 24 * 60 * 60; // 24 hours in seconds
 export const SALT_ROUNDS = 10;
 
 
-export const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-export const avatarMimeTypes = ['image/png', 'image/jpeg', 'image/webp'] as const;
+export const MAX_FILE_SIZE = 3 * 1024 * 1024; // 2MB
+export const imageMimeTypes: readonly string[] = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'] as const;
 
 
 export const sortOrderOptions = ['asc', 'desc'] as const;
