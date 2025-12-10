@@ -5,7 +5,7 @@ export const SALT_ROUNDS = 10;
 
 
 export const MAX_FILE_SIZE = 3 * 1024 * 1024; // 2MB
-export const imageMimeTypes: readonly string[] = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'] as const;
+export const imageMimeTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'] as const;
 
 
 export const sortOrderOptions = ['asc', 'desc'] as const;
@@ -22,4 +22,4 @@ export const GLOBAL_RATE_LIMIT_MAX = 1000;
 
 
 export const BOOKS_PAGINATION_LIMIT = 30;
-export const booksSortByOptions = ['title', 'authors', 'yearPublished', 'createdAt', 'updatedAt', 'deletedAt'] as const;
+export const booksSortByOptions = ['title', 'price', 'yearPublished', 'createdAt', 'updatedAt', 'deletedAt'] as const;

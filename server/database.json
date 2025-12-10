@@ -27,7 +27,9 @@
             "ENV": "DB_HOST"
         },
         "port": "5432",
-        "database": "bookden_test"
+        "database": {
+            "ENV": "DB_NAME"
+        }
     },
     "production": {
         "driver": "pg",

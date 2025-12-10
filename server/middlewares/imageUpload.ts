@@ -10,7 +10,7 @@ const storage = multer.memoryStorage(); // Save in memory temporarily
 
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowedTypes = imageMimeTypes;
-    const isFileTypeCorrect = allowedTypes.includes(file.mimetype);
+    const isFileTypeCorrect = allowedTypes.includes(file.mimetype as (typeof imageMimeTypes)[number]);
     if(isFileTypeCorrect) {
         cb(null, true);
         return;

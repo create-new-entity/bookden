@@ -2,18 +2,27 @@ import * as R from 'ramda';
 import camelcaseKeys from 'camelcase-keys';
 
 import { getPGDBPool, sqlTag } from '../configs';
-import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, UpdateBookPayload } from '../types';
+import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, PaginatedDataList, UpdateBookPayload } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { BOOKS_PAGINATION_LIMIT } from '../constants';
 // import { BOOKS_PAGINATION_LIMIT } from '../constants';
 
 
 
-const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, search: string = '', sortBy: BooksSortByOptions = 'createdAt', sortOrder: BooksSortOrderOptions = 'desc') => {
+const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, search: string = '', sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc'): Promise<PaginatedDataList<Book>> => {
     const dbPool = await getPGDBPool();
 
     const searchFragment = search && search.trim() !== ''
-        ? sqlTag.fragment`AND title ILIKE ${'%' + search.trim() + '%'}`
+        ? sqlTag.fragment`
+            AND (
+                title ILIKE ${'%' + search + '%'}
+                OR EXISTS (
+                    SELECT 1
+                    FROM jsonb_array_elements_text(authors) AS author
+                    WHERE author ILIKE ${'%' + search + '%'}
+                )
+            )
+        `
         : sqlTag.fragment``;
 
 
@@ -27,8 +36,7 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
 
     const snakeCasedSortBy = convertStringToSnakeCase(sortBy);
     const sortOrderFragment = sortOrder === 'asc' ? sqlTag.fragment`ASC` : sqlTag.fragment`DESC`;
-    const sortByFragment = snakeCasedSortBy ? sqlTag.fragment`ORDER BY ${snakeCasedSortBy} ${sortOrderFragment}` : sqlTag.fragment``;
-
+    const sortByFragment = sqlTag.fragment`ORDER BY ${sqlTag.identifier([snakeCasedSortBy])} ${sortOrderFragment}`;
 
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
         SELECT
@@ -44,7 +52,32 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
     `);
 
-    return camelcaseKeys(result.rows, { deep: true });
+    const totalResult = await dbPool.one(sqlTag.typeAlias('Total')`
+        SELECT COUNT(book_id)::int AS total
+        FROM books
+        WHERE 1 = 1
+        ${searchFragment}
+        ${deletedAtFragment}
+    `);
+    const totalBooks = totalResult.total;
+
+    const totalPages = Math.ceil(totalBooks / BOOKS_PAGINATION_LIMIT);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+    
+    const books = [...camelcaseKeys(result.rows, { deep: true })];
+
+    return {
+        data: books,
+        pagination: {
+            page,
+            limit: BOOKS_PAGINATION_LIMIT,
+            total: totalBooks,
+            totalPages,
+            hasNextPage,
+            hasPreviousPage
+        }
+    };
 };
 
 const getBook = async (bookId: number, includeDeleted: boolean = false) => {
@@ -74,8 +107,8 @@ const createBook = async (createBookData: CreateBookPayload, coverImage: Buffer,
                     price, year_published, language, pages
                 )
                 VALUES (
-                    ${snakeCasedData.title}, ${snakeCasedData.synopsis}, ${JSON.stringify(snakeCasedData.authors)}::jsonb, ${snakeCasedData.isbn},
-                    ${snakeCasedData.price}, ${snakeCasedData.year_published}, ${snakeCasedData.language}, ${snakeCasedData.pages}
+                    ${snakeCasedData.title}, ${snakeCasedData.synopsis || ''}, ${JSON.stringify(snakeCasedData.authors || [])}::jsonb, ${snakeCasedData.isbn},
+                    ${snakeCasedData.price}, ${snakeCasedData.year_published}, ${snakeCasedData.language}, ${snakeCasedData.pages || 100}
                 )
                 RETURNING
                     book_id, title, synopsis, authors,

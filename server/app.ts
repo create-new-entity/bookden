@@ -26,7 +26,10 @@ app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 app.use(healthBaseUrl, healthRouter);
-app.use(globalRateLimiter);
+
+if(!isTestEnvironment()) {
+    app.use(globalRateLimiter);
+}
 
 app.use(userBaseUrl, userRouter);
 app.use(loginBaseUrl, loginRateLimiter, loginRouter);
