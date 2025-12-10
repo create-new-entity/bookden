@@ -23,3 +23,13 @@ export const getBook = async (bookId: number, expectedCode: number, token?: stri
         })
         .expect(expectedCode);
 };
+
+export const deleteBook = async (bookId: number, expectedCode: number, token?: string) => {
+    return await apiSupertest(app)
+        .delete(`${bookBaseUrl}/${bookId}`)
+        .set({
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        })
+        .expect(expectedCode);
+};
