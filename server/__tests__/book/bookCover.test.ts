@@ -6,7 +6,9 @@ import { PaginatedDataList } from '../../types';
 import { Book } from '../../types/Book';
 import {
     clearDB, createSomeSeeBooks, createSomeSeedUsers,
-    getBooks, EXPECT_200, getBookCover
+    getBooks, EXPECT_200, getBookCover,
+    EXPECT_404,
+    EXPECT_400
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
@@ -40,13 +42,16 @@ describe('GET Book(s) related tests', () => {
             const notExpectedImage = path.join(__dirname, '..', 'files', 'batman1.jpeg');
             const notExpectedImageBuffer = fs.readFileSync(notExpectedImage);
 
-            const imageBufferResponse = await getBookCover(book.bookId);
+            const imageBufferResponse = await getBookCover(book.bookId, EXPECT_200);
             const imageBuffer = imageBufferResponse.body;
             expect(Buffer.compare(imageBuffer, expectedImageBuffer)).toBe(0);
             expect(Buffer.compare(imageBuffer, notExpectedImageBuffer)).not.toBe(0);
 
             expect(imageBufferResponse.headers['content-type']).toBe('image/jpeg');
             expect(imageBufferResponse.headers['content-disposition']).toBe('inline');
+
+            await getBookCover(-1, EXPECT_400);
+            await getBookCover(2342323, EXPECT_404);
         });
     });
 

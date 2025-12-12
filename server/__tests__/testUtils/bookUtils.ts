@@ -25,11 +25,11 @@ export const getBook = async (bookId: number, expectedCode: number, token?: stri
         .expect(expectedCode);
 };
 
-export const getBookCover = async (bookId: number) => {
+export const getBookCover = async (bookId: number, expectedCode: number) => {
     return await requestAsBuffer(
         apiSupertest(app)
             .get(`/api/books/${bookId}/cover`)
-            .expect(200)
+            .expect(expectedCode)
     );
 };
 
