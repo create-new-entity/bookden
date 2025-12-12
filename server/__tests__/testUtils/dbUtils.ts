@@ -56,7 +56,7 @@ export const createSomeSeeBooks = async () => {
             .post(`${testBaseUrl}/books`)
             .field('payload', JSON.stringify(book))
             .field('mimeType', 'image/jpeg')
-            .attach('coverImage', dummyImagePath)
+            .attach('coverImage', dummyImagePath)  // Use this dummy image as cover image for the book.
             .expect(201);
     };
 };

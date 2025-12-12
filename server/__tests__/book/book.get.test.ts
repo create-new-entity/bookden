@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import { endConnectionPool, initPGDBPool } from '../../configs';
 import { BOOKS_PAGINATION_LIMIT } from '../../constants';
 import { PaginatedDataList } from '../../types';
@@ -6,7 +9,9 @@ import {
     clearDB, createSomeSeeBooks, createSomeSeedUsers,
     getBooks, EXPECT_200, getBook,
     EXPECT_403, deleteBook, login,
-    customerUsersSeedData, seedSuperAdminUser, adminUsersSeedData } from '../testUtils';
+    customerUsersSeedData, seedSuperAdminUser, adminUsersSeedData,
+    getBookCover
+} from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
 jest.setTimeout(TWENTY_SECONDS);
@@ -210,6 +215,33 @@ describe('GET Book(s) related tests', () => {
             console.log(receivedListOfTitles);
 
             expect(receivedListOfTitles).toStrictEqual(expectedListOfTitles);
+        });
+
+        test('GET book endpoint', async () => {
+            const bookTitle = 'Bleak House';
+            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            const { data: books } = response.body as PaginatedDataList<Book>;
+
+            const book = books[0];
+            response = await getBook(book.bookId, EXPECT_200);
+            const bookData = response.body as Book;
+            expect(bookData.title).toBe(bookTitle);
+        });
+
+        test('GET book cover', async () => {
+            const bookTitle = 'Bleak House';
+            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            const { data: books } = response.body as PaginatedDataList<Book>;
+            const book = books[0];
+
+            const expectedImage = path.join(__dirname, '..', 'seed', 'dummy.jpg');
+            const expectedImageBuffer = fs.readFileSync(expectedImage);
+            const notExpectedImage = path.join(__dirname, '..', 'files', 'batman1.jpeg');
+            const notExpectedImageBuffer = fs.readFileSync(notExpectedImage);
+
+            const imageBuffer = await getBookCover(book.bookId);
+            expect(Buffer.compare(imageBuffer.body, expectedImageBuffer)).toBe(0);
+            expect(Buffer.compare(imageBuffer.body, notExpectedImageBuffer)).not.toBe(0);
         });
 
         test('DELETE book: Customer user cannot delete book', async () => {
