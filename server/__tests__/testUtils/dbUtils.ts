@@ -48,7 +48,7 @@ export const createSomeSeedUsers = async () => {
 };
 
 
-const dummyImagePath = path.join(__dirname, '..', 'seed', 'dummy.jpg');
+const dummyImagePath = path.join(__dirname, '..', 'seed', 'dummy.jpeg');
 export const createSomeSeeBooks = async () => {
     for (const book of booksSeedData) {
         // eslint-disable-next-line no-await-in-loop
