@@ -1,10 +1,9 @@
 
 import { endConnectionPool, initPGDBPool } from '../../configs';
 import { BOOKS_PAGINATION_LIMIT } from '../../constants';
-import { PaginatedDataList } from '../../types';
-import { Book } from '../../types/Book';
+import { PaginatedDataList, Book } from '../../types';
 import {
-    clearDB, createSomeSeeBooks, createSomeSeedUsers,
+    clearDB, createSomeSeedBooks, createSomeSeedUsers,
     getBooks, EXPECT_200, getBook, customerUsersSeedData,
     EXPECT_403, login, deleteBook, seedSuperAdminUser, adminUsersSeedData
 } from '../testUtils';
@@ -23,7 +22,7 @@ describe('GET Book(s) related tests', () => {
     beforeEach(async () => {
         await clearDB();
         await createSomeSeedUsers();
-        await createSomeSeeBooks();
+        await createSomeSeedBooks();
     });
 
 

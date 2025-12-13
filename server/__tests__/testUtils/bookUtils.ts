@@ -33,6 +33,19 @@ export const getBookCover = async (bookId: number, expectedCode: number) => {
     );
 };
 
+
+export const updateBookCover = async (bookId: number, expectedCode: number, token: string, imagePath: string) => {
+    return await apiSupertest(app)
+        .put(`${bookBaseUrl}/${bookId}/cover`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .field('mimeType', 'image/jpeg')
+        .attach('coverImage', imagePath)  // Use this dummy image as cover image for the book.
+        .expect(expectedCode);
+};
+
 export const deleteBook = async (bookId: number, expectedCode: number, token?: string) => {
     return await apiSupertest(app)
         .delete(`${bookBaseUrl}/${bookId}`)

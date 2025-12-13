@@ -48,8 +48,8 @@ export const createSomeSeedUsers = async () => {
 };
 
 
-const dummyImagePath = path.join(__dirname, '..', 'seed', 'dummy.jpeg');
-export const createSomeSeeBooks = async () => {
+const dummyImagePath = path.join(__dirname, '..', 'files', 'dummy.jpeg');
+export const createSomeSeedBooks = async () => {
     for (const book of booksSeedData) {
         // eslint-disable-next-line no-await-in-loop
         await apiSupertest(app)

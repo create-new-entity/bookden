@@ -5,10 +5,15 @@ import { endConnectionPool, initPGDBPool } from '../../configs';
 import { PaginatedDataList } from '../../types';
 import { Book } from '../../types/Book';
 import {
-    clearDB, createSomeSeeBooks, createSomeSeedUsers,
+    clearDB, createSomeSeedBooks, createSomeSeedUsers,
     getBooks, EXPECT_200, getBookCover,
     EXPECT_404,
-    EXPECT_400
+    EXPECT_400,
+    seedSuperAdminUser,
+    login,
+    updateBookCover,
+    customerUsersSeedData,
+    EXPECT_403
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
@@ -25,7 +30,7 @@ describe('GET Book(s) related tests', () => {
     beforeEach(async () => {
         await clearDB();
         await createSomeSeedUsers();
-        await createSomeSeeBooks();
+        await createSomeSeedBooks();
     });
 
 
@@ -37,7 +42,7 @@ describe('GET Book(s) related tests', () => {
             const { data: books } = response.body as PaginatedDataList<Book>;
             const book = books[0];
 
-            const expectedImage = path.join(__dirname, '..', 'seed', 'dummy.jpeg');
+            const expectedImage = path.join(__dirname, '..', 'files', 'dummy.jpeg');
             const expectedImageBuffer = fs.readFileSync(expectedImage);
             const notExpectedImage = path.join(__dirname, '..', 'files', 'batman1.jpeg');
             const notExpectedImageBuffer = fs.readFileSync(notExpectedImage);
@@ -52,6 +57,22 @@ describe('GET Book(s) related tests', () => {
 
             await getBookCover(-1, EXPECT_400);
             await getBookCover(2342323, EXPECT_404);
+        });
+
+        test.only('PUT book cover', async () => {
+            const bookTitle = 'Bleak House';
+            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            const { data: books } = response.body as PaginatedDataList<Book>;
+            const book = books[0];
+
+            const expectedImage = path.join(__dirname, '..', 'files', 'dummy.jpeg');
+            
+            let token = await login({ username: seedSuperAdminUser.username, password: seedSuperAdminUser.password });
+            const updateBookCoverResponse = await updateBookCover(book.bookId, EXPECT_200, token, expectedImage);
+            expect(updateBookCoverResponse.status).toBe(EXPECT_200);
+
+            token = await login({ username: customerUsersSeedData[0].username, password: customerUsersSeedData[0].password });
+            await updateBookCover(book.bookId, EXPECT_403, token, expectedImage);
         });
     });
 
