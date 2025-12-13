@@ -59,7 +59,7 @@ describe('GET Book(s) related tests', () => {
             await getBookCover(2342323, EXPECT_404);
         });
 
-        test.only('PUT book cover', async () => {
+        test('PUT book cover', async () => {
             const bookTitle = 'Bleak House';
             response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
             const { data: books } = response.body as PaginatedDataList<Book>;
