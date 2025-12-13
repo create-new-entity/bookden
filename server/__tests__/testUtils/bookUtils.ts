@@ -3,6 +3,7 @@ import apiSupertest from 'supertest';
 import { bookBaseUrl } from '../../routes/bookRoutes';
 import app from '../../app';
 import { requestAsBuffer } from './miscellaneous';
+import { UpdateBookPayload } from '../../types';
 
 
 export const getBooks = async (expectedCode: number, token?: string, queryParams?: string) => {
@@ -31,6 +32,17 @@ export const getBookCover = async (bookId: number, expectedCode: number) => {
             .get(`/api/books/${bookId}/cover`)
             .expect(expectedCode)
     );
+};
+
+export const updateBook = async (bookId: number, expectedCode: number, token: string, book: UpdateBookPayload) => {
+    return await apiSupertest(app)
+        .patch(`${bookBaseUrl}/${bookId}`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .send(book)
+        .expect(expectedCode);
 };
 
 

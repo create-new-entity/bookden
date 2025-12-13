@@ -4,8 +4,10 @@ import { BOOKS_PAGINATION_LIMIT } from '../../constants';
 import { PaginatedDataList, Book } from '../../types';
 import {
     clearDB, createSomeSeedBooks, createSomeSeedUsers,
-    getBooks, EXPECT_200, getBook, customerUsersSeedData,
-    EXPECT_403, login, deleteBook, seedSuperAdminUser, adminUsersSeedData
+    getBooks, EXPECT_200, getBook,
+    customerUsersSeedData, EXPECT_403, login,
+    deleteBook, seedSuperAdminUser, adminUsersSeedData,
+    updateBook
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
@@ -26,7 +28,7 @@ describe('GET Book(s) related tests', () => {
     });
 
 
-    describe('Get books related tests', () => {
+    describe('GET books related tests', () => {
         test('GET books without authentication', async () => {
             response = await getBooks(EXPECT_200);
             const { data: books } = response.body as PaginatedDataList<Book>;
@@ -221,6 +223,42 @@ describe('GET Book(s) related tests', () => {
             response = await getBook(book.bookId, EXPECT_200);
             const bookData = response.body as Book;
             expect(bookData.title).toBe(bookTitle);
+        });
+    });
+
+    describe('PATCH book related tests', () => {
+        test('customer user cannot patch book', async () => {
+            const bookTitle = 'Bleak House';
+            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            const { data: books } = response.body as PaginatedDataList<Book>;
+            const book = books[0];
+
+            const customerUser = customerUsersSeedData[0];
+            const token = await login({ username: customerUser.username, password: customerUser.password });
+            response = await updateBook(book.bookId, EXPECT_403, token, { title: 'New Title' });
+            expect(response.status).toBe(EXPECT_403);
+        });
+
+        test('superadmin or admin user can patch book', async () => {
+            const bookTitle = 'Bleak House';
+            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            const { data: books } = response.body as PaginatedDataList<Book>;
+            const book = books[0];
+
+            const superAdminUser = seedSuperAdminUser;
+            let token = await login({ username: superAdminUser.username, password: superAdminUser.password });
+            response = await updateBook(book.bookId, EXPECT_200, token, { title: 'New Title', synopsis: 'New Synopsis' });
+            expect(response.status).toBe(EXPECT_200);
+            response = await getBook(book.bookId, EXPECT_200, token);
+            expect(response.body.title).toBe('New Title');
+            expect(response.body.synopsis).toBe('New Synopsis');
+
+            token = await login({ username: adminUsersSeedData[0].username, password: adminUsersSeedData[0].password });
+            response = await updateBook(book.bookId, EXPECT_200, token, { title: 'New Title 2', synopsis: 'New Synopsis 2' });
+            expect(response.status).toBe(EXPECT_200);
+            response = await getBook(book.bookId, EXPECT_200, token);
+            expect(response.body.title).toBe('New Title 2');
+            expect(response.body.synopsis).toBe('New Synopsis 2');
         });
     });
 
