@@ -13,7 +13,9 @@ import {
     login,
     updateBookCover,
     customerUsersSeedData,
-    EXPECT_403
+    EXPECT_403,
+    deleteBookCover,
+    adminUsersSeedData
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
@@ -73,6 +75,25 @@ describe('GET Book(s) related tests', () => {
 
             token = await login({ username: customerUsersSeedData[0].username, password: customerUsersSeedData[0].password });
             await updateBookCover(book.bookId, EXPECT_403, token, expectedImage);
+        });
+
+        test('DELETE book cover', async () => {
+            let bookTitle = 'Bleak House';
+            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            const { data: books } = response.body as PaginatedDataList<Book>;
+            const book = books[0];
+
+            let token = await login({ username: customerUsersSeedData[0].username, password: customerUsersSeedData[0].password });
+            await deleteBookCover(book.bookId, EXPECT_403, token); // Customer user cannot delete book cover
+
+            token = await login({ username: seedSuperAdminUser.username, password: seedSuperAdminUser.password });
+            await deleteBookCover(book.bookId, EXPECT_200, token); // Super admin can delete book cover
+            await getBookCover(book.bookId, EXPECT_404); // Has been deleted
+
+            bookTitle = '1 Lessons for the 21st Century';
+            token = await login({ username: adminUsersSeedData[0].username, password: adminUsersSeedData[0].password });
+            await deleteBookCover(book.bookId, EXPECT_200, token); // Admin user can delete book cover
+            await getBookCover(book.bookId, EXPECT_404); // Has been deleted
         });
     });
 

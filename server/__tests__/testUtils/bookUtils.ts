@@ -55,3 +55,13 @@ export const deleteBook = async (bookId: number, expectedCode: number, token?: s
         })
         .expect(expectedCode);
 };
+
+export const deleteBookCover = async (bookId: number, expectedCode: number, token: string) => {
+    return await apiSupertest(app)
+        .delete(`${bookBaseUrl}/${bookId}/cover`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};
