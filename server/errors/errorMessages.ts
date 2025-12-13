@@ -16,6 +16,9 @@ const UNSUPPORTED_AVATAR_EXTENSION = 'UnsupportedAvatarExtension' as const;
 const NO_FILE_UPLOADED = 'NoFileUploaded' as const;
 const AVATAR_NOT_FOUND = 'AvatarNotFound' as const;
 const INVALID_AUTH_HEADER = 'InvalidAuthHeader' as const;
+const INVALID_BOOK_ID = 'InvalidBookId' as const;
+const NO_COVER_IMAGE_UPLOADED = 'NoCoverImageUploaded' as const;
+const BOOK_COVER_NOT_FOUND = 'BookCoverNotFound' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -36,6 +39,9 @@ export const errorNames = {
     noFileUploaded: NO_FILE_UPLOADED,
     avatarNotFound: AVATAR_NOT_FOUND,
     invalidAuthHeader: INVALID_AUTH_HEADER,
+    invalidBookId: INVALID_BOOK_ID,
+    noCoverImageUploaded: NO_COVER_IMAGE_UPLOADED,
+    bookCoverNotFound: BOOK_COVER_NOT_FOUND
 };
 
 export const errorMessages = {
@@ -56,7 +62,10 @@ export const errorMessages = {
     [UNSUPPORTED_AVATAR_EXTENSION]: 'Only JPEG, PNG, and WebP are allowed',
     [NO_FILE_UPLOADED]: 'No file uploaded',
     [AVATAR_NOT_FOUND]: 'Avatar not found',
-    [INVALID_AUTH_HEADER]: 'Invalid Authorization header format'
+    [INVALID_AUTH_HEADER]: 'Invalid Authorization header format',
+    [INVALID_BOOK_ID]: 'Invalid book ID',
+    [NO_COVER_IMAGE_UPLOADED]: 'No cover image uploaded',
+    [BOOK_COVER_NOT_FOUND]: 'Book cover not found'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;

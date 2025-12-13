@@ -1,6 +1,6 @@
 
 import { Router } from 'express';
-import { asyncHandler, tokenExtractor, uploadAvatar } from '../middlewares';
+import { asyncHandler, tokenExtractor, uploadImage } from '../middlewares';
 import { deleteAvatarController, getAvatarController, updateAvatarController } from '../controllers';
 
 export const avatarBaseUrl = '/api/avatar';
@@ -10,7 +10,7 @@ const avatarRouter = Router();
 avatarRouter.put(
     '/',
     tokenExtractor,
-    uploadAvatar.single('avatar'),
+    uploadImage.single('avatar'),
     asyncHandler(updateAvatarController)
 );
 

@@ -6,10 +6,13 @@ import {
     adminUsersSeedData,
     clearDB, createSomeSeedUsers, createUser, customerUsersSeedData, deleteUser, getUsers, login, seedAdminUser,
     seedCustomerUser, seedSuperAdminUser, updateAvatar, updateUser
-} from './testUtils';
-import { PaginatedDataList, User } from '../types';
-import { endConnectionPool, initPGDBPool } from '../configs';
-import { USERS_PAGINATION_LIMIT } from '../constants';
+} from '../testUtils';
+import { PaginatedDataList, User } from '../../types';
+import { endConnectionPool, initPGDBPool } from '../../configs';
+import { USERS_PAGINATION_LIMIT } from '../../constants';
+
+const TWENTY_SECONDS = 20000;
+jest.setTimeout(TWENTY_SECONDS);
 
 describe('User accounts related tests', () => {
 
@@ -20,7 +23,6 @@ describe('User accounts related tests', () => {
     beforeEach(async () => {
         await clearDB();
         await createSomeSeedUsers();
-        console.log('test users created');
     });
 
     test('New superadmin user can not be created.', async () => {

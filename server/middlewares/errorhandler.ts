@@ -11,7 +11,7 @@ export const errorHandler = ( error: unknown, _req: Request, res: Response, _nex
 
     if (error instanceof ZodError) {
         return res.status(400).json({
-            message: `${error.errors[0].message}`
+            message: error.message
         });
     }
 
