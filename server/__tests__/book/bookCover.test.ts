@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { endConnectionPool, initPGDBPool } from '../../configs';
-import { PaginatedDataList } from '../../types';
-import { Book } from '../../types/Book';
+import { PaginatedDataList, Book } from '../../types';
 import {
     clearDB, createSomeSeedBooks, createSomeSeedUsers,
     getBooks, EXPECT_200, getBookCover,

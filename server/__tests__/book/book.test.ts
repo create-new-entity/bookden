@@ -1,13 +1,17 @@
 
+import path from 'path';
+
 import { endConnectionPool, initPGDBPool } from '../../configs';
 import { BOOKS_PAGINATION_LIMIT } from '../../constants';
-import { PaginatedDataList, Book } from '../../types';
+import { PaginatedDataList, Book, CreateBookPayload } from '../../types';
 import {
     clearDB, createSomeSeedBooks, createSomeSeedUsers,
     getBooks, EXPECT_200, getBook,
     customerUsersSeedData, EXPECT_403, login,
     deleteBook, seedSuperAdminUser, adminUsersSeedData,
-    updateBook
+    updateBook,
+    createBook,
+    EXPECT_201
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
@@ -294,6 +298,70 @@ describe('GET Book(s) related tests', () => {
 
             response = await getBook(book2.bookId, EXPECT_200, token2);
             expect(response.body.deletedAt).not.toBeNull();
+        });
+    });
+
+    describe('POST book related tests', () => {
+        test('customer user cannot post book', async () => {
+            const newBook: CreateBookPayload = {
+                title: 'New Title',
+                synopsis: 'New Synopsis',
+                authors: ['New Author'],
+                isbn: '1234567890',
+                price: 10.99,
+                yearPublished: 2021,
+                language: 'en',
+                pages: 100
+            };
+            const imagePath = path.join(__dirname, '..', 'files', 'dummy.jpeg');
+            const customerUser = customerUsersSeedData[0];
+            const token = await login({ username: customerUser.username, password: customerUser.password });
+            response = await createBook(EXPECT_403, token, newBook, imagePath);
+            expect(response.status).toBe(EXPECT_403);
+        });
+
+        test('superadmin or admin user can create new book', async () => {
+            const newBook: CreateBookPayload = {
+                title: 'New Title',
+                synopsis: 'New Synopsis',
+                authors: ['New Author'],
+                isbn: '1234567890',
+                price: 10.99,
+                yearPublished: 2021,
+                language: 'en',
+                pages: 100
+            };
+
+            const imagePath = path.join(__dirname, '..', 'files', 'dummy.jpeg');
+
+            const longSynopsis1 = 'Long enough synopsis for the test here we go again. More text here. CJ.';
+            const superAdminUser = seedSuperAdminUser;
+            let token = await login({ username: superAdminUser.username, password: superAdminUser.password });
+            response = await createBook(EXPECT_201, token, { ...newBook, synopsis: longSynopsis1 }, imagePath);
+            expect(response.status).toBe(EXPECT_201);
+            response = await getBook(response.body.bookId, EXPECT_200, token);
+            expect(response.body.title).toBe('New Title');
+            expect(response.body.synopsis).toBe(longSynopsis1);
+            expect(response.body.authors).toStrictEqual(['New Author']);
+            expect(response.body.isbn).toBe('1234567890');
+            expect(response.body.price).toBe(10.99);
+            expect(response.body.yearPublished).toBe(2021);
+            expect(response.body.language).toBe('en');
+            expect(response.body.pages).toBe(100);
+
+            const longSynopsis2 = 'Long enough synopsis for the test here we go again. More text here. Trevor.';
+            token = await login({ username: adminUsersSeedData[0].username, password: adminUsersSeedData[0].password });
+            response = await createBook(EXPECT_201, token, { ...newBook, title: 'New Title 2', synopsis: longSynopsis2, authors: ['New Author 2'], isbn: '1234567892' }, imagePath);
+            expect(response.status).toBe(EXPECT_201);
+            response = await getBook(response.body.bookId, EXPECT_200, token);
+            expect(response.body.title).toBe('New Title 2');
+            expect(response.body.synopsis).toBe(longSynopsis2);
+            expect(response.body.authors).toStrictEqual(['New Author 2']);
+            expect(response.body.isbn).toBe('1234567892');
+            expect(response.body.price).toBe(10.99);
+            expect(response.body.yearPublished).toBe(2021);
+            expect(response.body.language).toBe('en');
+            expect(response.body.pages).toBe(100);
         });
     });
 
