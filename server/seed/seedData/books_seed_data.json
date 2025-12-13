@@ -7473,7 +7473,7 @@
     "binding": "Hardcover",
     "isbn": "9358940948",
     "isbn10": "9358940948",
-    "language": "English",
+    "language": "en",
     "dimensions": "Height: 8.5 Inches, Length: 5.5 Inches, Weight: 0.7275254646 Pounds, Width: 0.66 Inches",
     "dimensions_structured": {
       "length": {
@@ -10887,7 +10887,7 @@
     "msrp": 9.99,
     "binding": "Paperback",
     "isbn": "9798601511728",
-    "language": "English",
+    "language": "en",
     "dimensions": "Height: 8 Inches, Length: 5 Inches, Weight: 0.36 pounds, Width: 0.25 Inches",
     "dimensions_structured": {
       "length": {
@@ -11456,7 +11456,7 @@
     "msrp": 13.99,
     "binding": "Paperback",
     "isbn": "9798671772791",
-    "language": "English",
+    "language": "en",
     "dimensions": "Height: 10 inches, Length: 7 inches, Width: 0.45 inches",
     "dimensions_structured": {
       "length": {

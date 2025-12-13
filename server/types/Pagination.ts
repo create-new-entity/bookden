@@ -9,3 +9,8 @@ export type Pagination = {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
 };
+
+export type PaginatedDataList<DataType> = {
+    data: DataType[];
+    pagination: Pagination;
+};

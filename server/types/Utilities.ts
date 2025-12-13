@@ -45,6 +45,3 @@ export type CamelCaseDeep<T> = T extends readonly unknown[]
     : T;
 
 
-export function isRecord(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
-}

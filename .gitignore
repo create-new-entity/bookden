@@ -145,3 +145,5 @@ build/
 e2e/test-results/
 env/**/*.env
 !env/**/*.env.example
+
+deleteThis

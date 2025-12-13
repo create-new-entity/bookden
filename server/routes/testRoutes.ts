@@ -1,6 +1,7 @@
 import { Router, Response, Request } from 'express';
-import { createUser } from '../services';
-import { asyncHandler } from '../middlewares';
+import { createBook, createUser } from '../services';
+import { asyncHandler, uploadImage } from '../middlewares';
+import { BadRequestError, errorNames, errorMessages } from '../errors';
 
 /*
     For testing purposes, we need a superadmin in place.
@@ -14,6 +15,14 @@ const testRouter = Router();
 
 testRouter.post('/users', asyncHandler(async (req: Request, res: Response) => {
     await createUser(req.body);
+    res.status(201).end();
+}));
+
+testRouter.post('/books', uploadImage.single('coverImage'), asyncHandler(async (req: Request, res: Response) => {
+    if(!req.file) {
+        throw new BadRequestError(errorMessages[errorNames.noFileUploaded]);
+    };
+    await createBook(JSON.parse(req.body.payload), req.file.buffer, req.file.mimetype);
     res.status(201).end();
 }));
 
