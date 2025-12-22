@@ -14,9 +14,24 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     if(req.user) {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
-    const validatedQueryParams = GetBooksQueryParamsSchema.parse(req.query);
+    const rawTags = req.query.tags;
+
+    const normalizedTags = typeof rawTags === 'string'
+        ?
+        [rawTags]
+        :
+        Array.isArray(rawTags)
+            ?
+            rawTags
+            :
+            undefined;
+
+    const validatedQueryParams = GetBooksQueryParamsSchema.parse({
+        ...req.query,
+        tags: normalizedTags,
+    });
     const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
-    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder);
+    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder, validatedQueryParams.tags);
     res.status(200).json(books);
 };
 
@@ -67,19 +82,20 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         How to create a book with a cover image from terminal:
 
         curl -X POST http://localhost:3000/api/books \
-        -H "Authorization: Bearer <token of superadmin or admin>" \
+        -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2NjQzMjUzMCwiZXhwIjoxNzY2NTE4OTMwfQ.-ZzQPKokHAod9kAKGkbFAZkdtxtxDrp7HfYXX65GgEk" \
         -H "Content-Type: multipart/form-data" \
         -F 'payload={
-                "title":"Mockingbird new book",
-                "synopsis":"This is a new book for sure. It is about testing the book creation endpoint.",
-                "authors":["John Doe"],
-                "isbn":"9780743331199",
-                "price":100,
-                "yearPublished":2025,
-                "language":"en",
-                "pages":100
-            };type=application/json' \
-        -F "coverImage=@<Absolute path to book cover image>"
+            "title": "Mockingbird new book 2",
+            "synopsis": "This is a new book for sure. It is about testing the book creation endpoint.",
+            "authors": ["John Doe"],
+            "price": 100,
+            "language": "en",
+            "pages": 100,
+            "tags": ["horror"],
+            "yearPublished": 2025,
+            "isbn": "9780743330000"
+        };type=application/json' \
+        -F "coverImage=@/Users/mdimranpavel/Desktop/bookden/server/__tests__/files/dummy.jpeg"
 
     */
 
@@ -94,14 +110,23 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         throw unauthorizedError;
     }
 
-    const validated = CreateBookPayloadSchema.parse(JSON.parse(req.body.payload));
+    const payload = typeof req.body.payload === 'string'
+        ? JSON.parse(req.body.payload)
+        : req.body.payload;
+
+
+    const validated = CreateBookPayloadSchema.parse(payload);
 
     if(!req.file) {
         const noFileUploadedError = new BadRequestError(errorMessages[errorNames.noCoverImageUploaded]);
         throw noFileUploadedError;
     }
 
-    const createdBook = await createBook(validated, req.file.buffer, req.file.mimetype);
+    const normalizedTags = validated.tags.map(t =>{
+        return t.trim().toLowerCase();
+    });
+
+    const createdBook = await createBook({ ...validated, tags: normalizedTags }, req.file.buffer, req.file.mimetype);
     res.status(201).json(createdBook);
 };
 
@@ -129,7 +154,14 @@ const updateBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         throw badRequestError;
     }
 
-    await updateBook(bookId, validated);
+    const normalizedTags = validated.tags?.map(t =>{
+        return t.trim().toLowerCase();
+    });
+
+    await updateBook(bookId, {
+        ...validated,
+        tags: normalizedTags
+    });
     res.status(200).end();
 };
 

@@ -19,6 +19,7 @@ const INVALID_AUTH_HEADER = 'InvalidAuthHeader' as const;
 const INVALID_BOOK_ID = 'InvalidBookId' as const;
 const NO_COVER_IMAGE_UPLOADED = 'NoCoverImageUploaded' as const;
 const BOOK_COVER_NOT_FOUND = 'BookCoverNotFound' as const;
+const INVALID_BOOK_TAGS = 'InvalidBookTags' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -41,7 +42,8 @@ export const errorNames = {
     invalidAuthHeader: INVALID_AUTH_HEADER,
     invalidBookId: INVALID_BOOK_ID,
     noCoverImageUploaded: NO_COVER_IMAGE_UPLOADED,
-    bookCoverNotFound: BOOK_COVER_NOT_FOUND
+    bookCoverNotFound: BOOK_COVER_NOT_FOUND,
+    invalidBookTags: INVALID_BOOK_TAGS
 };
 
 export const errorMessages = {
@@ -65,7 +67,8 @@ export const errorMessages = {
     [INVALID_AUTH_HEADER]: 'Invalid Authorization header format',
     [INVALID_BOOK_ID]: 'Invalid book ID',
     [NO_COVER_IMAGE_UPLOADED]: 'No cover image uploaded',
-    [BOOK_COVER_NOT_FOUND]: 'Book cover not found'
+    [BOOK_COVER_NOT_FOUND]: 'Book cover not found',
+    [INVALID_BOOK_TAGS]: 'One or more booktags are invalid'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;

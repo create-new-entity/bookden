@@ -1,7 +1,7 @@
 
 GET http://localhost:3000/api/books?search=pa
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjg3MiwidXNlclR5cGUiOiJzdXBlcmFkbWluIiwiaWF0IjoxNzY1MzAwNDg5LCJleHAiOjE3NjUzODY4ODl9.RBlm6g48a3B5U43IZ4cRQ9tyun-XBdGvhDNPQgpWrlc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2NjQxMzY5MywiZXhwIjoxNzY2NTAwMDkzfQ.GzRgNSou72bFQCWDSYtUP4svR7jfAHov8ZSaNt7dVgo
 
 
 ###
@@ -14,4 +14,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1c
 
 
 GET http://localhost:3000/api/books/820/cover
+Content-Type: application/json
+
+
+###
+
+GET http://localhost:3000/api/books?tags=LAWYERS_FICTION&tags=horror
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2NjQxMzY5MywiZXhwIjoxNzY2NTAwMDkzfQ.GzRgNSou72bFQCWDSYtUP4svR7jfAHov8ZSaNt7dVgo
+
+###
+
+GET http://localhost:3000/api/books/834
 Content-Type: application/json

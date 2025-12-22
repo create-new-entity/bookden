@@ -5,6 +5,7 @@ import { booksSortByOptions, sortOrderOptions } from '../constants';
 export const UpdateBookPayloadSchema = z.object({
     title: z.string().min(1, { message: 'Title must be a non-empty string' }).optional(),
     synopsis: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     authors: z.array(z.string()).optional(),
     isbn: z.string().min(1, { message: 'ISBN must be a non-empty string' }).optional(),
     price: z.number().min(0, { message: 'Price must be a non-negative number' }).optional(),
@@ -18,6 +19,7 @@ export const CreateBookPayloadSchema = z.object({
     title: z.string().min(1, { message: 'Title must be a non-empty string' }),
     synopsis: z.string().min(30, { message: 'Synopsis must be at least 30 characters long' }),
     authors: z.array(z.string()).min(1, { message: 'At least one author is required' }),
+    tags: z.array(z.string()),
     isbn: z.string().min(1, { message: 'ISBN must be a non-empty string' }),
     price: z.number().min(0, { message: 'Price must be a non-negative number' }),
     yearPublished: z.number()
@@ -33,6 +35,7 @@ export const GetBooksQueryParamsSchema = z.object({
     search: z.string().optional(),
     sortBy: z.enum(booksSortByOptions).optional(),
     sortOrder: z.enum(sortOrderOptions).optional(),
+    tags: z.array(z.string()).optional(),
     page: z.string().optional(),
 });
 
