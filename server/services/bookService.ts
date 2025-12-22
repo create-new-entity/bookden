@@ -127,41 +127,90 @@ const getBook = async (bookId: number, includeDeleted: boolean = false) => {
 
 const createBook = async (createBookData: CreateBookPayload, coverImage: Buffer, coverImageMimeType: string): Promise<Book> => {
     const dbPool = await getPGDBPool();
-    const snakeCasedData = convertToSnakeCaseDeep(createBookData);
-    const result = await dbPool.query(sqlTag.typeAlias('Book')`
-        WITH
-            inserted_book AS (
-                INSERT INTO books (
-                    title, synopsis, authors, isbn,
-                    price, year_published, language, pages
-                )
-                VALUES (
-                    ${snakeCasedData.title}, ${snakeCasedData.synopsis || ''}, ${JSON.stringify(snakeCasedData.authors || [])}::jsonb, ${snakeCasedData.isbn},
-                    ${snakeCasedData.price}, ${snakeCasedData.year_published}, ${snakeCasedData.language}, ${snakeCasedData.pages || 100}
-                )
-                RETURNING
-                    book_id, title, synopsis, authors,
-                    isbn, price, year_published, language,
-                    pages, created_at, updated_at, deleted_at
-            ),
-            insert_cover AS (
-                INSERT INTO book_covers (
-                    book_id,
-                    image_data,
-                    mime_type
-                )
-                SELECT
-                    book_id,
-                    ${sqlTag.binary(coverImage)},
-                    ${coverImageMimeType}
-                FROM inserted_book
-                RETURNING book_id
-            )
 
-        SELECT *
-        FROM inserted_book;
-    `);
-    return camelcaseKeys(result.rows[0], { deep: true });
+    return await dbPool.transaction(async (trx) => {
+        const snakeCasedData = convertToSnakeCaseDeep(createBookData);
+        const tags = createBookData.tags;
+
+        // If there are invalid tags, throw an error.
+        if (tags && tags.length > 0) {
+            const tagRows = await trx.query(sqlTag.typeAlias('Tag')`
+                SELECT tag_id
+                FROM tags
+                WHERE tag = ANY(${sql.array(tags, 'text')});
+            `);
+    
+            if (tagRows.rows.length !== tags.length) {
+                throw new BadRequestError(errorMessages[errorNames.invalidBookTags]);
+            }
+        }
+    
+    
+        const result = await trx.query(sqlTag.typeAlias('Book')`
+            WITH
+                inserted_book AS (
+                    INSERT INTO books (
+                        title, synopsis, authors, isbn,
+                        price, year_published, language, pages
+                    )
+                    VALUES (
+                        ${snakeCasedData.title}, ${snakeCasedData.synopsis || ''}, ${JSON.stringify(snakeCasedData.authors || [])}::jsonb, ${snakeCasedData.isbn},
+                        ${snakeCasedData.price}, ${snakeCasedData.year_published}, ${snakeCasedData.language}, ${snakeCasedData.pages || 100}
+                    )
+                    RETURNING
+                        book_id, title, synopsis, authors,
+                        isbn, price, year_published, language,
+                        pages, created_at, updated_at, deleted_at
+                ),
+                insert_cover AS (
+                    INSERT INTO book_covers (
+                        book_id,
+                        image_data,
+                        mime_type
+                    )
+                    SELECT
+                        book_id,
+                        ${sqlTag.binary(coverImage)},
+                        ${coverImageMimeType}
+                    FROM inserted_book
+                    RETURNING book_id
+                )
+    
+            SELECT *
+            FROM inserted_book;
+        `);
+
+        if (tags.length > 0) {
+            await trx.query(sqlTag.typeAlias('Void')`
+              INSERT INTO book_tags (book_id, tag_id)
+              SELECT
+                ${result.rows[0].book_id},
+                tag_id
+              FROM tags
+              WHERE tag = ANY(${sql.array(tags, 'text')});
+            `);
+        }
+
+        const fullBook = await trx.query(sqlTag.typeAlias('Book')`
+            SELECT
+                b.book_id, b.title, b.synopsis,
+                b.authors, b.isbn, b.price, b.year_published,
+                b.language, b.pages,
+                COALESCE(
+                    array_agg(t.tag) FILTER (WHERE t.tag IS NOT NULL),
+                    '{}'
+                ) AS tags,
+                b.created_at, b.updated_at, b.deleted_at
+            FROM books b
+            LEFT JOIN book_tags bt
+                ON bt.book_id = b.book_id
+            LEFT JOIN tags t
+                ON t.tag_id = bt.tag_id
+            WHERE b.book_id = ${result.rows[0].book_id}
+            GROUP BY b.book_id;
+        `);
+        return camelcaseKeys(fullBook.rows[0], { deep: true });
+    });
 };
 
 const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => {
@@ -169,9 +218,6 @@ const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => 
 
     await dbPool.transaction(async (trx) => {
         const fragments = [];
-        const normalizedTags = updateBookData.tags?.map(t =>{
-            return t.trim().toLowerCase();
-        });
 
         if(updateBookData.title) {
             fragments.push(sqlTag.fragment`title = ${updateBookData.title}`);
@@ -210,14 +256,14 @@ const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => 
             `);
         }
 
-        if (normalizedTags?.length) {
+        if (updateBookData.tags?.length) {
             const tagRows = await trx.query(sqlTag.typeAlias('Tag')`
                 SELECT tag_id
                 FROM tags
-                WHERE tag = ANY(${sql.array(normalizedTags, 'text')});
+                WHERE tag = ANY(${sql.array(updateBookData.tags, 'text')});
             `);
       
-            if (tagRows.rows.length !== normalizedTags.length) {
+            if (tagRows.rows.length !== updateBookData.tags.length) {
                 throw new BadRequestError(errorMessages[errorNames.invalidBookTags]);
             }
       
@@ -230,7 +276,7 @@ const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => 
                 INSERT INTO book_tags (book_id, tag_id)
                 SELECT ${bookId}, tag_id
                 FROM tags
-                WHERE tag = ANY(${sql.array(normalizedTags, 'text')});
+                WHERE tag = ANY(${sql.array(updateBookData.tags, 'text')});
             `);
         }
     });
