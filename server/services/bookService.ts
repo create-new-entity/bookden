@@ -9,7 +9,7 @@ import { BOOKS_PAGINATION_LIMIT } from '../constants';
 
 
 
-const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, search: string = '', sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc'): Promise<PaginatedDataList<Book>> => {
+const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, search: string = '', sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc', tags: string[] = []): Promise<PaginatedDataList<Book>> => {
     const dbPool = await getPGDBPool();
 
     const searchFragment = search && search.trim() !== ''
@@ -37,17 +37,37 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
     const snakeCasedSortBy = convertStringToSnakeCase(sortBy);
     const sortOrderFragment = sortOrder === 'asc' ? sqlTag.fragment`ASC` : sqlTag.fragment`DESC`;
     const sortByFragment = sqlTag.fragment`ORDER BY ${sqlTag.identifier([snakeCasedSortBy])} ${sortOrderFragment}`;
+    const tagsFragment = tags.length > 0 ? sqlTag.fragment`
+        AND EXISTS (
+            SELECT 1
+            FROM book_tags bt
+            INNER JOIN tags t
+                ON bt.tag_id = t.tag_id
+            WHERE bt.book_id = books.book_id
+            AND (
+                ${sqlTag.join(tags.map(tag => sqlTag.fragment`t.tag ILIKE ${tag}`), sqlTag.fragment` OR `)}
+            )
+        )`
+        :
+        sqlTag.fragment``;
 
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
         SELECT
-            book_id, title, synopsis,
+            books.book_id, title, synopsis,
+            COALESCE(array_agg(DISTINCT t.tag) FILTER (WHERE t.tag IS NOT NULL), '{}') AS tags,
             authors, isbn, price,
             year_published, language, pages,
             created_at, updated_at, deleted_at
         FROM books
+        LEFT JOIN book_tags bt
+            ON bt.book_id = books.book_id   -- left join makes more sense. inner join will drop books if there are no tags.
+        LEFT JOIN tags t
+            ON t.tag_id = bt.tag_id
         WHERE 1 = 1
+        ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
+        GROUP BY books.book_id
         ${sortByFragment}
         LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
     `);
@@ -56,6 +76,7 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         SELECT COUNT(book_id)::int AS total
         FROM books
         WHERE 1 = 1
+        ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
     `);

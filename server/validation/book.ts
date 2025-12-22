@@ -33,6 +33,7 @@ export const GetBooksQueryParamsSchema = z.object({
     search: z.string().optional(),
     sortBy: z.enum(booksSortByOptions).optional(),
     sortOrder: z.enum(sortOrderOptions).optional(),
+    tags: z.array(z.string()).optional(),
     page: z.string().optional(),
 });
 

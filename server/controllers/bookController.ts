@@ -14,9 +14,24 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     if(req.user) {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
-    const validatedQueryParams = GetBooksQueryParamsSchema.parse(req.query);
+    const rawTags = req.query.tags;
+
+    const normalizedTags = typeof rawTags === 'string'
+        ?
+        [rawTags]
+        :
+        Array.isArray(rawTags)
+            ?
+            rawTags
+            :
+            undefined;
+
+    const validatedQueryParams = GetBooksQueryParamsSchema.parse({
+        ...req.query,
+        tags: normalizedTags,
+    });
     const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
-    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder);
+    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder, validatedQueryParams.tags);
     res.status(200).json(books);
 };
 
