@@ -19,6 +19,22 @@ function extractYear(raw) {
   return DEFAULT_YEAR;
 }
 
+function extractUniqueTags() {
+  const uniqueTags = new Set();
+
+  for (const book of booksSeedData) {
+    if (Array.isArray(book.subjects)) {
+      for (const subject of book.subjects) {
+        if (typeof subject === 'string' && subject.trim() !== '') {
+          uniqueTags.add(subject.trim());
+        }
+      }
+    }
+  }
+
+  return Array.from(uniqueTags);
+}
+
 
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
@@ -35,6 +51,8 @@ exports.up = async function(db) {
   const imageExtensions = ['jpg', 'jpeg', 'png', 'webp'];
 
   const baseTime = new Date();
+  const uniqueTags = extractUniqueTags();
+  const bookTagsBuffer = [];
 
   try {
     await db.runSql('BEGIN');
@@ -78,6 +96,13 @@ exports.up = async function(db) {
       );
   
       const bookId = result.rows[0].book_id;
+
+      bookTagsBuffer.push({
+        bookId,
+        tags: book.subjects ?? []
+      });
+
+
       const bookIsbn = result.rows[0].isbn;
       let selectedPath = null;
       let mimeType = null;
@@ -105,6 +130,59 @@ exports.up = async function(db) {
         [bookId, buffer, mimeType]
       );
     }
+
+    await db.runSql(`
+      CREATE TABLE tags (
+        tag_id SERIAL PRIMARY KEY,
+        tag TEXT NOT NULL UNIQUE
+      );
+    `);
+    
+    await db.runSql(`
+      CREATE TABLE book_tags (
+        book_id INT NOT NULL REFERENCES books(book_id) ON DELETE CASCADE,
+        tag_id  INT NOT NULL REFERENCES tags(tag_id) ON DELETE CASCADE,
+        PRIMARY KEY (book_id, tag_id)
+      );
+    `);
+
+    const tagIdByName = new Map();
+
+    for (const tag of uniqueTags) {
+      const result = await db.runSql(
+        ` INSERT INTO tags (tag)
+          VALUES ($1)
+          ON CONFLICT (tag) DO NOTHING
+          RETURNING tag_id;
+        `,
+        [tag]
+      );
+
+      if (result.rows.length > 0) {
+        tagIdByName.set(tag, result.rows[0].tag_id);
+      }
+    }
+
+    for (const entry of bookTagsBuffer) {
+      const { bookId, tags } = entry;
+    
+      for (const tag of tags) {
+        const tagId = tagIdByName.get(tag.trim());
+        if (!tagId) continue;
+    
+        await db.runSql(
+          `
+            INSERT INTO book_tags (book_id, tag_id)
+            VALUES ($1, $2)
+            ON CONFLICT DO NOTHING;
+          `,
+          [bookId, tagId]
+        );
+      }
+    }
+    
+
+    
     await db.runSql('COMMIT');
   }
   catch(error) {
