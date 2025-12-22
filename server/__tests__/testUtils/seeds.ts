@@ -55,10 +55,10 @@ const sortedSeedBookData = allBooksSeedData.sort((a, b) => {
 });
     
 const allProcessedSeedBookData: Book[] = sortedSeedBookData.map(book => {
-    const processedBook = R.pick(['title', 'synopsis', 'authors', 'isbn', 'msrp', 'date_published', 'language', 'pages'], book);
-    const newBook = { ...processedBook } as Book;
+    const processedBook = R.pick(['title', 'synopsis', 'authors', 'isbn', 'msrp', 'date_published', 'language', 'pages', 'subjects'], book);
+    const newBook = { ...processedBook } as Book & { tags: string[] };
     newBook.yearPublished = extractYear(book.date_published);
-
+    newBook.tags = book.subjects?.map(subject => subject.trim().toLowerCase()) || [];
     if(book.msrp && !isNaN(book.msrp) && book.msrp > 0) {
         newBook.price = Number(book.msrp);
     } else {

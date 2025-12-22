@@ -97,9 +97,6 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         };type=application/json' \
         -F "coverImage=@/Users/mdimranpavel/Desktop/bookden/server/__tests__/files/dummy.jpeg"
 
-
-        ** Before sending curl request,
-        add json.parse like this: const validated = CreateBookPayloadSchema.parse(JSON.parse(req.body.payload));
     */
 
     if(!req.user) {
@@ -113,7 +110,12 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         throw unauthorizedError;
     }
 
-    const validated = CreateBookPayloadSchema.parse(req.body.payload);
+    const payload = typeof req.body.payload === 'string'
+        ? JSON.parse(req.body.payload)
+        : req.body.payload;
+
+
+    const validated = CreateBookPayloadSchema.parse(payload);
 
     if(!req.file) {
         const noFileUploadedError = new BadRequestError(errorMessages[errorNames.noCoverImageUploaded]);
