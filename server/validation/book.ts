@@ -5,6 +5,7 @@ import { booksSortByOptions, sortOrderOptions } from '../constants';
 export const UpdateBookPayloadSchema = z.object({
     title: z.string().min(1, { message: 'Title must be a non-empty string' }).optional(),
     synopsis: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     authors: z.array(z.string()).optional(),
     isbn: z.string().min(1, { message: 'ISBN must be a non-empty string' }).optional(),
     price: z.number().min(0, { message: 'Price must be a non-negative number' }).optional(),

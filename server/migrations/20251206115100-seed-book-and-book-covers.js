@@ -26,7 +26,7 @@ function extractUniqueTags() {
     if (Array.isArray(book.subjects)) {
       for (const subject of book.subjects) {
         if (typeof subject === 'string' && subject.trim() !== '') {
-          uniqueTags.add(subject.trim());
+          uniqueTags.add(subject.trim().toLowerCase());
         }
       }
     }
@@ -99,7 +99,7 @@ exports.up = async function(db) {
 
       bookTagsBuffer.push({
         bookId,
-        tags: book.subjects ?? []
+        tags: book.subjects?.map(t => t.trim().toLowerCase()) ?? []
       });
 
 
@@ -140,9 +140,9 @@ exports.up = async function(db) {
     
     await db.runSql(`
       CREATE TABLE book_tags (
-        book_id INT NOT NULL REFERENCES books(book_id) ON DELETE CASCADE,
-        tag_id  INT NOT NULL REFERENCES tags(tag_id) ON DELETE CASCADE,
-        PRIMARY KEY (book_id, tag_id)
+          book_id INT NOT NULL REFERENCES books(book_id) ON DELETE CASCADE,
+          tag_id  INT NOT NULL REFERENCES tags(tag_id) ON DELETE CASCADE,
+          PRIMARY KEY (book_id, tag_id)
       );
     `);
 
@@ -150,7 +150,8 @@ exports.up = async function(db) {
 
     for (const tag of uniqueTags) {
       const result = await db.runSql(
-        ` INSERT INTO tags (tag)
+        `
+          INSERT INTO tags (tag)
           VALUES ($1)
           ON CONFLICT (tag) DO NOTHING
           RETURNING tag_id;

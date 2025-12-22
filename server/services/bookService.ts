@@ -5,6 +5,8 @@ import { getPGDBPool, sqlTag } from '../configs';
 import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, PaginatedDataList, UpdateBookPayload } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { BOOKS_PAGINATION_LIMIT } from '../constants';
+import { BadRequestError, errorMessages, errorNames } from '../errors';
+import { sql } from 'slonik';
 // import { BOOKS_PAGINATION_LIMIT } from '../constants';
 
 
@@ -106,13 +108,19 @@ const getBook = async (bookId: number, includeDeleted: boolean = false) => {
     const deletedAtFragment = includeDeleted ? sqlTag.fragment`` : sqlTag.fragment`AND deleted_at IS NULL`;
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
         SELECT
-            book_id, title, synopsis,
+            books.book_id, title, synopsis,
+            COALESCE(array_agg(DISTINCT t.tag) FILTER (WHERE t.tag IS NOT NULL), '{}') AS tags,
             authors, isbn, price,
             year_published, language, pages,
             created_at, updated_at, deleted_at
         FROM books
-        WHERE book_id = ${bookId}
-        ${deletedAtFragment};
+        LEFT JOIN book_tags bt
+            ON bt.book_id = books.book_id
+        LEFT JOIN tags t
+            ON t.tag_id = bt.tag_id
+        WHERE books.book_id = ${bookId}
+        ${deletedAtFragment}
+        GROUP BY books.book_id;
     `);
     return camelcaseKeys(result.rows[0], { deep: true });
 };
@@ -159,46 +167,73 @@ const createBook = async (createBookData: CreateBookPayload, coverImage: Buffer,
 const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => {
     const dbPool = await getPGDBPool();
 
-    const fragments = [];
+    await dbPool.transaction(async (trx) => {
+        const fragments = [];
+        const normalizedTags = updateBookData.tags?.map(t =>{
+            return t.trim().toLowerCase();
+        });
 
-    if(updateBookData.title) {
-        fragments.push(sqlTag.fragment`title = ${updateBookData.title}`);
-    }
-    if(updateBookData.synopsis !== undefined) {
-        fragments.push(sqlTag.fragment`synopsis = ${updateBookData.synopsis}`);
-    }
+        if(updateBookData.title) {
+            fragments.push(sqlTag.fragment`title = ${updateBookData.title}`);
+        }
+        if(updateBookData.synopsis !== undefined) {
+            fragments.push(sqlTag.fragment`synopsis = ${updateBookData.synopsis}`);
+        }
 
-    const nonEmptyAuthors = updateBookData.authors?.filter(a => !R.isEmpty(a));
-    if(nonEmptyAuthors && nonEmptyAuthors.length) {
-        fragments.push(sqlTag.fragment`authors = ${nonEmptyAuthors}::jsonb`);
-    }
-    
-    if(updateBookData.isbn) {
-        fragments.push(sqlTag.fragment`isbn = ${updateBookData.isbn}`);
-    }
-    if(updateBookData.price !== undefined) {
-        fragments.push(sqlTag.fragment`price = ${updateBookData.price}`);
-    }
+        const nonEmptyAuthors = updateBookData.authors?.filter(a => !R.isEmpty(a));
+        if(nonEmptyAuthors && nonEmptyAuthors.length) {
+            fragments.push(sqlTag.fragment`authors = ${nonEmptyAuthors}::jsonb`);
+        }
+        
+        if(updateBookData.isbn) {
+            fragments.push(sqlTag.fragment`isbn = ${updateBookData.isbn}`);
+        }
+        if(updateBookData.price !== undefined) {
+            fragments.push(sqlTag.fragment`price = ${updateBookData.price}`);
+        }
 
-    if(updateBookData.yearPublished) {
-        fragments.push(sqlTag.fragment`year_published = ${updateBookData.yearPublished}`);
-    }
-    if(updateBookData.language) {
-        fragments.push(sqlTag.fragment`language = ${updateBookData.language}`);
-    }
-    if(updateBookData.pages) {
-        fragments.push(sqlTag.fragment`pages = ${updateBookData.pages}`);
-    }
+        if(updateBookData.yearPublished) {
+            fragments.push(sqlTag.fragment`year_published = ${updateBookData.yearPublished}`);
+        }
+        if(updateBookData.language) {
+            fragments.push(sqlTag.fragment`language = ${updateBookData.language}`);
+        }
+        if(updateBookData.pages) {
+            fragments.push(sqlTag.fragment`pages = ${updateBookData.pages}`);
+        }
 
-    if (fragments.length === 0) {
-        return;
-    }
+        if (fragments.length > 0) {
+            await trx.query(sqlTag.typeAlias('Book')`
+                UPDATE books
+                SET ${sqlTag.join(fragments, sqlTag.fragment`, `)}
+                WHERE book_id = ${bookId};
+            `);
+        }
 
-    await dbPool.query(sqlTag.typeAlias('Book')`
-        UPDATE books
-        SET ${sqlTag.join(fragments, sqlTag.fragment`, `)}
-        WHERE book_id = ${bookId};
-    `);
+        if (normalizedTags?.length) {
+            const tagRows = await trx.query(sqlTag.typeAlias('Tag')`
+                SELECT tag_id
+                FROM tags
+                WHERE tag = ANY(${sql.array(normalizedTags, 'text')});
+            `);
+      
+            if (tagRows.rows.length !== normalizedTags.length) {
+                throw new BadRequestError(errorMessages[errorNames.invalidBookTags]);
+            }
+      
+            await trx.query(sqlTag.typeAlias('Void')`
+                DELETE FROM book_tags
+                WHERE book_id = ${bookId};
+            `);
+      
+            await trx.query(sqlTag.typeAlias('Void')`
+                INSERT INTO book_tags (book_id, tag_id)
+                SELECT ${bookId}, tag_id
+                FROM tags
+                WHERE tag = ANY(${sql.array(normalizedTags, 'text')});
+            `);
+        }
+    });
 };
 
 const updateBookCover = async (bookId: number, coverImage: Buffer, coverImageMimeType: string) => {
