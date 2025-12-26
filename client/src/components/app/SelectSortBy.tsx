@@ -1,42 +1,30 @@
+import type { SelectChangeEvent, SxProps, Theme } from '@mui/material';
 
-import type { SortByOptions } from '../../types';
-import {
-    CREATED_AT,
-    DELETED_AT,
-    EMAIL,
-    MINIMUM_WIDTH_FOR_SELECT_SORT_BY,
-    UPDATED_AT,
-    USERNAME,
-    USERS_LIST_SORT_BY_OPTIONS_TEXTS
-} from '../../constants';
 import type { SelectOption } from '../custom/CustomSelect';
 import { CustomSelect } from '../custom';
-import type { UserSearchParams } from '../../validations/userSearchParams';
 
 
-type SelectSortByProps = {
-    sortBy: SortByOptions;
-    updateParams: (params: Partial<UserSearchParams>) => void;
-};
+
+// Check the comment about this "extends" just above SelectOption type definition in CustomSelect.tsx.
+type SelectSortByProps<TValue extends string | number> = {
+    id: string;
+    value: TValue;
+    options: Array<SelectOption<TValue>>;
+    formControlSx?: SxProps<Theme>;
+    onChange: (event: SelectChangeEvent<TValue>) => void;
+  };
 
 
-const SelectSortBy = ({ sortBy, updateParams }: SelectSortByProps) => {
-    const options: Array<SelectOption<SortByOptions>> = [
-        { optionValue: USERNAME, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[USERNAME] },
-        { optionValue: EMAIL, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[EMAIL] },
-        { optionValue: CREATED_AT, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[CREATED_AT] },
-        { optionValue: UPDATED_AT, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[UPDATED_AT] },
-        { optionValue: DELETED_AT, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[DELETED_AT] },
-    ];
+const SelectSortBy = <TValue extends string | number>(props: SelectSortByProps<TValue>) => {
+    const { id, value, options, formControlSx, onChange } = props;
+    
     return (
-        <CustomSelect<SortByOptions>
-            id="sort-by"
-            formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_SELECT_SORT_BY }}
+        <CustomSelect<TValue>
+            id={id}
+            formControlSx={formControlSx}
             inputLabelText="Sort By"
-            value={sortBy}
-            onChange={(event) => {
-                updateParams({ sortBy: event.target.value, page: 1 });
-            }}
+            value={value}
+            onChange={onChange}
             options={options}
         />
     );

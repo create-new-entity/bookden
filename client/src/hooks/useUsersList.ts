@@ -2,9 +2,9 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import { getUsersList } from '../api';
 import { useAuthContext } from '../contexts';
-import useUsersListDeepLinking from './useUsersListDeepLinking';
 import type { UserSearchParams } from '../validations';
 import type { PaginatedDataList, User } from '../types';
+import useUserManagementDeepLinking from './useUserManagementDeepLinking';
 
 
 export type UseUsersListReturn = {
@@ -15,7 +15,7 @@ export type UseUsersListReturn = {
 
 const useUsersList = (): UseUsersListReturn => {
     const { token } = useAuthContext();
-    const { params, updateParams } = useUsersListDeepLinking();
+    const { params, updateParams } = useUserManagementDeepLinking();
 
     const { search, page, sortBy, sortOrder, userType } = params;
 

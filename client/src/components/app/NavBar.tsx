@@ -9,7 +9,7 @@ import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 
-import { useNavContext, useThemeModeContext } from '../../contexts';
+import { useNavContext } from '../../contexts';
 import { CustomAutoComplete } from '../custom';
 import { useBookSearchVisibility } from '../../hooks';
 import { NAV_BAR_Z_INDEX } from '../../constants';
@@ -59,7 +59,6 @@ const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
-    const { isLightMode } = useThemeModeContext();
     const navigate = useNavigate();
     const showBookSearch = useBookSearchVisibility();
     const theme = useTheme();

@@ -1,8 +1,8 @@
-import { Paper, Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { Paper, Stack, Typography, useTheme, type SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 
 import type { UserSearchParams } from '../../../validations';
-import type { UserTypeOptions } from '../../../types';
-import { DEFAULT_GAP, SUPERADMIN } from '../../../constants';
+import type { SortOrder, UsersSortByOptions, UserTypeOptions } from '../../../types';
+import { DEFAULT_GAP, MINIMUM_WIDTH_FOR_SELECT_SORT_BY, SUPERADMIN, USERS_LIST_SORT_BY_OPTIONS } from '../../../constants';
 import { CustomAutoComplete } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import { useAuthContext } from '../../../contexts';
@@ -51,6 +51,14 @@ const UsersListFilterMobile = (props: UsersListFilterMobileProps) => {
     const styles = getStyles(theme);
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
 
+    const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
+        updateParams({ sortOrder: event.target.value });
+    };
+
+    const handleSortByChange = (event: SelectChangeEvent<UsersSortByOptions>) => {
+        updateParams({ sortBy: event.target.value, page: 1 });
+    };
+
     return (
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>
             <Paper sx={styles.paper}>
@@ -71,9 +79,25 @@ const UsersListFilterMobile = (props: UsersListFilterMobileProps) => {
                         }}
                         placeholder='username or email'
                     />
-                    <SelectSortBy sortBy={sortBy} updateParams={updateParams} />
+
+                    {
+                        /*
+                            Instead of <SelectSortBy<UsersSortByOptions> .... />
+                            This will also work: <SelectSortBy .../>
+                            Due to the type inference from "value" prop.
+
+                            But let's be explicit anyway.
+                        */
+                    }
+                    <SelectSortBy<UsersSortByOptions>
+                        id="users-list-sort-by"
+                        formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_SELECT_SORT_BY }}
+                        value={sortBy}
+                        options={USERS_LIST_SORT_BY_OPTIONS}
+                        onChange={handleSortByChange}
+                    />
                     { isClientSuperAdmin && <SelectUserType userType={userType} updateParams={updateParams} /> }
-                    <SelectSortOrder sortOrder={sortOrder} updateParams={updateParams} />
+                    <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
                 </Stack>
             </Paper>
         </Stack>

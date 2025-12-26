@@ -20,8 +20,10 @@ import {
     UPDATE_PROFILE,
     USER,
     USER_MANAGEMENT,
-    NOTIFICATION_DELAY
+    NOTIFICATION_DELAY,
+    BOOK_MANAGEMENT
 } from './constants';
+import BookManagementPage from './pages/BookManagementPage';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
@@ -64,6 +66,7 @@ const App = () => {
                 <Route path={CREATE_ADMIN_USER} element={<CreateAdminOrUpdateAnyUserProfilePage mode='create'/>}/>
                 <Route path={USER} element={<UserPage/>}/>
                 <Route path={USER_MANAGEMENT} element={<UserManagementPage/>} />
+                <Route path={BOOK_MANAGEMENT} element={<BookManagementPage/>} />
                 <Route path={ADMIN_TOOLS} element={<AdminToolsPage/>} />
                 <Route path={HOME} element={<HomePage/>} />
             </Routes>

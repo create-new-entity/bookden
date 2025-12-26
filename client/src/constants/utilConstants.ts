@@ -1,4 +1,5 @@
-import type { UserType } from '../types';
+import type { SelectOption } from '../components/custom/CustomSelect';
+import type { BooksSortByOptions, UsersSortByOptions, UserType } from '../types';
 
 export const NOTIFICATION_DELAY = 4000;
 export const ALL = 'all' as const;
@@ -17,7 +18,7 @@ export const USERTYPE_LABELS = {
 
 export const ASC = 'asc' as const;
 export const DESC = 'desc' as const;
-export const USERS_SORT_ORDER_OPTIONS = [ASC, DESC] as const;
+export const SORT_ORDER_OPTIONS = [ASC, DESC] as const;
 
 export const USERNAME = 'username' as const;
 export const EMAIL = 'email' as const;
@@ -26,6 +27,34 @@ export const CREATED_AT = 'createdAt' as const;
 export const UPDATED_AT = 'updatedAt' as const;
 export const DELETED_AT = 'deletedAt' as const;
 export const USERS_SORT_BY_OPTIONS = [USERNAME, EMAIL, CREATED_AT, UPDATED_AT, DELETED_AT] as const;
+
+
+export const TITLE = 'title' as const;
+export const PRICE = 'price' as const;
+export const YEAR_PUBLISHED = 'yearPublished' as const;
+export const BOOKS_SORT_BY_OPTIONS = [
+    TITLE, PRICE, YEAR_PUBLISHED,
+    CREATED_AT, UPDATED_AT, DELETED_AT
+] as const;
+
+export const BOOKS_LIST_SORT_BY_OPTIONS_TEXTS = {
+    [TITLE]: 'Title',
+    [PRICE]: 'Price',
+    [YEAR_PUBLISHED]: 'Year Published',
+    [CREATED_AT]: 'Latest New Book',
+    [UPDATED_AT]: 'Latest Updated Book',
+    [DELETED_AT]: 'Latest Deleted Book'
+} as const;
+
+export const BOOKS_LIST_SORT_BY_OPTIONS: Array<SelectOption<BooksSortByOptions>> = [
+    { optionValue: TITLE, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[TITLE] },
+    { optionValue: PRICE, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[PRICE] },
+    { optionValue: YEAR_PUBLISHED, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[YEAR_PUBLISHED] },
+    { optionValue: CREATED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[CREATED_AT] },
+    { optionValue: UPDATED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[UPDATED_AT] },
+    { optionValue: DELETED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[DELETED_AT] },
+] as const;
+
 
 export const ALL_TYPES_OF_USERS: UserType[] = [CUSTOMER, ADMIN, SUPERADMIN];
 
@@ -40,6 +69,15 @@ export const USERS_LIST_SORT_BY_OPTIONS_TEXTS = {
     [UPDATED_AT]: 'Latest Updated User',
     [DELETED_AT]: 'Latest Deleted User'
 } as const;
+
+export const USERS_LIST_SORT_BY_OPTIONS: Array<SelectOption<UsersSortByOptions>> = [
+    { optionValue: USERNAME, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[USERNAME] },
+    { optionValue: EMAIL, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[EMAIL] },
+    { optionValue: CREATED_AT, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[CREATED_AT] },
+    { optionValue: UPDATED_AT, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[UPDATED_AT] },
+    { optionValue: DELETED_AT, optionLabel: USERS_LIST_SORT_BY_OPTIONS_TEXTS[DELETED_AT] },
+];
+
 
 export const USER_INPUT_DELAY = 700;
 

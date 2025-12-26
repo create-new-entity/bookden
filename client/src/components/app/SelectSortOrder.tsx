@@ -8,16 +8,16 @@ import {
 } from '../../constants';
 import type { SelectOption } from '../custom/CustomSelect';
 import { CustomSelect } from '../custom';
-import type { UserSearchParams } from '../../validations/userSearchParams';
+import type { SelectChangeEvent } from '@mui/material';
 
 
 type SelectSortOrderProps = {
     sortOrder: SortOrder;
-    updateParams: (params: Partial<UserSearchParams>) => void;
+    onChange: (event: SelectChangeEvent<SortOrder>) => void;
 };
 
 
-const SelectSortOrder = ({ sortOrder, updateParams }: SelectSortOrderProps) => {
+const SelectSortOrder = ({ sortOrder, onChange }: SelectSortOrderProps) => {
     const options: Array<SelectOption<SortOrder>> = [
         { optionValue: ASC, optionLabel: 'Ascending' },
         { optionValue: DESC, optionLabel: 'Descending' },
@@ -29,9 +29,7 @@ const SelectSortOrder = ({ sortOrder, updateParams }: SelectSortOrderProps) => {
             formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_SELECT_SORT_ORDER }}
             inputLabelText="Sort Order"
             value={sortOrder}
-            onChange={(event) => {
-                updateParams({ sortOrder: event.target.value });
-            }}
+            onChange={onChange}
             options={options}
         />
     );
