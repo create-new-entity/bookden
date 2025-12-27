@@ -10,12 +10,15 @@ import {
     deleteBookController,
     getBookCoverController,
     updateBookCoverController,
-    deleteBookCoverController
+    deleteBookCoverController,
+    getTagsController
 } from '../controllers';
 
 export const bookBaseUrl = '/api/books';
 
 const bookRouter = Router();
+
+bookRouter.get('/tags', asyncHandler(getTagsController));
 
 bookRouter.get('/:id/cover', tokenExtractor, asyncHandler(getBookCoverController));
 bookRouter.put('/:id/cover', tokenExtractor, uploadImage.single('coverImage'), asyncHandler(updateBookCoverController));
@@ -27,5 +30,6 @@ bookRouter.delete('/:id', tokenExtractor, asyncHandler(deleteBookController));
 
 bookRouter.post('/', tokenExtractor, uploadImage.single('coverImage'), asyncHandler(createBookController));
 bookRouter.get('/', tokenExtractor, asyncHandler(getAllBooksController));
+
 
 export default bookRouter;

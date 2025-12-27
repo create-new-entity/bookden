@@ -1,9 +1,9 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import QueryString from 'qs';
 import * as R from 'ramda';
 
 import { ADMIN, AuthenticatedRequest, CreateBookRequestBody, GetBooksQueryParams, SUPERADMIN } from '../types';
-import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, updateBook, updateBookCover } from '../services';
+import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, getTags, updateBook, updateBookCover } from '../services';
 import { AuthenticationError, BadRequestError, errorMessages, errorNames, NotFoundError, UnauthorizedError } from '../errors';
 import { UpdateBookPayload } from '../types';
 import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
@@ -239,6 +239,11 @@ const deleteBookCoverController = async (req: AuthenticatedRequest, res: Respons
 };
 
 
+const getTagsController = async (_req: Request, res: Response) => {
+    const tags = await getTags();
+    res.status(200).json(tags);
+};
+
 
 export {
     getAllBooksController,
@@ -248,5 +253,6 @@ export {
     deleteBookController,
     getBookCoverController,
     updateBookCoverController,
-    deleteBookCoverController
+    deleteBookCoverController,
+    getTagsController
 };

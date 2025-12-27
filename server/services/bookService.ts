@@ -327,6 +327,15 @@ const getBookCover = async (bookId: number, includeDeleted: boolean = false) => 
     return camelcaseKeys(result.rows[0], { deep: true });
 };
 
+const getTags = async () => {
+    const dbPool = await getPGDBPool();
+    const result = await dbPool.query(sqlTag.typeAlias('Tag')`
+        SELECT tag_id, tag
+        FROM tags;
+    `);
+    return camelcaseKeys(result.rows, { deep: true });
+};
+
 export {
     getAllBooks,
     getBook,
@@ -335,5 +344,6 @@ export {
     deleteBook,
     getBookCover,
     updateBookCover,
-    deleteBookCover
+    deleteBookCover,
+    getTags
 };
