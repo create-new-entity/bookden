@@ -41,7 +41,7 @@ export const BOOKS_LIST_SORT_BY_OPTIONS_TEXTS = {
     [TITLE]: 'Title',
     [PRICE]: 'Price',
     [YEAR_PUBLISHED]: 'Year Published',
-    [CREATED_AT]: 'Latest New Book',
+    [CREATED_AT]: 'Latest Book',
     [UPDATED_AT]: 'Latest Updated Book',
     [DELETED_AT]: 'Latest Deleted Book'
 } as const;

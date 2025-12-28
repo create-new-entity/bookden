@@ -2,7 +2,7 @@ import { Paper, Stack, Typography, useTheme, type SelectChangeEvent, type SxProp
 
 import type { UserSearchParams } from '../../../validations';
 import type { SortOrder, UsersSortByOptions, UserTypeOptions } from '../../../types';
-import { DEFAULT_GAP, MINIMUM_WIDTH_FOR_SELECT_SORT_BY, SUPERADMIN, USERS_LIST_SORT_BY_OPTIONS } from '../../../constants';
+import { DEFAULT_GAP, MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY, SUPERADMIN, USERS_LIST_SORT_BY_OPTIONS } from '../../../constants';
 import { CustomAutoComplete } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import { useAuthContext } from '../../../contexts';
@@ -91,7 +91,7 @@ const UsersListFilterMobile = (props: UsersListFilterMobileProps) => {
                     }
                     <SelectSortBy<UsersSortByOptions>
                         id="users-list-sort-by"
-                        formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_SELECT_SORT_BY }}
+                        formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY }}
                         value={sortBy}
                         options={USERS_LIST_SORT_BY_OPTIONS}
                         onChange={handleSortByChange}

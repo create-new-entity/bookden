@@ -1,22 +1,35 @@
-import { IconButton, Stack, Tooltip, useTheme, type SxProps } from '@mui/material';
-import type { SelectChangeEvent, Theme } from '@mui/material';
+import {
+    Collapse, IconButton, Stack,
+    Tooltip, Typography, useTheme
+} from '@mui/material';
+import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import { useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 // import { useNavigate } from 'react-router-dom';
 
 import type { BookSearchParams } from '../../../validations';
 import type { BooksSortByOptions, SortOrder } from '../../../types';
 import {
     ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, MARGIN_TOP_TO_AVOID_NAV_BAR,
+    MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
     NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN
 } from '../../../constants';
 import { CustomAutoComplete } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
 import { useAuthContext } from '../../../contexts';
+import BookTagsSelect from './BookTagsSelect';
 
 type Styles = {
     searchBoxesStack: SxProps<Theme>;
     searchBox: SxProps<Theme>;
+    rootStack: SxProps<Theme>;
+    bookTagsSelectStack: SxProps<Theme>;
+    bookTagsMultiAutoComplete: SxProps<Theme>;
+    bookTagsSelectCollapse: SxProps<Theme>;
+    tagsStack: SxProps<Theme>;
 };
 
 const getStyles = (theme: Theme): Styles => {
@@ -31,6 +44,22 @@ const getStyles = (theme: Theme): Styles => {
         },
         searchBox: {
             flexGrow: 1
+        },
+        rootStack: {
+            width: '100%'
+        },
+        tagsStack: {
+            width: '100%'
+        },
+        bookTagsSelectStack: {
+            height: '100vh',
+            pointerEvents: 'none' // Needed, otherwise it consumes clicks meant for modal -> modal won't close after opening.
+        },
+        bookTagsSelectCollapse: {
+            width: '100%'
+        },
+        bookTagsMultiAutoComplete: {
+            pointerEvents: 'auto', // Needed, otherwise it consumes clicks meant for modal -> modal won't close after opening.
         }
     };
 };
@@ -40,7 +69,7 @@ type BooksListFilterDesktopProps = {
     search: string;
     sortBy: BookSearchParams['sortBy'];
     sortOrder: BookSearchParams['sortOrder'];
-    tags: BookSearchParams['tags'];
+    tags: string[];
     updateParams: (params: Partial<BookSearchParams>) => void;
 };
 
@@ -50,9 +79,11 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const theme = useTheme();
     const styles = getStyles(theme);
     const { userType } = useAuthContext();
+    const [isTagsCollapseOpen, setIsTagsCollapseOpen] = useState(false);
     // const navigate = useNavigate();
+    
     const isClientAdminOrSuperAdmin = userType === SUPERADMIN || userType === ADMIN;
-    const { search, sortBy, sortOrder, updateParams } = props;
+    const { search, sortBy, sortOrder, updateParams, tags } = props;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
         updateParams({ sortOrder: event.target.value });
@@ -62,45 +93,73 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
         updateParams({ sortBy: event.target.value, page: 1 });
     };
 
+    const handleTagsClick = () => {
+        setIsTagsCollapseOpen(!isTagsCollapseOpen);
+    };
+
     return (
-        <Stack
-            sx={styles.searchBoxesStack}
-            direction={'row'}
-            justifyContent={'space-between'}
-            alignItems={'center'}
-            gap={STACK_DEFAULT_GAP}
-            position={'sticky'}
-            top={MARGIN_TOP_TO_AVOID_NAV_BAR}
-            zIndex={NAV_BAR_Z_INDEX}
-        >
-            <CustomAutoComplete id='bookManagementSearchBox'
-                sx={styles.searchBox}
-                value={search}
-                handleChange={(value) => {
-                    updateParams({ search: value, page: 1 });
-                }}
-                placeholder='Search by username or email'
-            />
-            <SelectSortBy<BooksSortByOptions>
-                id="books-list-sort-by"
-                value={sortBy}
-                options={BOOKS_LIST_SORT_BY_OPTIONS}
-                onChange={handleSortByChange}
-            />
-            <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
-            {
-                isClientAdminOrSuperAdmin && (
-                    <Tooltip title='Add a new book'>
-                        <IconButton onClick={() => {
-                            // navigate(CREATE_BOOK);
-                            console.log('add new book');
-                        }}>
-                            <Add />
+        <>
+            <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
+                <Stack
+                    sx={styles.searchBoxesStack}
+                    direction={'row'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    gap={STACK_DEFAULT_GAP}
+                    position={'sticky'}
+                    top={MARGIN_TOP_TO_AVOID_NAV_BAR}
+                    zIndex={NAV_BAR_Z_INDEX}
+                >
+                    <CustomAutoComplete id='bookManagementSearchBox'
+                        sx={styles.searchBox}
+                        value={search}
+                        handleChange={(value) => {
+                            updateParams({ search: value, page: 1 });
+                        }}
+                        placeholder='Search by title or author'
+                    />
+                    <SelectSortBy<BooksSortByOptions>
+                        id="books-list-sort-by"
+                        value={sortBy}
+                        options={BOOKS_LIST_SORT_BY_OPTIONS}
+                        onChange={handleSortByChange}
+                        formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY }}
+                    />
+                    <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
+                    {
+                        isClientAdminOrSuperAdmin && (
+                            <Tooltip title='Add a new book'>
+                                <IconButton onClick={() => {
+                                    // navigate(CREATE_BOOK);
+                                    console.log('add new book');
+                                }}>
+                                    <Add />
+                                </IconButton>
+                            </Tooltip>
+                        )
+                    }
+                </Stack>
+                <Stack sx={styles.tagsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'} gap={STACK_DEFAULT_GAP}>
+                    <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>
+                        <Typography variant='subtitle1'>
+                            {
+                                tags.length > 0 ? `${tags.length} tags selected` : 'Select tags'
+                            }
+                        </Typography>
+                        <IconButton onClick={handleTagsClick}>
+                            {isTagsCollapseOpen ? <RemoveIcon /> : <AddIcon />}
                         </IconButton>
-                    </Tooltip>
-                )
-            }
-        </Stack>
+                    </Stack>
+                    <Collapse in={isTagsCollapseOpen} sx={styles.bookTagsSelectCollapse}>
+                        <BookTagsSelect
+                            tags={tags}
+                            updateParams={updateParams}
+                            multiAutoCompleteStyles={styles.bookTagsMultiAutoComplete}
+                        />
+                    </Collapse>
+                </Stack>
+            </Stack>
+        </>
     );
 };
 

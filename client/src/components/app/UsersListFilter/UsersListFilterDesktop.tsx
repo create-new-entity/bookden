@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import {
     CREATE_ADMIN_USER, MARGIN_TOP_TO_AVOID_NAV_BAR,
-    MINIMUM_WIDTH_FOR_SELECT_SORT_BY,
+    MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY,
     NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN,
     USERS_LIST_SORT_BY_OPTIONS
 } from '../../../constants';
@@ -98,7 +98,7 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             }
             <SelectSortBy<UsersSortByOptions>
                 id="users-list-sort-by"
-                formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_SELECT_SORT_BY }}
+                formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY }}
                 value={sortBy}
                 options={USERS_LIST_SORT_BY_OPTIONS}
                 onChange={handleSortByChange}
