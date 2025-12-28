@@ -14,4 +14,5 @@ export { default as useCreateAdminUser } from './useCreateAdminUser';
 export { default as useResponsive } from './useResponsive';
 export { default as useUserManagementDeepLinking } from './useUserManagementDeepLinking';
 export { default as useBookManagementDeepLinking } from './useBookManagementDeepLinking';
+export { default as useBookTags } from './useBookTags';
 

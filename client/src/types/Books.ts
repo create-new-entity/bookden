@@ -16,4 +16,10 @@ export type Book = {
     createdAt: string;
 }
 
+
+export type BookTag = {
+    tagId: number;
+    tag: string;
+};
+
 export type BooksSortByOptions = keyof typeof BOOKS_LIST_SORT_BY_OPTIONS_TEXTS;

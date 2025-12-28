@@ -11,17 +11,20 @@ import useBookManagementDeepLinking from './useBookManagementDeepLinking';
 
 export type UseBooksListReturn = {
     booksList: UseQueryResult<PaginatedDataList<Book>, Error>;
-    params: BookSearchParams;
+    params: Omit<BookSearchParams, 'tags'> & { tags: string[] };
     updateParams: (params: Partial<BookSearchParams>) => void;
 };
 
 const useBooksList = () => {
     // const { token } = useAuthContext();
-    const { params, updateParams } = useBookManagementDeepLinking();
-
-    console.log('books params', params);
+    const { params: originalParams, updateParams } = useBookManagementDeepLinking();
+    const params = {
+        ...originalParams,
+        tags: originalParams.tags.split(',').filter((tag) => tag !== '')
+    };
 
     // const { search, page, sortBy, sortOrder, tags } = params;
+
 
     // const queryFn = () => {
     //     console.log('Call query fn with params:', { search, page, sortBy, sortOrder, tags });
