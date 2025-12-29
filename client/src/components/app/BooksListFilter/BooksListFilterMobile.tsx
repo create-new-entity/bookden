@@ -100,6 +100,11 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
                         tags={tags}
                         updateParams={updateParams}
                     />
+                    <Typography variant='subtitle1'>
+                        {
+                            tags.length > 0 && `${tags.length} tags selected`
+                        }
+                    </Typography>
                 </Stack>
             </Paper>
         </Stack>
