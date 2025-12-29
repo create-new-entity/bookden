@@ -1,5 +1,4 @@
 import type { SELECT_USER_TYPE_OPTIONS, USERS_LIST_SORT_BY_OPTIONS_TEXTS } from '../constants';
-import type { Pagination } from './Pagination';
 import type { SortOrder } from './UtilTypes';
 
 export type AdminOrCustomer = 'admin' | 'customer';
@@ -31,12 +30,6 @@ export type UsersListLocalOptions = {
     setSortOrder: React.Dispatch<React.SetStateAction<SortOrder>>;
     setUserType: React.Dispatch<React.SetStateAction<UserType>>;
 };
-
-export type PaginatedDataList<DataType> = {
-    data: DataType[];
-    pagination: Pagination;
-};
-
 
 
 export type CreateUserPayload = {

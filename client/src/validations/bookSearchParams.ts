@@ -15,3 +15,7 @@ export const BookSearchParamsSchema = z.object({
 });
 
 export type BookSearchParams = z.infer<typeof BookSearchParamsSchema>;
+
+export type GetBooksListParams = Omit<BookSearchParams, 'tags'> & {
+    tags: string[];
+};

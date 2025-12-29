@@ -1,12 +1,12 @@
 
 
-import { type UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-// import { getBooksList } from '../api';
-// import { useAuthContext } from '../contexts';
 import type { BookSearchParams } from '../validations';
 import type { Book, PaginatedDataList } from '../types';
 import useBookManagementDeepLinking from './useBookManagementDeepLinking';
+import { useAuthContext } from '../contexts';
+import { getBooksList } from '../api';
 
 
 export type UseBooksListReturn = {
@@ -16,28 +16,21 @@ export type UseBooksListReturn = {
 };
 
 const useBooksList = () => {
-    // const { token } = useAuthContext();
+    const { token } = useAuthContext();
     const { params: originalParams, updateParams } = useBookManagementDeepLinking();
+
     const params = {
         ...originalParams,
         tags: originalParams.tags.split(',').filter((tag) => tag !== '')
     };
+    const { search, page, sortBy, sortOrder, tags } = params;
 
-    // console.log('params.tags', params.tags);
-
-    // const { search, page, sortBy, sortOrder, tags } = params;
-
-
-    // const queryFn = () => {
-    //     console.log('Call query fn with params:', { search, page, sortBy, sortOrder, tags });
-    // };
-
-    // const booksList = useQuery({
-    //     queryKey: ['booksList', search, page, sortBy, sortOrder, tags, token],
-    //     queryFn
-    // });
+    const booksList = useQuery({
+        queryKey: ['booksList', search, page, sortBy, sortOrder, tags, token],
+        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags }, token)
+    });
     
-    return { booksList: { data: [], pagination: { total: 0, page: 1, limit: 10 } }, params, updateParams };
+    return { booksList, params, updateParams };
 };
 
 export default useBooksList;

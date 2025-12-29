@@ -63,7 +63,7 @@ const getStyles = (theme: Theme): Styles => {
 const BookManagementPage = () => {
     const { isDesktop } = useResponsive();
     const theme = useTheme();
-    const { params, updateParams } = useBooksList();
+    const { booksList, params, updateParams } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
 
@@ -76,6 +76,8 @@ const BookManagementPage = () => {
     };
     
     useSetTabTitle('Book Management');
+
+    console.log('booksList', booksList.data?.data);
     
 
     return (
