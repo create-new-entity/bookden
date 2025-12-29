@@ -23,6 +23,8 @@ const useBooksList = () => {
         tags: originalParams.tags.split(',').filter((tag) => tag !== '')
     };
 
+    // console.log('params.tags', params.tags);
+
     // const { search, page, sortBy, sortOrder, tags } = params;
 
 

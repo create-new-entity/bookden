@@ -1,9 +1,15 @@
-import { Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+import { IconButton, Stack, Tooltip, useTheme, type SxProps, type Theme } from '@mui/material';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { Add } from '@mui/icons-material';
 
 
-import { useBooksList, useResponsive } from '../hooks';
-import { CONTENT_MARGIN, DEFAULT_GAP } from '../constants';
+import { useBooksList, useResponsive, useSetTabTitle } from '../hooks';
+import { ADMIN, CONTENT_MARGIN, DEFAULT_GAP, SUPERADMIN } from '../constants';
 import { BooksListFilterDesktop } from '../components/app/BooksListFilter';
+import { CustomModal, type CustomModalRef } from '../components';
+import { useRef } from 'react';
+import BooksListFilterMobile from '../components/app/BooksListFilter/BooksListFilterMobile';
+import { useAuthContext } from '../contexts';
 
 
 
@@ -57,9 +63,19 @@ const getStyles = (theme: Theme): Styles => {
 const BookManagementPage = () => {
     const { isDesktop } = useResponsive();
     const theme = useTheme();
-    const styles = getStyles(theme);
     const { params, updateParams } = useBooksList();
+    const modalRef = useRef<CustomModalRef>(null);
+    const { userType: clientUserType } = useAuthContext();
+
+    const styles = getStyles(theme);
     const { search, sortBy, sortOrder, tags } = params;
+    const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
+
+    const openFilterModal = () => {
+        modalRef.current?.openModal();
+    };
+    
+    useSetTabTitle('Book Management');
     
 
     return (
@@ -70,22 +86,23 @@ const BookManagementPage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
             >
-                {/* <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
+                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                     <IconButton onClick={openFilterModal}>
                         <FilterAltIcon />
                     </IconButton>
                     {
-                        isClientSuperAdmin && (
-                            <Tooltip title='Add a new admin'>
+                        isClientAdminOrSuperAdmin && (
+                            <Tooltip title='Add a new book'>
                                 <IconButton onClick={() => {
-                                    navigate(CREATE_ADMIN_USER);
+                                    // navigate(CREATE_BOOK);
+                                    console.log('add new book');
                                 }}>
                                     <Add />
                                 </IconButton>
                             </Tooltip>
                         )
                     }
-                </Stack> */}
+                </Stack>
                 {
                     isDesktop &&
                     <BooksListFilterDesktop
@@ -126,6 +143,15 @@ const BookManagementPage = () => {
                     />
                 } */}
             </Stack>
+            <CustomModal ref={modalRef}>
+                <BooksListFilterMobile
+                    search={search}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
+                    tags={tags}
+                    updateParams={updateParams}
+                />
+            </CustomModal>
         </>
     );
 };
