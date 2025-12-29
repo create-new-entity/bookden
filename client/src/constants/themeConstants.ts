@@ -3,6 +3,9 @@ import { ADMIN, CUSTOMER, SUPERADMIN } from './utilConstants';
 
 
 export const LARGE_SVG_ICON_FONT_SIZE = '8rem';
+export const MEDIUM_SVG_ICON_FONT_SIZE = '1.5rem';
+export const SMALL_SVG_ICON_FONT_SIZE = '0.8rem';
+
 export const PLACE_HOLDER_AVATAR_CARD_MEDIA_WIDTH = '150px';
 export const PLACE_HOLDER_AVATAR_CARD_MEDIA_HEIGHT = '150px';
 export const BORDER_RADIUS = '20px';

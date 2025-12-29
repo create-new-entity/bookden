@@ -5,8 +5,8 @@ import {
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 // import { useNavigate } from 'react-router-dom';
 
 import type { BookSearchParams } from '../../../validations';
@@ -133,7 +133,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                                     // navigate(CREATE_BOOK);
                                     console.log('add new book');
                                 }}>
-                                    <Add />
+                                    <Add/>
                                 </IconButton>
                             </Tooltip>
                         )
@@ -147,7 +147,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                             }
                         </Typography>
                         <IconButton onClick={handleTagsClick}>
-                            {isTagsCollapseOpen ? <RemoveIcon /> : <AddIcon />}
+                            {isTagsCollapseOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>
                     </Stack>
                     <Collapse in={isTagsCollapseOpen} sx={styles.bookTagsSelectCollapse}>

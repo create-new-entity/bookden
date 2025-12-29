@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
-import { customColors, DEFAULT_SPACING } from '../constants';
+import { customColors, DEFAULT_SPACING, MEDIUM_SVG_ICON_FONT_SIZE, SMALL_SVG_ICON_FONT_SIZE } from '../constants';
 import {
     BORDER_RADIUS,
     LARGE_SVG_ICON_FONT_SIZE,
@@ -248,6 +248,12 @@ export const getTheme = (mode: ThemeMode) => {
                 styleOverrides: {
                     fontSizeLarge: {
                         fontSize: LARGE_SVG_ICON_FONT_SIZE
+                    },
+                    fontSizeMedium: {
+                        fontSize: MEDIUM_SVG_ICON_FONT_SIZE
+                    },
+                    fontSizeSmall: {
+                        fontSize: SMALL_SVG_ICON_FONT_SIZE
                     }
                 }
             },
