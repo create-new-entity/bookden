@@ -1,15 +1,18 @@
-import { IconButton, Stack, Tooltip, useTheme, type SxProps, type Theme } from '@mui/material';
+import { IconButton, Stack, Tooltip, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { Add } from '@mui/icons-material';
 
 
 import { useBooksList, useResponsive, useSetTabTitle } from '../hooks';
-import { ADMIN, CONTENT_MARGIN, DEFAULT_GAP, SUPERADMIN } from '../constants';
+import { ADMIN, CONTENT_MARGIN, DEFAULT_GAP, GRID_VIEW, SUPERADMIN } from '../constants';
 import { BooksListFilterDesktop } from '../components/app/BooksListFilter';
-import { CustomModal, type CustomModalRef } from '../components';
+import { CustomModal, CustomPagination, Items, type CustomModalRef } from '../components';
 import { useRef } from 'react';
 import BooksListFilterMobile from '../components/app/BooksListFilter/BooksListFilterMobile';
 import { useAuthContext } from '../contexts';
+import type { Book } from '../types';
+import BookCard from '../components/app/BookCard';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -66,19 +69,27 @@ const BookManagementPage = () => {
     const { booksList, params, updateParams } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
+    const queryClient = useQueryClient();
 
     const styles = getStyles(theme);
     const { search, sortBy, sortOrder, tags } = params;
     const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
+    const queryKey = ['booksList', params.search, params.page, params.sortBy, params.sortOrder, params.tags];
+    
+
+    const handleQueryClientInvalidation = () => {
+        queryClient.invalidateQueries({ queryKey });
+    };
 
     const openFilterModal = () => {
         modalRef.current?.openModal();
     };
+
+    const onPageChange = (page: number) => {
+        updateParams({ page });
+    };
     
     useSetTabTitle('Book Management');
-
-    console.log('booksList', booksList.data?.data);
-    
 
     return (
         <>
@@ -115,35 +126,35 @@ const BookManagementPage = () => {
                         updateParams={updateParams}
                     />
                 }
-                {/* {
-                    usersList.data && usersList.data.data.length === 0 &&
+                {
+                    booksList.data && booksList.data.data.length === 0 &&
                     <Typography variant='body1'>
-                        No users found matching your search criteria.
+                        No books found matching your search criteria.
                     </Typography>
-                } */}
-                {/* {
-                    usersList.data &&
-                    <CustomPagination<User>
+                }
+                {
+                    booksList.data &&
+                    <CustomPagination<Book>
                         sx={styles.topPagination}
-                        paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        paginatedDataList={booksList.data}
+                        onPageChange={onPageChange}
                     />
-                } */}
-                {/* <Items
+                }
+                <Items<Book>
                     sx={styles.items}
-                    items={usersList.data?.data || []}
-                    ItemComponent={UserCard}
-                    getKey={(user) => user.userId}
+                    items={booksList.data?.data || []}
+                    ItemComponent={BookCard}
+                    getKey={(book) => book.bookId}
                     viewOption={GRID_VIEW}
                     onItemDelete={handleQueryClientInvalidation}
-                /> */}
-                {/* {
-                    usersList.data &&
-                    <CustomPagination<User>
-                        paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                />
+                {
+                    booksList.data &&
+                    <CustomPagination<Book>
+                        paginatedDataList={booksList.data}
+                        onPageChange={onPageChange}
                     />
-                } */}
+                }
             </Stack>
             <CustomModal ref={modalRef}>
                 <BooksListFilterMobile

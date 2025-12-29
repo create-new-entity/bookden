@@ -21,3 +21,20 @@ export const getBooksList = async (params: GetBooksListParams, token?: string): 
     const response = await axios.get(bookUrl, { params: removeEmptyValues(params), ...requestConfig });
     return response.data;
 };
+
+export const getBookCover = async (bookId: number) => {
+    const requestConfig: AxiosRequestConfig = {
+        responseType: 'blob'
+    };
+    const response = await axios.get(`${bookUrl}/${bookId}/cover`, requestConfig);
+    return response.data;
+};
+
+export const deleteBook = async (token: string, bookId: number) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.delete(`${bookUrl}/${bookId}`, requestConfig);
+};

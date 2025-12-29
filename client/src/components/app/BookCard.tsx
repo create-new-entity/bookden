@@ -1,14 +1,15 @@
+
+
 import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import type { User } from '../../types';
+import type { Book } from '../../types';
 import { useBlobImage } from '../../hooks';
 import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
-import { deleteUser, getUserAvatarBlob } from '../../api';
-import UserTypeChip from './UserTypeChip';
+import { deleteBook, getBookCover } from '../../api';
 
 
 type Styles = {
@@ -64,34 +65,36 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-type UserCardProps = {
-    item: User;
+type BookCardProps = {
+    item: Book;
     onItemDelete?: () => void;
 };
 
-const UserCard = ({ item, onItemDelete }: UserCardProps) => {
-    const user = item;
+const BookCard = ({ item, onItemDelete }: BookCardProps) => {
+    const book = item;
     const { token } = useAuthContext();
-    const theme = useTheme();
-    const styles = getStyles(theme);
-    const { handleShowNotification } = useNotificationContext();
     const blobOptions = {
-        queryKey: ['avatar', token, user.userId],
-        queryFn: () => getUserAvatarBlob(token, user.userId),
-        enabled: !!token && !!user.userId,
+        queryKey: ['bookCover', book.bookId],
+        queryFn: () => getBookCover(book.bookId),
+        enabled: !!book.bookId,
     };
     const { objectUrl } = useBlobImage(blobOptions);
-    const isAlreadyDeleted = user.deletedAt !== null;
+    const { handleShowNotification } = useNotificationContext();
+    const theme = useTheme();
 
-    const handleDeleteUser = async () => {
-        await deleteUser(token, user.userId);
+
+    const styles = getStyles(theme);
+    const isAlreadyDeleted = book.deletedAt !== null;
+
+    const handleDeleteBook = async () => {
+        // await deleteBook(token, book.bookId);
         onItemDelete?.();
-        handleShowNotification('User deleted successfully.');
+        handleShowNotification('Book deleted successfully.');
     };
 
     return (
-        <Link to={`/users/${user.userId}`}>
-            <Card sx={styles.card} data-testid={'user-card'}>
+        <Link to={`/books/${book.bookId}`}>
+            <Card sx={styles.card} data-testid={'book-card'}>
                 <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                     {
                         objectUrl ? 
@@ -110,21 +113,20 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                     }
                     <CardContent sx={styles.cardContent}>
                         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                            <Typography variant='h6'>{user.username}</Typography>
+                            <Typography variant='h6'>{book.title}</Typography>
                             {
                                 !isAlreadyDeleted &&
-                                <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
+                                <IconButton onClick={handleDeleteBook}><DeleteIcon /></IconButton>
                             }
                         </Stack>
-                        <Typography variant='body1'>{user.email}</Typography>
-                        <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                            <UserTypeChip userType={user.userType} />
+                        <Typography variant='body1'>{book.authors.join(', ')}</Typography>
+                        <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>  
                             {
-                                user.deletedAt &&
+                                book.deletedAt &&
                                 <Chip label='Deleted' color='error' size='small' />
                             }
                         </Stack>
-                        <Typography variant='body1'>{user.createdAt}</Typography>
+                        <Typography variant='body1'>{book.createdAt}</Typography>
                     </CardContent>
                 </Stack>
             </Card>
@@ -132,4 +134,4 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     );
 };
 
-export default UserCard;
+export default BookCard;

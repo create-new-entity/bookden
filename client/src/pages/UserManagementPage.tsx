@@ -99,6 +99,10 @@ const UserManagementPage = () => {
         console.log('Attempting to open filter modal');
         modalRef.current?.openModal();
     };
+
+    const onPageChange = (page: number) => {
+        updateParams({ page });
+    };
     
     useSetTabTitle('User Management');
 
@@ -147,10 +151,10 @@ const UserManagementPage = () => {
                     <CustomPagination<User>
                         sx={styles.topPagination}
                         paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        onPageChange={onPageChange}
                     />
                 }
-                <Items
+                <Items<User>
                     sx={styles.items}
                     items={usersList.data?.data || []}
                     ItemComponent={UserCard}
@@ -162,7 +166,7 @@ const UserManagementPage = () => {
                     usersList.data &&
                     <CustomPagination<User>
                         paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        onPageChange={onPageChange}
                     />
                 }
             </Stack>
