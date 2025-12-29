@@ -1,34 +1,30 @@
 
 
-import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Stack, Typography, Tooltip } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import type { Book } from '../../types';
 import { useBlobImage } from '../../hooks';
-import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
+import { BOOK_CARD_PADDING, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
-import { deleteBook, getBookCover } from '../../api';
+import { getBookCover } from '../../api';
+
+const BASE_DIMENSION = 15;
+const BOOK_COVER_WIDTH = `${BASE_DIMENSION}rem`;
+const BOOK_COVER_HEIGHT = `${BASE_DIMENSION * 1.3}rem`;
 
 
 type Styles = {
-    rootStack: SxProps<Theme>;
     card: SxProps<Theme>;
     cardMedia: SxProps<Theme>;
     cardContent: SxProps<Theme>;
+    textOverflowEllipsis: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
-    const rootStackPaddingLeft = '10px';
-    const rootStacDefaultGap = `${DEFAULT_GAP}px`;
-    const IMAGE_WIDTH_HEIGHT = '100px';
-
     return {
         card: {
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
             '& .MuiIconButton-root': {
                 display: 'none',
                 padding: 0
@@ -38,28 +34,24 @@ const getStyles = (_theme: Theme): Styles => {
             },
             '&:hover .MuiIconButton-root': {
                 display: 'block'
-            }
-        },
-        rootStack: {
-            paddingLeft: '10px',
-            height: '100%'
+            },
+            padding: BOOK_CARD_PADDING
         },
         cardMedia: {
-            width: IMAGE_WIDTH_HEIGHT,
-            height: IMAGE_WIDTH_HEIGHT,
-            borderRadius: BORDER_RADIUS,
             '& img': {
-                width: IMAGE_WIDTH_HEIGHT,
-                height: IMAGE_WIDTH_HEIGHT,
+                width: BOOK_COVER_WIDTH,
+                height: BOOK_COVER_HEIGHT,
                 objectFit: 'cover'
             }
         },
         cardContent: {
-            flex: 1,
-            maxWidth: `calc(100% - ${IMAGE_WIDTH_HEIGHT} - ${rootStackPaddingLeft} - ${rootStacDefaultGap})`,
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingBottom: 0
+            width: '100%',
+        },
+        textOverflowEllipsis: {
+            maxWidth: '80%',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
         }
     };
 };
@@ -95,12 +87,16 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
     return (
         <Link to={`/books/${book.bookId}`}>
             <Card sx={styles.card} data-testid={'book-card'}>
-                <Stack sx={styles.rootStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
+                <Stack
+                    direction={'column'}
+                    justifyContent={'flex-start'}
+                    alignItems={'center'}
+                    gap={`${DEFAULT_GAP}px`}
+                >
                     {
                         objectUrl ? 
                             <Box sx={styles.cardMedia}>
                                 <CardMedia
-                                    sx={styles.cardMedia}
                                     component='img'
                                     image={objectUrl}
                                 />
@@ -112,21 +108,34 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                             />
                     }
                     <CardContent sx={styles.cardContent}>
-                        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                            <Typography variant='h6'>{book.title}</Typography>
-                            {
-                                !isAlreadyDeleted &&
-                                <IconButton onClick={handleDeleteBook}><DeleteIcon /></IconButton>
-                            }
+                        <Stack
+                            direction={'column'}
+                            justifyContent={'flex-start'}
+                            alignItems={'center'}
+                            gap={`${DEFAULT_GAP/2}px`}
+                        >
+                            <Tooltip title={book.title}>
+                                <Typography variant='h6' sx={styles.textOverflowEllipsis}>
+                                    {book.title}
+                                </Typography>
+                            </Tooltip>
+                            <Tooltip title={book.authors.join(', ')}>
+                                <Typography variant='body1' sx={styles.textOverflowEllipsis}>
+                                    {book.authors.join(', ')}
+                                </Typography>
+                            </Tooltip>
+                            {/* <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>  
+                                {
+                                    book.deletedAt &&
+                                    <Chip label='Deleted' color='error' size='small' />
+                                }
+                            </Stack> */}
+                            <Tooltip title={`€${book.price}`}>
+                                <Typography variant='body1' sx={styles.textOverflowEllipsis}>
+                                    €{book.price}
+                                </Typography>
+                            </Tooltip>
                         </Stack>
-                        <Typography variant='body1'>{book.authors.join(', ')}</Typography>
-                        <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>  
-                            {
-                                book.deletedAt &&
-                                <Chip label='Deleted' color='error' size='small' />
-                            }
-                        </Stack>
-                        <Typography variant='body1'>{book.createdAt}</Typography>
                     </CardContent>
                 </Stack>
             </Card>

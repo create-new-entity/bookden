@@ -91,6 +91,9 @@ const BookManagementPage = () => {
     
     useSetTabTitle('Book Management');
 
+    console.log('booksList', booksList.data?.data);
+    
+
     return (
         <>
             <Stack
