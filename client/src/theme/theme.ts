@@ -119,6 +119,9 @@ export const getTheme = (mode: ThemeMode) => {
         typography: {
             fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
             fontSize: 14,
+            button: {
+                textTransform: 'none'
+            }
         },
         shape: {
             borderRadius: 8,
@@ -181,11 +184,6 @@ export const getTheme = (mode: ThemeMode) => {
                     disableRipple: true,
                     disableFocusRipple: true,
                     disableTouchRipple: true
-                },
-                styleOverrides: {
-                    root: {
-                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
-                    }
                 }
             },
             MuiAppBar: {

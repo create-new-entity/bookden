@@ -1,4 +1,5 @@
 import {
+    Button,
     Collapse, IconButton, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
@@ -97,6 +98,10 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
         setIsTagsCollapseOpen(!isTagsCollapseOpen);
     };
 
+    const clearTags = () => {
+        updateParams({ tags: '' });
+    };
+
     return (
         <>
             <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
@@ -141,14 +146,22 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                 </Stack>
                 <Stack sx={styles.tagsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'} gap={STACK_DEFAULT_GAP}>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>
-                        <Typography variant='subtitle1'>
-                            {
-                                tags.length > 0 ? `${tags.length} tags selected` : 'Select tags'
-                            }
-                        </Typography>
+                        <Typography variant='subtitle1'>Additional Options</Typography>
                         <IconButton onClick={handleTagsClick}>
                             {isTagsCollapseOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>
+                        {
+                            tags.length > 0
+                                ?
+                                (
+                                    <>
+                                        <Typography variant='subtitle1'>{tags.length} tags selected</Typography>
+                                        <Button variant='text' onClick={clearTags}>Clear Tags</Button>
+                                    </>
+                                ) 
+                                :
+                                null
+                        }
                     </Stack>
                     <Collapse in={isTagsCollapseOpen} sx={styles.bookTagsSelectCollapse}>
                         <BookTagsSelect
