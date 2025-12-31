@@ -57,7 +57,8 @@ const getStyles = (theme: Theme): Styles => {
             pointerEvents: 'none' // Needed, otherwise it consumes clicks meant for modal -> modal won't close after opening.
         },
         bookTagsSelectCollapse: {
-            width: '100%'
+            width: '100%',
+            marginBottom: '1rem'
         },
         bookTagsMultiAutoComplete: {
             pointerEvents: 'auto', // Needed, otherwise it consumes clicks meant for modal -> modal won't close after opening.
