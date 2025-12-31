@@ -10,9 +10,9 @@ import { BOOK_CARD_PADDING, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
 import { getBookCover } from '../../api';
 
-const BASE_DIMENSION = 15;
-const BOOK_COVER_WIDTH = `${BASE_DIMENSION}rem`;
-const BOOK_COVER_HEIGHT = `${BASE_DIMENSION * 1.3}rem`;
+const BOOK_COVER_WIDTH = 17;
+const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH * 1.5;
+const BOOK_CARD_HEIGHT = '38rem';
 
 
 type Styles = {
@@ -35,12 +35,14 @@ const getStyles = (_theme: Theme): Styles => {
             '&:hover .MuiIconButton-root': {
                 display: 'block'
             },
-            padding: BOOK_CARD_PADDING
+            padding: `${BOOK_CARD_PADDING}rem`,
+            height: BOOK_CARD_HEIGHT,
+            minWidth: `${BOOK_COVER_WIDTH + BOOK_CARD_PADDING * 2}rem`
         },
         cardMedia: {
             '& img': {
-                width: BOOK_COVER_WIDTH,
-                height: BOOK_COVER_HEIGHT,
+                width: `${BOOK_COVER_WIDTH}rem`,
+                height: `${BOOK_COVER_HEIGHT}rem`,
                 objectFit: 'cover'
             }
         },
@@ -120,9 +122,17 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                                 </Typography>
                             </Tooltip>
                             <Tooltip title={book.authors.join(', ')}>
-                                <Typography variant='body1' sx={styles.textOverflowEllipsis}>
-                                    {book.authors.join(', ')}
-                                </Typography>
+                                {
+                                    book.authors.length > 0
+                                        ?
+                                        <Typography variant='body1' sx={styles.textOverflowEllipsis}>
+                                            By {book.authors.join(', ')}
+                                        </Typography>
+                                        :
+                                        <Typography variant='body1' sx={styles.textOverflowEllipsis}>
+                                            By Unknown Author
+                                        </Typography>
+                                }
                             </Tooltip>
                             {/* <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>  
                                 {

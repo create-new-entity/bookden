@@ -10,6 +10,6 @@ export const MINIMUM_WIDTH_FOR_SELECT_SORT_ORDER = '9rem';
 export const STACK_DEFAULT_GAP = '1rem';
 export const NAV_BAR_Z_INDEX = 1000;
 export const DEFAULT_GAP = 20;
-export const ITEMS_GRID_SIZES = { xs: 12, sm: 6, md: 4 };
+export const ITEMS_GRID_SIZES = { xs: 12, sm: 6, md: 4, lg: 3 };
 export const LIST_VIEW_GRID_SIZES = { xs: 12 };
 export const AVATAR_DIMENSIONS = 145;
