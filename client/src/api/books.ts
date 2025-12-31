@@ -2,7 +2,7 @@ import axios, { type AxiosRequestConfig } from 'axios';
 
 import { bookUrl } from './endpoints';
 import type { PaginatedDataList, Book } from '../types';
-import type { GetBooksListParams } from '../validations';
+import type { BookSearchParams } from '../validations';
 import { removeEmptyValues } from '../utility';
 
 
@@ -12,13 +12,14 @@ export const getTags = async () => {
 };
 
 
-export const getBooksList = async (params: GetBooksListParams, token?: string): Promise<PaginatedDataList<Book>> => {
+export const getBooksList = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
-    const response = await axios.get(bookUrl, { params: removeEmptyValues(params), ...requestConfig });
+    const cleanedParams = removeEmptyValues(params);
+    const response = await axios.get(bookUrl, { params: cleanedParams, ...requestConfig });
     return response.data;
 };
 

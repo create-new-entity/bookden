@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import type { Book } from '../../types';
 import { useBlobImage } from '../../hooks';
-import { BOOK_CARD_PADDING, DEFAULT_GAP } from '../../constants';
+import { BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
 import { getBookCover } from '../../api';
 
@@ -114,7 +114,7 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                             direction={'column'}
                             justifyContent={'flex-start'}
                             alignItems={'center'}
-                            gap={`${DEFAULT_GAP/2}px`}
+                            gap={`${ONE_TENTH_OF_DEFAULT_GAP}px`}
                         >
                             <Tooltip title={book.title}>
                                 <Typography variant='h6' sx={styles.textOverflowEllipsis}>
@@ -125,11 +125,11 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                                 {
                                     book.authors.length > 0
                                         ?
-                                        <Typography variant='body1' sx={styles.textOverflowEllipsis}>
+                                        <Typography variant='subtitle1' sx={styles.textOverflowEllipsis}>
                                             By {book.authors.join(', ')}
                                         </Typography>
                                         :
-                                        <Typography variant='body1' sx={styles.textOverflowEllipsis}>
+                                        <Typography variant='subtitle1' sx={styles.textOverflowEllipsis}>
                                             By Unknown Author
                                         </Typography>
                                 }
@@ -145,6 +145,9 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                                     €{book.price}
                                 </Typography>
                             </Tooltip>
+                            <Typography>
+                                Published in {book.yearPublished}
+                            </Typography>
                         </Stack>
                     </CardContent>
                 </Stack>

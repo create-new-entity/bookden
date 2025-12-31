@@ -27,7 +27,7 @@ const useBooksList = () => {
 
     const booksList = useQuery({
         queryKey: ['booksList', search, page, sortBy, sortOrder, tags, token],
-        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags }, token)
+        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tags.join(',') }, token)
     });
     
     return { booksList, params, updateParams };

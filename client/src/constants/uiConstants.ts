@@ -13,3 +13,4 @@ export const DEFAULT_GAP = 20;
 export const ITEMS_GRID_SIZES = { xs: 12, sm: 6, md: 4, lg: 3 };
 export const LIST_VIEW_GRID_SIZES = { xs: 12 };
 export const AVATAR_DIMENSIONS = 145;
+export const ONE_TENTH_OF_DEFAULT_GAP = DEFAULT_GAP / 10;

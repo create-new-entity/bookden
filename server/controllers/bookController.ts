@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import QueryString from 'qs';
 import * as R from 'ramda';
 
-import { ADMIN, AuthenticatedRequest, CreateBookRequestBody, GetBooksQueryParams, SUPERADMIN } from '../types';
+import { ADMIN, AuthenticatedRequest, CreateBookRequestBody, GetBooksQueryParams, isString, SUPERADMIN } from '../types';
 import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, getTags, updateBook, updateBookCover } from '../services';
 import { AuthenticationError, BadRequestError, errorMessages, errorNames, NotFoundError, UnauthorizedError } from '../errors';
 import { UpdateBookPayload } from '../types';
@@ -16,15 +16,7 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     };
     const rawTags = req.query.tags;
 
-    const normalizedTags = typeof rawTags === 'string'
-        ?
-        [rawTags]
-        :
-        Array.isArray(rawTags)
-            ?
-            rawTags
-            :
-            undefined;
+    const normalizedTags = isString(rawTags) ? rawTags.split(',') : [];
 
     const validatedQueryParams = GetBooksQueryParamsSchema.parse({
         ...req.query,
