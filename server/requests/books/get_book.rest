@@ -24,3 +24,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1c
 
 GET http://localhost:3000/api/books/834
 Content-Type: application/json
+
+
+###
+
+GET http://localhost:3000/api/books?priceMin=0&priceMax=225
+Content-Type: application/json

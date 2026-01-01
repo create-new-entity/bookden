@@ -20,6 +20,6 @@ export type BooksSortOrderOptions = 'asc' | 'desc';
 export type GetBooksQueryParams = z.infer<typeof GetBooksQueryParamsSchema>;
 
 export type PriceRange = {
-    min: number;
-    max: number;
+    priceMin: number;
+    priceMax: number;
 };

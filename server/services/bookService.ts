@@ -8,11 +8,12 @@ import { BOOKS_PAGINATION_LIMIT, PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS 
 import { BadRequestError, errorMessages, errorNames } from '../errors';
 import { sql } from 'slonik';
 
-// import { BOOKS_PAGINATION_LIMIT } from '../constants';
 
-
-
-const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, search: string = '', sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc', tags: string[] = []): Promise<PaginatedDataList<Book>> => {
+const getAllBooks = async (
+    includeDeleted: boolean = false, page: number = 1, search: string = '',
+    sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc',
+    tags: string[] = [], priceRanges: PriceRange | undefined = undefined
+): Promise<PaginatedDataList<Book>> => {
     const dbPool = await getPGDBPool();
 
     const searchFragment = search && search.trim() !== ''
@@ -27,6 +28,11 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
             )
         `
         : sqlTag.fragment``;
+
+    const priceRangeFragment = priceRanges ? sqlTag.fragment`
+        AND price >= ${priceRanges.priceMin}
+        AND price <= ${priceRanges.priceMax}
+    ` : sqlTag.fragment``;
 
 
     /*
@@ -70,6 +76,7 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
+        ${priceRangeFragment}
         GROUP BY books.book_id
         ${sortByFragment}
         LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
@@ -82,6 +89,7 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
+        ${priceRangeFragment}
     `);
     const totalBooks = totalResult.total;
 
@@ -348,8 +356,8 @@ const getBooksPriceRange = async (): Promise<PriceRange> => {
     const dbPool = await getPGDBPool();
     const result = await dbPool.one(sqlTag.typeAlias('PriceRange')`
         SELECT
-            MIN(price) AS min_price,
-            MAX(price) AS max_price
+            MIN(price) AS price_min,
+            MAX(price) AS price_max
         FROM books
         WHERE deleted_at IS NULL
     `);
@@ -357,8 +365,8 @@ const getBooksPriceRange = async (): Promise<PriceRange> => {
 
     // Defensive default. This shouldn't be necessary. Since tables are seeded with data.
     const priceRange: PriceRange = {
-        min: result.min_price ?? 0,
-        max: result.max_price ?? 1000,
+        priceMin: result.price_min ?? 0,
+        priceMax: result.price_max ?? 1000,
     };
   
     await redis.set(

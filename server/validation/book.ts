@@ -37,6 +37,34 @@ export const GetBooksQueryParamsSchema = z.object({
     sortOrder: z.enum(sortOrderOptions).optional(),
     tags: z.array(z.string()).optional(),
     page: z.string().optional(),
-});
+    
+    // "coerce" chatgpt = “Accept input as something else, and convert it into this type before validating.”
+    priceMin: z.coerce.number().optional(),   
+    priceMax: z.coerce.number().optional()
+}).refine(
+    (data) => {
+        // Case 1: neither provided → OK
+        if (data.priceMin === undefined && data.priceMax === undefined) {
+            return true;
+        }
+
+        // Case 2: both provided and ordered → OK
+        if (
+            data.priceMin !== undefined &&
+        data.priceMax !== undefined &&
+        data.priceMin <= data.priceMax
+        ) {
+            return true;
+        }
+
+        // Everything else → invalid
+        return false;
+    },
+    {
+        message:
+        'priceMin and priceMax must either both be provided (priceMin ≤ priceMax) or both omitted',
+        path: ['priceMin'],
+    }
+);
 
 

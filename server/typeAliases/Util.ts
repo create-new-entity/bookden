@@ -5,7 +5,7 @@ export const TotalTypeAlias = z.object({
 });
 
 export const PriceRangeTypeAlias = z.object({
-    min_price: z.number(),
-    max_price: z.number(),
+    price_min: z.number(),
+    price_max: z.number(),
 });
 

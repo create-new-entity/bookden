@@ -22,8 +22,18 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
         ...req.query,
         tags: normalizedTags,
     });
+    const priceRanges = validatedQueryParams.priceMin && validatedQueryParams.priceMax ? {
+        priceMin: validatedQueryParams.priceMin,
+        priceMax: validatedQueryParams.priceMax
+    } : undefined;
     const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
-    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder, validatedQueryParams.tags);
+    
+    const books = await getAllBooks(
+        includeDeleted, validatedPage, validatedQueryParams.search,
+        validatedQueryParams.sortBy, validatedQueryParams.sortOrder,
+        validatedQueryParams.tags, priceRanges
+    );
+    
     res.status(200).json(books);
 };
 
