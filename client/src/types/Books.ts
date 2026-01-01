@@ -23,3 +23,8 @@ export type BookTag = {
 };
 
 export type BooksSortByOptions = keyof typeof BOOKS_LIST_SORT_BY_OPTIONS_TEXTS;
+
+export type BooksPriceRangeMeta = {
+    priceMin: number;
+    priceMax: number;
+};

@@ -372,7 +372,7 @@ const getBooksPriceRange = async (): Promise<PriceRange> => {
     await redis.set(
         PRICE_RANGE_CACHE_KEY,
         JSON.stringify(priceRange),
-        { EX: PRICE_RANGE_TTL_SECONDS }
+        { EX: PRICE_RANGE_TTL_SECONDS } // Should be same as staleTime in useBooksFiltersMeta hook.
     );
   
     return priceRange;

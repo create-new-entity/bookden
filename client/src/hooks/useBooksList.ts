@@ -7,6 +7,7 @@ import type { Book, PaginatedDataList } from '../types';
 import useBookManagementDeepLinking from './useBookManagementDeepLinking';
 import { useAuthContext } from '../contexts';
 import { getBooksList } from '../api';
+import { useBooksFiltersMeta } from './useBooksFilterMeta';
 
 
 export type UseBooksListReturn = {
@@ -18,19 +19,20 @@ export type UseBooksListReturn = {
 const useBooksList = () => {
     const { token } = useAuthContext();
     const { params: originalParams, updateParams } = useBookManagementDeepLinking();
+    const { data: priceRangeMeta } = useBooksFiltersMeta();
 
     const params = {
         ...originalParams,
         tags: originalParams.tags.split(',').filter((tag) => tag !== '')
     };
-    const { search, page, sortBy, sortOrder, tags } = params;
+    const { search, page, sortBy, sortOrder, tags, priceMin, priceMax } = params;
 
     const booksList = useQuery({
-        queryKey: ['booksList', search, page, sortBy, sortOrder, tags, token],
-        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tags.join(',') }, token)
+        queryKey: ['booksList', search, page, sortBy, sortOrder, tags, priceMin, priceMax, token],
+        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tags.join(','), priceMin, priceMax }, token)
     });
     
-    return { booksList, params, updateParams };
+    return { booksList, params, updateParams, priceRangeMeta };
 };
 
 export default useBooksList;

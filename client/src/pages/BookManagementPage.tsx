@@ -66,7 +66,7 @@ const getStyles = (theme: Theme): Styles => {
 const BookManagementPage = () => {
     const { isDesktop } = useResponsive();
     const theme = useTheme();
-    const { booksList, params, updateParams } = useBooksList();
+    const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
     const queryClient = useQueryClient();
@@ -90,8 +90,6 @@ const BookManagementPage = () => {
     };
     
     useSetTabTitle('Book Management');
-
-    console.log('booksList', booksList.data?.data);
     
 
     return (
@@ -120,13 +118,12 @@ const BookManagementPage = () => {
                     }
                 </Stack>
                 {
-                    isDesktop &&
+                    isDesktop && priceRangeMeta &&
                     <BooksListFilterDesktop
-                        search={search}
-                        sortBy={sortBy}
-                        sortOrder={sortOrder}
                         tags={tags}
+                        params={params}
                         updateParams={updateParams}
+                        priceRangeMeta={priceRangeMeta}
                     />
                 }
                 {

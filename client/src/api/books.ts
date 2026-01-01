@@ -1,13 +1,18 @@
 import axios, { type AxiosRequestConfig } from 'axios';
 
 import { bookUrl } from './endpoints';
-import type { PaginatedDataList, Book } from '../types';
+import type { PaginatedDataList, Book, BooksPriceRangeMeta } from '../types';
 import type { BookSearchParams } from '../validations';
 import { removeEmptyValues } from '../utility';
 
 
 export const getTags = async () => {
     const response = await axios.get(`${bookUrl}/tags`);
+    return response.data;
+};
+
+export async function getBooksFiltersMeta(): Promise<BooksPriceRangeMeta> {
+    const response = await axios.get(`${bookUrl}/filters/meta`);
     return response.data;
 };
 

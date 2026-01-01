@@ -55,6 +55,9 @@ export const BOOKS_LIST_SORT_BY_OPTIONS: Array<SelectOption<BooksSortByOptions>>
     { optionValue: DELETED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[DELETED_AT] },
 ] as const;
 
+export const DEFAULT_PRICE_MIN = 0;
+export const DEFAULT_PRICE_MAX = 1000;
+
 
 export const ALL_TYPES_OF_USERS: UserType[] = [CUSTOMER, ADMIN, SUPERADMIN];
 

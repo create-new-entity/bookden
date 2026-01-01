@@ -27,4 +27,4 @@ export const booksSortByOptions = ['title', 'price', 'yearPublished', 'createdAt
 
 // Redis cache keys and TTLs.
 export const PRICE_RANGE_CACHE_KEY = 'books:price-range';
-export const PRICE_RANGE_TTL_SECONDS = 60 * 10; // 10 minutes
+export const PRICE_RANGE_TTL_SECONDS = 60 * 10; // 10 minutes. Redis EX = seconds. No need to multiply by 1000.

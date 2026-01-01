@@ -1,18 +1,13 @@
 import {
-    Box,
-    Button,
-    Collapse, IconButton, Stack,
+    Button, Collapse, IconButton, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { useState } from 'react';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-// import { useNavigate } from 'react-router-dom';
 
 import type { BookSearchParams } from '../../../validations';
-import type { BooksSortByOptions, SortOrder } from '../../../types';
+import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import {
     ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, MARGIN_TOP_TO_AVOID_NAV_BAR,
     MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
@@ -23,15 +18,16 @@ import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
 import { useAuthContext } from '../../../contexts';
 import BookTagsSelect from './BookTagsSelect';
+import BooksPriceFilter from './BooksPriceFilter';
+import type { UpdateMode } from '../../../hooks/useDeepLinkedSearchParams';
 
 type Styles = {
     searchBoxesStack: SxProps<Theme>;
     searchBox: SxProps<Theme>;
     rootStack: SxProps<Theme>;
-    bookTagsSelectStack: SxProps<Theme>;
-    bookTagsMultiAutoComplete: SxProps<Theme>;
     bookTagsSelectCollapse: SxProps<Theme>;
     tagsStack: SxProps<Theme>;
+    collapseStack: SxProps<Theme>;
 };
 
 const getStyles = (theme: Theme): Styles => {
@@ -53,47 +49,40 @@ const getStyles = (theme: Theme): Styles => {
         tagsStack: {
             width: '100%'
         },
-        bookTagsSelectStack: {
-            height: '100vh',
-            pointerEvents: 'none' // Needed, otherwise it consumes clicks meant for modal -> modal won't close after opening.
-        },
         bookTagsSelectCollapse: {
             width: '100%',
             marginBottom: '1rem'
         },
-        bookTagsMultiAutoComplete: {
-            pointerEvents: 'auto', // Needed, otherwise it consumes clicks meant for modal -> modal won't close after opening.
+        collapseStack: {
+            alignItems: 'stretch'
         }
     };
 };
 
 
 type BooksListFilterDesktopProps = {
-    search: string;
-    sortBy: BookSearchParams['sortBy'];
-    sortOrder: BookSearchParams['sortOrder'];
     tags: string[];
-    updateParams: (params: Partial<BookSearchParams>) => void;
+    updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
+    priceRangeMeta: BooksPriceRangeMeta;
+    params: Omit<BookSearchParams, 'tags'>;
 };
-
-
 
 const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const theme = useTheme();
     const styles = getStyles(theme);
     const { userType } = useAuthContext();
     const [isTagsCollapseOpen, setIsTagsCollapseOpen] = useState(false);
-    // const navigate = useNavigate();
     
     const isClientAdminOrSuperAdmin = userType === SUPERADMIN || userType === ADMIN;
-    const { search, sortBy, sortOrder, updateParams, tags } = props;
+    const { tags, params, updateParams, priceRangeMeta } = props;
+    const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
-        updateParams({ sortOrder: event.target.value });
+        updateParams({ sortOrder: event.target.value }, 'merge');
     };
 
     const handleSortByChange = (event: SelectChangeEvent<BooksSortByOptions>) => {
-        updateParams({ sortBy: event.target.value, page: 1 });
+        updateParams({ sortBy: event.target.value, page: 1 }, 'merge');
     };
 
     const handleTagsClick = () => {
@@ -101,8 +90,18 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     };
 
     const clearTags = () => {
-        updateParams({ tags: '' });
+        updateParams({ tags: '' }, 'merge');
     };
+
+    const clearPrice = () => {
+        const newParams = { ...params };
+        delete newParams.priceMin;
+        delete newParams.priceMax;
+        updateParams(newParams, 'replace');
+    };
+
+    const hasPrice = priceMin !== undefined && priceMax !== undefined;
+
 
     return (
         <>
@@ -121,7 +120,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         sx={styles.searchBox}
                         value={search}
                         handleChange={(value) => {
-                            updateParams({ search: value, page: 1 });
+                            updateParams({ search: value, page: 1 }, 'merge');
                         }}
                         placeholder='Search by title or author'
                     />
@@ -150,7 +149,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>
                         <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} onClick={handleTagsClick}>
                             <Typography variant='subtitle1'>Additional Options</Typography>
-                            {isTagsCollapseOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                            {isTagsCollapseOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                         </Stack>
                         {
                             tags.length > 0
@@ -164,13 +163,32 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                                 :
                                 null
                         }
+                        {
+                            hasPrice &&
+                            <>
+                                <Button variant='text' onClick={clearPrice}>Clear Price</Button>
+                            </>
+                        }
                     </Stack>
                     <Collapse in={isTagsCollapseOpen} sx={styles.bookTagsSelectCollapse}>
-                        <BookTagsSelect
-                            tags={tags}
-                            updateParams={updateParams}
-                            multiAutoCompleteStyles={styles.bookTagsMultiAutoComplete}
-                        />
+                        <Stack
+                            sx={styles.collapseStack}
+                            direction={'column'}
+                            justifyContent={'flex-start'}
+                            alignItems={'center'}
+                            gap={STACK_DEFAULT_GAP}
+                        >
+                            <BookTagsSelect
+                                tags={tags}
+                                updateParams={(params) => updateParams(params, 'merge')}
+                            />
+                            <BooksPriceFilter   
+                                priceMin={priceMin}
+                                priceMax={priceMax}
+                                priceRangeMeta={priceRangeMeta}
+                                updateParams={(params) => updateParams(params, 'merge')}
+                            />
+                        </Stack>
                     </Collapse>
                 </Stack>
             </Stack>

@@ -11,7 +11,10 @@ export const BookSearchParamsSchema = z.object({
     page: z.coerce.number().int().positive().default(1),
     sortBy: z.enum(BOOKS_SORT_BY_OPTIONS).default(TITLE),
     sortOrder: z.enum(SORT_ORDER_OPTIONS).default(DESC),
-    tags: z.string().optional().default('')
+    tags: z.string().optional().default(''),
+
+    priceMin: z.coerce.number().int().optional(),
+    priceMax: z.coerce.number().int().optional()
 });
 
 export type BookSearchParams = z.infer<typeof BookSearchParamsSchema>;
