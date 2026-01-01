@@ -18,3 +18,8 @@ export type CreateBookRequestBody = {
 export type BooksSortByOptions = 'title' | 'price' | 'yearPublished' | 'createdAt' | 'updatedAt' | 'deletedAt';
 export type BooksSortOrderOptions = 'asc' | 'desc';
 export type GetBooksQueryParams = z.infer<typeof GetBooksQueryParamsSchema>;
+
+export type PriceRange = {
+    min: number;
+    max: number;
+};

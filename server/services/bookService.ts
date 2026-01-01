@@ -1,12 +1,13 @@
 import * as R from 'ramda';
 import camelcaseKeys from 'camelcase-keys';
 
-import { getPGDBPool, sqlTag } from '../configs';
-import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, PaginatedDataList, UpdateBookPayload } from '../types';
+import { getPGDBPool, getRedis, sqlTag } from '../configs';
+import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
-import { BOOKS_PAGINATION_LIMIT } from '../constants';
+import { BOOKS_PAGINATION_LIMIT, PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS } from '../constants';
 import { BadRequestError, errorMessages, errorNames } from '../errors';
 import { sql } from 'slonik';
+
 // import { BOOKS_PAGINATION_LIMIT } from '../constants';
 
 
@@ -335,6 +336,40 @@ const getTags = async () => {
     `);
     return camelcaseKeys(result.rows, { deep: true });
 };
+    
+const getBooksPriceRange = async (): Promise<PriceRange> => {
+    const redis = getRedis();
+    const cached = await redis.get(PRICE_RANGE_CACHE_KEY);
+  
+    if (cached) {
+        return JSON.parse(cached);
+    }
+  
+    const dbPool = await getPGDBPool();
+    const result = await dbPool.one(sqlTag.typeAlias('PriceRange')`
+        SELECT
+            MIN(price) AS min_price,
+            MAX(price) AS max_price
+        FROM books
+        WHERE deleted_at IS NULL
+    `);
+  
+
+    // Defensive default. This shouldn't be necessary. Since tables are seeded with data.
+    const priceRange: PriceRange = {
+        min: result.min_price ?? 0,
+        max: result.max_price ?? 1000,
+    };
+  
+    await redis.set(
+        PRICE_RANGE_CACHE_KEY,
+        JSON.stringify(priceRange),
+        { EX: PRICE_RANGE_TTL_SECONDS }
+    );
+  
+    return priceRange;
+};
+  
 
 export {
     getAllBooks,
@@ -345,5 +380,6 @@ export {
     getBookCover,
     updateBookCover,
     deleteBookCover,
-    getTags
+    getTags,
+    getBooksPriceRange
 };

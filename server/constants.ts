@@ -23,3 +23,8 @@ export const GLOBAL_RATE_LIMIT_MAX = 1000;
 
 export const BOOKS_PAGINATION_LIMIT = 24;
 export const booksSortByOptions = ['title', 'price', 'yearPublished', 'createdAt', 'updatedAt', 'deletedAt'] as const;
+
+
+// Redis cache keys and TTLs.
+export const PRICE_RANGE_CACHE_KEY = 'books:price-range';
+export const PRICE_RANGE_TTL_SECONDS = 60 * 10; // 10 minutes

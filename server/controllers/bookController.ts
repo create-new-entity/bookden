@@ -3,7 +3,7 @@ import QueryString from 'qs';
 import * as R from 'ramda';
 
 import { ADMIN, AuthenticatedRequest, CreateBookRequestBody, GetBooksQueryParams, isString, SUPERADMIN } from '../types';
-import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, getTags, updateBook, updateBookCover } from '../services';
+import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, getBooksPriceRange, getTags, updateBook, updateBookCover } from '../services';
 import { AuthenticationError, BadRequestError, errorMessages, errorNames, NotFoundError, UnauthorizedError } from '../errors';
 import { UpdateBookPayload } from '../types';
 import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
@@ -236,6 +236,11 @@ const getTagsController = async (_req: Request, res: Response) => {
     res.status(200).json(tags);
 };
 
+const getBooksPriceRangeController = async (_req: Request, res: Response) => {
+    const priceRange = await getBooksPriceRange();
+    res.status(200).json(priceRange);
+};
+
 
 export {
     getAllBooksController,
@@ -246,5 +251,6 @@ export {
     getBookCoverController,
     updateBookCoverController,
     deleteBookCoverController,
-    getTagsController
+    getTagsController,
+    getBooksPriceRangeController
 };
