@@ -22,7 +22,7 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
         ...req.query,
         tags: normalizedTags,
     });
-    const priceRanges = validatedQueryParams.priceMin && validatedQueryParams.priceMax ? {
+    const priceRanges = (validatedQueryParams.priceMin || validatedQueryParams.priceMax) ? {
         priceMin: validatedQueryParams.priceMin,
         priceMax: validatedQueryParams.priceMax
     } : undefined;

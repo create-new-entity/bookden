@@ -14,8 +14,8 @@ const getAllBooks = async (
     sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc',
     tags: string[] = [], priceRanges: PriceRange | undefined = undefined
 ): Promise<PaginatedDataList<Book>> => {
-    const dbPool = await getPGDBPool();
 
+    const dbPool = await getPGDBPool();
     const searchFragment = search && search.trim() !== ''
         ? sqlTag.fragment`
             AND (
@@ -29,12 +29,16 @@ const getAllBooks = async (
         `
         : sqlTag.fragment``;
 
-    const priceRangeFragment = priceRanges ? sqlTag.fragment`
-        AND price >= ${priceRanges.priceMin}
-        AND price <= ${priceRanges.priceMax}
-    ` : sqlTag.fragment``;
-
-
+    const priceMinFragment =
+        priceRanges?.priceMin !== undefined
+            ? sqlTag.fragment`AND price >= ${priceRanges.priceMin}`
+            : sqlTag.fragment``;
+    
+    const priceMaxFragment =
+        priceRanges?.priceMax !== undefined
+            ? sqlTag.fragment`AND price <= ${priceRanges.priceMax}`
+            : sqlTag.fragment``;
+    
     /*
         Include deleted books if includeDeleted is true.
         Otherwise, include only non-deleted books. Books that have not
@@ -76,7 +80,8 @@ const getAllBooks = async (
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
-        ${priceRangeFragment}
+        ${priceMinFragment}
+        ${priceMaxFragment}
         GROUP BY books.book_id
         ${sortByFragment}
         LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
@@ -89,7 +94,8 @@ const getAllBooks = async (
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
-        ${priceRangeFragment}
+        ${priceMinFragment}
+        ${priceMaxFragment}
     `);
     const totalBooks = totalResult.total;
 

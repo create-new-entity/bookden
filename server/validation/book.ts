@@ -43,26 +43,19 @@ export const GetBooksQueryParamsSchema = z.object({
     priceMax: z.coerce.number().optional()
 }).refine(
     (data) => {
-        // Case 1: neither provided → OK
-        if (data.priceMin === undefined && data.priceMax === undefined) {
-            return true;
-        }
-
-        // Case 2: both provided and ordered → OK
+        // Only invalid when both are provided and ordering is wrong
         if (
             data.priceMin !== undefined &&
-        data.priceMax !== undefined &&
-        data.priceMin <= data.priceMax
+            data.priceMax !== undefined &&
+            data.priceMin > data.priceMax
         ) {
-            return true;
+            return false;
         }
 
-        // Everything else → invalid
-        return false;
+        return true;
     },
     {
-        message:
-        'priceMin and priceMax must either both be provided (priceMin ≤ priceMax) or both omitted',
+        message: 'priceMin must be less than or equal to priceMax',
         path: ['priceMin'],
     }
 );

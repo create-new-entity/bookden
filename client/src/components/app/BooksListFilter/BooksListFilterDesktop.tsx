@@ -102,7 +102,11 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
         updateParams(newParams, 'replace');
     };
 
-    const hasPrice = priceMin !== undefined && priceMax !== undefined;
+    const clearAll = () => {
+        updateParams({}, 'replace');
+    };
+
+    const hasPrice = priceMin !== undefined || priceMax !== undefined;
 
 
     return (
@@ -179,6 +183,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                                 <Button variant='text' onClick={clearPrice}>Clear Price</Button>
                             </>
                         }
+                        <Button variant='text' onClick={clearAll}>Clear All</Button>
                     </Stack>
                     <Collapse in={isTagsCollapseOpen} sx={styles.bookTagsSelectCollapse}>
                         <Stack

@@ -22,10 +22,15 @@ type Styles = {
     items: SxProps<Theme>;
     topPagination: SxProps<Theme>;
     filterIconStack: SxProps<Theme>;
+    rootStack: SxProps<Theme>;
 };
 
 const getStyles = (theme: Theme): Styles => {
     return {
+        rootStack: {
+            paddingLeft: CONTENT_MARGIN,
+            paddingRight: CONTENT_MARGIN
+        },
         searchBoxesStack: {
             width: '100%',
             height: 'fit-content',
@@ -90,6 +95,7 @@ const BookManagementPage = () => {
     return (
         <>
             <Stack
+                sx={styles.rootStack}
                 direction={'column'}
                 justifyContent={'flex-start'}
                 alignItems={'center'}
