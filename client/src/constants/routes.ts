@@ -8,5 +8,6 @@ export const BOOK_MANAGEMENT = '/book-management' as const;
 export const AUTH = '/auth' as const;
 export const USER = '/users/:userId' as const;
 export const CREATE_ADMIN_USER = '/create-admin-user' as const;
+export const BOOK = '/books/:bookId' as const;
 
-export const ALL_ROUTES = [HOME, UPDATE_PROFILE, USER_MANAGEMENT, ADMIN_TOOLS, AUTH, CREATE_ADMIN_USER] as const;
+export const ALL_ROUTES = [HOME, UPDATE_PROFILE, USER_MANAGEMENT, ADMIN_TOOLS, AUTH, CREATE_ADMIN_USER, BOOK] as const;

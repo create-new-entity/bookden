@@ -14,6 +14,7 @@ export type Book = {
     deletedAt: string | null;
     updatedAt: string | null;
     createdAt: string;
+    tags: string[];
 }
 
 

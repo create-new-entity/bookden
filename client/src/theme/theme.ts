@@ -199,7 +199,7 @@ export const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                        backgroundColor: mode === 'light' ? theme.palette.background.elevated : theme.palette.primary.dark,
                     }
                 }
             },

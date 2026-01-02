@@ -5,6 +5,15 @@ import type { PaginatedDataList, Book, BooksPriceRangeMeta } from '../types';
 import type { BookSearchParams } from '../validations';
 import { removeEmptyValues } from '../utility';
 
+export const getBook = async (bookId: number, token?: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const response = await axios.get(`${bookUrl}/${bookId}`, requestConfig);
+    return response.data;
+};
 
 export const getTags = async () => {
     const response = await axios.get(`${bookUrl}/tags`);
