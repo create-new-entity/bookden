@@ -26,7 +26,7 @@ type Styles = {
     searchBox: SxProps<Theme>;
     rootStack: SxProps<Theme>;
     bookTagsSelectCollapse: SxProps<Theme>;
-    tagsStack: SxProps<Theme>;
+    additionalOptionsStack: SxProps<Theme>;
     collapseStack: SxProps<Theme>;
 };
 
@@ -46,8 +46,10 @@ const getStyles = (theme: Theme): Styles => {
         rootStack: {
             width: '100%'
         },
-        tagsStack: {
-            width: '100%'
+        additionalOptionsStack: {
+            width: '100%',
+            backgroundColor: theme.palette.background.default,
+            marginBottom: '1rem'
         },
         bookTagsSelectCollapse: {
             width: '100%',
@@ -105,7 +107,15 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
 
     return (
         <>
-            <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
+            <Stack
+                sx={styles.rootStack}
+                direction={'column'}
+                justifyContent={'flex-start'}
+                alignItems={'flex-start'}
+                position={'sticky'}
+                top={MARGIN_TOP_TO_AVOID_NAV_BAR}
+                zIndex={NAV_BAR_Z_INDEX}
+            >
                 <Stack
                     sx={styles.searchBoxesStack}
                     direction={'row'}
@@ -145,7 +155,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         )
                     }
                 </Stack>
-                <Stack sx={styles.tagsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'} gap={STACK_DEFAULT_GAP}>
+                <Stack sx={styles.additionalOptionsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'} gap={STACK_DEFAULT_GAP}>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>
                         <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} onClick={handleTagsClick}>
                             <Typography variant='subtitle1'>Additional Options</Typography>

@@ -17,7 +17,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 
 type Styles = {
-    rootStack: SxProps<Theme>;
     searchBoxesStack: SxProps<Theme>;
     searchBox: SxProps<Theme>;
     items: SxProps<Theme>;
@@ -27,10 +26,6 @@ type Styles = {
 
 const getStyles = (theme: Theme): Styles => {
     return {
-        rootStack: {
-            marginLeft: CONTENT_MARGIN,
-            marginRight: CONTENT_MARGIN
-        },
         searchBoxesStack: {
             width: '100%',
             height: 'fit-content',
@@ -95,7 +90,6 @@ const BookManagementPage = () => {
     return (
         <>
             <Stack
-                sx={styles.rootStack}
                 direction={'column'}
                 justifyContent={'flex-start'}
                 alignItems={'center'}
