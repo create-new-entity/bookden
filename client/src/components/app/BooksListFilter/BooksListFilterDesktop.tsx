@@ -48,8 +48,7 @@ const getStyles = (theme: Theme): Styles => {
         },
         additionalOptionsStack: {
             width: '100%',
-            backgroundColor: theme.palette.background.default,
-            marginBottom: '1rem'
+            backgroundColor: theme.palette.background.default
         },
         bookTagsSelectCollapse: {
             width: '100%',
@@ -159,7 +158,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         )
                     }
                 </Stack>
-                <Stack sx={styles.additionalOptionsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'} gap={STACK_DEFAULT_GAP}>
+                <Stack sx={styles.additionalOptionsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>
                         <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} onClick={handleTagsClick}>
                             <Typography variant='subtitle1'>Additional Options</Typography>

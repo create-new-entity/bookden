@@ -5,7 +5,7 @@ import {
 import { useParams } from 'react-router-dom';
 
 import { useBook, useBookCover } from '../hooks';
-import { DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../constants';
+import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../constants';
 
 const BOOK_COVER_WIDTH = 20;
 const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH * 1.5;
@@ -73,54 +73,61 @@ const BookPage = () => {
                             elevation={5}
                             sx={styles.bookCoverContainer}
                         >
-                            <img src={objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img src={objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                         </Paper>
-                        <Paper
-                            elevation={5}
-                            sx={styles.bookDetailsContainer}
+                        <Stack
+                            direction={'column'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            gap={`${DEFAULT_GAP}px`}
                         >
                             <Stack
-                                direction={'column'}
+                                direction={'row'}
                                 justifyContent={'flex-start'}
-                                alignItems={'flex-start'}
+                                alignItems={'center'}
                                 gap={`${DEFAULT_GAP}px`}
                             >
-                                <Typography variant='h4'>
-                                    {bookQuery.data?.title}
+                                <Typography variant='h4' color='info'>
+                                    €{bookQuery.data?.price}
                                 </Typography>
-                                <Typography variant='body1'>
-                                    By {bookQuery.data?.authors?.join(', ')}
-                                </Typography>
-                                <Typography>
-                                    ISBN: {bookQuery.data?.isbn}
-                                </Typography>
-                                <Typography>
-                                    Published in: {bookQuery.data?.yearPublished}
-                                </Typography>
-                                <Typography>
-                                    Pages: {bookQuery.data?.pages}
-                                </Typography>
-                                <Typography>
-                                    Language: {bookQuery.data?.language}
-                                </Typography>
-                                <Typography>
-                                    Tags: {bookQuery.data?.tags?.join(', ')}
-                                </Typography>
+                                <Button variant='contained' color='primary'>
+                                    Add to cart
+                                </Button>
                             </Stack>
-                        </Paper>
-                    </Stack>
-                    <Stack
-                        direction={'column'}
-                        justifyContent={'center'}
-                        alignItems={'flex-start'}
-                        gap={`${DEFAULT_GAP}px`}
-                    >
-                        <Typography variant='h4'>
-                            €{bookQuery.data?.price}
-                        </Typography>
-                        <Button variant='outlined' color='secondary'>
-                            Add to cart
-                        </Button>
+                            <Paper
+                                elevation={5}
+                                sx={styles.bookDetailsContainer}
+                            >
+                                <Stack
+                                    direction={'column'}
+                                    justifyContent={'flex-start'}
+                                    alignItems={'flex-start'}
+                                    gap={`${DEFAULT_GAP}px`}
+                                >
+                                    <Typography variant='h4'>
+                                        {bookQuery.data?.title}
+                                    </Typography>
+                                    <Typography variant='body1'>
+                                        By {bookQuery.data?.authors?.join(', ')}
+                                    </Typography>
+                                    <Typography>
+                                        ISBN: {bookQuery.data?.isbn}
+                                    </Typography>
+                                    <Typography>
+                                        Published in: {bookQuery.data?.yearPublished}
+                                    </Typography>
+                                    <Typography>
+                                        Pages: {bookQuery.data?.pages}
+                                    </Typography>
+                                    <Typography>
+                                        Language: {bookQuery.data?.language}
+                                    </Typography>
+                                    <Typography>
+                                        Tags: {bookQuery.data?.tags?.join(', ')}
+                                    </Typography>
+                                </Stack>
+                            </Paper>
+                        </Stack>
                     </Stack>
                 </Stack>
                 <Paper elevation={5} sx={styles.synopsisContainer}>
