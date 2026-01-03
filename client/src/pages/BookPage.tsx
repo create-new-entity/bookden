@@ -29,7 +29,9 @@ const getStyles = (_theme: Theme): Styles => {
             height: `${BOOK_COVER_HEIGHT}rem`
         },
         bookDetailsContainer: {
-            padding: `${DEFAULT_GAP}px`
+            padding: `${DEFAULT_GAP}px`,
+            width: '100%',
+            height: '100%'
         },
         synopsisContainer: {
             padding: `${DEFAULT_GAP}px`
@@ -66,8 +68,9 @@ const BookPage = () => {
                     <Stack
                         direction={'row'}
                         justifyContent={'flex-start'}
-                        alignItems={'center'}
+                        alignItems={'flex-start'}
                         gap={`${DEFAULT_GAP}px`}
+                        flexGrow={1}
                     >
                         <Paper
                             elevation={5}
@@ -78,8 +81,10 @@ const BookPage = () => {
                         <Stack
                             direction={'column'}
                             justifyContent={'center'}
-                            alignItems={'center'}
+                            alignItems={'flex-end'}
                             gap={`${DEFAULT_GAP}px`}
+                            flexGrow={1}
+                            alignSelf={'stretch'}
                         >
                             <Stack
                                 direction={'row'}
