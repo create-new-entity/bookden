@@ -109,7 +109,7 @@ const BookPage = () => {
                                     alignItems={'flex-start'}
                                     gap={`${DEFAULT_GAP}px`}
                                 >
-                                    <Typography variant='h4'>
+                                    <Typography variant='h4' fontWeight={'bold'}>
                                         {bookQuery.data?.title}
                                     </Typography>
                                     <Typography variant='body1'>
@@ -137,7 +137,7 @@ const BookPage = () => {
                 </Stack>
                 <Paper elevation={5} sx={styles.synopsisContainer}>
                     <Stack>
-                        <Typography variant='h5'>
+                        <Typography variant='h5' fontWeight={'bold'}>
                             Synopsis:
                         </Typography>
                         <Divider sx={styles.synopsisDivider}/>

@@ -118,9 +118,11 @@ export const getTheme = (mode: ThemeMode) => {
     const additionalThemeOptions: ThemeOptions = {
         typography: {
             fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
-            fontSize: 14,
             button: {
                 textTransform: 'none'
+            },
+            body1: {
+                fontSize: '1.2rem'
             }
         },
         shape: {
