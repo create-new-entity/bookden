@@ -31,7 +31,8 @@ const getStyles = (_theme: Theme): Styles => {
         bookDetailsContainer: {
             padding: `${DEFAULT_GAP}px`,
             width: '100%',
-            height: '100%'
+            height: '26rem',
+            overflowY: 'scroll'
         },
         synopsisContainer: {
             padding: `${DEFAULT_GAP}px`
