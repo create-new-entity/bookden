@@ -6,6 +6,8 @@ export { default as UserManagementPage } from './UserManagementPage';
 export { default as UserPage } from './UserPage';
 export { default as CreateAdminOrUpdateAnyUserProfilePage } from './CreateAdminOrUpdateAnyUserProfilePage';
 export { AdminToolsPage } from './AdminToolsPage';
+export { BookPage } from './BookPage';
+export { default as BookManagementPage } from './BookManagementPage';
 
 
 /* 

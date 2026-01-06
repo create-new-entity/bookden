@@ -4,11 +4,9 @@ import {
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
-import { useBook, useBookCover } from '../hooks';
-import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../constants';
-
-const BOOK_COVER_WIDTH = 20;
-const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH * 1.5;
+import { useBook, useBookCover } from '../../hooks';
+import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
+import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -24,9 +22,9 @@ const getStyles = (_theme: Theme): Styles => {
             marginTop: MARGIN_TOP_TO_AVOID_NAV_BAR
         },
         bookCoverContainer: {
-            width: `${BOOK_COVER_WIDTH}rem`,
-            minWidth: `${BOOK_COVER_WIDTH}rem`,
-            height: `${BOOK_COVER_HEIGHT}rem`
+            width: `${BOOK_COVER_WIDTH_DESKTOP}rem`,
+            minWidth: `${BOOK_COVER_WIDTH_DESKTOP}rem`,
+            height: `${BOOK_COVER_HEIGHT_DESKTOP}rem`
         },
         bookDetailsContainer: {
             padding: `${DEFAULT_GAP}px`,
@@ -44,7 +42,7 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-const BookPage = () => {
+const BookPageDesktop = () => {
     const { bookId } = useParams();
     const theme = useTheme();
     const styles = getStyles(theme);
@@ -152,4 +150,4 @@ const BookPage = () => {
     );
 };
 
-export default BookPage;
+export default BookPageDesktop;

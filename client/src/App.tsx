@@ -24,8 +24,7 @@ import {
     BOOK_MANAGEMENT,
     BOOK
 } from './constants';
-import BookManagementPage from './pages/BookManagementPage';
-import BookPage from './pages/BookPage';
+import { BookPage, BookManagementPage } from './pages';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
