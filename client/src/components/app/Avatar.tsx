@@ -1,7 +1,7 @@
 
 
 import { useRef, type ReactNode, type RefObject } from 'react';
-import { IconButton, Stack, useTheme } from '@mui/material';
+import { IconButton, useTheme } from '@mui/material';
 import type { Theme, SxProps } from '@mui/material/styles';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,16 +12,12 @@ import { IMAGE_MIME_TYPES } from '../../constants';
 
 type IconButtonStyles = {
     iconButton: SxProps<Theme>;
-    addUpdateAvatarStack: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): IconButtonStyles => {
     return {
         iconButton: {
             padding: 0
-        },
-        addUpdateAvatarStack: {
-            marginLeft: '1.5rem'
         }
     };
 };
@@ -77,12 +73,7 @@ export const UpdateOrDeleteAvatarButtonsStack = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     return (
-        <Stack
-            direction={'row'}
-            justifyContent={'flex-start'}
-            alignItems={'center'}
-            sx={styles.addUpdateAvatarStack}
-        >
+        <>
             <AddUpdateAvatarWrapper inputRef={inputRef}>
                 <IconButton sx={styles.iconButton} onClick={() => inputRef.current?.click()}>
                     <ChangeCircleIcon/>
@@ -91,6 +82,6 @@ export const UpdateOrDeleteAvatarButtonsStack = () => {
             <IconButton sx={styles.iconButton} onClick={() => deleteAvatarMutation.mutate() }>
                 <DeleteIcon/>
             </IconButton>
-        </Stack>
+        </>
     );
 };
