@@ -3,6 +3,6 @@ import { UserSearchParamsSchema } from '../validations';
 import { useDeepLinkedSearchParams } from './useDeepLinkedSearchParams';
 
 
-export default function useUserManagementDeepLinking() {
+export const useUserManagementDeepLinking = () => {
     return useDeepLinkedSearchParams(UserSearchParamsSchema);
 };

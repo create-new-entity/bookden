@@ -3,20 +3,21 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import type { BookSearchParams } from '../validations';
-import type { Book, PaginatedDataList } from '../types';
-import useBookManagementDeepLinking from './useBookManagementDeepLinking';
+import type { Book, BooksPriceRangeMeta, PaginatedDataList } from '../types';
+import { useBookManagementDeepLinking } from './useBookManagementDeepLinking';
 import { useAuthContext } from '../contexts';
 import { getBooksList } from '../api';
 import { useBooksFiltersMeta } from './useBooksFilterMeta';
 
 
-export type UseBooksListReturn = {
+type UseBooksListReturn = {
     booksList: UseQueryResult<PaginatedDataList<Book>, Error>;
     params: Omit<BookSearchParams, 'tags'> & { tags: string[] };
     updateParams: (params: Partial<BookSearchParams>) => void;
+    priceRangeMeta: BooksPriceRangeMeta | undefined;
 };
 
-const useBooksList = () => {
+export const useBooksList = (): UseBooksListReturn => {
     const { token } = useAuthContext();
     const { params: originalParams, updateParams } = useBookManagementDeepLinking();
     const { data: priceRangeMeta } = useBooksFiltersMeta();
@@ -34,5 +35,3 @@ const useBooksList = () => {
     
     return { booksList, params, updateParams, priceRangeMeta };
 };
-
-export default useBooksList;

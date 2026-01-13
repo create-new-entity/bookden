@@ -4,7 +4,7 @@ import { getTags } from '../api';
 import type { BookTag } from '../types';
 
 
-const useBookTags = () => {
+export const useBookTags = () => {
 
     const { data, isLoading, isSuccess, isError } = useQuery<BookTag[], Error>({
         queryKey: ['bookTags'],
@@ -27,5 +27,3 @@ const useBookTags = () => {
         isError
     };
 };
-
-export default useBookTags;

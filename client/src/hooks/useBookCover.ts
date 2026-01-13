@@ -1,9 +1,9 @@
 
 import { getBookCover } from '../api/books';
-import useBlobImage from './useBlobImage';
+import { useBlobImage } from './useBlobImage';
 
 
-const useBookCover = (bookId: number) => {
+export const useBookCover = (bookId: number) => {
     const blobOptions = {
         queryKey: ['bookCover', bookId],
         queryFn: () => getBookCover(bookId),
@@ -12,5 +12,3 @@ const useBookCover = (bookId: number) => {
     
     return useBlobImage(blobOptions);
 };
-
-export default useBookCover;

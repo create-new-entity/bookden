@@ -3,6 +3,7 @@ import { BookSearchParamsSchema } from '../validations';
 import { useDeepLinkedSearchParams } from './useDeepLinkedSearchParams';
 
 
-export default function useBookManagementDeepLinking() {
+export const useBookManagementDeepLinking = () => {
     return useDeepLinkedSearchParams(BookSearchParamsSchema);
 };
+

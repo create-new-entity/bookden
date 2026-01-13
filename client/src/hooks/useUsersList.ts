@@ -4,16 +4,16 @@ import { getUsersList } from '../api';
 import { useAuthContext } from '../contexts';
 import type { UserSearchParams } from '../validations';
 import type { PaginatedDataList, User } from '../types';
-import useUserManagementDeepLinking from './useUserManagementDeepLinking';
+import { useUserManagementDeepLinking } from './useUserManagementDeepLinking';
 
 
-export type UseUsersListReturn = {
+type UseUsersListReturn = {
     usersList: UseQueryResult<PaginatedDataList<User>, Error>;
     params: UserSearchParams;
     updateParams: (params: Partial<UserSearchParams>) => void;
 };
 
-const useUsersList = (): UseUsersListReturn => {
+export const useUsersList = (): UseUsersListReturn => {
     const { token } = useAuthContext();
     const { params, updateParams } = useUserManagementDeepLinking();
 
@@ -31,5 +31,3 @@ const useUsersList = (): UseUsersListReturn => {
     
     return { usersList, params, updateParams };
 };
-
-export default useUsersList;

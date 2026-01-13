@@ -5,7 +5,7 @@ import type { AxiosErrorResponse, Book } from '../types';
 import { useAuthContext } from '../contexts';
 
 
-const useBook = (bookId: number) => {
+export const useBook = (bookId: number) => {
     const { token } = useAuthContext();
     
     const bookQuery = useQuery<Book, AxiosErrorResponse>({
@@ -16,5 +16,3 @@ const useBook = (bookId: number) => {
 
     return bookQuery;
 };
-
-export default useBook;
