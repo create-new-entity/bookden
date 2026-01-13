@@ -1,18 +1,26 @@
-import { IconButton, Stack, Tooltip, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { useRef } from 'react';
+import {
+    IconButton, Stack, Tooltip,
+    Typography, useTheme, type SxProps, type Theme
+} from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { Add } from '@mui/icons-material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 
 import { useBooksList, useResponsive, useSetTabTitle } from '../hooks';
-import { ADMIN, CONTENT_MARGIN, DEFAULT_GAP, GRID_VIEW, SUPERADMIN } from '../constants';
-import { BooksListFilterDesktop } from '../components/app/BooksListFilter';
-import { CustomModal, CustomPagination, Items, type CustomModalRef } from '../components';
-import { useRef } from 'react';
-import BooksListFilterMobile from '../components/app/BooksListFilter/BooksListFilterMobile';
+import {
+    ADMIN, CONTENT_MARGIN, CREATE_BOOK,
+    DEFAULT_GAP, GRID_VIEW, SUPERADMIN
+} from '../constants';
+import {
+    CustomModal, CustomPagination, Items,
+    BooksListFilterDesktop, type CustomModalRef,
+    BooksListFilterMobile, BookCard
+} from '../components';
 import { useAuthContext } from '../contexts';
 import type { Book } from '../types';
-import BookCard from '../components/app/BookCard';
-import { useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -70,7 +78,8 @@ const BookManagementPage = () => {
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
     const queryClient = useQueryClient();
-
+    const navigate = useNavigate();
+    
     const styles = getStyles(theme);
     const { search, sortBy, sortOrder, tags } = params;
     const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
@@ -108,8 +117,7 @@ const BookManagementPage = () => {
                         isClientAdminOrSuperAdmin && (
                             <Tooltip title='Add a new book'>
                                 <IconButton onClick={() => {
-                                    // navigate(CREATE_BOOK);
-                                    console.log('add new book');
+                                    navigate(CREATE_BOOK);
                                 }}>
                                     <Add />
                                 </IconButton>

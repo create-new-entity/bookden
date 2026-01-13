@@ -3,13 +3,16 @@ import {
     useTheme, type SelectChangeEvent, type SxProps, type Theme
 } from '@mui/material';
 
-import { BOOKS_LIST_SORT_BY_OPTIONS, DEFAULT_GAP, MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY } from '../../../constants';
-import type { BookSearchParams } from '../../../validations';
+import {
+    BOOKS_LIST_SORT_BY_OPTIONS, DEFAULT_GAP, MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY
+} from '../../../constants';
 import BookTagsSelect from './BookTagsSelect';
 import { CustomAutoComplete } from '../../custom';
-import type { BooksSortByOptions, SortOrder } from '../../../types';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
+import type { BookSearchParams } from '../../../validations';
+import type { BooksSortByOptions, SortOrder } from '../../../types';
+import type { UpdateMode } from '../../../hooks';
 
 
 
@@ -42,7 +45,7 @@ type BooksListFilterMobileProps = {
     sortBy: BookSearchParams['sortBy'];
     sortOrder: BookSearchParams['sortOrder'];
     tags: string[];
-    updateParams: (params: Partial<BookSearchParams>) => void;
+    updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
 };
 
 const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
@@ -51,11 +54,11 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
     const { search, sortBy, sortOrder, tags, updateParams } = props;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
-        updateParams({ sortOrder: event.target.value });
+        updateParams({ sortOrder: event.target.value }, 'merge');
     };
 
     const handleSortByChange = (event: SelectChangeEvent<BooksSortByOptions>) => {
-        updateParams({ sortBy: event.target.value, page: 1 });
+        updateParams({ sortBy: event.target.value, page: 1 }, 'merge');
     };
 
     return (
@@ -74,7 +77,7 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
                     <CustomAutoComplete id='booksListFilterSearchBox'
                         value={search}
                         handleChange={(value) => {
-                            updateParams({ search: value, page: 1 });
+                            updateParams({ search: value, page: 1 }, 'merge');
                         }}
                         placeholder='Search by title or author'
                     />
@@ -97,8 +100,9 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
                     />
                     <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
                     <BookTagsSelect
+                        label='Tags'
                         tags={tags}
-                        updateParams={updateParams}
+                        onChange={(tags) => updateParams({ tags: tags.join(',') }, 'merge')}
                     />
                     <Typography variant='subtitle1'>
                         {

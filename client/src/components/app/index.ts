@@ -18,6 +18,9 @@ export { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './Avatar';
 export { default as UserFormFields } from './UserFormFields';
 export { default as UpdateUserForm } from './UpdateUserForm';
 export { default as CreateAdminUserForm } from './CreateAdminUserForm';
+export { default as BookCard } from './BookCard';
+
 export * from './UsersListFilter';
+export * from './BooksListFilter';
 export * from './CreateUpdateBook';
 export * from './ImageInput';

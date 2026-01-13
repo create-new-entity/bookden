@@ -1,14 +1,21 @@
 
 
-import { Box, Card, CardContent, CardMedia, Stack, Typography, Tooltip } from '@mui/material';
+import {
+    Box, Card, CardContent,
+    CardMedia, Stack, Typography, Tooltip
+} from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 
 import type { Book } from '../../types';
 import { useBlobImage } from '../../hooks';
-import { BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP } from '../../constants';
+import {
+    BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP
+} from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
 import { getBookCover } from '../../api';
+
+
 
 const BOOK_COVER_WIDTH = 17;
 const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH * 1.5;

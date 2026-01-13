@@ -1,15 +1,16 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Button, Collapse, IconButton, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { useState } from 'react';
 
 import type { BookSearchParams } from '../../../validations';
 import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import {
-    ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, MARGIN_TOP_TO_AVOID_NAV_BAR,
+    ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, CREATE_BOOK, MARGIN_TOP_TO_AVOID_NAV_BAR,
     MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
     NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN
 } from '../../../constants';
@@ -19,7 +20,8 @@ import SelectSortOrder from '../SelectSortOrder';
 import { useAuthContext } from '../../../contexts';
 import BookTagsSelect from './BookTagsSelect';
 import BooksPriceFilter from './BooksPriceFilter';
-import type { UpdateMode } from '../../../hooks/useDeepLinkedSearchParams';
+import { type UpdateMode } from '../../../hooks';
+
 
 type Styles = {
     searchBoxesStack: SxProps<Theme>;
@@ -73,6 +75,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const styles = getStyles(theme);
     const { userType } = useAuthContext();
     const [isTagsCollapseOpen, setIsTagsCollapseOpen] = useState(false);
+    const navigate = useNavigate();
     
     const isClientAdminOrSuperAdmin = userType === SUPERADMIN || userType === ADMIN;
     const { tags, params, updateParams, priceRangeMeta } = props;
@@ -149,8 +152,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         isClientAdminOrSuperAdmin && (
                             <Tooltip title='Add a new book'>
                                 <IconButton onClick={() => {
-                                    // navigate(CREATE_BOOK);
-                                    console.log('add new book');
+                                    navigate(CREATE_BOOK);
                                 }}>
                                     <Add/>
                                 </IconButton>
@@ -193,8 +195,9 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                             gap={STACK_DEFAULT_GAP}
                         >
                             <BookTagsSelect
+                                label='Tags'
                                 tags={tags}
-                                updateParams={(params) => updateParams(params, 'merge')}
+                                onChange={(tags) => updateParams({ tags: tags.join(',') }, 'merge')}
                             />
                             <BooksPriceFilter   
                                 priceMin={priceMin}
