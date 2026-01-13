@@ -1,18 +1,18 @@
 import { type SxProps, type Theme } from '@mui/material';
 
 import { useBookTags } from '../../../hooks';
-import type { BookSearchParams } from '../../../validations';
 import { CustomMultiAutoComplete } from '../../custom';
 
 
 type BookTagsSelectProps = {
     tags: string[];
-    updateParams: (params: Partial<BookSearchParams>) => void;
+    onChange: (tags: string[]) => void;
     multiAutoCompleteStyles?: SxProps<Theme>;
+    label?: string;
 };
 
 const BookTagsSelect = (props: BookTagsSelectProps) => {
-    const { tags, updateParams, multiAutoCompleteStyles = {} } = props;
+    const { tags, onChange, multiAutoCompleteStyles = {}, label } = props;
     const { data: allBookTags } = useBookTags();
     /*
         For this project, we don't really care about tagId at this point.
@@ -24,11 +24,11 @@ const BookTagsSelect = (props: BookTagsSelectProps) => {
         <CustomMultiAutoComplete<string>
             id='book-tags-input'
             multiAutoCompleteStyles={multiAutoCompleteStyles}
-            label='Tags'
+            label={label ?? ''}
             placeholder='Search and select tags'
             options={allBookTagsOptions}
             value={tags}
-            onChange={(value) => updateParams({ tags: value.join(',') })}
+            onChange={onChange}
         />
     );
 };

@@ -1,12 +1,15 @@
 import * as R from 'ramda';
 import camelcaseKeys from 'camelcase-keys';
+import { sql } from 'slonik';
 
 import { getPGDBPool, getRedis, sqlTag } from '../configs';
-import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload } from '../types';
+import {
+    Book, BooksSortByOptions, BooksSortOrderOptions,
+    CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload
+} from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
 import { BOOKS_PAGINATION_LIMIT, PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS } from '../constants';
 import { BadRequestError, errorMessages, errorNames } from '../errors';
-import { sql } from 'slonik';
 
 
 const getAllBooks = async (

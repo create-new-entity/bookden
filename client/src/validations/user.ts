@@ -1,6 +1,10 @@
 
 import { z, type RefinementCtx } from 'zod';
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, MAX_USERNAME_LENGTH, MIN_USERNAME_LENGTH, MAX_EMAIL_LENGTH, MIN_EMAIL_LENGTH } from '../constants';
+
+import {
+    MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, MAX_USERNAME_LENGTH,
+    MIN_USERNAME_LENGTH, MAX_EMAIL_LENGTH, MIN_EMAIL_LENGTH
+} from '../constants';
 
 export const LogInResolver = z.object({
     username: z.string().trim().toLowerCase().min(6).max(30),
@@ -58,9 +62,6 @@ export type UpdateUserFormFields = {
     email: string;
     confirmPassword: string;
 };
-
-
-
 
 
 

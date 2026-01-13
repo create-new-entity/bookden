@@ -22,9 +22,11 @@ import {
     USER_MANAGEMENT,
     NOTIFICATION_DELAY,
     BOOK_MANAGEMENT,
-    BOOK
+    BOOK,
+    CREATE_BOOK
 } from './constants';
 import { BookPage, BookManagementPage } from './pages';
+import CreateOrUpdateBookPage from './pages/CreateOrUpdateBookPage';
 
 const App = () => {
     const { clearAuthentication } = useAuthContext();
@@ -71,6 +73,7 @@ const App = () => {
                 <Route path={BOOK_MANAGEMENT} element={<BookManagementPage/>} />
                 <Route path={ADMIN_TOOLS} element={<AdminToolsPage/>} />
                 <Route path={HOME} element={<HomePage/>} />
+                <Route path={CREATE_BOOK} element={<CreateOrUpdateBookPage mode='create'/>}/>
             </Routes>
             <Snackbar
                 autoHideDuration={NOTIFICATION_DELAY}

@@ -15,3 +15,13 @@ export const ITEMS_GRID_SIZES = { xs: 12, sm: 6, md: 4, lg: 3 };
 export const LIST_VIEW_GRID_SIZES = { xs: 12 };
 export const AVATAR_DIMENSIONS = 145;
 export const ONE_TENTH_OF_DEFAULT_GAP = DEFAULT_GAP / 10;
+
+
+
+/*
+    Note to future self:
+    Let's go for aspect ratio 2 / 3 for width / height.
+*/
+const BOOK_COVER_ASPECT_RATIO = 2 / 3;
+export const BOOK_COVER_WIDTH = 220;
+export const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH / BOOK_COVER_ASPECT_RATIO;

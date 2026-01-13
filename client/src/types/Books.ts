@@ -1,4 +1,4 @@
-import type { BOOKS_LIST_SORT_BY_OPTIONS_TEXTS } from '../constants';
+import type { BOOKS_LIST_SORT_BY_OPTIONS_TEXTS, LANGUAGE_CODES } from '../constants';
 
 
 export type Book = {
@@ -29,3 +29,5 @@ export type BooksPriceRangeMeta = {
     priceMin: number;
     priceMax: number;
 };
+
+export type LanguageCode = typeof LANGUAGE_CODES[number];

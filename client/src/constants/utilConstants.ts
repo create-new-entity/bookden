@@ -1,5 +1,8 @@
 import type { SelectOption } from '../components/custom/CustomSelect';
-import type { BooksSortByOptions, UsersSortByOptions, UserType } from '../types';
+import type {
+    BooksSortByOptions, LanguageCode, SingleSelectOption,
+    UsersSortByOptions, UserType
+} from '../types';
 
 export const NOTIFICATION_DELAY = 4000;
 export const ALL = 'all' as const;
@@ -36,6 +39,34 @@ export const BOOKS_SORT_BY_OPTIONS = [
     TITLE, PRICE, YEAR_PUBLISHED,
     CREATED_AT, UPDATED_AT, DELETED_AT
 ] as const;
+export const MAX_BOOK_TITLE_LENGTH = 150;
+
+/*
+    Note to future self:
+    To keep things simple, let's just stick to these languages.
+*/
+export const LANGUAGE_CODES = [
+    'en', 'de', 'ja',
+    'fr', 'zh', 'pt',
+    'ar', 'ko', 'ru',
+] as const;
+
+export const LANGUAGE_LABEL_MAP: Record<LanguageCode, string> = {
+    en: 'English',
+    de: 'German',
+    ja: 'Japanese',
+    fr: 'French',
+    zh: 'Chinese',
+    pt: 'Portuguese',
+    ar: 'Arabic',
+    ko: 'Korean',
+    ru: 'Russian',
+} as const;
+
+export const LANGUAGE_OPTIONS: Array<SingleSelectOption<LanguageCode>> = LANGUAGE_CODES.map((code) => ({
+    value: code,
+    label: LANGUAGE_LABEL_MAP[code],
+}));
 
 export const BOOKS_LIST_SORT_BY_OPTIONS_TEXTS = {
     [TITLE]: 'Title',
@@ -62,6 +93,7 @@ export const DEFAULT_PRICE_MAX = 1000;
 export const ALL_TYPES_OF_USERS: UserType[] = [CUSTOMER, ADMIN, SUPERADMIN];
 
 export const PLACE_HOLDER_AVATAR = `${import.meta.env.BASE_URL}assets/images/avatarPlaceholder.png`;
+export const PLACE_HOLDER_BOOK_COVER = `${import.meta.env.BASE_URL}assets/images/noBookCoverPlaceholder.jpg`;
 
 export const MAX_NUMBER_OF_RECENT_SEARCH_VALUES = 5;
 
@@ -94,3 +126,5 @@ export const MIN_PASSWORD_LENGTH = 6;
 export const MAX_PASSWORD_LENGTH = 250;
 export const MIN_EMAIL_LENGTH = 6;
 export const MAX_EMAIL_LENGTH = 250;
+
+export const IMAGE_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'] as const;

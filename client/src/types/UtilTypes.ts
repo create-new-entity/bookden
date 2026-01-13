@@ -16,3 +16,8 @@ export type MultiSelectOption<V extends string | number> = {
     label: string;
 };
 
+export type SingleSelectOption<V extends string | number> = {
+    value: V;
+    label: string;
+};
+  

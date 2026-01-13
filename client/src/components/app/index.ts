@@ -19,3 +19,5 @@ export { default as UserFormFields } from './UserFormFields';
 export { default as UpdateUserForm } from './UpdateUserForm';
 export { default as CreateAdminUserForm } from './CreateAdminUserForm';
 export * from './UsersListFilter';
+export * from './CreateUpdateBook';
+export * from './ImageInput';

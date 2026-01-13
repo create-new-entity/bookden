@@ -9,5 +9,6 @@ export const AUTH = '/auth' as const;
 export const USER = '/users/:userId' as const;
 export const CREATE_ADMIN_USER = '/create-admin-user' as const;
 export const BOOK = '/books/:bookId' as const;
+export const CREATE_BOOK = '/create-book' as const;
 
 export const ALL_ROUTES = [HOME, UPDATE_PROFILE, USER_MANAGEMENT, ADMIN_TOOLS, AUTH, CREATE_ADMIN_USER, BOOK] as const;

@@ -300,6 +300,13 @@ export const getTheme = (mode: ThemeMode) => {
                         fontSize: '0.6rem'
                     }
                 }
+            },
+            MuiFormHelperText: {
+                styleOverrides: {
+                    root: {
+                        marginLeft: 0
+                    }
+                }
             }
         }
     };
