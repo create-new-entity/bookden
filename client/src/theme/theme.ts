@@ -254,6 +254,9 @@ export const getTheme = (mode: ThemeMode) => {
                     },
                     fontSizeSmall: {
                         fontSize: SMALL_SVG_ICON_FONT_SIZE
+                    },
+                    root: {
+                        color: theme.palette.text.primary,
                     }
                 }
             },

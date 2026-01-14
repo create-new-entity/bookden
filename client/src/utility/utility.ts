@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
-import { PLACE_HOLDER_BOOK_COVER } from '../constants';
+import { ADMIN, CUSTOMER, PLACE_HOLDER_BOOK_COVER, SUPERADMIN } from '../constants';
+import type { UserType } from '../types';
 
 
 
@@ -33,4 +34,11 @@ export const resolveRequiredImageFile = async (file: File | null): Promise<File>
     );
 };
   
-  
+
+export const canEditBook = (userType?: UserType) => {
+    return userType === ADMIN || userType === SUPERADMIN;
+};
+
+export const canBuyBook = (userType?: UserType) => {
+    return userType === CUSTOMER;
+};

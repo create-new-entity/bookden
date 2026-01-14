@@ -1,13 +1,16 @@
 import {
-    Button, Container, Paper,
-    Stack, Typography, useTheme,
+    Button, Container, IconButton, Paper,
+    Stack, Tooltip, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import EditSquareIcon from '@mui/icons-material/EditSquare';
 
 import { useBook, useBookCover } from '../../hooks';
 import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
+import { useAuthContext } from '../../contexts';
+import { canBuyBook, canEditBook } from '../../utility';
 
 
 type Styles = {
@@ -44,11 +47,14 @@ const getStyles = (_theme: Theme): Styles => {
 
 
 const BookPageMobile = () => {
+    const { userType } = useAuthContext();
     const { bookId } = useParams();
     const theme = useTheme();
     const styles = getStyles(theme);
     const bookQuery = useBook(parseInt(bookId || '-1', 10));
     const { objectUrl } = useBookCover(bookQuery.data?.bookId || -1);
+    const showEditBookButton = canEditBook(userType);
+    const showAddToCartButton = canBuyBook(userType);
 
     return (
         <Container>
@@ -77,9 +83,22 @@ const BookPageMobile = () => {
                     <Typography variant='h4' color='info'>
                         €{bookQuery.data?.price}
                     </Typography>
-                    <Button variant='contained' color='primary'>
-                        Add to cart
-                    </Button>
+                    {
+                        showAddToCartButton && (
+                            <Button variant='contained' color='primary'>
+                                Add to cart
+                            </Button>
+                        )
+                    }
+                    {
+                        showEditBookButton && (
+                            <Tooltip title='Edit Book'>
+                                <IconButton>
+                                    <EditSquareIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        )
+                    }
                 </Stack>
                 <Paper
                     elevation={5}

@@ -1,12 +1,15 @@
 import {
-    Button, Container, Divider, Paper,
-    Stack, Typography, useTheme, type SxProps, type Theme
+    Button, Container, Divider, IconButton, Paper,
+    Stack, Tooltip, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import EditSquareIcon from '@mui/icons-material/EditSquare';
 
 import { useBook, useBookCover } from '../../hooks';
 import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
 import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
+import { useAuthContext } from '../../contexts';
+import { canBuyBook, canEditBook } from '../../utility';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -43,12 +46,15 @@ const getStyles = (_theme: Theme): Styles => {
 
 
 const BookPageDesktop = () => {
+    const { userType } = useAuthContext();
     const { bookId } = useParams();
     const theme = useTheme();
     const styles = getStyles(theme);
     const bookQuery = useBook(parseInt(bookId || '-1', 10));
     const { objectUrl } = useBookCover(bookQuery.data?.bookId || -1);
-    
+    const showEditBookButton = canEditBook(userType);
+    const showAddToCartButton = canBuyBook(userType);
+
     return (
         <Container>
             <Stack
@@ -87,16 +93,36 @@ const BookPageDesktop = () => {
                         >
                             <Stack
                                 direction={'row'}
-                                justifyContent={'flex-start'}
+                                justifyContent={'space-between'}
                                 alignItems={'center'}
-                                gap={`${DEFAULT_GAP}px`}
+                                alignSelf={'stretch'}
                             >
-                                <Typography variant='h4' color='info'>
-                                    €{bookQuery.data?.price}
-                                </Typography>
-                                <Button variant='contained' color='primary'>
-                                    Add to cart
-                                </Button>
+                                {
+                                    showEditBookButton && (
+                                        <Tooltip title='Edit Book'>
+                                            <IconButton>
+                                                <EditSquareIcon/>
+                                            </IconButton>
+                                        </Tooltip>
+                                    )
+                                }
+                                <Stack
+                                    direction={'row'}
+                                    justifyContent={'flex-start'}
+                                    alignItems={'center'}
+                                    gap={`${DEFAULT_GAP}px`}
+                                >
+                                    <Typography variant='h4' color='info'>
+                                        €{bookQuery.data?.price}
+                                    </Typography>
+                                    {
+                                        showAddToCartButton && (
+                                            <Button variant='contained' color='primary'>
+                                                Add to cart
+                                            </Button>
+                                        )
+                                    }
+                                </Stack>
                             </Stack>
                             <Paper
                                 elevation={5}
