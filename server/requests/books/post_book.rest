@@ -3,11 +3,11 @@
 
 POST http://localhost:3000/api/books
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2NjQzMTcxOSwiZXhwIjoxNzY2NTE4MTE5fQ.xS7Jv6tAVdi79m3HbxhjMiS5HcS4N3NjZWLDZ_2pct8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2ODI2NDQzMSwiZXhwIjoxNzY4MzUwODMxfQ.HrBbRJ4tbHKtMlInZJZ58nGPZgXL601PiM_a-dsOprc
 
 {
     "payload": {
-        "title": "Mockingbird new book 2",
+        "title": "Mockingbird new book",
         "synopsis": "This is a new book for sure. It is about testing the book creation endpoint.",
         "authors": ["John Doe"],
         "price": 100,

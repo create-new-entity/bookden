@@ -23,7 +23,6 @@ const getStyles = (theme: Theme): Styles => {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: theme.palette.success.light,
     
             padding: '0.5rem',
             marginTop: '-5rem'

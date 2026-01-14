@@ -77,6 +77,7 @@ const getStyles = (theme: Theme): Styles => {
 
 
 const UserManagementPage = () => {
+    const { isDesktop } = useResponsive();
     const theme = useTheme();
     const styles = getStyles(theme);
     const queryClient = useQueryClient();
@@ -86,7 +87,6 @@ const UserManagementPage = () => {
     const { userType: clientUserType } = useAuthContext();
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
     const navigate = useNavigate();
-    const { isDesktop } = useResponsive();
     const modalRef = useRef<CustomModalRef | null>(null);
     const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
     
@@ -98,6 +98,10 @@ const UserManagementPage = () => {
     const openFilterModal = () => {
         console.log('Attempting to open filter modal');
         modalRef.current?.openModal();
+    };
+
+    const onPageChange = (page: number) => {
+        updateParams({ page });
     };
     
     useSetTabTitle('User Management');
@@ -147,10 +151,10 @@ const UserManagementPage = () => {
                     <CustomPagination<User>
                         sx={styles.topPagination}
                         paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        onPageChange={onPageChange}
                     />
                 }
-                <Items
+                <Items<User>
                     sx={styles.items}
                     items={usersList.data?.data || []}
                     ItemComponent={UserCard}
@@ -162,7 +166,7 @@ const UserManagementPage = () => {
                     usersList.data &&
                     <CustomPagination<User>
                         paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        onPageChange={onPageChange}
                     />
                 }
             </Stack>

@@ -1,6 +1,13 @@
 import { MenuItem, type SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { FormControl, InputLabel, Select } from '@mui/material';
 
+
+// Note to future self: Need to extend from string or number, other wise MUI select will complain about the type.
+/* 
+    From chatgpt:
+    "because MUI <Select /> only really works with primitive values,
+    and TypeScript needs that constraint to stay sound."
+*/
 export type SelectOption<V extends string | number> = {
     optionValue: V;
     optionLabel: string;

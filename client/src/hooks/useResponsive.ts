@@ -1,7 +1,7 @@
 import { useTheme, useMediaQuery } from '@mui/material';
 
 
-const useResponsive = () => {
+export const useResponsive = () => {
     const theme = useTheme();
 
     /* 
@@ -37,5 +37,3 @@ const useResponsive = () => {
         isDesktop,
     };
 };
-
-export default useResponsive;

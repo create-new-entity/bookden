@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import type { User } from '../../types';
-import { useAvatarBlob } from '../../hooks';
+import { useBlobImage } from '../../hooks';
 import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
-import { deleteUser } from '../../api';
+import { deleteUser, getUserAvatarBlob } from '../../api';
 import UserTypeChip from './UserTypeChip';
 
 
@@ -71,11 +71,16 @@ type UserCardProps = {
 
 const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     const user = item;
-    const { objectUrl } = useAvatarBlob(user.userId);
     const { token } = useAuthContext();
     const theme = useTheme();
     const styles = getStyles(theme);
     const { handleShowNotification } = useNotificationContext();
+    const blobOptions = {
+        queryKey: ['avatar', token, user.userId],
+        queryFn: () => getUserAvatarBlob(token, user.userId),
+        enabled: !!token && !!user.userId,
+    };
+    const { objectUrl } = useBlobImage(blobOptions);
     const isAlreadyDeleted = user.deletedAt !== null;
 
     const handleDeleteUser = async () => {

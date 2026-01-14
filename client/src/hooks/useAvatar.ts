@@ -8,7 +8,7 @@ import type { AxiosErrorResponse } from '../types';
 import { PLACE_HOLDER_AVATAR } from '../constants';
 import { addOrUpdate, deleteAvatar, getAvatar } from '../api';
 
-const useAvatar = () => {
+export const useAvatar = () => {
 
     const { token } = useAuthContext();
     const { avatarUrl, setAvatarUrl } = useAvatarContext();
@@ -72,5 +72,3 @@ const useAvatar = () => {
 
     return { getAvatarResult, deleteAvatarMutation, addOrUpdateMutation };
 };
-
-export default useAvatar;

@@ -14,6 +14,8 @@ export const UpdateBookPayloadSchema = z.object({
     pages: z.number().min(1, { message: 'Pages must be a positive number' }).optional(),
 });
 
+const CURRENT_YEAR = new Date().getFullYear();
+const EARLIEST_YEAR_PUBLISHED = 1200;
 
 export const CreateBookPayloadSchema = z.object({
     title: z.string().min(1, { message: 'Title must be a non-empty string' }),
@@ -24,8 +26,8 @@ export const CreateBookPayloadSchema = z.object({
     price: z.number().min(0, { message: 'Price must be a non-negative number' }),
     yearPublished: z.number()
         .int()
-        .gte(1300, { message: 'Year must be at least 1300' })
-        .lte(2025, { message: 'Year cannot exceed 2025' }),
+        .gte(EARLIEST_YEAR_PUBLISHED, { message: `Year must be at least ${EARLIEST_YEAR_PUBLISHED}` })
+        .lte(CURRENT_YEAR, { message: `Year must be at most ${CURRENT_YEAR}` }),
     language: z.string().min(1, { message: 'Language must be a non-empty string' }),
     pages: z.number().min(1, { message: 'Pages must be a positive number' }).max(1500, { message: 'Pages must be less than 1500' }),
 });
@@ -37,6 +39,27 @@ export const GetBooksQueryParamsSchema = z.object({
     sortOrder: z.enum(sortOrderOptions).optional(),
     tags: z.array(z.string()).optional(),
     page: z.string().optional(),
-});
+    
+    // "coerce" chatgpt = “Accept input as something else, and convert it into this type before validating.”
+    priceMin: z.coerce.number().optional(),   
+    priceMax: z.coerce.number().optional()
+}).refine(
+    (data) => {
+        // Only invalid when both are provided and ordering is wrong
+        if (
+            data.priceMin !== undefined &&
+            data.priceMax !== undefined &&
+            data.priceMin > data.priceMax
+        ) {
+            return false;
+        }
+
+        return true;
+    },
+    {
+        message: 'priceMin must be less than or equal to priceMax',
+        path: ['priceMin'],
+    }
+);
 
 

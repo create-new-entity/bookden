@@ -3,7 +3,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 
 import { CreateAdminUserResolver, type CreateAdminUserFormData } from '../../validations';
-import { CONFIRM_PASSWORD, EMAIL_FIELD, NEW_PASSWORD, NOTIFICATION_DELAY, USERNAME_FIELD } from '../../constants';
+import {
+    CONFIRM_PASSWORD, EMAIL_FIELD, NEW_PASSWORD,
+    NOTIFICATION_DELAY, USERNAME_FIELD
+} from '../../constants';
 import { useCreateAdminUser } from '../../hooks';
 import UserFormFields from './UserFormFields';
 

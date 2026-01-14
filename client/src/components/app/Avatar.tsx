@@ -8,12 +8,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import { useAvatar } from '../../hooks';
+import { IMAGE_MIME_TYPES } from '../../constants';
 
 type IconButtonStyles = {
     iconButton: SxProps<Theme>;
 };
 
-const getIconButtonStyles = (_theme: Theme): IconButtonStyles => {
+const getStyles = (_theme: Theme): IconButtonStyles => {
     return {
         iconButton: {
             padding: 0
@@ -41,7 +42,7 @@ const AddUpdateAvatarWrapper = ({ inputRef, children }: AddUpdateAvatarWrapperPr
         <>
             <input
                 type="file"
-                accept="image/jpeg, image/png, image/webp"
+                accept={IMAGE_MIME_TYPES.join(', ')}
                 hidden
                 ref={inputRef}
                 onChange={handleFileChange}
@@ -53,7 +54,7 @@ const AddUpdateAvatarWrapper = ({ inputRef, children }: AddUpdateAvatarWrapperPr
 
 export const AddAvatarButton = () => {
     const theme = useTheme();
-    const styles = getIconButtonStyles(theme);
+    const styles = getStyles(theme);
     const inputRef = useRef<HTMLInputElement>(null);
     
     return (
@@ -67,7 +68,7 @@ export const AddAvatarButton = () => {
 
 export const UpdateOrDeleteAvatarButtonsStack = () => {
     const theme = useTheme();
-    const styles = getIconButtonStyles(theme);
+    const styles = getStyles(theme);
     const { deleteAvatarMutation } = useAvatar();
     const inputRef = useRef<HTMLInputElement>(null);
 

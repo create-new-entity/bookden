@@ -1,12 +1,22 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import QueryString from 'qs';
 import * as R from 'ramda';
 
-import { ADMIN, AuthenticatedRequest, CreateBookRequestBody, GetBooksQueryParams, SUPERADMIN } from '../types';
-import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, updateBook, updateBookCover } from '../services';
-import { AuthenticationError, BadRequestError, errorMessages, errorNames, NotFoundError, UnauthorizedError } from '../errors';
-import { UpdateBookPayload } from '../types';
+import {
+    ADMIN, AuthenticatedRequest, CreateBookRequestBody,
+    GetBooksQueryParams, isString, SUPERADMIN, UpdateBookPayload
+} from '../types';
+import {
+    createBook, deleteBook, deleteBookCover,
+    getAllBooks, getBook, getBookCover,
+    getBooksPriceRange, getTags, updateBook, updateBookCover
+} from '../services';
+import {
+    AuthenticationError, BadRequestError, errorMessages,
+    errorNames, NotFoundError, UnauthorizedError
+} from '../errors';
 import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
+import { DEFAULT_PRICE_MAX, DEFAULT_PRICE_MIN } from '../constants';
 
 
 const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryParams>, res: Response) => {
@@ -16,22 +26,24 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     };
     const rawTags = req.query.tags;
 
-    const normalizedTags = typeof rawTags === 'string'
-        ?
-        [rawTags]
-        :
-        Array.isArray(rawTags)
-            ?
-            rawTags
-            :
-            undefined;
+    const normalizedTags = isString(rawTags) ? rawTags.split(',') : [];
 
     const validatedQueryParams = GetBooksQueryParamsSchema.parse({
         ...req.query,
         tags: normalizedTags,
     });
+    const priceRanges = (validatedQueryParams.priceMin || validatedQueryParams.priceMax) ? {
+        priceMin: validatedQueryParams.priceMin ?? DEFAULT_PRICE_MIN,
+        priceMax: validatedQueryParams.priceMax ?? DEFAULT_PRICE_MAX
+    } : undefined;
     const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
-    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder, validatedQueryParams.tags);
+    
+    const books = await getAllBooks(
+        includeDeleted, validatedPage, validatedQueryParams.search,
+        validatedQueryParams.sortBy, validatedQueryParams.sortOrder,
+        validatedQueryParams.tags, priceRanges
+    );
+    
     res.status(200).json(books);
 };
 
@@ -82,10 +94,10 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         How to create a book with a cover image from terminal:
 
         curl -X POST http://localhost:3000/api/books \
-        -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2NjQzMjUzMCwiZXhwIjoxNzY2NTE4OTMwfQ.-ZzQPKokHAod9kAKGkbFAZkdtxtxDrp7HfYXX65GgEk" \
+        -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2ODI2NTkwMCwiZXhwIjoxNzY4MzUyMzAwfQ.yBszDc5DW9jV4AI22gty2NSN5ZVpU1qTIL7vXL9ifZo" \
         -H "Content-Type: multipart/form-data" \
         -F 'payload={
-            "title": "Mockingbird new book 2",
+            "title": "Mockingbird",
             "synopsis": "This is a new book for sure. It is about testing the book creation endpoint.",
             "authors": ["John Doe"],
             "price": 100,
@@ -93,7 +105,7 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
             "pages": 100,
             "tags": ["horror"],
             "yearPublished": 2025,
-            "isbn": "9780743330000"
+            "isbn": "9780743330004"
         };type=application/json' \
         -F "coverImage=@/Users/mdimranpavel/Desktop/bookden/server/__tests__/files/dummy.jpeg"
 
@@ -113,7 +125,6 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
     const payload = typeof req.body.payload === 'string'
         ? JSON.parse(req.body.payload)
         : req.body.payload;
-
 
     const validated = CreateBookPayloadSchema.parse(payload);
 
@@ -239,6 +250,16 @@ const deleteBookCoverController = async (req: AuthenticatedRequest, res: Respons
 };
 
 
+const getTagsController = async (_req: Request, res: Response) => {
+    const tags = await getTags();
+    res.status(200).json(tags);
+};
+
+const getBooksPriceRangeController = async (_req: Request, res: Response) => {
+    const priceRange = await getBooksPriceRange();
+    res.status(200).json(priceRange);
+};
+
 
 export {
     getAllBooksController,
@@ -248,5 +269,7 @@ export {
     deleteBookController,
     getBookCoverController,
     updateBookCoverController,
-    deleteBookCoverController
+    deleteBookCoverController,
+    getTagsController,
+    getBooksPriceRangeController
 };

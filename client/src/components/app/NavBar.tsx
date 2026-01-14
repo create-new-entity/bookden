@@ -1,18 +1,16 @@
 import {
     AppBar, Avatar, Box,
-    Button, IconButton, Menu, MenuItem,
-    Stack, Toolbar,
-    useTheme,
-    type Theme
+    IconButton, Menu, MenuItem,
+    Stack, Toolbar, useTheme, type Theme
 } from '@mui/material';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { useNavContext, useThemeModeContext } from '../../contexts';
+import { useNavContext } from '../../contexts';
 import { CustomAutoComplete } from '../custom';
-import { useBookSearchVisibility } from '../../hooks';
 import { NAV_BAR_Z_INDEX } from '../../constants';
+import { useBookSearchVisibility } from '../../hooks';
 
 const getStyles = (_theme: Theme) => {
     return {
@@ -59,8 +57,6 @@ const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
-    const { isLightMode } = useThemeModeContext();
-    const navigate = useNavigate();
     const showBookSearch = useBookSearchVisibility();
     const theme = useTheme();
     const styles = getStyles(theme);
@@ -72,7 +68,7 @@ const NavBar = () => {
                     <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
                         <MenuIcon/>
                     </IconButton>
-                    <Button sx={styles.logoButton} onClick={() => navigate('/')}>
+                    <Link to='/'>
                         <Box sx={{ height: '2.5rem' }}>
                             <img
                                 src={`${import.meta.env.BASE_URL}assets/book-den-white.svg` }
@@ -80,7 +76,7 @@ const NavBar = () => {
                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             />
                         </Box>
-                    </Button>
+                    </Link>
                     {
                         showBookSearch && (
                             <CustomAutoComplete

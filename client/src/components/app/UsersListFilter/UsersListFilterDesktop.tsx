@@ -1,16 +1,23 @@
-import { IconButton, Stack, Tooltip, useTheme, type SxProps, type Theme } from '@mui/material';
-import { CREATE_ADMIN_USER, MARGIN_TOP_TO_AVOID_NAV_BAR, NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN } from '../../../constants';
+import {
+    IconButton, Stack, Tooltip,
+    useTheme, type SelectChangeEvent, type SxProps, type Theme
+} from '@mui/material';
+import { Add } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
+import {
+    CREATE_ADMIN_USER, MARGIN_TOP_TO_AVOID_NAV_BAR,
+    MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY,
+    NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN,
+    USERS_LIST_SORT_BY_OPTIONS
+} from '../../../constants';
 import { CustomAutoComplete } from '../../custom';
 import SelectUserType from '../SelectUserType';
-import type { UserTypeOptions } from '../../../types';
+import type { UsersSortByOptions, SortOrder, UserTypeOptions } from '../../../types';
 import type { UserSearchParams } from '../../../validations';
 import { useAuthContext } from '../../../contexts';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
-import { Add } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-
 
 type Styles = {
     searchBoxesStack: SxProps<Theme>;
@@ -44,13 +51,22 @@ type UsersListFilterDesktopProps = {
 
 const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
     const theme = useTheme();
+    const styles = getStyles(theme);
     const { userType: clientUserType } = useAuthContext();
     const navigate = useNavigate();
 
     const { search, sortBy, sortOrder, userType, updateParams } = props;
-    const styles = getStyles(theme);
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
 
+    const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
+        updateParams({ sortOrder: event.target.value });
+    };
+
+    const handleSortByChange = (event: SelectChangeEvent<UsersSortByOptions>) => {
+        updateParams({ sortBy: event.target.value, page: 1 });
+    };
+
+    
     return (
         <Stack
             sx={styles.searchBoxesStack}
@@ -70,9 +86,25 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
                 }}
                 placeholder='Search by username or email'
             />
-            <SelectSortBy sortBy={sortBy} updateParams={updateParams} />
+
+            {
+                /*
+                   Instead of <SelectSortBy<UsersSortByOptions> .... />
+                   This will also work: <SelectSortBy .../>
+                   Due to the type inference from "value" prop.
+
+                   But let's be explicit anyway.
+                */
+            }
+            <SelectSortBy<UsersSortByOptions>
+                id="users-list-sort-by"
+                formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY }}
+                value={sortBy}
+                options={USERS_LIST_SORT_BY_OPTIONS}
+                onChange={handleSortByChange}
+            />
             { isClientSuperAdmin && <SelectUserType userType={userType} updateParams={updateParams} /> }
-            <SelectSortOrder sortOrder={sortOrder} updateParams={updateParams} />
+            <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
             {
                 isClientSuperAdmin && (
                     <Tooltip title='Add a new admin'>

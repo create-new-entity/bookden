@@ -1,19 +1,24 @@
 import * as R from 'ramda';
 import camelcaseKeys from 'camelcase-keys';
-
-import { getPGDBPool, sqlTag } from '../configs';
-import { Book, BooksSortByOptions, BooksSortOrderOptions, CreateBookPayload, PaginatedDataList, UpdateBookPayload } from '../types';
-import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
-import { BOOKS_PAGINATION_LIMIT } from '../constants';
-import { BadRequestError, errorMessages, errorNames } from '../errors';
 import { sql } from 'slonik';
-// import { BOOKS_PAGINATION_LIMIT } from '../constants';
+
+import { getPGDBPool, getRedis, sqlTag } from '../configs';
+import {
+    Book, BooksSortByOptions, BooksSortOrderOptions,
+    CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload
+} from '../types';
+import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
+import { BOOKS_PAGINATION_LIMIT, PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS } from '../constants';
+import { BadRequestError, errorMessages, errorNames } from '../errors';
 
 
+const getAllBooks = async (
+    includeDeleted: boolean = false, page: number = 1, search: string = '',
+    sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc',
+    tags: string[] = [], priceRanges: PriceRange | undefined = undefined
+): Promise<PaginatedDataList<Book>> => {
 
-const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, search: string = '', sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc', tags: string[] = []): Promise<PaginatedDataList<Book>> => {
     const dbPool = await getPGDBPool();
-
     const searchFragment = search && search.trim() !== ''
         ? sqlTag.fragment`
             AND (
@@ -27,7 +32,16 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         `
         : sqlTag.fragment``;
 
-
+    const priceMinFragment =
+        priceRanges?.priceMin !== undefined
+            ? sqlTag.fragment`AND price >= ${priceRanges.priceMin}`
+            : sqlTag.fragment``;
+    
+    const priceMaxFragment =
+        priceRanges?.priceMax !== undefined
+            ? sqlTag.fragment`AND price <= ${priceRanges.priceMax}`
+            : sqlTag.fragment``;
+    
     /*
         Include deleted books if includeDeleted is true.
         Otherwise, include only non-deleted books. Books that have not
@@ -69,6 +83,8 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
+        ${priceMinFragment}
+        ${priceMaxFragment}
         GROUP BY books.book_id
         ${sortByFragment}
         LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
@@ -81,6 +97,8 @@ const getAllBooks = async (includeDeleted: boolean = false, page: number = 1, se
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
+        ${priceMinFragment}
+        ${priceMaxFragment}
     `);
     const totalBooks = totalResult.total;
 
@@ -327,6 +345,49 @@ const getBookCover = async (bookId: number, includeDeleted: boolean = false) => 
     return camelcaseKeys(result.rows[0], { deep: true });
 };
 
+const getTags = async () => {
+    const dbPool = await getPGDBPool();
+    const result = await dbPool.query(sqlTag.typeAlias('Tag')`
+        SELECT tag_id, tag
+        FROM tags;
+    `);
+    return camelcaseKeys(result.rows, { deep: true });
+};
+    
+const getBooksPriceRange = async (): Promise<PriceRange> => {
+    const redis = getRedis();
+    const cached = await redis.get(PRICE_RANGE_CACHE_KEY);
+  
+    if (cached) {
+        return JSON.parse(cached);
+    }
+  
+    const dbPool = await getPGDBPool();
+    const result = await dbPool.one(sqlTag.typeAlias('PriceRange')`
+        SELECT
+            MIN(price) AS price_min,
+            MAX(price) AS price_max
+        FROM books
+        WHERE deleted_at IS NULL
+    `);
+  
+
+    // Defensive default. This shouldn't be necessary. Since tables are seeded with data.
+    const priceRange: PriceRange = {
+        priceMin: result.price_min ?? 0,
+        priceMax: result.price_max ?? 1000,
+    };
+  
+    await redis.set(
+        PRICE_RANGE_CACHE_KEY,
+        JSON.stringify(priceRange),
+        { EX: PRICE_RANGE_TTL_SECONDS } // Should be same as staleTime in useBooksFiltersMeta hook.
+    );
+  
+    return priceRange;
+};
+  
+
 export {
     getAllBooks,
     getBook,
@@ -335,5 +396,7 @@ export {
     deleteBook,
     getBookCover,
     updateBookCover,
-    deleteBookCover
+    deleteBookCover,
+    getTags,
+    getBooksPriceRange
 };

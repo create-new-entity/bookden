@@ -36,12 +36,12 @@ const getStyles = (_theme: Theme): Styles => {
     };
 };
 
-const ErrorText = ({ isError, errorMessage }: { isError: boolean, errorMessage: string }) => {
+export const ErrorText = ({ isError, errorMessage }: { isError: boolean, errorMessage: string }) => {
     if(!isError) {
         return null;
     }
     return (
-        <Typography color='error'>{errorMessage}</Typography>
+        <Typography sx={{ marginTop: '0.3rem' }} variant="body1" color="error">{errorMessage}</Typography>
     );
 };
 

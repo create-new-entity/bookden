@@ -12,7 +12,7 @@ export type UseUpdateProfileReturn = {
     mutation: UseMutationResult<AxiosResponse, AxiosErrorResponse, UpdateUserFormData>;
 };
 
-const useUpdateProfile = (): UseUpdateProfileReturn => {
+export const useUpdateProfile = (): UseUpdateProfileReturn => {
     const { token } = useAuthContext();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -35,5 +35,3 @@ const useUpdateProfile = (): UseUpdateProfileReturn => {
 
     return { mutation: updateProfileMutation };
 };
-
-export default useUpdateProfile;

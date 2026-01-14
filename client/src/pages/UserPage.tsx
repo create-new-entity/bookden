@@ -17,10 +17,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { getUser } from '../api/users';
 import { useAuthContext, useNotificationContext } from '../contexts';
-import { useAvatarBlob } from '../hooks';
+import { useBlobImage } from '../hooks';
 import { AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR } from '../constants';
 import { UserTypeChip } from '../components/app';
-import { deleteUser } from '../api';
+import { deleteUser, getUserAvatarBlob } from '../api';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -90,7 +90,13 @@ const UserPage = () => {
     });
     const queryClient = useQueryClient();
 
-    const { objectUrl: avatarBlobUrl } = useAvatarBlob(user?.userId || -1);
+    const blobOptions = {
+        queryKey: ['avatar', token, user?.userId],
+        queryFn: () => getUserAvatarBlob(token, user?.userId || -1),
+        enabled: !!token && !!user?.userId,
+    };
+
+    const { objectUrl: avatarBlobUrl } = useBlobImage(blobOptions);
 
     const handleDeleteUser = async () => {
         if(user) {

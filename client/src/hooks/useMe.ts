@@ -4,7 +4,7 @@ import * as R from 'ramda';
 import { getMe } from '../api/profile';
 import type { LoggedInUserData } from '../types';
 
-const useMe = (token: string) => {
+export const useMe = (token: string) => {
     const meQuery = useQuery<Omit<LoggedInUserData, | 'token' >>({
         queryKey: ['me'],
         queryFn: async () => {
@@ -15,5 +15,3 @@ const useMe = (token: string) => {
     });
     return R.pick(['data', 'isSuccess', 'isLoading', 'isError', 'failureReason'], meQuery);
 };
-
-export default useMe;

@@ -7,8 +7,8 @@ import { useAuthContext, useAvatarContext } from '../contexts';
 import { useAvatar, useSetTabTitle } from '../hooks';
 import { AVATAR_DIMENSIONS } from '../constants';
 
-const ICON_BUTTONS_STACK_OFFSET_LEFT = -0.3;
-const ICON_BUTTONS_STACK_OFFSET_TOP = 1.5;
+const ICON_BUTTONS_STACK_OFFSET_LEFT = 1.7;
+const ICON_BUTTONS_STACK_OFFSET_TOP = 0.8;
 
 
 type ProfilePageStyles = {
@@ -96,7 +96,13 @@ const CreateAdminOrUpdateAnyUserProfilePage = (props: CreateAdminOrUpdateAnyUser
                             ?
                             <>
                                 <Badge badgeContent={badgeContent}>
-                                    <Avatar data-testid='profile-avatar' sx={styles.avatar} alt={'Profile Avatar'} src={avatarUrl}/>
+                                    <Avatar
+                                        data-testid='profile-avatar'
+                                        sx={styles.avatar}
+                                        alt={'Profile Avatar'}
+                                        src={avatarUrl}
+                                        variant='rounded'
+                                    />
                                 </Badge>
                                 <UpdateUserForm/>
                             </>

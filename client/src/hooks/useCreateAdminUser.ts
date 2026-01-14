@@ -7,11 +7,11 @@ import type { CreateAdminUserData } from '../validations';
 import { createAdminUser } from '../api';
 import { USER_MANAGEMENT } from '../constants';
 
-export type UseCreateAdminUserReturn = {
+type UseCreateAdminUserReturn = {
     mutation: UseMutationResult<void, AxiosErrorResponse, CreateAdminUserData>;
 };
 
-const useCreateAdminUser = (): UseCreateAdminUserReturn => {
+export const useCreateAdminUser = (): UseCreateAdminUserReturn => {
     const { token } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
@@ -35,5 +35,3 @@ const useCreateAdminUser = (): UseCreateAdminUserReturn => {
 
     return { mutation: createAdminUserMutation };
 };
-
-export default useCreateAdminUser;

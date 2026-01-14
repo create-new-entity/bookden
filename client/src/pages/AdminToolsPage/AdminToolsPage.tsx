@@ -59,6 +59,10 @@ const AdminToolsPage = () => {
         navigate('/user-management');
     };
 
+    const handleBookManagementClick = () => {
+        navigate('/book-management');
+    };
+
     return (
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'flex-start'} alignItems={'center'}>
             <Paper sx={styles.rootPaper} elevation={2}>
@@ -80,7 +84,7 @@ const AdminToolsPage = () => {
                         title='Book Management'
                         subtitle='Manage books, add new ones, and update existing ones.'
                         iconAndTextStackStyles={styles.iconAndTextStack}
-                        onClick={() => {}}
+                        onClick={handleBookManagementClick}
                         paperStyles={styles.toolPaper}
                     />
                     <AdminToolCard
