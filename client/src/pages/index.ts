@@ -8,6 +8,8 @@ export { default as CreateAdminOrUpdateAnyUserProfilePage } from './CreateAdminO
 export { AdminToolsPage } from './AdminToolsPage';
 export { BookPage } from './BookPage';
 export { default as BookManagementPage } from './BookManagementPage';
+export * from './CreateUpdateBook';
+export * from './ErrorPages';
 
 
 /* 

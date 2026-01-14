@@ -8,7 +8,8 @@ import {
     UPDATE_PROFILE, USER, USER_MANAGEMENT, BOOK_MANAGEMENT,
     BOOK, CREATE_BOOK, SUPERADMIN,
     ADMIN, UPDATE_BOOK,
-    UNAUTHORIZED
+    UNAUTHORIZED,
+    NOT_FOUND
 } from '../constants';
 import {
     RequireAuth, RequireRole
@@ -17,7 +18,8 @@ import {
     CreateBookPage, UpdateBookPage, LogInPage,
     CreateAdminOrUpdateAnyUserProfilePage, UserPage, BookPage,
     AdminToolsPage, UserManagementPage, BookManagementPage, HomePage,
-    UnauthorizedPage
+    UnauthorizedPage,
+    NotFoundPage
 } from '../pages';
 
 const AppRoutes = () => {
@@ -46,6 +48,7 @@ const AppRoutes = () => {
 
             <Route path={HOME} element={<HomePage/>} />
             <Route path={UNAUTHORIZED} element={<UnauthorizedPage/>} />
+            <Route path={NOT_FOUND} element={<NotFoundPage/>} />
         </Routes>
     );
 };
