@@ -1,10 +1,9 @@
 import {
-    Button, Container, IconButton, Paper,
-    Stack, Tooltip, Typography, useTheme,
+    Button, Container, Paper,
+    Stack, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import EditSquareIcon from '@mui/icons-material/EditSquare';
 
 import { useBook, useBookCover } from '../../hooks';
 import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
