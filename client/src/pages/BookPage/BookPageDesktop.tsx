@@ -2,7 +2,7 @@ import {
     Button, Container, Divider, Paper,
     Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useBook, useBookCover } from '../../hooks';
 import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
@@ -33,7 +33,7 @@ const getStyles = (_theme: Theme): Styles => {
             padding: `${DEFAULT_GAP}px`,
             width: '100%',
             height: '26rem',
-            overflowY: 'scroll'
+            overflowY: 'auto'
         },
         synopsisContainer: {
             padding: `${DEFAULT_GAP}px`
@@ -48,12 +48,17 @@ const getStyles = (_theme: Theme): Styles => {
 const BookPageDesktop = () => {
     const { userType } = useAuthContext();
     const { bookId } = useParams();
+    const navigate = useNavigate();
     const theme = useTheme();
     const styles = getStyles(theme);
     const bookQuery = useBook(parseInt(bookId || '-1', 10));
     const { objectUrl } = useBookCover(bookQuery.data?.bookId || -1);
     const showEditBookButton = canEditBook(userType);
     const showAddToCartButton = canBuyBook(userType);
+
+    const handleEditBook = () => {
+        navigate(`/books/${bookId}/update`);
+    };
 
     return (
         <Container>
@@ -100,7 +105,7 @@ const BookPageDesktop = () => {
                                 {
                                     showEditBookButton && (
                                         <EditActionButton
-                                            onClick={() => {}}
+                                            onClick={handleEditBook}
                                             tooltipTitle='Edit Book'
                                         />
                                     )
