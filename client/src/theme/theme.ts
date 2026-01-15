@@ -147,11 +147,6 @@ export const getTheme = (mode: ThemeMode) => {
                         color: 'inherit',
                     },
 
-                    // WebKit-based scrollbars (Chrome, Safari, Edge). Ignoring firefox for now.
-                    '*::-webkit-scrollbar': {
-                        width: '8px',
-                        height: '8px',
-                    },
                     '*::-webkit-scrollbar-thumb': {
                         backgroundColor: '#bdbdbd',
                         borderRadius: '4px',
@@ -254,9 +249,6 @@ export const getTheme = (mode: ThemeMode) => {
                     },
                     fontSizeSmall: {
                         fontSize: SMALL_SVG_ICON_FONT_SIZE
-                    },
-                    root: {
-                        color: theme.palette.text.primary,
                     }
                 }
             },
