@@ -49,19 +49,23 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
 
 const getBookController = async (req: AuthenticatedRequest, res: Response) => {
     const bookId = parseInt(req.params.id, 10);
+    
     if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
         const invalidBookIdError = new BadRequestError('Invalid book ID');
         throw invalidBookIdError;
     }
+
     let includeDeleted = false;
     if(req.user) {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
+
     const book = await getBook(bookId, includeDeleted);
     if(!book) {
         const bookNotFoundError = new NotFoundError();
         throw bookNotFoundError;
     }
+
     res.status(200).json(book);
 };
 

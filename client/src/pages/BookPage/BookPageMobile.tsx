@@ -46,16 +46,21 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-const BookPageMobile = () => {
+type BookPageMobileProps = {
+    bookId: number;
+};
+const BookPageMobile = (props: BookPageMobileProps) => {
+    const { bookId } = props;
+    
     const { userType } = useAuthContext();
-    const { bookId } = useParams();
     const navigate = useNavigate();
     const theme = useTheme();
-    const styles = getStyles(theme);
-    const bookQuery = useBook(parseInt(bookId || '-1', 10));
-    const { objectUrl } = useBookCover(bookQuery.data?.bookId || -1);
+    const bookQuery = useBook(bookId);
+    const { objectUrl } = useBookCover(bookId);
+
     const showEditBookButton = canEditBook(userType);
     const showAddToCartButton = canBuyBook(userType);
+    const styles = getStyles(theme);
 
     const handleEditBook = () => {
         navigate(`/books/${bookId}/update`);
