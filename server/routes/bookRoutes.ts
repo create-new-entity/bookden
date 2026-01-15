@@ -27,7 +27,7 @@ bookRouter.get('/:id/cover', tokenExtractor, asyncHandler(getBookCoverController
 bookRouter.put('/:id/cover', tokenExtractor, uploadImage.single('coverImage'), asyncHandler(updateBookCoverController));
 bookRouter.delete('/:id/cover', tokenExtractor, asyncHandler(deleteBookCoverController));
 
-bookRouter.get('/:id', asyncHandler(getBookController));
+bookRouter.get('/:id', tokenExtractor, asyncHandler(getBookController));
 bookRouter.patch('/:id', tokenExtractor, asyncHandler(updateBookController));
 bookRouter.delete('/:id', tokenExtractor, asyncHandler(deleteBookController));
 

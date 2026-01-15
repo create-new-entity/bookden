@@ -9,11 +9,14 @@ import { NOT_FOUND } from '../constants';
 
 
 export const useBook = (bookId: number) => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const navigate = useNavigate();
     const bookQuery = useQuery<Book, AxiosErrorResponse>({
         queryKey: ['book', bookId],
-        queryFn: () => getBook(bookId, token),
+        queryFn: () => getBook(bookId, resolvedToken),
         enabled: bookId >= 0,
         retry: false
     });
