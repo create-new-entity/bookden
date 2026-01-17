@@ -73,6 +73,17 @@ export const deleteBook = async (token: string, bookId: number) => {
     await axios.delete(`${bookUrl}/${bookId}`, requestConfig);
 };
 
+export const updateBook = async (bookId: number, data: CreateUpdateBookData, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    // Note to future self: consider using put instead of patch...I mean sending the entire book object anyway so...
+    const response = await axios.patch(`${bookUrl}/${bookId}`, data, requestConfig);
+    return response.data;
+};
+
 
 type AddBookArgs = {
     data: CreateUpdateBookData;

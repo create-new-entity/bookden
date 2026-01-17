@@ -20,3 +20,4 @@ export * from './useBookManagementDeepLinking';
 export * from './useBookTags';
 export * from './useImagePreview';
 export * from './useCreateBook';
+export * from './useUpdateBook';

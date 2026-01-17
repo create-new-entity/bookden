@@ -29,7 +29,6 @@ export const useBookCover = (bookId: number): UseBookCoverReturn => {
         mutationFn: (coverImage: File) => updateBookCover(bookId, coverImage, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['bookCover', bookId] });
-            handleShowNotification('Book cover updated successfully.');
         },
         onError: (error: AxiosErrorResponse) => {
             handleShowNotification(error.response?.data.message || 'An error occurred while updating the book cover.');
