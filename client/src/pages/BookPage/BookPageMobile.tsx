@@ -3,7 +3,7 @@ import {
     Stack, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useBook, useBookCover } from '../../hooks';
 import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
@@ -40,21 +40,31 @@ const getStyles = (_theme: Theme): Styles => {
             padding: `${DEFAULT_GAP}px`,
             width: '100%',
             height: '26rem',
-            overflowY: 'scroll'
+            overflowY: 'auto'
         },
     };
 };
 
 
-const BookPageMobile = () => {
+type BookPageMobileProps = {
+    bookId: number;
+};
+const BookPageMobile = (props: BookPageMobileProps) => {
+    const { bookId } = props;
+    
     const { userType } = useAuthContext();
-    const { bookId } = useParams();
+    const navigate = useNavigate();
     const theme = useTheme();
-    const styles = getStyles(theme);
-    const bookQuery = useBook(parseInt(bookId || '-1', 10));
-    const { objectUrl } = useBookCover(bookQuery.data?.bookId || -1);
+    const bookQuery = useBook(bookId);
+    const { bookCoverBlob } = useBookCover(bookId);
+
     const showEditBookButton = canEditBook(userType);
     const showAddToCartButton = canBuyBook(userType);
+    const styles = getStyles(theme);
+
+    const handleEditBook = () => {
+        navigate(`/books/${bookId}/update`);
+    };
 
     return (
         <Container>
@@ -69,7 +79,7 @@ const BookPageMobile = () => {
                     elevation={5}
                     sx={styles.bookCoverContainer}
                 >
-                    <img src={objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
+                    <img src={bookCoverBlob.objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                 </Paper>
                 <Typography variant='body1' sx={styles.bookTitle}>
                     {bookQuery.data?.title} by {bookQuery.data?.authors?.join(', ')}
@@ -93,7 +103,7 @@ const BookPageMobile = () => {
                     {
                         showEditBookButton && (
                             <EditActionButton
-                                onClick={() => {}}
+                                onClick={handleEditBook}
                                 tooltipTitle='Edit Book'
                             />
                         )

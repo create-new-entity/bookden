@@ -24,15 +24,6 @@ export const urlToFile = async (
     return new File([blob], filename, { type: mimeType });
 };
 
-export const resolveRequiredImageFile = async (file: File | null): Promise<File> => {
-    if (file) return file;
-  
-    return urlToFile(
-        PLACE_HOLDER_BOOK_COVER,
-        'noBookCoverPlaceholder.jpg',
-        'image/jpeg'
-    );
-};
   
 
 export const canEditBook = (userType?: UserType) => {

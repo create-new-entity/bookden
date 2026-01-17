@@ -45,6 +45,25 @@ export const getBookCover = async (bookId: number) => {
     return response.data;
 };
 
+export const updateBookCover = async (bookId: number, coverImage: File, token: string) => {
+    const formData = new FormData();
+    formData.append('coverImage', coverImage);
+
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            authorization: `Bearer ${token}`
+        }
+    };
+
+    const response = await axios.put(
+        `${bookUrl}/${bookId}/cover`,
+        formData,
+        requestConfig
+    );
+
+    return response.data;
+};
+
 export const deleteBook = async (token: string, bookId: number) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
@@ -52,6 +71,17 @@ export const deleteBook = async (token: string, bookId: number) => {
         }
     };
     await axios.delete(`${bookUrl}/${bookId}`, requestConfig);
+};
+
+export const updateBook = async (bookId: number, data: CreateUpdateBookData, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    // Note to future self: consider using put instead of patch...I mean sending the entire book object anyway so...
+    const response = await axios.patch(`${bookUrl}/${bookId}`, data, requestConfig);
+    return response.data;
 };
 
 

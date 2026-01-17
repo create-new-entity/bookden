@@ -9,7 +9,7 @@ export type Book = {
     isbn: string;
     price: number;
     yearPublished: number;
-    language: string;
+    language: LanguageCode;
     pages: number;
     deletedAt: string | null;
     updatedAt: string | null;

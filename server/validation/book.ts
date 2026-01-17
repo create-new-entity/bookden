@@ -1,6 +1,9 @@
 import { z } from 'zod';
+
 import { booksSortByOptions, sortOrderOptions } from '../constants';
 
+const CURRENT_YEAR = new Date().getFullYear();
+const EARLIEST_YEAR_PUBLISHED = 1200;
 
 export const UpdateBookPayloadSchema = z.object({
     title: z.string().min(1, { message: 'Title must be a non-empty string' }).optional(),
@@ -9,13 +12,15 @@ export const UpdateBookPayloadSchema = z.object({
     authors: z.array(z.string()).optional(),
     isbn: z.string().min(1, { message: 'ISBN must be a non-empty string' }).optional(),
     price: z.number().min(0, { message: 'Price must be a non-negative number' }).optional(),
-    yearPublished: z.string().date().optional(),
+    yearPublished: z.number()
+        .int()
+        .gte(EARLIEST_YEAR_PUBLISHED, { message: `Year must be at least ${EARLIEST_YEAR_PUBLISHED}` })
+        .lte(CURRENT_YEAR, { message: `Year must be at most ${CURRENT_YEAR}` }),
     language: z.string().min(1, { message: 'Language must be a non-empty string' }).optional(),
     pages: z.number().min(1, { message: 'Pages must be a positive number' }).optional(),
 });
 
-const CURRENT_YEAR = new Date().getFullYear();
-const EARLIEST_YEAR_PUBLISHED = 1200;
+
 
 export const CreateBookPayloadSchema = z.object({
     title: z.string().min(1, { message: 'Title must be a non-empty string' }),

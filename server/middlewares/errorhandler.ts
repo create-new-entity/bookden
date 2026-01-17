@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import { MulterError } from 'multer';
+import multer, { MulterError } from 'multer';
 
 import { errorMessages, errorNames, AppError, ConflictError } from '../errors';
 import { isPostgresError } from '../types';
@@ -9,6 +9,17 @@ import { isPostgresError } from '../types';
 export const errorHandler = ( error: unknown, _req: Request, res: Response, _next: NextFunction ) => {
 
     console.error(error);
+
+    if (error instanceof multer.MulterError) {
+        if(error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(413).json({
+                message: errorMessages[errorNames.imageTooLarge]
+            });
+        }
+        return res.status(400).json({
+            message: errorMessages[errorNames.invalidFileUpload]
+        });
+    }
 
     if (error instanceof ZodError) {
         return res.status(400).json({

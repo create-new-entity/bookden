@@ -126,7 +126,7 @@ const BadgeContent = (props: BadgeContentProps) => {
 
 type ImageInputProps = {
     inputRef: RefObject<HTMLInputElement | null>;
-    onSelectImagePicked: (file: File) => void;
+    onSelectImagePicked: (file: File) => void; // What to do when the user selects an image.
     avatarStyles: SxProps<Theme>;
     objectUrl: string | undefined;
     alt: string;

@@ -20,6 +20,8 @@ const INVALID_BOOK_ID = 'InvalidBookId' as const;
 const NO_COVER_IMAGE_UPLOADED = 'NoCoverImageUploaded' as const;
 const BOOK_COVER_NOT_FOUND = 'BookCoverNotFound' as const;
 const INVALID_BOOK_TAGS = 'InvalidBookTags' as const;
+const IMAGE_TOO_LARGE = 'ImageTooLarge' as const;
+const INVALID_FILE_UPLOAD = 'InvalidFileUpload' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -43,7 +45,9 @@ export const errorNames = {
     invalidBookId: INVALID_BOOK_ID,
     noCoverImageUploaded: NO_COVER_IMAGE_UPLOADED,
     bookCoverNotFound: BOOK_COVER_NOT_FOUND,
-    invalidBookTags: INVALID_BOOK_TAGS
+    invalidBookTags: INVALID_BOOK_TAGS,
+    imageTooLarge: IMAGE_TOO_LARGE,
+    invalidFileUpload: INVALID_FILE_UPLOAD
 };
 
 export const errorMessages = {
@@ -68,7 +72,9 @@ export const errorMessages = {
     [INVALID_BOOK_ID]: 'Invalid book ID',
     [NO_COVER_IMAGE_UPLOADED]: 'No cover image uploaded',
     [BOOK_COVER_NOT_FOUND]: 'Book cover not found',
-    [INVALID_BOOK_TAGS]: 'One or more booktags are invalid'
+    [INVALID_BOOK_TAGS]: 'One or more booktags are invalid',
+    [IMAGE_TOO_LARGE]: 'Image is too large. Maximum allowed size is 3MB.',
+    [INVALID_FILE_UPLOAD]: 'Invalid file upload'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;

@@ -1,31 +1,32 @@
-
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
-    type CreateUpdateBookData, CreateUpdateBookResolver,
-    CURRENT_YEAR
+    CreateUpdateBookResolver, type CreateUpdateBookData
 } from '../../../validations';
+import type { Book } from '../../../types';
 import BookFormFields from './BookFormFields';
 
 
-type CreateBookFormProps = {
+type UpdateBookFormProps = {
+    book: Book;
     onSubmit: (data: CreateUpdateBookData) => void;
 };
 
+const UpdateBookForm = (props: UpdateBookFormProps) => {
+    const { book, onSubmit } = props;
 
-const CreateBookForm = ({ onSubmit }: CreateBookFormProps) => {
 
     const defaultValues: CreateUpdateBookData = {
-        title: '',
-        authors: [],
-        synopsis: '',
-        isbn: '',
-        yearPublished: CURRENT_YEAR,
-        price: 0,
-        pages: 0,
-        tags: [],
-        language: 'en'
+        title: book.title,
+        authors: book.authors,
+        synopsis: book.synopsis || '',
+        isbn: book.isbn,
+        yearPublished: book.yearPublished,
+        price: book.price,
+        pages: book.pages,
+        tags: book.tags,
+        language: book.language
     };
     
     const form = useForm<CreateUpdateBookData>({
@@ -37,9 +38,9 @@ const CreateBookForm = ({ onSubmit }: CreateBookFormProps) => {
 
     return (
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-            <BookFormFields form={form} mode='create' />
+            <BookFormFields form={form} mode='update' />
         </form>
     );
 };
 
-export default CreateBookForm;
+export default UpdateBookForm;
