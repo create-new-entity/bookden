@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { PLACE_HOLDER_BOOK_COVER } from '../constants';
-
 
 type UseImagePreviewArgs = {
     initialImageUrl?: string;
@@ -10,10 +8,11 @@ type UseImagePreviewArgs = {
 
 
 type UseImagePreviewReturn = {
-  file: File | null;
-  objectUrl: string;
-  setFile: (file: File | null) => void;
-  clearImageFile: () => void;
+    file: File | null;
+    objectUrl: string;
+    selectFile: (file: File) => void;
+    clearImageFile: () => void;
+    isCleared: boolean;
 };
 
 /* 
@@ -57,11 +56,16 @@ export const useImagePreview = (args: UseImagePreviewArgs): UseImagePreviewRetur
         setObjectUrl(initialObjectUrl);
     }, [file, isCleared, initialObjectUrl, placeholderImageUrl]);
 
+    const selectFile = (file: File) => {
+        setIsCleared(false);
+        setFile(file);
+    };
+
     const clearImageFile = () => {
         setFile(null);
         setIsCleared(true);
     };
     
 
-    return { file, objectUrl, setFile, clearImageFile };
+    return { file, objectUrl, selectFile, clearImageFile, isCleared };
 };
