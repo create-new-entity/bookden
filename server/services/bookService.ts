@@ -246,7 +246,9 @@ const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => 
 
         const nonEmptyAuthors = updateBookData.authors?.filter(a => !R.isEmpty(a));
         if(nonEmptyAuthors && nonEmptyAuthors.length) {
-            fragments.push(sqlTag.fragment`authors = ${nonEmptyAuthors}::jsonb`);
+            fragments.push(
+                sqlTag.fragment`authors = ${sql.json(nonEmptyAuthors)}`
+            );
         }
         
         if(updateBookData.isbn) {
