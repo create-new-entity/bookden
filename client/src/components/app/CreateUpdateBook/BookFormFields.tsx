@@ -79,13 +79,14 @@ type BookFormFieldsProps = {
     mode: 'create' | 'update';
     onDelete?: () => void;
     isDeletedBook?: boolean;
+    onRestore?: () => void;
 };
 
 const BookFormFields = (props: BookFormFieldsProps) => {
     const theme = useTheme();
     
     const styles = getStyles(theme);
-    const { form, mode, onDelete, isDeletedBook } = props;
+    const { form, mode, onDelete, isDeletedBook, onRestore } = props;
 
     const { register, formState } = form;
     const areSmallerFieldsStacked = useMediaQuery(theme.breakpoints.down('md'));
@@ -315,6 +316,19 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                 disabled={isDeletedBook}
                             >
                                 Delete Book
+                            </Button>
+                        ) : null
+                    }
+                    {
+                        mode === 'update' && onRestore ? (
+                            <Button
+                                variant='contained'
+                                color='primary'
+                                type='button'
+                                onClick={onRestore}
+                                disabled={!isDeletedBook}
+                            >
+                                Restore Book
                             </Button>
                         ) : null
                     }

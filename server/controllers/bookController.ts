@@ -9,7 +9,7 @@ import {
 import {
     createBook, deleteBook, deleteBookCover,
     getAllBooks, getBook, getBookCover,
-    getBooksPriceRange, getTags, updateBook, updateBookCover
+    getBooksPriceRange, getTags, restoreBook, updateBook, updateBookCover
 } from '../services';
 import {
     AuthenticationError, BadRequestError, errorMessages,
@@ -264,6 +264,28 @@ const getBooksPriceRangeController = async (_req: Request, res: Response) => {
     res.status(200).json(priceRange);
 };
 
+const restoreBookController = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        throw loginRequiredError;
+    }
+
+    const userIsAdminOrSuperadmin = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
+    if(!userIsAdminOrSuperadmin) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    const bookId = parseInt(req.params.id, 10);
+    if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
+        const invalidBookIdError = new BadRequestError(errorMessages[errorNames.invalidBookId]);
+        throw invalidBookIdError;
+    }
+
+    await restoreBook(bookId);
+    res.status(200).end();
+};
+
 
 export {
     getAllBooksController,
@@ -275,5 +297,6 @@ export {
     updateBookCoverController,
     deleteBookCoverController,
     getTagsController,
-    getBooksPriceRangeController
+    getBooksPriceRangeController,
+    restoreBookController
 };

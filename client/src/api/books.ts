@@ -94,6 +94,15 @@ export const updateBook = async (bookId: number, data: CreateUpdateBookData, tok
 };
 
 
+export const restoreBook = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.put(`${bookUrl}/${bookId}/restore`, null, requestConfig);
+};
+
 type AddBookArgs = {
     data: CreateUpdateBookData;
     coverImage: File;

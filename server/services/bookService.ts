@@ -388,6 +388,15 @@ const getBooksPriceRange = async (): Promise<PriceRange> => {
   
     return priceRange;
 };
+
+const restoreBook = async (bookId: number) => {
+    const dbPool = await getPGDBPool();
+    await dbPool.query(sqlTag.typeAlias('Book')`
+        UPDATE books
+        SET deleted_at = NULL
+        WHERE book_id = ${bookId};
+    `);
+};
   
 
 export {
@@ -400,5 +409,6 @@ export {
     updateBookCover,
     deleteBookCover,
     getTags,
-    getBooksPriceRange
+    getBooksPriceRange,
+    restoreBook
 };

@@ -10,7 +10,8 @@ import { Link } from 'react-router-dom';
 import type { Book } from '../../types';
 import { useBlobImage } from '../../hooks';
 import {
-    BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP
+    BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP,
+    PLACE_HOLDER_BOOK_COVER
 } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
 import { getBookCover } from '../../api';
@@ -102,20 +103,20 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                     alignItems={'center'}
                     gap={`${DEFAULT_GAP}px`}
                 >
-                    {
-                        objectUrl ? 
-                            <Box sx={styles.cardMedia}>
+                    <Box sx={styles.cardMedia}>
+                        {
+                            objectUrl ? 
                                 <CardMedia
                                     component='img'
                                     image={objectUrl}
                                 />
-                            </Box>
-                            :
-                            <CardMedia
-                                sx={styles.cardMedia}
-                                component='img'
-                            />
-                    }
+                                :
+                                <CardMedia
+                                    component='img'
+                                    image={PLACE_HOLDER_BOOK_COVER}
+                                />
+                        }
+                    </Box>
                     <CardContent sx={styles.cardContent}>
                         <Stack
                             direction={'column'}
