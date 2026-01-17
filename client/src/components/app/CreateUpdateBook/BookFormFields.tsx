@@ -26,6 +26,7 @@ type Styles = {
     smallerBox: SxProps<Theme>;
     rootStack: SxProps<Theme>;
     smallFieldsStack: SxProps<Theme>;
+    synopsisTextField: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => ({
@@ -58,6 +59,10 @@ const getStyles = (_theme: Theme): Styles => ({
             md: 'center',
         },
         gap: `${DEFAULT_GAP}px`
+    },
+    synopsisTextField: {
+        maxHeight: '10rem',
+        overflow: 'auto'
     }
 });
 
@@ -65,13 +70,14 @@ const getStyles = (_theme: Theme): Styles => ({
 
 type BookFormFieldsProps = {
     form: UseFormReturn<CreateUpdateBookData>;
+    mode: 'create' | 'update';
 };
 
 const BookFormFields = (props: BookFormFieldsProps) => {
     const theme = useTheme();
     
     const styles = getStyles(theme);
-    const { form } = props;
+    const { form, mode } = props;
 
     const { register, formState } = form;
     const areSmallerFieldsStacked = useMediaQuery(theme.breakpoints.down('md'));
@@ -110,6 +116,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
             <Box sx={styles.wrapperBox}>
                 <Typography>Synopsis</Typography>
                 <CustomTextField
+                    sx={styles.synopsisTextField}
                     slotProps={{ htmlInput: { 'data-testid': 'synopsis-field' } }}
                     fullWidth {...register('synopsis')}
                     error={!!formState.errors[SYNOPSIS_FIELD_NAME]}
@@ -278,7 +285,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                         type='submit'
                         disabled={hasErrors}
                     >
-                        Create Book
+                        {mode === 'create' ? 'Create Book' : 'Update Book'}
                     </Button>
                 </Stack>
             </Box>

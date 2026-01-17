@@ -1,17 +1,14 @@
-import { useRef } from 'react';
 import {
     Container, Stack, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
 
-import { useCreateBook, useImagePreview, useSetTabTitle } from '../hooks';
+
 import {
     BOOK_COVER_HEIGHT, BOOK_COVER_WIDTH, MARGIN_TOP_TO_AVOID_NAV_BAR,
     PLACE_HOLDER_BOOK_COVER
-} from '../constants';
-import { CreateBookForm, ImageInput } from '../components/app';
-import { type CreateUpdateBookData } from '../validations';
-import { resolveRequiredImageFile } from '../utility';
+} from '../../constants';
+import { ImageInput } from '../../components/app';
 
 
 type Styles = {
@@ -32,30 +29,23 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-type CreateOrUpdateBookPageProps = {
-    mode: 'create' | 'update';
+type BookEditorLayoutProps = {
+    children: React.ReactNode;
+    imageProps: {
+      inputRef: React.RefObject<HTMLInputElement | null>;
+      objectUrl: string;
+      selectFile: (file: File) => void;
+      clearImageFile: () => void;
+    };
 };
 
-const CreateOrUpdateBookPage = (props: CreateOrUpdateBookPageProps) => {
-    const { file, objectUrl, setFile, clearImageFile } = useImagePreview();
-    const inputRef = useRef<HTMLInputElement>(null);
+const BookEditorLayout = (props: BookEditorLayoutProps) => {
     const theme = useTheme();
-    const { createBookMutation } = useCreateBook();
-
-    const { mode } = props;
     const styles = getStyles(theme);
 
-    const tabTitle = `${mode === 'create' ? 'Create' : 'Update'} Book`;
-
-    useSetTabTitle(tabTitle);
-
-    const onSubmit = async (data: CreateUpdateBookData) => {
-        const coverImage = await resolveRequiredImageFile(file);
-        createBookMutation.mutate({
-            data,
-            coverImage
-        });
-    };
+    const { children, imageProps } = props;
+    const { inputRef, objectUrl, selectFile, clearImageFile } = imageProps;
+    
 
     return (
         <Container sx={styles.rootContainer}>
@@ -66,19 +56,17 @@ const CreateOrUpdateBookPage = (props: CreateOrUpdateBookPageProps) => {
             >
                 <ImageInput
                     inputRef={inputRef}
-                    onSelectImagePicked={setFile}
+                    onSelectImagePicked={selectFile}
                     avatarStyles={styles.avatar}
                     objectUrl={objectUrl}
                     alt={'Book Cover'}
                     defaultPlaceholderImageUrl={PLACE_HOLDER_BOOK_COVER}
                     clearImageFile={clearImageFile}
                 />
-                {
-                    mode === 'create' && <CreateBookForm onSubmit={onSubmit} />
-                }
+                {children}
             </Stack>
         </Container>
     );
 };
 
-export default CreateOrUpdateBookPage;
+export default BookEditorLayout;
