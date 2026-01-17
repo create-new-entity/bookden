@@ -61,7 +61,7 @@ const UpdateBookPage = () => {
     }
   
     return (
-        <BookEditorLayout imageProps={{ ...image, inputRef }}>
+        <BookEditorLayout imageProps={{ ...image, inputRef, disableActionButtons: bookQuery.data.deletedAt !== null }}>
             <UpdateBookForm onSubmit={onSubmit} book={bookQuery.data}/>
         </BookEditorLayout>
     );

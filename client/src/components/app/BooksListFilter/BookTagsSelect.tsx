@@ -9,10 +9,11 @@ type BookTagsSelectProps = {
     onChange: (tags: string[]) => void;
     multiAutoCompleteStyles?: SxProps<Theme>;
     label?: string;
+    disabled?: boolean;
 };
 
 const BookTagsSelect = (props: BookTagsSelectProps) => {
-    const { tags, onChange, multiAutoCompleteStyles = {}, label } = props;
+    const { tags, onChange, multiAutoCompleteStyles = {}, label, disabled } = props;
     const { data: allBookTags } = useBookTags();
     /*
         For this project, we don't really care about tagId at this point.
@@ -29,6 +30,7 @@ const BookTagsSelect = (props: BookTagsSelectProps) => {
             options={allBookTagsOptions}
             value={tags}
             onChange={onChange}
+            disabled={disabled}
         />
     );
 };

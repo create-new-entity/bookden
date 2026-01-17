@@ -5,7 +5,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useBook, useBookCover } from '../../hooks';
-import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
+import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER } from '../../constants';
 import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
 import { useAuthContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
@@ -91,7 +91,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                             elevation={5}
                             sx={styles.bookCoverContainer}
                         >
-                            <img src={bookCoverBlob.objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
+                            <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                         </Paper>
                         <Stack
                             direction={'column'}

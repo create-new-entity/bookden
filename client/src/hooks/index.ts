@@ -21,3 +21,5 @@ export * from './useBookTags';
 export * from './useImagePreview';
 export * from './useCreateBook';
 export * from './useUpdateBook';
+export * from './useDeleteBook';
+export * from './useRestoreBook';
