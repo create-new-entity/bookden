@@ -45,6 +45,25 @@ export const getBookCover = async (bookId: number) => {
     return response.data;
 };
 
+export const updateBookCover = async (bookId: number, coverImage: File, token: string) => {
+    const formData = new FormData();
+    formData.append('coverImage', coverImage);
+
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            authorization: `Bearer ${token}`
+        }
+    };
+
+    const response = await axios.put(
+        `${bookUrl}/${bookId}/cover`,
+        formData,
+        requestConfig
+    );
+
+    return response.data;
+};
+
 export const deleteBook = async (token: string, bookId: number) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {

@@ -56,7 +56,7 @@ const BookPageMobile = (props: BookPageMobileProps) => {
     const navigate = useNavigate();
     const theme = useTheme();
     const bookQuery = useBook(bookId);
-    const { objectUrl } = useBookCover(bookId);
+    const { bookCoverBlob } = useBookCover(bookId);
 
     const showEditBookButton = canEditBook(userType);
     const showAddToCartButton = canBuyBook(userType);
@@ -79,7 +79,7 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                     elevation={5}
                     sx={styles.bookCoverContainer}
                 >
-                    <img src={objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
+                    <img src={bookCoverBlob.objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                 </Paper>
                 <Typography variant='body1' sx={styles.bookTitle}>
                     {bookQuery.data?.title} by {bookQuery.data?.authors?.join(', ')}

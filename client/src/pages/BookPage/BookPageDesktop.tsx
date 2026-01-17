@@ -55,7 +55,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
     const navigate = useNavigate();
     const theme = useTheme();
     const bookQuery = useBook(bookId);
-    const { objectUrl } = useBookCover(bookId);
+    const { bookCoverBlob } = useBookCover(bookId);
 
     const showEditBookButton = canEditBook(userType);
     const showAddToCartButton = canBuyBook(userType);
@@ -91,7 +91,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                             elevation={5}
                             sx={styles.bookCoverContainer}
                         >
-                            <img src={objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
+                            <img src={bookCoverBlob.objectUrl} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                         </Paper>
                         <Stack
                             direction={'column'}

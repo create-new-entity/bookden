@@ -17,8 +17,14 @@ type UseBlobImageOptions = {
     enabled?: boolean;
 };
 
+export type UseBlobImageReturn = {
+    objectUrl: string | undefined;
+    isLoading: boolean;
+    isError: boolean;
+    error: AxiosError | null;
+};
 
-export const useBlobImage = ({ queryKey, queryFn, enabled = true }: UseBlobImageOptions) => {
+export const useBlobImage = ({ queryKey, queryFn, enabled = true }: UseBlobImageOptions): UseBlobImageReturn => {
     const [objectUrl, setObjectUrl] = useState<string | undefined>(undefined);
     const blobResult = useQuery<Blob, AxiosError>({
         queryKey, queryFn, enabled, retry: false
