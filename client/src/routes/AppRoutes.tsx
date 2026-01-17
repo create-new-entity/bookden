@@ -49,6 +49,7 @@ const AppRoutes = () => {
             <Route path={HOME} element={<HomePage/>} />
             <Route path={UNAUTHORIZED} element={<UnauthorizedPage/>} />
             <Route path={NOT_FOUND} element={<NotFoundPage/>} />
+            <Route path={'*'} element={<NotFoundPage/>} />
         </Routes>
     );
 };
