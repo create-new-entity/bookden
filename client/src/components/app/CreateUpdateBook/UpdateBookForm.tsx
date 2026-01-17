@@ -6,6 +6,7 @@ import {
 } from '../../../validations';
 import type { Book } from '../../../types';
 import BookFormFields from './BookFormFields';
+import { useDeleteBook } from '../../../hooks';
 
 
 type UpdateBookFormProps = {
@@ -15,6 +16,7 @@ type UpdateBookFormProps = {
 
 const UpdateBookForm = (props: UpdateBookFormProps) => {
     const { book, onSubmit } = props;
+    const { deleteBookCoverAndBookData } = useDeleteBook(book.bookId);
 
 
     const defaultValues: CreateUpdateBookData = {
@@ -38,7 +40,12 @@ const UpdateBookForm = (props: UpdateBookFormProps) => {
 
     return (
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-            <BookFormFields form={form} mode='update' />
+            <BookFormFields
+                form={form}
+                mode='update'
+                onDelete={deleteBookCoverAndBookData}
+                isDeletedBook={book.deletedAt !== null}
+            />
         </form>
     );
 };

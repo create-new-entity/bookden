@@ -36,6 +36,7 @@ type BookEditorLayoutProps = {
       objectUrl: string;
       selectFile: (file: File) => void;
       clearImageFile: () => void;
+      disableActionButtons?: boolean;
     };
 };
 
@@ -44,7 +45,7 @@ const BookEditorLayout = (props: BookEditorLayoutProps) => {
     const styles = getStyles(theme);
 
     const { children, imageProps } = props;
-    const { inputRef, objectUrl, selectFile, clearImageFile } = imageProps;
+    const { inputRef, objectUrl, selectFile, clearImageFile, disableActionButtons } = imageProps;
     
 
     return (
@@ -62,6 +63,7 @@ const BookEditorLayout = (props: BookEditorLayoutProps) => {
                     alt={'Book Cover'}
                     defaultPlaceholderImageUrl={PLACE_HOLDER_BOOK_COVER}
                     clearImageFile={clearImageFile}
+                    disableActionButtons={disableActionButtons}
                 />
                 {children}
             </Stack>

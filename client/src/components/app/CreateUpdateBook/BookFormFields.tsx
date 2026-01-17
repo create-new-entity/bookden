@@ -1,7 +1,13 @@
-import { Box, Button, Stack, Typography, useMediaQuery, useTheme, type SxProps, type Theme } from '@mui/material';
+import {
+    Box, Button, Stack,
+    Typography, useMediaQuery, useTheme,
+    type SxProps, type Theme
+} from '@mui/material';
 import * as R from 'ramda';
 
-import { CustomSingleAutoComplete, CustomTextField, MultiValueInput } from '../../custom';
+import {
+    CustomSingleAutoComplete, CustomTextField, MultiValueInput
+} from '../../custom';
 import type { CreateUpdateBookData } from '../../../validations/book';
 import { Controller, type UseFormReturn } from 'react-hook-form';
 import { DEFAULT_GAP, LANGUAGE_OPTIONS } from '../../../constants';
@@ -71,13 +77,15 @@ const getStyles = (_theme: Theme): Styles => ({
 type BookFormFieldsProps = {
     form: UseFormReturn<CreateUpdateBookData>;
     mode: 'create' | 'update';
+    onDelete?: () => void;
+    isDeletedBook?: boolean;
 };
 
 const BookFormFields = (props: BookFormFieldsProps) => {
     const theme = useTheme();
     
     const styles = getStyles(theme);
-    const { form, mode } = props;
+    const { form, mode, onDelete, isDeletedBook } = props;
 
     const { register, formState } = form;
     const areSmallerFieldsStacked = useMediaQuery(theme.breakpoints.down('md'));
@@ -111,6 +119,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                             </Typography>
                         ) : undefined
                     }
+                    disabled={isDeletedBook}
                 />
             </Box>
             <Box sx={styles.wrapperBox}>
@@ -128,6 +137,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                             </Typography>
                         ) : undefined
                     }
+                    disabled={isDeletedBook}
                 />
             </Box>
             <Box sx={styles.wrapperBox}>
@@ -158,6 +168,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                     options={LANGUAGE_OPTIONS}
                                     value={field.value}
                                     onChange={field.onChange}
+                                    disabled={isDeletedBook}
                                 />
                             )}
                         />
@@ -176,6 +187,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                     </Typography>
                                 ) : undefined
                             }
+                            disabled={isDeletedBook}
                         />
                     </Box>
                     <Box sx={styles.smallerBox}>
@@ -192,6 +204,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                     </Typography>
                                 ) : undefined
                             }
+                            disabled={isDeletedBook}
                         />
                     </Box>
                     <Box>
@@ -208,6 +221,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                     </Typography>
                                 ) : undefined
                             }
+                            disabled={isDeletedBook}
                         />
                     </Box>
                     <Box>
@@ -223,6 +237,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                     </Typography>
                                 ) : undefined
                             }
+                            disabled={isDeletedBook}
                         />
                     </Box>
                 </Stack>
@@ -246,6 +261,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                             placeholder="Type and hit enter to add an author"
                             value={field.value ?? []}
                             onChange={field.onChange}
+                            disabled={isDeletedBook}
                         />
                     )}
                 />
@@ -268,6 +284,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                             <BookTagsSelect
                                 tags={field.value ?? []}
                                 onChange={field.onChange}
+                                disabled={isDeletedBook}
                             />
                         );
                     }}
@@ -278,15 +295,29 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                     direction={'row'}
                     justifyContent={'center'}
                     alignItems={'center'}
+                    gap={`${DEFAULT_GAP}px`}
                 >
                     <Button
                         variant='contained'
                         color='primary'
                         type='submit'
-                        disabled={hasErrors}
+                        disabled={hasErrors || isDeletedBook}
                     >
                         {mode === 'create' ? 'Create Book' : 'Update Book'}
                     </Button>
+                    {
+                        mode === 'update' && onDelete ? (
+                            <Button
+                                variant='contained'
+                                color='error'
+                                type='button'
+                                onClick={onDelete}
+                                disabled={isDeletedBook}
+                            >
+                                Delete Book
+                            </Button>
+                        ) : null
+                    }
                 </Stack>
             </Box>
         </Stack>

@@ -132,16 +132,17 @@ type ImageInputProps = {
     alt: string;
     defaultPlaceholderImageUrl: string;
     clearImageFile: () => void;
+    disableActionButtons?: boolean;
 };
 
 
 const ImageInput = (props: ImageInputProps) => {
     const {
-        inputRef, onSelectImagePicked, avatarStyles,
-        objectUrl, alt, defaultPlaceholderImageUrl, clearImageFile
+        inputRef, onSelectImagePicked, avatarStyles, objectUrl,
+        alt, defaultPlaceholderImageUrl, clearImageFile, disableActionButtons
     } = props;
 
-    const badgeContent = <BadgeContent
+    const badgeContent = disableActionButtons ? null : <BadgeContent
         objectUrl={objectUrl}
         inputRef={inputRef}
         clearImageFile={clearImageFile}

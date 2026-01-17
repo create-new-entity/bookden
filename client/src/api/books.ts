@@ -64,7 +64,16 @@ export const updateBookCover = async (bookId: number, coverImage: File, token: s
     return response.data;
 };
 
-export const deleteBook = async (token: string, bookId: number) => {
+export const deleteBookCover = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.delete(`${bookUrl}/${bookId}/cover`, requestConfig);
+};
+
+export const deleteBook = async (bookId: number, token: string) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`

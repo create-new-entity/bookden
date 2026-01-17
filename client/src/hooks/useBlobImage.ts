@@ -31,11 +31,13 @@ export const useBlobImage = ({ queryKey, queryFn, enabled = true }: UseBlobImage
     });
 
     useEffect(() => {
-        const blob = blobResult.data;
-        if(!blob) {
+        const noValidBlobImage = blobResult.isError || !blobResult.data;
+        if (noValidBlobImage) {
+            setObjectUrl(undefined);
             return;
         }
-        const url = URL.createObjectURL(blob);
+        
+        const url = URL.createObjectURL(blobResult.data);
         setObjectUrl(url);
         
         return () => {
@@ -43,7 +45,7 @@ export const useBlobImage = ({ queryKey, queryFn, enabled = true }: UseBlobImage
                 URL.revokeObjectURL(url);
             }
         };
-    }, [blobResult.data]);
+    }, [blobResult.data, blobResult.isError]);
 
 
     return {
