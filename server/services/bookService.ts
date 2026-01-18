@@ -304,10 +304,15 @@ const updateBook = async (bookId: number, updateBookData: UpdateBookPayload) => 
 
 const updateBookCover = async (bookId: number, coverImage: Buffer, coverImageMimeType: string) => {
     const dbPool = await getPGDBPool();
+
     await dbPool.query(sqlTag.typeAlias('BookCover')`
-        UPDATE book_covers
-        SET image_data = ${sqlTag.binary(coverImage)}, mime_type = ${coverImageMimeType}
-        WHERE book_id = ${bookId};
+        INSERT INTO book_covers (book_id, image_data, mime_type)
+        VALUES (${bookId}, ${sqlTag.binary(coverImage)}, ${coverImageMimeType})
+        ON CONFLICT (book_id)
+        DO UPDATE
+        SET
+            image_data = EXCLUDED.image_data,
+            mime_type = EXCLUDED.mime_type;
     `);
 };
 
