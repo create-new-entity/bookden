@@ -56,7 +56,7 @@ const getStyles = (theme: Theme): Styles => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            width: '25rem'
+            width: '23rem'
         },
         author: {
             [theme.breakpoints.down('sm')]: {
@@ -69,10 +69,7 @@ const getStyles = (theme: Theme): Styles => {
         },
         price: {
             [theme.breakpoints.down('sm')]: {
-                fontSize: smallerFontSize,
-                // overflow: 'hidden',
-                // textOverflow: 'ellipsis',
-                // flexGrow: 1
+                fontSize: smallerFontSize
             }
         },
         yearPublished: {
@@ -163,6 +160,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                         direction={'column'}
                         justifyContent={'flex-start'}
                         alignItems={'flex-start'}
+                        flexGrow={1}
                         gap={`${DEFAULT_GAP / 4}px`}
                         sx={styles.dataStack}
                     >
