@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
     IconButton, Stack, Tooltip,
     Typography, useTheme, type SxProps, type Theme
@@ -17,10 +17,12 @@ import {
 import {
     CustomModal, CustomPagination, Items,
     BooksListFilterDesktop, type CustomModalRef,
-    BooksListFilterMobile, BookCard
+    BooksListFilterMobile, BookCardDesktop,
+    BookCardMobile
 } from '../components';
 import { useAuthContext } from '../contexts';
 import type { Book } from '../types';
+import type { ViewSelectorProps } from '../components/app/ViewSelector';
 
 
 
@@ -72,13 +74,14 @@ const getStyles = (theme: Theme): Styles => {
 
 
 const BookManagementPage = () => {
-    const { isDesktop } = useResponsive();
+    const { isDesktop, isMobile } = useResponsive();
     const theme = useTheme();
     const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>(isMobile ? 'list' : 'grid');
     
     const styles = getStyles(theme);
     const { search, sortBy, sortOrder, tags } = params;
@@ -132,6 +135,8 @@ const BookManagementPage = () => {
                         params={params}
                         updateParams={updateParams}
                         priceRangeMeta={priceRangeMeta}
+                        selectedView={selectedView}
+                        onViewChange={setSelectedView}
                     />
                 }
                 {
@@ -151,9 +156,9 @@ const BookManagementPage = () => {
                 <Items<Book>
                     sx={styles.items}
                     items={booksList.data?.data || []}
-                    ItemComponent={BookCard}
+                    ItemComponent={(!isMobile && selectedView === GRID_VIEW) ? BookCardDesktop : BookCardMobile}
                     getKey={(book) => book.bookId}
-                    viewOption={GRID_VIEW}
+                    viewOption={selectedView}
                     onItemDelete={handleQueryClientInvalidation}
                 />
                 {

@@ -21,6 +21,8 @@ import { useAuthContext } from '../../../contexts';
 import BookTagsSelect from './BookTagsSelect';
 import BooksPriceFilter from './BooksPriceFilter';
 import { type UpdateMode } from '../../../hooks';
+import type { ViewSelectorProps } from '../ViewSelector';
+import ViewSelector from '../ViewSelector';
 
 
 type Styles = {
@@ -68,6 +70,8 @@ type BooksListFilterDesktopProps = {
     updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
     priceRangeMeta: BooksPriceRangeMeta;
     params: Omit<BookSearchParams, 'tags'>;
+    selectedView: ViewSelectorProps['selectedView'];
+    onViewChange: ViewSelectorProps['onViewChange'];
 };
 
 const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
@@ -76,9 +80,9 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const { userType } = useAuthContext();
     const [isTagsCollapseOpen, setIsTagsCollapseOpen] = useState(false);
     const navigate = useNavigate();
-    
+
     const isClientAdminOrSuperAdmin = userType === SUPERADMIN || userType === ADMIN;
-    const { tags, params, updateParams, priceRangeMeta } = props;
+    const { tags, params, updateParams, priceRangeMeta, selectedView, onViewChange } = props;
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
@@ -159,6 +163,10 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                             </Tooltip>
                         )
                     }
+                    <ViewSelector
+                        selectedView={selectedView}
+                        onViewChange={onViewChange}
+                    />
                 </Stack>
                 <Stack sx={styles.additionalOptionsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>

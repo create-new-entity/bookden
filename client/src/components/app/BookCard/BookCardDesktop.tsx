@@ -1,20 +1,20 @@
 
-
 import {
     Box, Card, CardContent,
     CardMedia, Stack, Typography, Tooltip
 } from '@mui/material';
-import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
+import {useTheme,type SxProps,type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 
-import type { Book } from '../../types';
-import { useBlobImage } from '../../hooks';
+
+import type { Book } from '../../../types';
 import {
     BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP,
     PLACE_HOLDER_BOOK_COVER
-} from '../../constants';
-import { useAuthContext, useNotificationContext } from '../../contexts';
-import { getBookCover } from '../../api';
+} from '../../../constants';
+import { useAuthContext, useNotificationContext } from '../../../contexts';
+import { getBookCover } from '../../../api';
+import { useBlobImage } from '../../../hooks';
 
 
 
@@ -67,12 +67,12 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-type BookCardProps = {
+type BookCardDesktopProps = {
     item: Book;
     onItemDelete?: () => void;
 };
 
-const BookCard = ({ item, onItemDelete }: BookCardProps) => {
+const BookCardDesktop = ({ item, onItemDelete }: BookCardDesktopProps) => {
     const book = item;
     const { token } = useAuthContext();
     const blobOptions = {
@@ -164,4 +164,4 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
     );
 };
 
-export default BookCard;
+export default BookCardDesktop;

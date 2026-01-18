@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
-import { customColors, DEFAULT_SPACING, MEDIUM_SVG_ICON_FONT_SIZE, SMALL_SVG_ICON_FONT_SIZE } from '../constants';
+import { customColors, DEFAULT_BORDER_RADIUS, DEFAULT_SPACING, MEDIUM_SVG_ICON_FONT_SIZE, SMALL_SVG_ICON_FONT_SIZE } from '../constants';
 import {
     BORDER_RADIUS,
     LARGE_SVG_ICON_FONT_SIZE,
@@ -181,6 +181,11 @@ export const getTheme = (mode: ThemeMode) => {
                     disableRipple: true,
                     disableFocusRipple: true,
                     disableTouchRipple: true
+                },
+                styleOverrides: {
+                    root: {
+                        borderRadius: DEFAULT_BORDER_RADIUS,
+                    }
                 }
             },
             MuiAppBar: {
@@ -256,7 +261,7 @@ export const getTheme = (mode: ThemeMode) => {
                 styleOverrides: {
                     root: {
                         backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
-                        borderRadius: '0.5rem'
+                        borderRadius: DEFAULT_BORDER_RADIUS,
                     },
                     paper: {
                         backgroundColor: theme.palette.background.elevated,
