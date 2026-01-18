@@ -1,23 +1,22 @@
-import EditSquareIcon from '@mui/icons-material/EditSquare';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 import ActionButton from './ActionButton';
 
-
-type EditActionButtonProps = {
+type RestoreActionButtonProps = {
     onClick: () => void;
     tooltipTitle: string;
 };
 
-const EditActionButton = (props: EditActionButtonProps) => {
+const RestoreActionButton = (props: RestoreActionButtonProps) => {
     const { onClick, tooltipTitle } = props;
-    
+
     return (
         <ActionButton
-            icon={<EditSquareIcon />}
+            icon={<ReplayIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
         />
     );
 };
 
-export default EditActionButton;
+export default RestoreActionButton;

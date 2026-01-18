@@ -1,23 +1,22 @@
-import EditSquareIcon from '@mui/icons-material/EditSquare';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import ActionButton from './ActionButton';
 
-
-type EditActionButtonProps = {
+type DeleteActionButtonProps = {
     onClick: () => void;
     tooltipTitle: string;
 };
 
-const EditActionButton = (props: EditActionButtonProps) => {
+const DeleteActionButton = (props: DeleteActionButtonProps) => {
     const { onClick, tooltipTitle } = props;
-    
+
     return (
         <ActionButton
-            icon={<EditSquareIcon />}
+            icon={<DeleteIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
         />
     );
 };
 
-export default EditActionButton;
+export default DeleteActionButton;
