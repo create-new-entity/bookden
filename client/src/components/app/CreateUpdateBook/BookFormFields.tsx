@@ -194,7 +194,12 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                     <Box sx={styles.smallerBox}>
                         <Typography>Price</Typography>
                         <CustomTextField
-                            slotProps={{ htmlInput: { 'data-testid': 'price-field' } }}
+                            slotProps={{
+                                htmlInput: {
+                                    'data-testid': 'price-field',
+                                    step: 'any' // Otherwise it complains for values like 9.99 and so on.
+                                }
+                            }}
                             type={'number'}
                             fullWidth {...register(PRICE_FIELD_NAME)}
                             error={!!formState.errors[PRICE_FIELD_NAME]}
