@@ -27,7 +27,6 @@ const yearPublishedSchema = z
 
 const priceSchema = z
     .coerce.number()
-    .int('Price must be an integer')
     .min(0, 'Price must be ≥ 0');
 
 const pagesSchema = z

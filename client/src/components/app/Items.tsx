@@ -7,14 +7,15 @@ import type { SxProps, Theme } from '@mui/material';
 
 type ItemsProps<T> = {
     items: T[];
-    ItemComponent: React.ComponentType<{ item: T, onItemDelete?: () => void }>;
+    ItemComponent: React.ComponentType<{ item: T, onItemDelete?: () => void, onItemRestore?: () => void }>;
     getKey: (item: T) => React.Key;
     viewOption: ViewOptionsTypes;
     sx?: SxProps<Theme>;
     onItemDelete?: () => void;
+    onItemRestore?: () => void;
 };
 
-const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx, onItemDelete }: ItemsProps<T>) => {
+const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx, onItemDelete, onItemRestore }: ItemsProps<T>) => {
     const isListView = viewOption === LIST_VIEW;
     const gridSizes = isListView ? LIST_VIEW_GRID_SIZES : ITEMS_GRID_SIZES;
     return (
@@ -22,7 +23,7 @@ const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx, onItemDelete 
             {
                 items.map((item) => (
                     <Grid size={gridSizes} key={getKey(item)}>
-                        <ItemComponent item={item} onItemDelete={onItemDelete} />
+                        <ItemComponent item={item} onItemDelete={onItemDelete} onItemRestore={onItemRestore} />
                     </Grid>
                 ))  
             }

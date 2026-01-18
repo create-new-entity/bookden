@@ -21,3 +21,5 @@ export type SingleSelectOption<V extends string | number> = {
     label: string;
 };
   
+
+export type ItemActions = 'edit' | 'delete' | 'restore';

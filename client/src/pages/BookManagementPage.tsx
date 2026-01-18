@@ -81,7 +81,7 @@ const BookManagementPage = () => {
     const { userType: clientUserType } = useAuthContext();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>(isMobile ? 'list' : 'grid');
+    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('list');
     
     const styles = getStyles(theme);
     const { search, sortBy, sortOrder, tags } = params;
@@ -160,6 +160,7 @@ const BookManagementPage = () => {
                     getKey={(book) => book.bookId}
                     viewOption={selectedView}
                     onItemDelete={handleQueryClientInvalidation}
+                    onItemRestore={handleQueryClientInvalidation}
                 />
                 {
                     booksList.data &&

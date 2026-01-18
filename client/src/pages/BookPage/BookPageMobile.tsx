@@ -30,8 +30,7 @@ const getStyles = (_theme: Theme): Styles => {
         },
         bookTitle: {
             overflow: 'hidden',
-            overflowX: 'scroll',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'wrap',
             marginLeft: '1rem',
             marginRight: '1rem'
         },
