@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Box, Card, CardMedia,
     Stack, Typography, useTheme,
@@ -6,9 +6,11 @@ import {
 } from '@mui/material';
 
 import { getBookCover } from '../../../api';
-import { useBlobImage } from '../../../hooks';
+import { useBlobImage, useDeleteBook, useRestoreBook } from '../../../hooks';
 import type { Book } from '../../../types';
-import { DEFAULT_GAP } from '../../../constants';
+import { DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
+import { useAuthContext } from '../../../contexts';
+import BookCardActions from './BookCardActions';
 
 type Styles = {
     card: SxProps<Theme>;
@@ -27,7 +29,10 @@ const getStyles = (theme: Theme): Styles => {
     return {
         card: {
             padding: '0.6rem',
-            height: cardHeight
+            height: cardHeight,
+            '& .MuiIconButton-root': {
+                padding: 0
+            }
         },
         cardMedia: {
             '& img': {
@@ -48,13 +53,10 @@ const getStyles = (theme: Theme): Styles => {
             }
         },
         title: {
-            [theme.breakpoints.down('sm')]: {
-                fontSize: '1rem',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                width: '90%'
-            }
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            width: '25rem'
         },
         author: {
             [theme.breakpoints.down('sm')]: {
@@ -89,10 +91,12 @@ const getStyles = (theme: Theme): Styles => {
 
 type BookCardMobileProps = {
     item: Book;
+    onItemDelete?: () => void;
+    onItemRestore?: () => void;
 };
 
 const BookCardMobile = (props: BookCardMobileProps) => {
-    const { item } = props;
+    const { item, onItemDelete, onItemRestore } = props;
     const book = item;
     const blobOptions = {
         queryKey: ['bookCover', book.bookId],
@@ -101,8 +105,36 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     };
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
+    const { deleteBookCoverAndBookData } = useDeleteBook(book.bookId);
+    const { restoreBookMutation } = useRestoreBook(book.bookId);
+    const navigate = useNavigate();
+
+    const { userType, hasExistingLoggedInUser } = useAuthContext();
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedUserType = existingLoggedInData?.userType || userType;
+    const isAdminOrSuperAdmin = resolvedUserType === 'admin' || resolvedUserType === 'superadmin';
+
 
     const styles = getStyles(theme);
+    const isAlreadyDeleted = book.deletedAt !== null;
+
+    const handleDeleteBook = async () => {
+        onItemDelete?.();
+        deleteBookCoverAndBookData();
+    };
+    
+    const onEdit = () => {
+        navigate(`/books/${book.bookId}/update`);
+    };
+
+    const onDelete = () => {
+        handleDeleteBook();
+    };
+
+    const onRestore = () => {
+        restoreBookMutation.mutate();
+        onItemRestore?.();
+    };
 
     return (
         <Link to={`/books/${book.bookId}`}>
@@ -114,11 +146,18 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                     gap={`${DEFAULT_GAP / 2}px`}
                 >
                     <Box sx={styles.cardMedia}>
-                        <CardMedia
-                            component='img'
-                            image={objectUrl}
-                            alt={book.title}
-                        />
+                        {
+                            objectUrl ? 
+                                <CardMedia
+                                    component='img'
+                                    image={objectUrl}
+                                />
+                                :
+                                <CardMedia
+                                    component='img'
+                                    image={PLACE_HOLDER_BOOK_COVER}
+                                />
+                        }
                     </Box>
                     <Stack
                         direction={'column'}
@@ -127,9 +166,35 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                         gap={`${DEFAULT_GAP / 4}px`}
                         sx={styles.dataStack}
                     >
-                        <Typography sx={styles.title} variant='h6'>
-                            {book.title}
-                        </Typography>
+                        <Stack
+                            direction={'row'}
+                            justifyContent={'space-between'}
+                            alignItems={'center'}
+                            gap={`${DEFAULT_GAP / 4}px`}
+                            alignSelf={'stretch'}
+                        >
+                            <Typography sx={styles.title} variant='h6'>
+                                {book.title}
+                            </Typography>
+                            {
+                                isAdminOrSuperAdmin &&
+                                <Stack
+                                    direction={'row'}
+                                    justifyContent={'flex-start'}
+                                    alignItems={'center'}
+                                    gap={`${DEFAULT_GAP / 4}px`}
+                                >
+                                    <BookCardActions
+                                        bookId={book.bookId}
+                                        isAlreadyDeleted={isAlreadyDeleted}
+                                        allowedActions={['edit', 'delete', 'restore']}
+                                        onEdit={onEdit}
+                                        onDelete={onDelete}
+                                        onRestore={onRestore}
+                                    />
+                                </Stack>
+                            }
+                        </Stack>
                         <Stack
                             direction={'row'}
                             justifyContent={'flex-start'}
