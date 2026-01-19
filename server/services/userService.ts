@@ -171,6 +171,15 @@ const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): b
     return hierarchy[creatorUserType].includes(targetUserType);
 };
 
+const canRestoreUser = (restorerUserType: UserTypes, targetUserType: UserTypes): boolean => {
+    const hierarchy: Record<UserTypes, UserTypes[]>= {
+        superadmin: [ADMIN, CUSTOMER],
+        admin: [CUSTOMER],
+        customer: []
+    };
+    return hierarchy[restorerUserType].includes(targetUserType);
+};
+
 const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): boolean => {
     const hierarchy: Record<UserTypes, UserTypes[]>= {
         superadmin: [ADMIN, CUSTOMER],
@@ -317,12 +326,41 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
     }
 };
 
+const restoreUser = async (requestorUser: JWTSignPayload, targetUserId: string): Promise<void> => {
+    const dbPool = await getPGDBPool();
+
+    const targetUserResult = await dbPool.one(sqlTag.typeAlias('User')`
+        SELECT user_type
+        FROM users
+        WHERE user_id = ${targetUserId}
+    `);
+
+    if(!targetUserResult) {
+        const notFoundError = new NotFoundError();
+        throw notFoundError;
+    }
+    const targetUserType = targetUserResult.user_type;
+
+    if(!canRestoreUser(requestorUser.userType, targetUserType)) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    await dbPool.query(sqlTag.typeAlias('User')`
+        UPDATE users
+        SET deleted_at = NULL
+        WHERE user_id = ${targetUserId}
+    `);
+};
+
 export {
     getAllUsers,
     getUser,
     getMyself,
     createUser,
     canCreateUser,
+    canRestoreUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    restoreUser
 };
