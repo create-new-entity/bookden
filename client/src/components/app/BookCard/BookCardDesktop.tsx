@@ -12,7 +12,6 @@ import {
     BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP,
     PLACE_HOLDER_BOOK_COVER
 } from '../../../constants';
-import { useAuthContext } from '../../../contexts';
 import { getBookCover } from '../../../api';
 import { useBlobImage, useDeleteBook, useRestoreBook } from '../../../hooks';
 import BookCardActions from './BookCardActions';
@@ -70,12 +69,10 @@ const getStyles = (_theme: Theme): Styles => {
 
 
 type BookCardDesktopProps = {
-    item: Book;
-    onItemDelete?: () => void;
-    onItemRestore?: () => void;
+    item: Book
 };
 
-const BookCardDesktop = ({ item, onItemDelete, onItemRestore }: BookCardDesktopProps) => {
+const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
     const book = item;
     const blobOptions = {
         queryKey: ['bookCover', book.bookId],
@@ -84,22 +81,16 @@ const BookCardDesktop = ({ item, onItemDelete, onItemRestore }: BookCardDesktopP
     };
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
-    const { deleteBookCoverAndBookData } = useDeleteBook(book.bookId);
-    const { restoreBookMutation } = useRestoreBook(book.bookId);
+    const { deleteBookCoverAndBookData } = useDeleteBook();
+    const { restoreBookMutation } = useRestoreBook();
     const navigate = useNavigate();
-
-    const { userType, hasExistingLoggedInUser } = useAuthContext();
-    const { existingLoggedInData } = hasExistingLoggedInUser();
-    const resolvedUserType = existingLoggedInData?.userType || userType;
-    const isAdminOrSuperAdmin = resolvedUserType === 'admin' || resolvedUserType === 'superadmin';
 
 
     const styles = getStyles(theme);
     const isDeleted = book.deletedAt !== null;
 
     const handleDeleteBook = async () => {
-        onItemDelete?.();
-        deleteBookCoverAndBookData();
+        deleteBookCoverAndBookData(book.bookId);
     };
     
     const onEdit = () => {
@@ -111,8 +102,7 @@ const BookCardDesktop = ({ item, onItemDelete, onItemRestore }: BookCardDesktopP
     };
 
     const onRestore = () => {
-        restoreBookMutation.mutate();
-        onItemRestore?.();
+        restoreBookMutation.mutate(book.bookId);
     };
 
     return (
@@ -183,12 +173,6 @@ const BookCardDesktop = ({ item, onItemDelete, onItemRestore }: BookCardDesktopP
                                         </Typography>
                                 }
                             </Tooltip>
-                            {/* <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>  
-                                {
-                                    book.deletedAt &&
-                                    <Chip label='Deleted' color='error' size='small' />
-                                }
-                            </Stack> */}
                             <Tooltip title={`€${book.price}`}>
                                 <Typography variant='body1' sx={styles.textOverflowEllipsis}>
                                     €{book.price}

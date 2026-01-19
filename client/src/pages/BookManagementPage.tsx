@@ -1,10 +1,7 @@
 import { useRef, useState } from 'react';
 import {
-    IconButton, Stack, Tooltip,
-    Typography, useTheme, type SxProps, type Theme
+    Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
-import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -23,6 +20,7 @@ import { useAuthContext } from '../contexts';
 import type { Book } from '../types';
 import type { ViewSelectorProps } from '../components/app/ViewSelector';
 import FilterActionIcon from '../components/app/ActionIcons/FilterActionIcon';
+import AddActionIcon from '../components/app/ActionIcons/AddActionIcon';
 import ClearBookFilterActions from '../components/app/BooksListFilter/ClearBookFilterActions';
 
 
@@ -80,19 +78,12 @@ const BookManagementPage = () => {
     const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('list');
+    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
     
     const styles = getStyles(theme);
     const { tags } = params;
     const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
-    const queryKey = ['booksList', params.search, params.page, params.sortBy, params.sortOrder, params.tags];
-    
-
-    const handleQueryClientInvalidation = () => {
-        queryClient.invalidateQueries({ queryKey });
-    };
 
     const openFilterModal = () => {
         modalRef.current?.openModal();
@@ -124,13 +115,9 @@ const BookManagementPage = () => {
                     <FilterActionIcon onClick={openFilterModal} tooltipTitle='Filter options' />
                     {
                         isClientAdminOrSuperAdmin && (
-                            <Tooltip title='Add a new book'>
-                                <IconButton onClick={() => {
-                                    navigate(CREATE_BOOK);
-                                }}>
-                                    <Add />
-                                </IconButton>
-                            </Tooltip>
+                            <AddActionIcon onClick={() => {
+                                navigate(CREATE_BOOK);
+                            }} tooltipTitle='Add a new book' />
                         )
                     }
                 </Stack>
@@ -165,8 +152,6 @@ const BookManagementPage = () => {
                     ItemComponent={(!isMobile && selectedView === GRID_VIEW) ? BookCardDesktop : BookCardMobile}
                     getKey={(book) => book.bookId}
                     viewOption={selectedView}
-                    onItemDelete={handleQueryClientInvalidation}
-                    onItemRestore={handleQueryClientInvalidation}
                 />
                 {
                     booksList.data &&

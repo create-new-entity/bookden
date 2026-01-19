@@ -12,3 +12,4 @@ export * from './EditActionIcon';
 export * from './DeleteActionIcon';
 export * from './RestoreActionButton';
 export * from './FilterActionIcon';
+export * from './AddActionIcon';

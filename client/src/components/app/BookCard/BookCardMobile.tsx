@@ -89,12 +89,10 @@ const getStyles = (theme: Theme): Styles => {
 
 type BookCardMobileProps = {
     item: Book;
-    onItemDelete?: () => void;
-    onItemRestore?: () => void;
 };
 
 const BookCardMobile = (props: BookCardMobileProps) => {
-    const { item, onItemDelete, onItemRestore } = props;
+    const { item } = props;
     const book = item;
     const blobOptions = {
         queryKey: ['bookCover', book.bookId],
@@ -103,8 +101,8 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     };
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
-    const { deleteBookCoverAndBookData } = useDeleteBook(book.bookId);
-    const { restoreBookMutation } = useRestoreBook(book.bookId);
+    const { deleteBookCoverAndBookData } = useDeleteBook();
+    const { restoreBookMutation } = useRestoreBook();
     const navigate = useNavigate();
 
     const { userType, hasExistingLoggedInUser } = useAuthContext();
@@ -117,8 +115,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     const isDeleted = book.deletedAt !== null;
 
     const handleDeleteBook = async () => {
-        onItemDelete?.();
-        deleteBookCoverAndBookData();
+        deleteBookCoverAndBookData(book.bookId);
     };
     
     const onEdit = () => {
@@ -130,8 +127,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     };
 
     const onRestore = () => {
-        restoreBookMutation.mutate();
-        onItemRestore?.();
+        restoreBookMutation.mutate(book.bookId);
     };
 
     return (

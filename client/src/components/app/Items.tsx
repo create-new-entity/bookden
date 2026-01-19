@@ -11,11 +11,9 @@ type ItemsProps<T> = {
     getKey: (item: T) => React.Key;
     viewOption: ViewOptionsTypes;
     sx?: SxProps<Theme>;
-    onItemDelete?: () => void;
-    onItemRestore?: () => void;
 };
 
-const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx, onItemDelete, onItemRestore }: ItemsProps<T>) => {
+const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx }: ItemsProps<T>) => {
     const isListView = viewOption === LIST_VIEW;
     const gridSizes = isListView ? LIST_VIEW_GRID_SIZES : ITEMS_GRID_SIZES;
     return (
@@ -23,7 +21,7 @@ const Items = <T,>({ items, ItemComponent, getKey, viewOption, sx, onItemDelete,
             {
                 items.map((item) => (
                     <Grid size={gridSizes} key={getKey(item)}>
-                        <ItemComponent item={item} onItemDelete={onItemDelete} onItemRestore={onItemRestore} />
+                        <ItemComponent item={item}/>
                     </Grid>
                 ))  
             }
