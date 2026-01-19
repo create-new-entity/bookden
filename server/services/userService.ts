@@ -19,19 +19,23 @@ import {
     GetUsersQueryParams,
     PaginatedDataList
 } from '../types';
-import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
+import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
 
 
 const mapDate = (user: UserDBRow): User => {
+    const timeStamps = {
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+        deletedAt: user.deleted_at
+    };
+    const dateStamps = mapNumericTimeStampsToDate(timeStamps);
     return {
         userId: user.user_id,
         username: user.username,
         email: user.email,
         userType: user.user_type,
-        createdAt: new Date(user.created_at),
-        updatedAt: user.updated_at ? new Date(user.updated_at) : null,
-        deletedAt: user.deleted_at ? new Date(user.deleted_at) : null
+        ...dateStamps
     };
 };
 

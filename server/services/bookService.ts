@@ -4,13 +4,35 @@ import { sql } from 'slonik';
 
 import { getPGDBPool, getRedis, sqlTag } from '../configs';
 import {
-    Book, BooksSortByOptions, BooksSortOrderOptions,
+    Book, BookDBRow, BooksSortByOptions, BooksSortOrderOptions,
     CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload
 } from '../types';
-import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
+import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
 import { BOOKS_PAGINATION_LIMIT, PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS } from '../constants';
 import { BadRequestError, errorMessages, errorNames } from '../errors';
 
+
+const mapDate = (book: BookDBRow): Book => {
+    const timeStamps = {
+        createdAt: book.created_at,
+        updatedAt: book.updated_at,
+        deletedAt: book.deleted_at
+    };
+    const dateStamps = mapNumericTimeStampsToDate(timeStamps);
+
+    return {
+        bookId: book.book_id,
+        title: book.title,
+        synopsis: book.synopsis,
+        authors: book.authors,
+        isbn: book.isbn,
+        price: book.price,
+        yearPublished: book.year_published,
+        language: book.language,
+        pages: book.pages,
+        ...dateStamps
+    };
+};
 
 const getAllBooks = async (
     includeDeleted: boolean = false, page: number = 1, search: string = '',
@@ -106,10 +128,10 @@ const getAllBooks = async (
     const hasNextPage = page < totalPages;
     const hasPreviousPage = page > 1;
     
-    const books = [...camelcaseKeys(result.rows, { deep: true })];
+    const books = result.rows;
 
     return {
-        data: books,
+        data: books.map(mapDate),
         pagination: {
             page,
             limit: BOOKS_PAGINATION_LIMIT,
@@ -227,7 +249,7 @@ const createBook = async (createBookData: CreateBookPayload, coverImage: Buffer,
             WHERE b.book_id = ${result.rows[0].book_id}
             GROUP BY b.book_id;
         `);
-        return camelcaseKeys(fullBook.rows[0], { deep: true });
+        return mapDate(fullBook.rows[0]);
     });
 };
 
