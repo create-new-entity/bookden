@@ -1,5 +1,5 @@
 import {
-    Button, Container, Paper,
+    Button, Chip, Container, Paper,
     Stack, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
@@ -109,6 +109,10 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                                 tooltipTitle='Edit Book'
                             />
                         )
+                    }
+                    {
+                        bookQuery.data?.deletedAt &&
+                        <Chip label='Deleted' color='error' size='small' />
                     }
                 </Stack>
                 <Paper

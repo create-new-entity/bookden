@@ -81,7 +81,7 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
         enabled: !!token && !!user.userId,
     };
     const { objectUrl } = useBlobImage(blobOptions);
-    const isAlreadyDeleted = user.deletedAt !== null;
+    const isDeleted = user.deletedAt !== null;
 
     const handleDeleteUser = async () => {
         await deleteUser(token, user.userId);
@@ -112,7 +112,7 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                             <Typography variant='h6'>{user.username}</Typography>
                             {
-                                !isAlreadyDeleted &&
+                                !isDeleted &&
                                 <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
                             }
                         </Stack>

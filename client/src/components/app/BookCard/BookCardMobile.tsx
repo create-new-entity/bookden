@@ -2,7 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
     Box, Card, CardMedia,
     Stack, Typography, useTheme,
-    type Theme, type SxProps
+    type Theme, type SxProps,
+    Chip
 } from '@mui/material';
 
 import { getBookCover } from '../../../api';
@@ -113,7 +114,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
 
 
     const styles = getStyles(theme);
-    const isAlreadyDeleted = book.deletedAt !== null;
+    const isDeleted = book.deletedAt !== null;
 
     const handleDeleteBook = async () => {
         onItemDelete?.();
@@ -182,9 +183,13 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                                     alignItems={'center'}
                                     gap={`${DEFAULT_GAP / 4}px`}
                                 >
+                                    {
+                                        isDeleted &&
+                                        <Chip label='Deleted' color='error' size='small' />
+                                    }
                                     <BookCardActions
                                         bookId={book.bookId}
-                                        isAlreadyDeleted={isAlreadyDeleted}
+                                        isDeleted={isDeleted}
                                         allowedActions={['edit', 'delete', 'restore']}
                                         onEdit={onEdit}
                                         onDelete={onDelete}

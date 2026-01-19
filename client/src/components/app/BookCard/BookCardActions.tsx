@@ -6,7 +6,7 @@ import type { ItemActions } from '../../../types';
 
 type BookCardActionsProps = {
     bookId: number;
-    isAlreadyDeleted: boolean;
+    isDeleted: boolean;
     allowedActions: ItemActions[];
     onEdit?: () => void;
     onDelete?: () => void;
@@ -14,10 +14,10 @@ type BookCardActionsProps = {
 };
 
 const BookCardActions = (props: BookCardActionsProps) => {
-    const { bookId, isAlreadyDeleted, allowedActions, onEdit, onDelete, onRestore } = props;
+    const { bookId, isDeleted, allowedActions, onEdit, onDelete, onRestore } = props;
     const filterDeleted = (action: ItemActions) => {
-        if(isAlreadyDeleted && (action === 'delete' || action === 'edit' )) return false;
-        if(!isAlreadyDeleted && action === 'restore') return false;
+        if(isDeleted && (action === 'delete' || action === 'edit' )) return false;
+        if(!isDeleted && action === 'restore') return false;
         return true;
     };
 
