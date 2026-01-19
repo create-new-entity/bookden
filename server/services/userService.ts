@@ -19,19 +19,23 @@ import {
     GetUsersQueryParams,
     PaginatedDataList
 } from '../types';
-import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
+import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
 
 
 const mapDate = (user: UserDBRow): User => {
+    const timeStamps = {
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+        deletedAt: user.deleted_at
+    };
+    const dateStamps = mapNumericTimeStampsToDate(timeStamps);
     return {
         userId: user.user_id,
         username: user.username,
         email: user.email,
         userType: user.user_type,
-        createdAt: new Date(user.created_at),
-        updatedAt: user.updated_at ? new Date(user.updated_at) : null,
-        deletedAt: user.deleted_at ? new Date(user.deleted_at) : null
+        ...dateStamps
     };
 };
 
@@ -119,7 +123,7 @@ const getUser = async (requestorUser: JWTSignPayload, targetUserId: number) => {
         throw notFoundError;
     }
 
-    const foundUser = camelcaseKeys(foundRow, { deep: true });
+    const foundUser = mapDate(foundRow);
 
     const canViewUser = canViewUserInUserManagement(requestorUser.userType, foundUser.userType);
     
@@ -165,6 +169,15 @@ const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): b
         customer: [],
     };
     return hierarchy[creatorUserType].includes(targetUserType);
+};
+
+const canRestoreUser = (restorerUserType: UserTypes, targetUserType: UserTypes): boolean => {
+    const hierarchy: Record<UserTypes, UserTypes[]>= {
+        superadmin: [ADMIN, CUSTOMER],
+        admin: [CUSTOMER],
+        customer: []
+    };
+    return hierarchy[restorerUserType].includes(targetUserType);
 };
 
 const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): boolean => {
@@ -313,12 +326,41 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
     }
 };
 
+const restoreUser = async (requestorUser: JWTSignPayload, targetUserId: string): Promise<void> => {
+    const dbPool = await getPGDBPool();
+
+    const targetUserResult = await dbPool.one(sqlTag.typeAlias('User')`
+        SELECT user_type
+        FROM users
+        WHERE user_id = ${targetUserId}
+    `);
+
+    if(!targetUserResult) {
+        const notFoundError = new NotFoundError();
+        throw notFoundError;
+    }
+    const targetUserType = targetUserResult.user_type;
+
+    if(!canRestoreUser(requestorUser.userType, targetUserType)) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    await dbPool.query(sqlTag.typeAlias('User')`
+        UPDATE users
+        SET deleted_at = NULL
+        WHERE user_id = ${targetUserId}
+    `);
+};
+
 export {
     getAllUsers,
     getUser,
     getMyself,
     createUser,
     canCreateUser,
+    canRestoreUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    restoreUser
 };

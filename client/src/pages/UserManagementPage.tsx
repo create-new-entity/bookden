@@ -5,14 +5,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Add } from '@mui/icons-material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { useResponsive, useSetTabTitle, useUsersList } from '../hooks';
 import {
     CONTENT_MARGIN,
     CREATE_ADMIN_USER,
     DEFAULT_GAP,
-    GRID_VIEW,
     SUPERADMIN
 } from '../constants';
 import {
@@ -26,6 +25,7 @@ import {
 } from '../components';
 import type { User } from '../types';
 import { useAuthContext } from '../contexts';
+import type { ViewSelectorProps } from '../components/app/ViewSelector';
 
 
 
@@ -88,6 +88,8 @@ const UserManagementPage = () => {
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
     const navigate = useNavigate();
     const modalRef = useRef<CustomModalRef | null>(null);
+    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
+    
     const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
     
 
@@ -114,10 +116,12 @@ const UserManagementPage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
             >
-                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                    <IconButton onClick={openFilterModal}>
-                        <FilterAltIcon />
-                    </IconButton>
+                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
+                    <Tooltip title='Filter options'>
+                        <IconButton onClick={openFilterModal}>
+                            <FilterAltIcon />
+                        </IconButton>
+                    </Tooltip>
                     {
                         isClientSuperAdmin && (
                             <Tooltip title='Add a new admin'>
@@ -138,6 +142,8 @@ const UserManagementPage = () => {
                         sortOrder={sortOrder}
                         userType={userType}
                         updateParams={updateParams}
+                        selectedView={selectedView}
+                        onViewChange={setSelectedView}
                     />
                 }
                 {
@@ -159,7 +165,7 @@ const UserManagementPage = () => {
                     items={usersList.data?.data || []}
                     ItemComponent={UserCard}
                     getKey={(user) => user.userId}
-                    viewOption={GRID_VIEW}
+                    viewOption={selectedView}
                     onItemDelete={handleQueryClientInvalidation}
                 />
                 {

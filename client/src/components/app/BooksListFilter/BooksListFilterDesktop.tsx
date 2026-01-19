@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Button, Collapse, IconButton, Stack,
+    Button, Collapse, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
-import type { BookSearchParams } from '../../../validations';
+import type { BookSearchParams, BookSearchParamsWithTagsArray } from '../../../validations';
 import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import {
     ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, CREATE_BOOK, MARGIN_TOP_TO_AVOID_NAV_BAR,
@@ -21,6 +21,9 @@ import { useAuthContext } from '../../../contexts';
 import BookTagsSelect from './BookTagsSelect';
 import BooksPriceFilter from './BooksPriceFilter';
 import { type UpdateMode } from '../../../hooks';
+import type { ViewSelectorProps } from '../ViewSelector';
+import ViewSelector from '../ViewSelector';
+import ClearBookFilterActions from './ClearBookFilterActions';
 
 
 type Styles = {
@@ -67,7 +70,9 @@ type BooksListFilterDesktopProps = {
     tags: string[];
     updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
     priceRangeMeta: BooksPriceRangeMeta;
-    params: Omit<BookSearchParams, 'tags'>;
+    params: BookSearchParamsWithTagsArray;
+    selectedView: ViewSelectorProps['selectedView'];
+    onViewChange: ViewSelectorProps['onViewChange'];
 };
 
 const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
@@ -76,9 +81,9 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const { userType } = useAuthContext();
     const [isTagsCollapseOpen, setIsTagsCollapseOpen] = useState(false);
     const navigate = useNavigate();
-    
+
     const isClientAdminOrSuperAdmin = userType === SUPERADMIN || userType === ADMIN;
-    const { tags, params, updateParams, priceRangeMeta } = props;
+    const { tags, params, updateParams, priceRangeMeta, selectedView, onViewChange } = props;
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
@@ -92,24 +97,6 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const handleTagsClick = () => {
         setIsTagsCollapseOpen(!isTagsCollapseOpen);
     };
-
-    const clearTags = () => {
-        updateParams({ tags: '' }, 'merge');
-    };
-
-    const clearPrice = () => {
-        const newParams = { ...params };
-        delete newParams.priceMin;
-        delete newParams.priceMax;
-        updateParams(newParams, 'replace');
-    };
-
-    const clearAll = () => {
-        updateParams({}, 'replace');
-    };
-
-    const hasPrice = priceMin !== undefined || priceMax !== undefined;
-
 
     return (
         <>
@@ -148,14 +135,19 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY }}
                     />
                     <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
+                    <ViewSelector
+                        selectedView={selectedView}
+                        onViewChange={onViewChange}
+                    />
                     {
                         isClientAdminOrSuperAdmin && (
                             <Tooltip title='Add a new book'>
-                                <IconButton onClick={() => {
+                                <Button variant='contained' onClick={() => {
                                     navigate(CREATE_BOOK);
                                 }}>
                                     <Add/>
-                                </IconButton>
+                                    <Typography variant='body1'>Add Book</Typography>
+                                </Button>
                             </Tooltip>
                         )
                     }
@@ -166,25 +158,13 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                             <Typography variant='subtitle1'>Additional Options</Typography>
                             {isTagsCollapseOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                         </Stack>
-                        {
-                            tags.length > 0
-                                ?
-                                (
-                                    <>
-                                        <Typography variant='subtitle1'>{tags.length} tags selected</Typography>
-                                        <Button variant='text' onClick={clearTags}>Clear Tags</Button>
-                                    </>
-                                ) 
-                                :
-                                null
-                        }
-                        {
-                            hasPrice &&
-                            <>
-                                <Button variant='text' onClick={clearPrice}>Clear Price</Button>
-                            </>
-                        }
-                        <Button variant='text' onClick={clearAll}>Clear All</Button>
+                        <ClearBookFilterActions
+                            tags={tags}
+                            priceMin={priceMin}
+                            priceMax={priceMax}
+                            params={params}
+                            updateParams={updateParams}
+                        />
                     </Stack>
                     <Collapse in={isTagsCollapseOpen} sx={styles.bookTagsSelectCollapse}>
                         <Stack

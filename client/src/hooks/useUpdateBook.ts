@@ -20,6 +20,7 @@ const useUpdateBook = (bookId: number) => {
             queryClient.invalidateQueries({
                 queryKey: ['book', bookId]
             });
+            handleShowNotification('Book updated successfully.');
         },
         onError: (error: AxiosErrorResponse) => {
             handleShowNotification(error.response?.data.message || 'An error occurred while updating the book.');

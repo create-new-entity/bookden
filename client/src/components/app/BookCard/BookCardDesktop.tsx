@@ -1,20 +1,20 @@
 
-
 import {
-    Box, Card, CardContent,
-    CardMedia, Stack, Typography, Tooltip
+    Box, Card, CardContent, CardMedia,
+    Stack, Typography, Tooltip,
+    Chip
 } from '@mui/material';
-import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import {useTheme,type SxProps,type Theme } from '@mui/material/styles';
+import { Link, useNavigate } from 'react-router-dom';
 
-import type { Book } from '../../types';
-import { useBlobImage } from '../../hooks';
+import type { Book } from '../../../types';
 import {
     BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP,
     PLACE_HOLDER_BOOK_COVER
-} from '../../constants';
-import { useAuthContext, useNotificationContext } from '../../contexts';
-import { getBookCover } from '../../api';
+} from '../../../constants';
+import { getBookCover } from '../../../api';
+import { useBlobImage, useDeleteBook, useRestoreBook } from '../../../hooks';
+import BookCardActions from './BookCardActions';
 
 
 
@@ -28,20 +28,21 @@ type Styles = {
     cardMedia: SxProps<Theme>;
     cardContent: SxProps<Theme>;
     textOverflowEllipsis: SxProps<Theme>;
+    actionsStack: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
     return {
+        actionsStack: {
+            position: 'relative',
+            top: 0,
+            right: 0,
+            marginTop: '-0.5rem',
+            marginBottom: '0.5rem'
+        },
         card: {
             '& .MuiIconButton-root': {
-                display: 'none',
                 padding: 0
-            },
-            '&:not(:hover) .MuiIconButton-root': {
-                display: 'none'
-            },
-            '&:hover .MuiIconButton-root': {
-                display: 'block'
             },
             padding: `${BOOK_CARD_PADDING}rem`,
             height: BOOK_CARD_HEIGHT,
@@ -67,41 +68,71 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-type BookCardProps = {
-    item: Book;
-    onItemDelete?: () => void;
+type BookCardDesktopProps = {
+    item: Book
 };
 
-const BookCard = ({ item, onItemDelete }: BookCardProps) => {
+const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
     const book = item;
-    const { token } = useAuthContext();
     const blobOptions = {
         queryKey: ['bookCover', book.bookId],
         queryFn: () => getBookCover(book.bookId),
         enabled: !!book.bookId,
     };
     const { objectUrl } = useBlobImage(blobOptions);
-    const { handleShowNotification } = useNotificationContext();
     const theme = useTheme();
+    const { deleteBookCoverAndBookData } = useDeleteBook();
+    const { restoreBookMutation } = useRestoreBook();
+    const navigate = useNavigate();
 
 
     const styles = getStyles(theme);
-    const isAlreadyDeleted = book.deletedAt !== null;
+    const isDeleted = book.deletedAt !== null;
 
     const handleDeleteBook = async () => {
-        // await deleteBook(token, book.bookId);
-        onItemDelete?.();
-        handleShowNotification('Book deleted successfully.');
+        deleteBookCoverAndBookData(book.bookId);
+    };
+    
+    const onEdit = () => {
+        navigate(`/books/${book.bookId}/update`);
+    };
+
+    const onDelete = () => {
+        handleDeleteBook();
+    };
+
+    const onRestore = () => {
+        restoreBookMutation.mutate(book.bookId);
     };
 
     return (
         <Link to={`/books/${book.bookId}`}>
             <Card sx={styles.card} data-testid={'book-card'}>
                 <Stack
+                    sx={styles.actionsStack}
+                    direction={'row'}
+                    justifyContent={'flex-end'}
+                    alignItems={'center'}
+                    gap={`${DEFAULT_GAP / 4}px`}
+                >
+                    {
+                        isDeleted &&
+                        <Chip label='Deleted' color='error' size='small' />
+                    }
+                    <BookCardActions
+                        bookId={book.bookId}
+                        isDeleted={isDeleted}
+                        allowedActions={['edit', 'delete', 'restore']}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                        onRestore={onRestore}
+                    />
+                </Stack>
+                <Stack
                     direction={'column'}
                     justifyContent={'flex-start'}
                     alignItems={'center'}
-                    gap={`${DEFAULT_GAP}px`}
+                    gap={`${DEFAULT_GAP / 4}px`}
                 >
                     <Box sx={styles.cardMedia}>
                         {
@@ -124,7 +155,7 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                             alignItems={'center'}
                             gap={`${ONE_TENTH_OF_DEFAULT_GAP}px`}
                         >
-                            <Tooltip title={book.title}>
+                            <Tooltip sx={{ alignSelf: 'stretch'}} title={book.title}>
                                 <Typography variant='h6' sx={styles.textOverflowEllipsis}>
                                     {book.title}
                                 </Typography>
@@ -142,12 +173,6 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
                                         </Typography>
                                 }
                             </Tooltip>
-                            {/* <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>  
-                                {
-                                    book.deletedAt &&
-                                    <Chip label='Deleted' color='error' size='small' />
-                                }
-                            </Stack> */}
                             <Tooltip title={`€${book.price}`}>
                                 <Typography variant='body1' sx={styles.textOverflowEllipsis}>
                                     €{book.price}
@@ -164,4 +189,4 @@ const BookCard = ({ item, onItemDelete }: BookCardProps) => {
     );
 };
 
-export default BookCard;
+export default BookCardDesktop;

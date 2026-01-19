@@ -7,7 +7,8 @@ import {
     getMeController,
     getUserController,
     patchUserController,
-    postUserController
+    postUserController,
+    restoreUserController
 } from '../controllers';
 
 
@@ -20,5 +21,7 @@ userRouter.get('/:id', tokenExtractor, asyncHandler(getUserController));
 userRouter.post('/', tokenExtractor, asyncHandler(postUserController));
 userRouter.patch('/', tokenExtractor, asyncHandler(patchUserController));
 userRouter.delete('/:id', tokenExtractor, asyncHandler(deleteUserController));
+userRouter.post('/:id/restore', tokenExtractor, asyncHandler(restoreUserController));
+
 
 export default userRouter;

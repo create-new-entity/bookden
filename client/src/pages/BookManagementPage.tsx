@@ -1,11 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
-    IconButton, Stack, Tooltip,
-    Typography, useTheme, type SxProps, type Theme
+    Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { Add } from '@mui/icons-material';
-import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,10 +13,15 @@ import {
 import {
     CustomModal, CustomPagination, Items,
     BooksListFilterDesktop, type CustomModalRef,
-    BooksListFilterMobile, BookCard
+    BooksListFilterMobile, BookCardDesktop,
+    BookCardMobile
 } from '../components';
 import { useAuthContext } from '../contexts';
 import type { Book } from '../types';
+import type { ViewSelectorProps } from '../components/app/ViewSelector';
+import FilterActionIcon from '../components/app/ActionIcons/FilterActionIcon';
+import AddActionIcon from '../components/app/ActionIcons/AddActionIcon';
+import ClearBookFilterActions from '../components/app/BooksListFilter/ClearBookFilterActions';
 
 
 
@@ -72,23 +73,17 @@ const getStyles = (theme: Theme): Styles => {
 
 
 const BookManagementPage = () => {
-    const { isDesktop } = useResponsive();
+    const { isDesktop, isMobile } = useResponsive();
     const theme = useTheme();
     const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
     
     const styles = getStyles(theme);
-    const { search, sortBy, sortOrder, tags } = params;
+    const { tags } = params;
     const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
-    const queryKey = ['booksList', params.search, params.page, params.sortBy, params.sortOrder, params.tags];
-    
-
-    const handleQueryClientInvalidation = () => {
-        queryClient.invalidateQueries({ queryKey });
-    };
 
     const openFilterModal = () => {
         modalRef.current?.openModal();
@@ -109,19 +104,20 @@ const BookManagementPage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
             >
-                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                    <IconButton onClick={openFilterModal}>
-                        <FilterAltIcon />
-                    </IconButton>
+                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
+                    <ClearBookFilterActions
+                        tags={tags}
+                        priceMin={params.priceMin}
+                        priceMax={params.priceMax}
+                        params={params}
+                        updateParams={updateParams}
+                    />
+                    <FilterActionIcon onClick={openFilterModal} tooltipTitle='Filter options' />
                     {
                         isClientAdminOrSuperAdmin && (
-                            <Tooltip title='Add a new book'>
-                                <IconButton onClick={() => {
-                                    navigate(CREATE_BOOK);
-                                }}>
-                                    <Add />
-                                </IconButton>
-                            </Tooltip>
+                            <AddActionIcon onClick={() => {
+                                navigate(CREATE_BOOK);
+                            }} tooltipTitle='Add a new book' />
                         )
                     }
                 </Stack>
@@ -132,6 +128,8 @@ const BookManagementPage = () => {
                         params={params}
                         updateParams={updateParams}
                         priceRangeMeta={priceRangeMeta}
+                        selectedView={selectedView}
+                        onViewChange={setSelectedView}
                     />
                 }
                 {
@@ -151,10 +149,9 @@ const BookManagementPage = () => {
                 <Items<Book>
                     sx={styles.items}
                     items={booksList.data?.data || []}
-                    ItemComponent={BookCard}
+                    ItemComponent={(!isMobile && selectedView === GRID_VIEW) ? BookCardDesktop : BookCardMobile}
                     getKey={(book) => book.bookId}
-                    viewOption={GRID_VIEW}
-                    onItemDelete={handleQueryClientInvalidation}
+                    viewOption={selectedView}
                 />
                 {
                     booksList.data &&
@@ -164,15 +161,18 @@ const BookManagementPage = () => {
                     />
                 }
             </Stack>
-            <CustomModal ref={modalRef}>
-                <BooksListFilterMobile
-                    search={search}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    tags={tags}
-                    updateParams={updateParams}
-                />
-            </CustomModal>
+            {
+                priceRangeMeta && (
+                    <CustomModal ref={modalRef}>
+                        <BooksListFilterMobile
+                            params={params}
+                            tags={tags}
+                            updateParams={updateParams}
+                            priceRangeMeta={priceRangeMeta}
+                        />
+                    </CustomModal>
+                )
+            }
         </>
     );
 };

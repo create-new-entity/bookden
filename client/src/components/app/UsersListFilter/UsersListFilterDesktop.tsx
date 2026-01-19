@@ -1,5 +1,7 @@
 import {
+    Button,
     IconButton, Stack, Tooltip,
+    Typography,
     useTheme, type SelectChangeEvent, type SxProps, type Theme
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
@@ -18,6 +20,7 @@ import type { UserSearchParams } from '../../../validations';
 import { useAuthContext } from '../../../contexts';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
+import ViewSelector, { type ViewSelectorProps } from '../ViewSelector';
 
 type Styles = {
     searchBoxesStack: SxProps<Theme>;
@@ -47,6 +50,8 @@ type UsersListFilterDesktopProps = {
     sortOrder: UserSearchParams['sortOrder'];
     userType: UserTypeOptions;
     updateParams: (params: Partial<UserSearchParams>) => void;
+    selectedView: ViewSelectorProps['selectedView'];
+    onViewChange: ViewSelectorProps['onViewChange'];
 };
 
 const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
@@ -55,7 +60,10 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
     const { userType: clientUserType } = useAuthContext();
     const navigate = useNavigate();
 
-    const { search, sortBy, sortOrder, userType, updateParams } = props;
+    const {
+        search, sortBy, sortOrder,
+        userType, updateParams, selectedView, onViewChange
+    } = props;
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
@@ -105,14 +113,19 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             />
             { isClientSuperAdmin && <SelectUserType userType={userType} updateParams={updateParams} /> }
             <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
+            <ViewSelector
+                selectedView={selectedView}
+                onViewChange={onViewChange}
+            />
             {
                 isClientSuperAdmin && (
                     <Tooltip title='Add a new admin'>
-                        <IconButton onClick={() => {
+                        <Button variant='contained' onClick={() => {
                             navigate(CREATE_ADMIN_USER);
                         }}>
                             <Add />
-                        </IconButton>
+                            <Typography variant='body1'>Add Admin</Typography>
+                        </Button>
                     </Tooltip>
                 )
             }

@@ -6,30 +6,30 @@ import type { AxiosErrorResponse } from '../types';
 
 
 
-export const useDeleteBook = (bookId: number) => {
+export const useDeleteBook = () => {
     const { token } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
 
-    const deleteBookMutation = useMutation<void, AxiosErrorResponse>({
-        mutationFn: () => deleteBook(bookId, token),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['books'] });
+    const deleteBookMutation = useMutation<void, AxiosErrorResponse, number>({
+        mutationFn: (bookId: number) => deleteBook(bookId, token),
+        onSuccess: (_, bookId) => {
+            queryClient.invalidateQueries({ queryKey: ['booksList'] });
             queryClient.invalidateQueries({ queryKey: ['book', bookId] });
             handleShowNotification('Book deleted successfully.');
         }
     });
 
-    const deleteBookCoverMutation = useMutation<void, AxiosErrorResponse>({
-        mutationFn: () => deleteBookCover(bookId, token),
-        onSuccess: () => {
+    const deleteBookCoverMutation = useMutation<void, AxiosErrorResponse, number>({
+        mutationFn: (bookId: number) => deleteBookCover(bookId, token),
+        onSuccess: (_, bookId) => {
             queryClient.invalidateQueries({ queryKey: ['bookCover', bookId] });
         }
     });
 
-    const deleteBookCoverAndBookData = () => {
-        deleteBookMutation.mutate();
-        deleteBookCoverMutation.mutate();
+    const deleteBookCoverAndBookData = (bookId: number) => {
+        deleteBookMutation.mutate(bookId);
+        deleteBookCoverMutation.mutate(bookId);
     };
     
     return {

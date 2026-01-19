@@ -1,7 +1,6 @@
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 
-import ActionButton from './ActionButton';
-
+import ActionIcon from './ActionIcon';
 
 
 type EditActionButtonProps = {
@@ -9,11 +8,11 @@ type EditActionButtonProps = {
     tooltipTitle: string;
 };
 
-const EditActionButton = (props: EditActionButtonProps) => {
+const EditActionIcon = (props: EditActionButtonProps) => {
     const { onClick, tooltipTitle } = props;
     
     return (
-        <ActionButton
+        <ActionIcon
             icon={<EditSquareIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
@@ -21,4 +20,4 @@ const EditActionButton = (props: EditActionButtonProps) => {
     );
 };
 
-export default EditActionButton;
+export default EditActionIcon;

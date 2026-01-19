@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import {
     Avatar,
@@ -6,21 +6,24 @@ import {
     CircularProgress,
     Paper,
     Stack,
-    IconButton,
     Typography,
     useTheme,
     type SxProps,
     type Theme,
     Box
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import { getUser } from '../api/users';
-import { useAuthContext, useNotificationContext } from '../contexts';
+import { useAuthContext } from '../contexts';
 import { useBlobImage } from '../hooks';
 import { AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR } from '../constants';
 import { UserTypeChip } from '../components/app';
-import { deleteUser, getUserAvatarBlob } from '../api';
+import { getUserAvatarBlob } from '../api';
+import { getFormattedDate } from '../utility';
+import RestoreActionButton from '../components/app/ActionIcons/RestoreActionButton';
+import { useRestoreUser } from '../hooks/useRestoreUser';
+import DeleteActionIcon from '../components/app/ActionIcons/DeleteActionIcon';
+import { useDeleteUser } from '../hooks/useDeleteUser';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -79,16 +82,15 @@ const getStyles = (theme: Theme): Styles => {
 
 const UserPage = () => {
     const { userId } = useParams();
+    const parsedUserId = Number(userId);
     const { token } = useAuthContext();
-    const { handleShowNotification } = useNotificationContext();
     const theme = useTheme();
     const styles = getStyles(theme);
 
     const { data: user, isLoading } = useQuery({
-        queryKey: ['user', userId],
-        queryFn: () => getUser(parseInt(userId || '-1', 10), token),
+        queryKey: ['user', parsedUserId],
+        queryFn: () => getUser(parsedUserId, token),
     });
-    const queryClient = useQueryClient();
 
     const blobOptions = {
         queryKey: ['avatar', token, user?.userId],
@@ -97,14 +99,15 @@ const UserPage = () => {
     };
 
     const { objectUrl: avatarBlobUrl } = useBlobImage(blobOptions);
+    const { restoreUserMutation } = useRestoreUser(parsedUserId);
+    const { deleteUserMutation } = useDeleteUser(parsedUserId);
 
-    const handleDeleteUser = async () => {
-        if(user) {
-            await deleteUser(token, user.userId);
-            handleShowNotification('User deleted successfully.');
-            queryClient.invalidateQueries({ queryKey: ['usersList'] });
-            queryClient.invalidateQueries({ queryKey: ['user', userId] });
-        }
+    const handleDeleteUser = () => {
+        deleteUserMutation.mutate();
+    };
+
+    const handleRestoreUser = () => {
+        restoreUserMutation.mutate();
     };
 
     return (
@@ -121,7 +124,7 @@ const UserPage = () => {
                                 <Stack sx={styles.detailsStack} direction={'row'} justifyContent={'center'} alignItems={'center'}>
                                     <Stack direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
                                         <Box sx={styles.textContainer}>
-                                            <Typography variant='body1'>{user.username}</Typography>
+                                            <Typography variant='h4'>{user.username}</Typography>
                                             <Typography variant='body1'>{user.email}</Typography>
                                         </Box>
                                         <Stack sx={styles.chipStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
@@ -132,15 +135,29 @@ const UserPage = () => {
                                             }
                                             {
                                                 !user.deletedAt &&
-                                                <IconButton onClick={handleDeleteUser}>
-                                                    <DeleteIcon />
-                                                </IconButton>
+                                                <DeleteActionIcon
+                                                    onClick={handleDeleteUser}
+                                                    tooltipTitle='Delete User'
+                                                />
+                                            }
+                                            {
+                                                user.deletedAt &&
+                                                <RestoreActionButton
+                                                    onClick={handleRestoreUser}
+                                                    tooltipTitle='Restore User'
+                                                />
                                             }
                                         </Stack>
                                         <Box sx={styles.textContainer}>
-                                            <Typography variant='body1'>Created At: {user.createdAt}</Typography>
-                                            <Typography variant='body1'>Updated At: {user.updatedAt}</Typography>
-                                            <Typography variant='body1'>Deleted At: {user.deletedAt}</Typography>
+                                            <Typography variant='body1'>Created At: {getFormattedDate(new Date(user.createdAt))}</Typography>
+                                            {
+                                                user.updatedAt &&
+                                                <Typography variant='body1'>Updated At: {getFormattedDate(new Date(user.updatedAt))}</Typography>
+                                            }
+                                            {
+                                                user.deletedAt &&
+                                                <Typography variant='body1'>Deleted At: {getFormattedDate(new Date(user.deletedAt))}</Typography>
+                                            }
                                         </Box>
                                     </Stack>
                                 </Stack>

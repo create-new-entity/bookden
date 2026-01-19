@@ -2,8 +2,12 @@
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-import type { BookSearchParams } from '../validations';
-import type { Book, BooksPriceRangeMeta, PaginatedDataList } from '../types';
+import type {
+    BookSearchParams, BookSearchParamsWithTagsArray
+} from '../validations';
+import type {
+    Book, BooksPriceRangeMeta, PaginatedDataList
+} from '../types';
 import { useBookManagementDeepLinking } from './useBookManagementDeepLinking';
 import { useAuthContext } from '../contexts';
 import { getBooksList } from '../api';
@@ -12,7 +16,7 @@ import { useBooksFiltersMeta } from './useBooksFilterMeta';
 
 type UseBooksListReturn = {
     booksList: UseQueryResult<PaginatedDataList<Book>, Error>;
-    params: Omit<BookSearchParams, 'tags'> & { tags: string[] };
+    params: BookSearchParamsWithTagsArray;
     updateParams: (params: Partial<BookSearchParams>) => void;
     priceRangeMeta: BooksPriceRangeMeta | undefined;
 };
@@ -28,9 +32,10 @@ export const useBooksList = (): UseBooksListReturn => {
     };
     const { search, page, sortBy, sortOrder, tags, priceMin, priceMax } = params;
 
+    const tagsString = tags.join(',');
     const booksList = useQuery({
-        queryKey: ['booksList', search, page, sortBy, sortOrder, tags, priceMin, priceMax, token],
-        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tags.join(','), priceMin, priceMax }, token)
+        queryKey: ['booksList', search, page, sortBy, sortOrder, tagsString, priceMin, priceMax],
+        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, token)
     });
     
     return { booksList, params, updateParams, priceRangeMeta };

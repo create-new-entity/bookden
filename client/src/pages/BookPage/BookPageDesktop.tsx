@@ -1,5 +1,5 @@
 import {
-    Button, Container, Divider, Paper,
+    Button, Chip, Container, Divider, Paper,
     Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_
 import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
 import { useAuthContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
-import EditActionButton from '../../components/app/ActionButtons/EditActionButton';
+import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -107,14 +107,25 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                 alignItems={'center'}
                                 alignSelf={'stretch'}
                             >
-                                {
-                                    showEditBookButton && (
-                                        <EditActionButton
-                                            onClick={handleEditBook}
-                                            tooltipTitle='Edit Book'
-                                        />
-                                    )
-                                }
+                                <Stack
+                                    direction={'row'}
+                                    justifyContent={'flex-start'}
+                                    alignItems={'center'}
+                                    gap={`${DEFAULT_GAP / 4}px`}
+                                >
+                                    {
+                                        showEditBookButton && (
+                                            <EditActionIcon
+                                                onClick={handleEditBook}
+                                                tooltipTitle='Edit Book'
+                                            />
+                                        )
+                                    }
+                                    {
+                                        bookQuery.data?.deletedAt &&
+                                        <Chip label='Deleted' color='error' size='small' />
+                                    }
+                                </Stack>
                                 <Stack
                                     direction={'row'}
                                     justifyContent={'flex-start'}
