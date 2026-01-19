@@ -23,6 +23,7 @@ import { useAuthContext } from '../contexts';
 import type { Book } from '../types';
 import type { ViewSelectorProps } from '../components/app/ViewSelector';
 import FilterActionIcon from '../components/app/ActionIcons/FilterActionIcon';
+import ClearBookFilterActions from '../components/app/BooksListFilter/ClearBookFilterActions';
 
 
 
@@ -84,7 +85,7 @@ const BookManagementPage = () => {
     const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('list');
     
     const styles = getStyles(theme);
-    const { search, sortBy, sortOrder, tags } = params;
+    const { tags } = params;
     const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
     const queryKey = ['booksList', params.search, params.page, params.sortBy, params.sortOrder, params.tags];
     
@@ -113,6 +114,13 @@ const BookManagementPage = () => {
                 alignItems={'center'}
             >
                 <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
+                    <ClearBookFilterActions
+                        tags={tags}
+                        priceMin={params.priceMin}
+                        priceMax={params.priceMax}
+                        params={params}
+                        updateParams={updateParams}
+                    />
                     <FilterActionIcon onClick={openFilterModal} tooltipTitle='Filter options' />
                     {
                         isClientAdminOrSuperAdmin && (
@@ -168,15 +176,18 @@ const BookManagementPage = () => {
                     />
                 }
             </Stack>
-            <CustomModal ref={modalRef}>
-                <BooksListFilterMobile
-                    search={search}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
-                    tags={tags}
-                    updateParams={updateParams}
-                />
-            </CustomModal>
+            {
+                priceRangeMeta && (
+                    <CustomModal ref={modalRef}>
+                        <BooksListFilterMobile
+                            params={params}
+                            tags={tags}
+                            updateParams={updateParams}
+                            priceRangeMeta={priceRangeMeta}
+                        />
+                    </CustomModal>
+                )
+            }
         </>
     );
 };

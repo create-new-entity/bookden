@@ -2,7 +2,7 @@
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-import type { BookSearchParams } from '../validations';
+import type { BookSearchParams, BookSearchParamsWithTagsArray } from '../validations';
 import type { Book, BooksPriceRangeMeta, PaginatedDataList } from '../types';
 import { useBookManagementDeepLinking } from './useBookManagementDeepLinking';
 import { useAuthContext } from '../contexts';
@@ -12,7 +12,7 @@ import { useBooksFiltersMeta } from './useBooksFilterMeta';
 
 type UseBooksListReturn = {
     booksList: UseQueryResult<PaginatedDataList<Book>, Error>;
-    params: Omit<BookSearchParams, 'tags'> & { tags: string[] };
+    params: BookSearchParamsWithTagsArray;
     updateParams: (params: Partial<BookSearchParams>) => void;
     priceRangeMeta: BooksPriceRangeMeta | undefined;
 };

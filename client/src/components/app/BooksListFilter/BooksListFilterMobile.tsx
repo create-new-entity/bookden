@@ -11,8 +11,9 @@ import { CustomAutoComplete } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
 import type { BookSearchParams } from '../../../validations';
-import type { BooksSortByOptions, SortOrder } from '../../../types';
+import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import type { UpdateMode } from '../../../hooks';
+import BooksPriceFilter from './BooksPriceFilter';
 
 
 
@@ -41,9 +42,8 @@ const getStyles = (_theme: Theme): Styles => {
 
 
 type BooksListFilterMobileProps = {
-    search: string;
-    sortBy: BookSearchParams['sortBy'];
-    sortOrder: BookSearchParams['sortOrder'];
+    priceRangeMeta: BooksPriceRangeMeta;
+    params: Omit<BookSearchParams, 'tags'>;
     tags: string[];
     updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
 };
@@ -51,7 +51,8 @@ type BooksListFilterMobileProps = {
 const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
     const theme = useTheme();
     const styles = getStyles(theme);
-    const { search, sortBy, sortOrder, tags, updateParams } = props;
+    const { tags, params, updateParams, priceRangeMeta } = props;
+    const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
         updateParams({ sortOrder: event.target.value }, 'merge');
@@ -109,6 +110,12 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
                             tags.length > 0 && `${tags.length} tags selected`
                         }
                     </Typography>
+                    <BooksPriceFilter   
+                        priceMin={priceMin}
+                        priceMax={priceMax}
+                        priceRangeMeta={priceRangeMeta}
+                        updateParams={(params) => updateParams(params, 'merge')}
+                    />
                 </Stack>
             </Paper>
         </Stack>

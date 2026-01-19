@@ -17,5 +17,18 @@ export const BookSearchParamsSchema = z.object({
     priceMax: z.coerce.number().int().optional()
 });
 
+
+/*
+    Note to future self:
+    
+    Difference between BookSearchParams and BookSearchParamsWithTagsArray
+    is that BookSearchParams has a tags string, while BookSearchParamsWithTagsArray has a tags array.
+
+    It is easier to keep it as string when deep linking in browser url.
+    It is easier to keep it as array when filtering and sorting.
+
+    So, we have both.
+*/
 export type BookSearchParams = z.infer<typeof BookSearchParamsSchema>;
+export type BookSearchParamsWithTagsArray = Omit<BookSearchParams, 'tags'> & { tags: string[] };
 
