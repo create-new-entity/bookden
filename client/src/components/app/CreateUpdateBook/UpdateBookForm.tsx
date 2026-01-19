@@ -16,11 +16,11 @@ type UpdateBookFormProps = {
 
 const UpdateBookForm = (props: UpdateBookFormProps) => {
     const { book, onSubmit } = props;
-    const { deleteBookCoverAndBookData } = useDeleteBook(book.bookId);
-    const { restoreBookMutation } = useRestoreBook(book.bookId);
+    const { deleteBookCoverAndBookData } = useDeleteBook();
+    const { restoreBookMutation } = useRestoreBook();
 
     const onRestore = () => {
-        restoreBookMutation.mutate();
+        restoreBookMutation.mutate(book.bookId);
     };
 
 
@@ -48,7 +48,7 @@ const UpdateBookForm = (props: UpdateBookFormProps) => {
             <BookFormFields
                 form={form}
                 mode='update'
-                onDelete={deleteBookCoverAndBookData}
+                onDelete={() => deleteBookCoverAndBookData(book.bookId)}
                 onRestore={onRestore}
                 isDeletedBook={book.deletedAt !== null}
             />
