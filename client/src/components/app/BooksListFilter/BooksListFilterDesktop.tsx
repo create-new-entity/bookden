@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Button, Collapse, IconButton, Stack,
+    Button, Collapse, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
@@ -152,21 +152,22 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY }}
                     />
                     <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />
-                    {
-                        isClientAdminOrSuperAdmin && (
-                            <Tooltip title='Add a new book'>
-                                <IconButton onClick={() => {
-                                    navigate(CREATE_BOOK);
-                                }}>
-                                    <Add/>
-                                </IconButton>
-                            </Tooltip>
-                        )
-                    }
                     <ViewSelector
                         selectedView={selectedView}
                         onViewChange={onViewChange}
                     />
+                    {
+                        isClientAdminOrSuperAdmin && (
+                            <Tooltip title='Add a new book'>
+                                <Button variant='contained' onClick={() => {
+                                    navigate(CREATE_BOOK);
+                                }}>
+                                    <Add/>
+                                    <Typography variant='body1'>Add Book</Typography>
+                                </Button>
+                            </Tooltip>
+                        )
+                    }
                 </Stack>
                 <Stack sx={styles.additionalOptionsStack} direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
                     <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={STACK_DEFAULT_GAP}>

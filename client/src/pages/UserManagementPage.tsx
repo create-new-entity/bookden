@@ -114,10 +114,12 @@ const UserManagementPage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
             >
-                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                    <IconButton onClick={openFilterModal}>
-                        <FilterAltIcon />
-                    </IconButton>
+                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
+                    <Tooltip title='Filter options'>
+                        <IconButton onClick={openFilterModal}>
+                            <FilterAltIcon />
+                        </IconButton>
+                    </Tooltip>
                     {
                         isClientSuperAdmin && (
                             <Tooltip title='Add a new admin'>

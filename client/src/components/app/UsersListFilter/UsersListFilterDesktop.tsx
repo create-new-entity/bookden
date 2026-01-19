@@ -1,5 +1,7 @@
 import {
+    Button,
     IconButton, Stack, Tooltip,
+    Typography,
     useTheme, type SelectChangeEvent, type SxProps, type Theme
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
@@ -108,11 +110,12 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             {
                 isClientSuperAdmin && (
                     <Tooltip title='Add a new admin'>
-                        <IconButton onClick={() => {
+                        <Button variant='contained' onClick={() => {
                             navigate(CREATE_ADMIN_USER);
                         }}>
                             <Add />
-                        </IconButton>
+                            <Typography variant='body1'>Add Admin</Typography>
+                        </Button>
                     </Tooltip>
                 )
             }
