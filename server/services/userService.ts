@@ -123,7 +123,7 @@ const getUser = async (requestorUser: JWTSignPayload, targetUserId: number) => {
         throw notFoundError;
     }
 
-    const foundUser = camelcaseKeys(foundRow, { deep: true });
+    const foundUser = mapDate(foundRow);
 
     const canViewUser = canViewUserInUserManagement(requestorUser.userType, foundUser.userType);
     
