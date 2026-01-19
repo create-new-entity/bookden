@@ -1,3 +1,6 @@
+
+
+
 import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
@@ -9,6 +12,11 @@ import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
 import { useAuthContext, useNotificationContext } from '../../contexts';
 import { deleteUser, getUserAvatarBlob } from '../../api';
 import UserTypeChip from './UserTypeChip';
+import { getFormattedDate } from '../../utility';
+import DeleteActionIcon from './ActionIcons/DeleteActionIcon';
+import { useRestoreUser } from '../../hooks/useRestoreUser';
+import RestoreActionButton from './ActionIcons/RestoreActionButton';
+import { useDeleteUser } from '../../hooks/useDeleteUser';
 
 
 type Styles = {
@@ -27,17 +35,7 @@ const getStyles = (_theme: Theme): Styles => {
         card: {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            '& .MuiIconButton-root': {
-                display: 'none',
-                padding: 0
-            },
-            '&:not(:hover) .MuiIconButton-root': {
-                display: 'none'
-            },
-            '&:hover .MuiIconButton-root': {
-                display: 'block'
-            }
+            textOverflow: 'ellipsis'
         },
         rootStack: {
             paddingLeft: '10px',
@@ -81,12 +79,17 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
         enabled: !!token && !!user.userId,
     };
     const { objectUrl } = useBlobImage(blobOptions);
+    const { restoreUserMutation } = useRestoreUser(user.userId);
+    const { deleteUserMutation } = useDeleteUser(user.userId);
+
+    const handleRestoreUser = () => {
+        restoreUserMutation.mutate();
+    };
+
     const isDeleted = user.deletedAt !== null;
 
-    const handleDeleteUser = async () => {
-        await deleteUser(token, user.userId);
-        onItemDelete?.();
-        handleShowNotification('User deleted successfully.');
+    const handleDeleteUser = () => {
+        deleteUserMutation.mutate();
     };
 
     return (
@@ -113,7 +116,17 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                             <Typography variant='h6'>{user.username}</Typography>
                             {
                                 !isDeleted &&
-                                <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
+                                <DeleteActionIcon
+                                    onClick={handleDeleteUser}
+                                    tooltipTitle='Delete User'
+                                />
+                            }
+                            {
+                                isDeleted &&
+                                <RestoreActionButton
+                                    onClick={handleRestoreUser}
+                                    tooltipTitle='Restore User'
+                                />
                             }
                         </Stack>
                         <Typography variant='body1'>{user.email}</Typography>
@@ -124,7 +137,7 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                                 <Chip label='Deleted' color='error' size='small' />
                             }
                         </Stack>
-                        <Typography variant='body1'>{user.createdAt}</Typography>
+                        <Typography variant='body1'>Created on {getFormattedDate(new Date(user.createdAt))}</Typography>
                     </CardContent>
                 </Stack>
             </Card>
