@@ -21,6 +21,7 @@
     "@mui/material": "^7.3.4",
     "@tanstack/react-query": "^5.90.5",
     "axios": "^1.13.0",
+    "date-fns": "^4.1.0",
     "jsdom": "^21.1.0",
     "ramda": "^0.32.0",
     "react": "^19.1.1",

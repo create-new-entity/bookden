@@ -1,6 +1,8 @@
 import * as R from 'ramda';
+import { format } from 'date-fns';
 
-import { ADMIN, CUSTOMER, PLACE_HOLDER_BOOK_COVER, SUPERADMIN } from '../constants';
+
+import { ADMIN, CUSTOMER, SUPERADMIN } from '../constants';
 import type { UserType } from '../types';
 
 
@@ -32,4 +34,9 @@ export const canEditBook = (userType?: UserType) => {
 
 export const canBuyBook = (userType?: UserType) => {
     return userType === CUSTOMER;
+};
+
+
+export const getFormattedDate = (date: Date) => {
+    return `${format(date, 'dd/MM/yyyy \'at\' HH:mm')}`;
 };
