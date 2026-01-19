@@ -9,7 +9,7 @@ import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_
 import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
 import { useAuthContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
-import EditActionButton from '../../components/app/ActionButtons/EditActionButton';
+import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -115,7 +115,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                 >
                                     {
                                         showEditBookButton && (
-                                            <EditActionButton
+                                            <EditActionIcon
                                                 onClick={handleEditBook}
                                                 tooltipTitle='Edit Book'
                                             />

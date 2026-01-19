@@ -13,7 +13,7 @@ import {
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
 import { useAuthContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
-import EditActionButton from '../../components/app/ActionButtons/EditActionButton';
+import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
 
 
 type Styles = {
@@ -104,7 +104,7 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                     }
                     {
                         showEditBookButton && (
-                            <EditActionButton
+                            <EditActionIcon
                                 onClick={handleEditBook}
                                 tooltipTitle='Edit Book'
                             />

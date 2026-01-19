@@ -3,7 +3,6 @@ import {
     IconButton, Stack, Tooltip,
     Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { Add } from '@mui/icons-material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +22,7 @@ import {
 import { useAuthContext } from '../contexts';
 import type { Book } from '../types';
 import type { ViewSelectorProps } from '../components/app/ViewSelector';
+import FilterActionIcon from '../components/app/ActionIcons/FilterActionIcon';
 
 
 
@@ -113,11 +113,7 @@ const BookManagementPage = () => {
                 alignItems={'center'}
             >
                 <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
-                    <Tooltip title='Filter options'>
-                        <IconButton onClick={openFilterModal}>
-                            <FilterAltIcon />
-                        </IconButton>
-                    </Tooltip>
+                    <FilterActionIcon onClick={openFilterModal} tooltipTitle='Filter options' />
                     {
                         isClientAdminOrSuperAdmin && (
                             <Tooltip title='Add a new book'>

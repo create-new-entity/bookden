@@ -1,6 +1,6 @@
 import ReplayIcon from '@mui/icons-material/Replay';
 
-import ActionButton from './ActionButton';
+import ActionIcon from './ActionIcon';
 
 type RestoreActionButtonProps = {
     onClick: () => void;
@@ -11,7 +11,7 @@ const RestoreActionButton = (props: RestoreActionButtonProps) => {
     const { onClick, tooltipTitle } = props;
 
     return (
-        <ActionButton
+        <ActionIcon
             icon={<ReplayIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}

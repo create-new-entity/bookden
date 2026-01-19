@@ -1,17 +1,17 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import ActionButton from './ActionButton';
+import ActionIcon from './ActionIcon';
 
 type DeleteActionButtonProps = {
     onClick: () => void;
     tooltipTitle: string;
 };
 
-const DeleteActionButton = (props: DeleteActionButtonProps) => {
+const DeleteActionIcon = (props: DeleteActionButtonProps) => {
     const { onClick, tooltipTitle } = props;
 
     return (
-        <ActionButton
+        <ActionIcon
             icon={<DeleteIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
@@ -19,4 +19,4 @@ const DeleteActionButton = (props: DeleteActionButtonProps) => {
     );
 };
 
-export default DeleteActionButton;
+export default DeleteActionIcon;

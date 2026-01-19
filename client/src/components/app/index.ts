@@ -24,6 +24,6 @@ export * from './UsersListFilter';
 export * from './BooksListFilter';
 export * from './CreateUpdateBook';
 export * from './ImageInput';
-export * from './ActionButtons';
+export * from './ActionIcons';
 export * from './CreateUpdateBook';
 export * from './BookCard';

@@ -8,7 +8,7 @@ type ActionButtonProps = {
 };
 
 
-const ActionButton = (props: ActionButtonProps) => {
+const ActionIcon = (props: ActionButtonProps) => {
     const { icon, onClick, tooltipTitle } = props;
     
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,4 +33,4 @@ const ActionButton = (props: ActionButtonProps) => {
     );
 };
 
-export default ActionButton;
+export default ActionIcon;
