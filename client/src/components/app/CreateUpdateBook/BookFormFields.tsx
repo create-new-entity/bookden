@@ -6,7 +6,7 @@ import {
 import * as R from 'ramda';
 
 import {
-    CustomSingleAutoComplete, CustomTextField, MultiValueInput
+    SingleSelectAutoComplete, CustomTextField, MultiValueInput
 } from '../../custom';
 import type { CreateUpdateBookData } from '../../../validations/book';
 import { Controller, type UseFormReturn } from 'react-hook-form';
@@ -162,7 +162,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                             name={LANGUAGE_FIELD_NAME}
                             control={form.control}
                             render={({ field }) => (
-                                <CustomSingleAutoComplete<LanguageCode>
+                                <SingleSelectAutoComplete<LanguageCode>
                                     id="language-select"
                                     label=""
                                     placeholder="Select language"

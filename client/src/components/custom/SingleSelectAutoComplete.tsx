@@ -34,19 +34,17 @@ type CustomSingleAutoCompleteProps<V extends string | number> = {
 >;
 
 
-// Force selection from a predefined list of options.
-const CustomSingleAutoComplete = <V extends string | number>(
+/*
+    Force a single selection and allow typing to search from a predefined list of options.
+    For example, a language selection for a book.
+*/
+const SingleSelectAutoComplete = <V extends string | number>(
     props: CustomSingleAutoCompleteProps<V>
 ) => {
     const {
-        id,
-        label,
-        placeholder,
-        options,
-        value,
-        onChange,
-        sx,
-        disabled = false,
+        id, label, placeholder,
+        options, value, onChange,
+        sx, disabled = false,
         ...rest
     } = props;
 
@@ -79,4 +77,4 @@ const CustomSingleAutoComplete = <V extends string | number>(
     );
 };
 
-export default CustomSingleAutoComplete;
+export default SingleSelectAutoComplete;
