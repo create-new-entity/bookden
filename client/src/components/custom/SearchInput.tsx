@@ -7,7 +7,7 @@ import { isString } from '../../types';
 import { MAX_NUMBER_OF_RECENT_SEARCH_VALUES } from '../../constants';
 
 
-type CustomAutoCompleteProps = {
+type SearchInputProps = {
     id: string;
     sx?: SxProps<Theme>;
     handleChange: (value: string) => void;
@@ -20,7 +20,15 @@ type CustomAutoCompleteProps = {
     >, 'renderInput' | 'options'>;
 
 
-const CustomAutoComplete = (props: CustomAutoCompleteProps) => {
+    
+/*
+    Note to future self:
+    
+    Allow freely type a search term and show
+    recently searched values as dropdown options.
+*/
+
+const SearchInput = (props: SearchInputProps) => {
     const [previouslySearchedValues, setPreviouslySearchedValues] = useLocalStorage<string[]>(props.id, []);
     const { handleChange, placeholder } = props;
 
@@ -77,4 +85,4 @@ const CustomAutoComplete = (props: CustomAutoCompleteProps) => {
     );
 };
 
-export default CustomAutoComplete;
+export default SearchInput;

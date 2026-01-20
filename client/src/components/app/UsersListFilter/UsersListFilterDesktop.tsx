@@ -13,7 +13,7 @@ import {
     NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN,
     USERS_LIST_SORT_BY_OPTIONS
 } from '../../../constants';
-import { CustomAutoComplete } from '../../custom';
+import { SearchInput } from '../../custom';
 import SelectUserType from '../SelectUserType';
 import type { UsersSortByOptions, SortOrder, UserTypeOptions } from '../../../types';
 import type { UserSearchParams } from '../../../validations';
@@ -86,7 +86,7 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             top={MARGIN_TOP_TO_AVOID_NAV_BAR}
             zIndex={NAV_BAR_Z_INDEX}
         >
-            <CustomAutoComplete id='userManagementSearchBox'
+            <SearchInput id='userManagementSearchBox'
                 sx={styles.searchBox}
                 value={search}
                 handleChange={(value) => {

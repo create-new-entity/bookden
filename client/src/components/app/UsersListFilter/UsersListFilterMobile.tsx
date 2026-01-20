@@ -3,7 +3,7 @@ import { Paper, Stack, Typography, useTheme, type SelectChangeEvent, type SxProp
 import type { UserSearchParams } from '../../../validations';
 import type { SortOrder, UsersSortByOptions, UserTypeOptions } from '../../../types';
 import { DEFAULT_GAP, MINIMUM_WIDTH_FOR_USERS_SELECT_SORT_BY, SUPERADMIN, USERS_LIST_SORT_BY_OPTIONS } from '../../../constants';
-import { CustomAutoComplete } from '../../custom';
+import { SearchInput } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import { useAuthContext } from '../../../contexts';
 import { SelectSortOrder, SelectUserType } from '../..';
@@ -72,7 +72,7 @@ const UsersListFilterMobile = (props: UsersListFilterMobileProps) => {
                     <Stack direction={'row'} justifyContent={'center'} alignItems={'center'}>
                         <Typography variant='h6'>Filters</Typography>
                     </Stack>
-                    <CustomAutoComplete id='userManagementSearchBox'
+                    <SearchInput id='userManagementSearchBox'
                         value={search}
                         handleChange={(value) => {
                             updateParams({ search: value, page: 1 });
