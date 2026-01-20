@@ -29,6 +29,7 @@ type Styles = {
     cardContent: SxProps<Theme>;
     textOverflowEllipsis: SxProps<Theme>;
     actionsStack: SxProps<Theme>;
+    actionsContainer: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
@@ -47,6 +48,9 @@ const getStyles = (_theme: Theme): Styles => {
             padding: `${BOOK_CARD_PADDING}rem`,
             height: BOOK_CARD_HEIGHT,
             minWidth: `${BOOK_COVER_WIDTH + BOOK_CARD_PADDING * 2}rem`
+        },
+        actionsContainer: {
+            height: '2rem'
         },
         cardMedia: {
             '& img': {
@@ -108,26 +112,29 @@ const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
     return (
         <Link to={`/books/${book.bookId}`}>
             <Card sx={styles.card} data-testid={'book-card'}>
-                <Stack
-                    sx={styles.actionsStack}
-                    direction={'row'}
-                    justifyContent={'flex-end'}
-                    alignItems={'center'}
-                    gap={`${DEFAULT_GAP / 4}px`}
-                >
-                    {
-                        isDeleted &&
-                        <Chip label='Deleted' color='error' size='small' />
-                    }
-                    <BookCardActions
-                        bookId={book.bookId}
-                        isDeleted={isDeleted}
-                        allowedActions={['edit', 'delete', 'restore']}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                        onRestore={onRestore}
-                    />
-                </Stack>
+                <Box sx={styles.actionsContainer}>
+                    <Stack
+                        sx={styles.actionsStack}
+                        direction={'row'}
+                        justifyContent={'flex-end'}
+                        alignItems={'center'}
+                        gap={`${DEFAULT_GAP / 4}px`}
+                    >
+                        {
+                            isDeleted &&
+                            <Chip label='Deleted' color='error' size='small' />
+                        }
+                        <BookCardActions
+                            bookId={book.bookId}
+                            isDeleted={isDeleted}
+                            allowedActions={['edit', 'delete', 'restore']}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                            onRestore={onRestore}
+                        />
+                        
+                    </Stack>
+                </Box>
                 <Stack
                     direction={'column'}
                     justifyContent={'flex-start'}
