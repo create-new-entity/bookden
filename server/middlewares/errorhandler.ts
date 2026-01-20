@@ -8,8 +8,6 @@ import { isPostgresError } from '../types';
 
 export const errorHandler = ( error: unknown, _req: Request, res: Response, _next: NextFunction ) => {
 
-    console.error(error);
-
     if (error instanceof multer.MulterError) {
         if(error.code === 'LIMIT_FILE_SIZE') {
             return res.status(413).json({
