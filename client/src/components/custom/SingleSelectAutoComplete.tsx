@@ -35,6 +35,8 @@ type CustomSingleAutoCompleteProps<V extends string | number> = {
 
 
 /*
+    Note to future self:
+    
     Force a single selection and allow typing to search from a predefined list of options.
     For example, a language selection for a book.
 */
