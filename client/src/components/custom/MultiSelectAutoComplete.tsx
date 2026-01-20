@@ -7,7 +7,7 @@ import {
 
 import type { MultiSelectOption } from '../../types';
 
-type MultiValueInputProps<V extends string | number> = {
+type MultiSelectAutoCompleteProps<V extends string | number> = {
   id: string;
   label: string;
   placeholder?: string;
@@ -27,7 +27,7 @@ type MultiValueInputProps<V extends string | number> = {
     For example, a list of tags for a book.
 */
 
-const MultiValueInput = <V extends string | number>(props: MultiValueInputProps<V>) => {
+const MultiSelectAutoComplete = <V extends string | number>(props: MultiSelectAutoCompleteProps<V>) => {
     const {
         id, label, placeholder,
         options, value, onChange,
@@ -73,4 +73,4 @@ const MultiValueInput = <V extends string | number>(props: MultiValueInputProps<
     );
 };
 
-export default MultiValueInput;
+export default MultiSelectAutoComplete;
