@@ -4,7 +4,7 @@ import * as R from 'ramda';
 import {
     EXPECT_200, EXPECT_201, EXPECT_204, EXPECT_400, EXPECT_403, EXPECT_409,
     adminUsersSeedData,
-    clearDB, createSomeSeedUsers, createUser, customerUsersSeedData, deleteUser, getUsers, login, seedAdminUser,
+    clearDB, createSomeSeedUsers, createUser, customerUsersSeedData, deleteUser, getUsers, login, restoreUser, seedAdminUser,
     seedCustomerUser, seedSuperAdminUser, updateAvatar, updateUser
 } from '../testUtils';
 import { PaginatedDataList, User } from '../../types';
@@ -545,6 +545,41 @@ describe('User accounts related tests', () => {
                     throw new Error('Could not find a user to delete.');
                 }
             });
+        });
+    });
+
+    describe('Restore deleted user cases.', () => {
+        test('superadmin can restore deleted admin and customer users', async () => {
+            
+            const getUserAndTestRestore = async (userType: 'admin' | 'customer', token: string) => {
+                let response = await getUsers(EXPECT_200, token, `userType=${userType}`);
+                const { data: users } = response.body as PaginatedDataList<User>;
+                if(users[0]) {
+                    const user = users[0];
+                    await deleteUser(user.userId, EXPECT_204, token);
+                    response = await getUsers(EXPECT_200, token, `userType=${userType}&search=${users[0].username}`);
+                    const { data: deletedUsers } = response.body as PaginatedDataList<User>;
+                    expect(deletedUsers[0].deletedAt).not.toBeNull();
+
+                    await restoreUser(user.userId, EXPECT_200, token);
+
+                    response = await getUsers(EXPECT_200, token, `userType=${userType}&search=${users[0].username}`);
+                    const { data: restoredUsers } = response.body as PaginatedDataList<User>;
+                    expect(restoredUsers[0].deletedAt).toBeNull();
+                }
+                else {
+                    throw new Error('Could not find a user to restore.');
+                }
+            };
+
+            const loginAndTestRestore = async (user: { username: string, password: string }, userType: 'admin' | 'customer') => {
+                const token = await login(user);
+                await getUserAndTestRestore(userType, token);
+            };
+            
+            await loginAndTestRestore(seedSuperAdminUser, 'admin');
+            await loginAndTestRestore(seedSuperAdminUser, 'customer');
+            await loginAndTestRestore(adminUsersSeedData[0], 'customer');
         });
     });
 
