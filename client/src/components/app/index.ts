@@ -1,5 +1,4 @@
 
-
 export { default as AppProviders } from './AppProviders';
 export { default as AuthenticationTabs } from './AuthenticationTabs';
 export { default as LogInTab } from './LogInTab';
@@ -13,7 +12,6 @@ export { default as SelectSortOrder } from './SelectSortOrder';
 export { default as Items } from './Items';
 export { default as ViewOptions } from './ViewOptions';
 export { default as UserTypeChip } from './UserTypeChip';
-export { AddAvatarButton, UpdateOrDeleteAvatarButtonsStack } from './Avatar';
 export { default as UserFormFields } from './UserFormFields';
 export { default as UpdateUserForm } from './UpdateUserForm';
 export { default as CreateAdminUserForm } from './CreateAdminUserForm';

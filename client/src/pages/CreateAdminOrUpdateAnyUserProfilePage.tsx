@@ -1,21 +1,19 @@
-import { Avatar, Badge, Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
-import { type ReactNode, useEffect } from 'react';
+import { Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AddAvatarButton, CreateAdminUserForm, UpdateOrDeleteAvatarButtonsStack, UpdateUserForm } from '../components';
-import { useAuthContext, useAvatarContext } from '../contexts';
+import {
+    CreateAdminUserForm, UpdateUserForm
+} from '../components';
+import { useAuthContext } from '../contexts';
 import { useAvatar, useSetTabTitle } from '../hooks';
 import { AVATAR_DIMENSIONS } from '../constants';
-
-const ICON_BUTTONS_STACK_OFFSET_LEFT = 1.7;
-const ICON_BUTTONS_STACK_OFFSET_TOP = 0.8;
 
 
 type ProfilePageStyles = {
     paper: SxProps<Theme>;
     rootStack: SxProps<Theme>;
     avatar: SxProps<Theme>;
-    iconButtonsStack: SxProps<Theme>;
 };
 
 const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
@@ -33,25 +31,10 @@ const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
         avatar: {
             width: `${AVATAR_DIMENSIONS}px`,
             height: `${AVATAR_DIMENSIONS}px`
-        },
-        iconButtonsStack: {
-            position: 'relative',
-            top: `${ICON_BUTTONS_STACK_OFFSET_TOP}rem`,
-            left: `${ICON_BUTTONS_STACK_OFFSET_LEFT}rem`
         }
     };
 };
 
-
-const WrapperStack = ({ children }: { children: ReactNode }) => {
-    const theme = useTheme();
-    const styles = getProfilePageStyles(theme);
-    return (
-        <Stack sx={styles.iconButtonsStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'}>
-            {children}
-        </Stack>
-    );
-};
 
 export type CreateAdminOrUpdateAnyUserProfilePageProps = {
     mode: 'update' | 'create';
@@ -59,33 +42,24 @@ export type CreateAdminOrUpdateAnyUserProfilePageProps = {
 
 const CreateAdminOrUpdateAnyUserProfilePage = (props: CreateAdminOrUpdateAnyUserProfilePageProps) => {
     const { mode } = props;
-    const { avatarUrl, isPlaceHolderAvatar } = useAvatarContext();
-    const { hasExistingLoggedInUser } = useAuthContext();
+
+    const { hasExistingLoggedInUser, isLoggedIn } = useAuthContext();
     const navigate = useNavigate();
     const theme = useTheme();
-    const styles = getProfilePageStyles(theme);
     const { isUserLoggedIn } = hasExistingLoggedInUser();
+    const resolvedIsLoggedIn = isLoggedIn || isUserLoggedIn;
+
 
     useAvatar();
     useEffect(() => {
-        if(!isUserLoggedIn) {
+        if(!resolvedIsLoggedIn) {
             navigate('/auth');
         }
-    }, [navigate, hasExistingLoggedInUser, isUserLoggedIn]);
+    }, [navigate, resolvedIsLoggedIn]);
 
     useSetTabTitle('Update Profile');
 
-    const updateOrDeleteAvatarOptions = (
-        <WrapperStack>
-            <UpdateOrDeleteAvatarButtonsStack/>
-        </WrapperStack>
-    );
-    const addAvatarOption = (
-        <WrapperStack>
-            <AddAvatarButton/>
-        </WrapperStack>
-    );
-    const badgeContent = isPlaceHolderAvatar ? addAvatarOption : updateOrDeleteAvatarOptions;
+    const styles = getProfilePageStyles(theme);
 
     return (
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>
@@ -94,18 +68,7 @@ const CreateAdminOrUpdateAnyUserProfilePage = (props: CreateAdminOrUpdateAnyUser
                     {
                         mode === 'update'
                             ?
-                            <>
-                                <Badge badgeContent={badgeContent}>
-                                    <Avatar
-                                        data-testid='profile-avatar'
-                                        sx={styles.avatar}
-                                        alt={'Profile Avatar'}
-                                        src={avatarUrl}
-                                        variant='rounded'
-                                    />
-                                </Badge>
-                                <UpdateUserForm/>
-                            </>
+                            <UpdateUserForm/>
                             :
                             null
                     }

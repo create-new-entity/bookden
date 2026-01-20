@@ -1,7 +1,6 @@
 
 
 export type AvatarContextValue = {
-    avatarUrl: string;
-    setAvatarUrl: React.Dispatch<React.SetStateAction<string>>;
-    isPlaceHolderAvatar: boolean;
+    avatarUrl: string | null;
+    setAvatarUrl: React.Dispatch<React.SetStateAction<string | null>>;
 };

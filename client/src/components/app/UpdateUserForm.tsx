@@ -3,18 +3,57 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
 
 import { UpdateUserResolver, type UpdateUserFormData } from '../../validations';
-import { useAuthContext } from '../../contexts';
-import { CONFIRM_PASSWORD, CUSTOMER, EMAIL_FIELD, NEW_PASSWORD, NOTIFICATION_DELAY, USERNAME_FIELD } from '../../constants';
-import { useUpdateProfile } from '../../hooks';
+import { useAuthContext, useAvatarContext, useNotificationContext } from '../../contexts';
+import { AVATAR_DIMENSIONS, CONFIRM_PASSWORD, CUSTOMER, EMAIL_FIELD, NEW_PASSWORD, NOTIFICATION_DELAY, PLACE_HOLDER_AVATAR, USERNAME_FIELD } from '../../constants';
+import { useAvatar, useImagePreview, useUpdateProfile } from '../../hooks';
 import UserFormFields from './UserFormFields';
 import { deleteUser } from '../../api';
+import type { SxProps, Theme } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
+import { ImageInput } from './ImageInput';
+import { urlToFile } from '../../utility';
 
 
+type Styles = {
+    avatar: SxProps<Theme>;
+};
+
+const getStyles = (_theme: Theme): Styles => {
+    return {
+        avatar: {
+            width: `${AVATAR_DIMENSIONS}px`,
+            height: `${AVATAR_DIMENSIONS}px`
+        }
+    };
+};
 const UpdateUserForm = () => {
+    const theme = useTheme();
+    const styles = getStyles(theme);
     const { username, email, userType, token, userId, clearAuthentication } = useAuthContext();
     const { mutation: updateUserMutation } = useUpdateProfile();
     const [responseErr, setResponseErr] = useState('');
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const { addOrUpdateAvatarMutation } = useAvatar();
+    const { avatarUrl } = useAvatarContext();
+    const { handleShowNotification } = useNotificationContext();
+
+    const {
+        objectUrl, selectFile,
+        clearImageFile, file, isCleared: isImageCleared
+    } = useImagePreview({
+        initialImageUrl: avatarUrl,
+        placeholderImageUrl: PLACE_HOLDER_AVATAR
+    });
+    
+
+    const isUpdateSuccess = updateUserMutation.isSuccess && addOrUpdateAvatarMutation.isSuccess;
+    useEffect(() => {
+        if(isUpdateSuccess) {
+            handleShowNotification('Profile updated successfully.');
+        }
+    }, [isUpdateSuccess, handleShowNotification]);
+    
     const isResponseError = !!responseErr;
     const isCustomer = userType === CUSTOMER;
 
@@ -79,8 +118,22 @@ const UpdateUserForm = () => {
         }
     }, [updateUserMutation.isSuccess, getValues, reset]);
 
-    const onSubmit = (formData: UpdateUserFormData) => {
+    const onSubmit = async (formData: UpdateUserFormData) => {
         updateUserMutation.mutate(formData);
+        if(file) {
+            addOrUpdateAvatarMutation.mutate(file);
+            return;
+        }
+
+        if (isImageCleared) {
+            // User has cleared the image. Use the placeholder image.
+            const placeholderFile = await urlToFile(
+                PLACE_HOLDER_AVATAR,
+                'noBookCoverPlaceholder.jpg',
+                'image/jpeg'
+            );
+            addOrUpdateAvatarMutation.mutate(placeholderFile);
+        }
     };
     
     const handleDeleteAccount = async () => {
@@ -92,8 +145,25 @@ const UpdateUserForm = () => {
         }
     };
 
+    const hasChangedAvatar = !!file || isImageCleared;
+
     return (
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
+            <Stack
+                direction='row'
+                justifyContent='center'
+                alignItems='center'
+            >
+                <ImageInput
+                    inputRef={inputRef}
+                    onSelectImagePicked={selectFile}
+                    avatarStyles={styles.avatar}
+                    objectUrl={objectUrl}
+                    alt={'Profile Avatar'}
+                    defaultPlaceholderImageUrl={PLACE_HOLDER_AVATAR}
+                    clearImageFile={clearImageFile}
+                />
+            </Stack>
             <UserFormFields
                 mode='update'
                 form={form}
@@ -105,7 +175,8 @@ const UpdateUserForm = () => {
                 responseErrorMessage={responseErr}
                 isCustomer={isCustomer}
                 handleDeleteAccount={handleDeleteAccount}
-                isPending={updateUserMutation.isPending}
+                isPending={updateUserMutation.isPending || addOrUpdateAvatarMutation.isPending}
+                hasChangedAvatar={hasChangedAvatar}
             />
         </form>
     );

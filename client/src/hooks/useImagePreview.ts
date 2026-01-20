@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 
 type UseImagePreviewArgs = {
-    initialImageUrl?: string;
+    initialImageUrl?: string | null;
     placeholderImageUrl: string;
 };
 

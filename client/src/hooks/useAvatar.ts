@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 
 import { useAvatarContext, useAuthContext, useNotificationContext } from '../contexts';
 import type { AxiosErrorResponse } from '../types';
-import { PLACE_HOLDER_AVATAR } from '../constants';
 import { addOrUpdate, deleteAvatar, getAvatar } from '../api';
 
 export const useAvatar = () => {
@@ -29,8 +28,10 @@ export const useAvatar = () => {
         mutationFn: () => deleteAvatar(token),
         onSuccess: () => {
             setAvatarUrl(() => {
-                URL.revokeObjectURL(avatarUrl);
-                return PLACE_HOLDER_AVATAR;
+                if(avatarUrl) {
+                    URL.revokeObjectURL(avatarUrl);
+                }
+                return null;
             });
             queryClient.invalidateQueries({ queryKey: ['avatar', token] });
         },
@@ -39,11 +40,10 @@ export const useAvatar = () => {
         },
     });
 
-    const addOrUpdateMutation = useMutation<void, AxiosErrorResponse, File>({
+    const addOrUpdateAvatarMutation = useMutation<void, AxiosErrorResponse, File>({
         mutationFn: (newAvatar: File) => addOrUpdate(newAvatar, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['avatar', token] });
-            handleShowNotification('Avatar updated.');
         },
         onError: (err) => {
             const message = `${err.response?.data.message}. Image size should be smaller than 2MB.`;
@@ -70,5 +70,5 @@ export const useAvatar = () => {
 
     }, [getAvatarResult.isSuccess, getAvatarResult.isError, getAvatarResult.data, setAvatarUrl]);
 
-    return { getAvatarResult, deleteAvatarMutation, addOrUpdateMutation };
+    return { getAvatarResult, deleteAvatarMutation, addOrUpdateAvatarMutation };
 };
