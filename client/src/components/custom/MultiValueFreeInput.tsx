@@ -34,9 +34,9 @@ type MultiValueInputProps = {
     For example, A list of authors for a book.
     We don't save authors in a separate table and keep it
     loose and dynamic for authors field. In this case,
-    MultiValueInput is good enough.
+    MultiValueFreeInput is good enough.
 */
-const MultiValueInput = (props: MultiValueInputProps) => {
+const MultiValueFreeInput = (props: MultiValueInputProps) => {
     const [previouslySearchedValues, setPreviouslySearchedValues] = useLocalStorage<string[]>(props.id, []);
 
     const {
@@ -106,4 +106,4 @@ const MultiValueInput = (props: MultiValueInputProps) => {
     );
 };
 
-export default MultiValueInput;
+export default MultiValueFreeInput;

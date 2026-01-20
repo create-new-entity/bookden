@@ -6,7 +6,7 @@ import {
 import * as R from 'ramda';
 
 import {
-    SingleSelectAutoComplete, CustomTextField, MultiValueInput
+    SingleSelectAutoComplete, CustomTextField, MultiValueFreeInput
 } from '../../custom';
 import type { CreateUpdateBookData } from '../../../validations/book';
 import { Controller, type UseFormReturn } from 'react-hook-form';
@@ -262,7 +262,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                     name={AUTHORS_FIELD_NAME}
                     control={form.control}
                     render={({ field }) => (
-                        <MultiValueInput
+                        <MultiValueFreeInput
                             id="create-book-authors-input"
                             placeholder="Type and hit enter to add an author"
                             value={field.value ?? []}
