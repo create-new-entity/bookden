@@ -1,10 +1,9 @@
 import app from './app';
-import { endConnectionPool, endRedis, ENV_VARIABLES, initPGDBPool, initRedis } from './configs';
+import { endConnectionPool, endRedis, ENV_VARIABLES, initRedis } from './configs';
 
 const PORT = ENV_VARIABLES.PORT;
 
 const start = async () => {
-    await initPGDBPool();
     await initRedis();
     const server = app.listen(PORT, (error) => {
         if(error) {
