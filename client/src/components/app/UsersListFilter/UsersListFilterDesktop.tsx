@@ -1,5 +1,6 @@
 import {
     Button,
+    Divider,
     IconButton, Stack, Tooltip,
     Typography,
     useTheme, type SelectChangeEvent, type SxProps, type Theme
@@ -119,14 +120,20 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             />
             {
                 isClientSuperAdmin && (
-                    <Tooltip title='Add a new admin'>
-                        <Button variant='contained' onClick={() => {
-                            navigate(CREATE_ADMIN_USER);
-                        }}>
-                            <Add />
-                            <Typography variant='body1'>Add Admin</Typography>
-                        </Button>
-                    </Tooltip>
+                    <>
+                        <Divider
+                            orientation='vertical'
+                            flexItem={true}
+                        />
+                        <Tooltip title='Add a new admin'>
+                            <Button variant='contained' onClick={() => {
+                                navigate(CREATE_ADMIN_USER);
+                            }}>
+                                <Add />
+                                <Typography variant='body1'>Add Admin</Typography>
+                            </Button>
+                        </Tooltip>
+                    </>
                 )
             }
         </Stack>

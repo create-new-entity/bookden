@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Button, Collapse, Stack,
+    Button, Collapse, Divider, Paper, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
@@ -141,14 +141,20 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                     />
                     {
                         isClientAdminOrSuperAdmin && (
-                            <Tooltip title='Add a new book'>
-                                <Button variant='contained' onClick={() => {
-                                    navigate(CREATE_BOOK);
-                                }}>
-                                    <Add/>
-                                    <Typography variant='body1'>Add Book</Typography>
-                                </Button>
-                            </Tooltip>
+                            <>
+                                <Divider
+                                    orientation='vertical'
+                                    flexItem={true}
+                                />
+                                <Tooltip title='Add a new book'>
+                                    <Button variant='contained' onClick={() => {
+                                        navigate(CREATE_BOOK);
+                                    }}>
+                                        <Add/>
+                                        <Typography variant='body1'>Add Book</Typography>
+                                    </Button>
+                                </Tooltip>
+                            </>
                         )
                     }
                 </Stack>
