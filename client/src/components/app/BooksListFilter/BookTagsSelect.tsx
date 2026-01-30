@@ -26,7 +26,7 @@ const BookTagsSelect = (props: BookTagsSelectProps) => {
             id='book-tags-input'
             multiAutoCompleteStyles={multiAutoCompleteStyles}
             label={label ?? ''}
-            placeholder='Search and select tags'
+            placeholder={tags.length > 0 ? '' : 'Search and select tags'}
             options={allBookTagsOptions}
             value={tags}
             onChange={onChange}
