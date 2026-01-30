@@ -1,10 +1,12 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
-import multer, { MulterError } from 'multer';
+import multer from 'multer';
 
 import { errorMessages, errorNames, AppError, ConflictError } from '../errors';
 import { isPostgresError } from '../types';
+import { mapPostgresErrorToAppError } from '../utilities';
+
 
 export const errorHandler = ( error: unknown, _req: Request, res: Response, _next: NextFunction ) => {
 
@@ -29,16 +31,15 @@ export const errorHandler = ( error: unknown, _req: Request, res: Response, _nex
         return res.status(error.statusCode).json({ message: error.message, });
     }
 
-    if(error instanceof MulterError) {
-        return res.status(400).json({ message: error.message });
-    }
-
     if(error instanceof ConflictError) {
         return res.status(409).json({ message: error.message });
     }
 
-    if(isPostgresError(error)) {
-        return res.status(500).json({ message: error.cause.detail });
+    if (isPostgresError(error)) {
+        const appError = mapPostgresErrorToAppError(error);
+        return res
+            .status(appError.statusCode)
+            .json({ message: appError.message });
     }
     
     return res.status(500).json({ message: errorMessages[errorNames.internalServerError] });

@@ -4,20 +4,12 @@ import camelcaseKeys from 'camelcase-keys';
 
 import { SALT_ROUNDS, USERS_PAGINATION_LIMIT } from '../constants';
 import {
-    errorMessages,
-    errorNames,
-    ConflictError,
-    UnauthorizedError,
-    NotFoundError
+    UnauthorizedError, NotFoundError
 } from '../errors';
 import {
-    NewUserPayload,
-    UserTypes,
-    JWTSignPayload,
+    NewUserPayload, UserTypes, JWTSignPayload,
     ADMIN, CUSTOMER, UpdateUserPayload, User,
-    UserDBRow,
-    GetUsersQueryParams,
-    PaginatedDataList
+    UserDBRow, GetUsersQueryParams, PaginatedDataList
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
@@ -207,10 +199,6 @@ const createUser = async (newUserData: NewUserPayload) => {
     newUserData.password = await getPasswordHash(newUserData.password);
     const snakeCasedData = convertToSnakeCaseDeep(newUserData);
 
-    // Unique constraints are there. Want to have better error messaging though.
-    await checkDuplicateUsername(snakeCasedData.username);
-    await checkDuplicateEmail(snakeCasedData.email);
-    
     await dbPool.query(sqlTag.typeAlias('User')`
         INSERT INTO users (username, password_hash, email, user_type)
         VALUES (
@@ -222,44 +210,6 @@ const createUser = async (newUserData: NewUserPayload) => {
     `);
 };
 
-const checkDuplicateUsername = async (username: string, userId?: number): Promise<void> => {
-    const dbPool = await getPGDBPool();
-
-    const userIdFragment = userId ? sqlTag.fragment`AND u.user_id != ${userId}` : sqlTag.fragment``;
-
-    const found = await dbPool.maybeOne(sqlTag.typeAlias('User')`
-        SELECT 1
-        FROM users u
-        WHERE
-            u.username = ${username}
-            ${userIdFragment}
-    `);
-    
-    if(found) {
-        const userNameNotAvailableError = new ConflictError(errorMessages[errorNames.usernameNotAvailable]);
-        throw userNameNotAvailableError;
-    }
-};
-
-const checkDuplicateEmail = async (email: string, userId?: number): Promise<void> => {
-    const dbPool = await getPGDBPool();
-
-    const userIdFragment = userId ? sqlTag.fragment`AND u.user_id != ${userId}` : sqlTag.fragment``;
-
-    const found = await dbPool.maybeOne(sqlTag.typeAlias('User')`
-        SELECT 1
-        FROM users u
-        WHERE
-            u.email = ${email}
-            ${userIdFragment}
-    `);
-    
-    if(found) {
-        const emailIsNotAvailableError = new ConflictError(errorMessages[errorNames.emailNotAvailable]);
-        throw emailIsNotAvailableError;
-    }
-};
-
 const updateUser = async (userId: number, updateUserData: UpdateUserPayload): Promise<void> => {
     const dbPool = await getPGDBPool();
     const snakeCasedData = convertToSnakeCaseDeep(updateUserData);
@@ -269,16 +219,7 @@ const updateUser = async (userId: number, updateUserData: UpdateUserPayload): Pr
         updatedData.password = await getPasswordHash(snakeCasedData.password);
     };
     updatedData.username = snakeCasedData.username;
-
-    // Unique constraints are there. Want to have better error messaging though.
-    if(updatedData.username) {
-        await checkDuplicateUsername(updatedData.username, userId);
-    }
     updatedData.email = snakeCasedData.email;
-    if(updatedData.email) {
-        await checkDuplicateEmail(updatedData.email, userId);
-    }
-
 
     await dbPool.query(sqlTag.typeAlias('User')`
         UPDATE users
