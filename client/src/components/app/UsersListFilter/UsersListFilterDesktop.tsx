@@ -1,9 +1,7 @@
 import {
-    Button,
-    Divider,
-    IconButton, Stack, Tooltip,
-    Typography,
-    useTheme, type SelectChangeEvent, type SxProps, type Theme
+    Button, Divider, Stack,
+    Tooltip, Typography, useTheme,
+    type SelectChangeEvent, type SxProps, type Theme
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';

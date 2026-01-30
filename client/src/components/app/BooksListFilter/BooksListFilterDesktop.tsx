@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Button, Collapse, Divider, Paper, Stack,
+    Button, Collapse, Divider, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';

@@ -23,7 +23,7 @@ const CreateBookForm = ({ onSubmit }: CreateBookFormProps) => {
         isbn: '',
         yearPublished: CURRENT_YEAR,
         price: 0,
-        pages: 0,
+        pages: 1,
         tags: [],
         language: 'en'
     };
