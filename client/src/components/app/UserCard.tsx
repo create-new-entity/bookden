@@ -1,16 +1,15 @@
 
 
 
-import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, Tooltip } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import type { User } from '../../types';
 import { useBlobImage } from '../../hooks';
 import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
-import { useAuthContext, useNotificationContext } from '../../contexts';
-import { deleteUser, getUserAvatarBlob } from '../../api';
+import { useAuthContext } from '../../contexts';
+import { getUserAvatarBlob } from '../../api';
 import UserTypeChip from './UserTypeChip';
 import { getFormattedDate } from '../../utility';
 import DeleteActionIcon from './ActionIcons/DeleteActionIcon';
@@ -24,6 +23,7 @@ type Styles = {
     card: SxProps<Theme>;
     cardMedia: SxProps<Theme>;
     cardContent: SxProps<Theme>;
+    overflow: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
@@ -57,6 +57,12 @@ const getStyles = (_theme: Theme): Styles => {
             paddingLeft: 0,
             paddingRight: 0,
             paddingBottom: 0
+        },
+        overflow: {
+            width: '95%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         }
     };
 };
@@ -64,15 +70,13 @@ const getStyles = (_theme: Theme): Styles => {
 
 type UserCardProps = {
     item: User;
-    onItemDelete?: () => void;
 };
 
-const UserCard = ({ item, onItemDelete }: UserCardProps) => {
+const UserCard = ({ item }: UserCardProps) => {
     const user = item;
     const { token } = useAuthContext();
     const theme = useTheme();
     const styles = getStyles(theme);
-    const { handleShowNotification } = useNotificationContext();
     const blobOptions = {
         queryKey: ['avatar', token, user.userId],
         queryFn: () => getUserAvatarBlob(token, user.userId),
@@ -91,6 +95,8 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
     const handleDeleteUser = () => {
         deleteUserMutation.mutate();
     };
+
+    const createdAt = getFormattedDate(new Date(user.createdAt));
 
     return (
         <Link to={`/users/${user.userId}`}>
@@ -113,7 +119,9 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                     }
                     <CardContent sx={styles.cardContent}>
                         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                            <Typography variant='h6'>{user.username}</Typography>
+                            <Tooltip title={user.username} placement='bottom-start'>
+                                <Typography sx={styles.overflow} variant='h6'>{user.username}</Typography>
+                            </Tooltip>
                             {
                                 !isDeleted &&
                                 <DeleteActionIcon
@@ -129,7 +137,9 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                                 />
                             }
                         </Stack>
-                        <Typography variant='body1'>{user.email}</Typography>
+                        <Tooltip title={user.email} placement='bottom-start'>
+                            <Typography sx={styles.overflow} variant='body1'>{user.email}</Typography>
+                        </Tooltip>
                         <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                             <UserTypeChip userType={user.userType} />
                             {
@@ -137,7 +147,9 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                                 <Chip label='Deleted' color='error' size='small' />
                             }
                         </Stack>
-                        <Typography variant='body1'>Created on {getFormattedDate(new Date(user.createdAt))}</Typography>
+                        <Tooltip title={`Created on ${createdAt}`} placement='bottom-start'>
+                            <Typography sx={styles.overflow} variant='body1'>Created on {createdAt}</Typography>
+                        </Tooltip>
                     </CardContent>
                 </Stack>
             </Card>

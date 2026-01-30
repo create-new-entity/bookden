@@ -1,7 +1,10 @@
 
 
-import { IconButton, Stack, Tooltip, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
+import {
+    IconButton, Stack, Tooltip,
+    Typography, useTheme, type SxProps,
+    type Theme
+} from '@mui/material';
 import { Add } from '@mui/icons-material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useNavigate } from 'react-router-dom';
@@ -15,12 +18,8 @@ import {
     SUPERADMIN
 } from '../constants';
 import {
-    UserCard,
-    Items,
-    CustomPagination,
-    UsersListFilterDesktop,
-    UsersListFilterMobile,
-    CustomModal,
+    UserCard, Items, CustomPagination,
+    UsersListFilterDesktop, UsersListFilterMobile, CustomModal,
     type CustomModalRef
 } from '../components';
 import type { User } from '../types';
@@ -80,8 +79,6 @@ const UserManagementPage = () => {
     const { isDesktop } = useResponsive();
     const theme = useTheme();
     const styles = getStyles(theme);
-    const queryClient = useQueryClient();
-    const { token } = useAuthContext();
     const { usersList, params, updateParams } = useUsersList();
     const { search, sortBy, sortOrder, userType } = params;
     const { userType: clientUserType } = useAuthContext();
@@ -89,13 +86,6 @@ const UserManagementPage = () => {
     const navigate = useNavigate();
     const modalRef = useRef<CustomModalRef | null>(null);
     const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
-    
-    const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
-    
-
-    const handleQueryClientInvalidation = () => {
-        queryClient.invalidateQueries({ queryKey });
-    };
     
     const openFilterModal = () => {
         console.log('Attempting to open filter modal');
@@ -166,7 +156,6 @@ const UserManagementPage = () => {
                     ItemComponent={UserCard}
                     getKey={(user) => user.userId}
                     viewOption={selectedView}
-                    onItemDelete={handleQueryClientInvalidation}
                 />
                 {
                     usersList.data &&
