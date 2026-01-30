@@ -54,7 +54,11 @@ const UpdateBookPage = () => {
         }
     };
 
-    const bothBookCoverAndBookDataAreUpdated = updateBookMutation.isSuccess && bookCover.updateBookCoverMutation.isSuccess;
+    const bookCoverHasBeenChanged = image.file || image.isCleared;
+    const bookCoverHasBeenUpdated = bookCoverHasBeenChanged && bookCover.updateBookCoverMutation.isSuccess;
+    
+
+    const bothBookCoverAndBookDataAreUpdated = updateBookMutation.isSuccess && ( bookCoverHasBeenUpdated || true ); // true is for the use case when book cover is not changed but book data is updated.
     if (bothBookCoverAndBookDataAreUpdated) {
         handleShowNotification('Book updated successfully.');
         return <Navigate to={`${BOOK.replace(':bookId', parsedBookId.toString())}`} replace />;
