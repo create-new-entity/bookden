@@ -98,6 +98,7 @@ const NavBar = () => {
                             setMenuOpen(false);
                             setAnchorElement(null);
                         }}
+                        disableScrollLock
                     >
                         {
                             options.map((option) => {
