@@ -121,6 +121,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                             <EditActionIcon
                                                 onClick={handleEditBook}
                                                 tooltipTitle='Edit Book'
+                                                testId='edit-book-icon'
                                             />
                                         )
                                     }

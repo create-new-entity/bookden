@@ -111,7 +111,7 @@ const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
 
     return (
         <Link to={`/books/${book.bookId}`}>
-            <Card sx={styles.card} data-testid={'book-card'}>
+            <Card sx={styles.card} data-testid={`book-card-${book.title.toLowerCase().replace(/ /g, '-')}`}>
                 <Box sx={styles.actionsContainer}>
                     <Stack
                         sx={styles.actionsStack}

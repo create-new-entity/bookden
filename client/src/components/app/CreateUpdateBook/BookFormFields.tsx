@@ -308,6 +308,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                         color='primary'
                         type='submit'
                         disabled={hasErrors || isDeletedBook}
+                        data-testid={`${mode}-book-submit`}
                     >
                         {mode === 'create' ? 'Create Book' : 'Update Book'}
                     </Button>

@@ -5,11 +5,12 @@ type ActionButtonProps = {
     icon: React.ReactNode;
     onClick: () => void;
     tooltipTitle: string;
+    testId?: string;
 };
 
 
 const ActionIcon = (props: ActionButtonProps) => {
-    const { icon, onClick, tooltipTitle } = props;
+    const { icon, onClick, tooltipTitle, testId } = props;
     
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         /*
@@ -26,7 +27,7 @@ const ActionIcon = (props: ActionButtonProps) => {
 
     return (
         <Tooltip title={tooltipTitle}>
-            <IconButton onClick={handleClick}>
+            <IconButton onClick={handleClick} data-testid={testId}>
                 {icon}
             </IconButton>
         </Tooltip>
