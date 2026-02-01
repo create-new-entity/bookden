@@ -1,8 +1,7 @@
 import {
-    Button,
-    IconButton, Stack, Tooltip,
-    Typography,
-    useTheme, type SelectChangeEvent, type SxProps, type Theme
+    Button, Divider, Stack,
+    Tooltip, Typography, useTheme,
+    type SelectChangeEvent, type SxProps, type Theme
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +12,7 @@ import {
     NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN,
     USERS_LIST_SORT_BY_OPTIONS
 } from '../../../constants';
-import { CustomAutoComplete } from '../../custom';
+import { SearchInput } from '../../custom';
 import SelectUserType from '../SelectUserType';
 import type { UsersSortByOptions, SortOrder, UserTypeOptions } from '../../../types';
 import type { UserSearchParams } from '../../../validations';
@@ -86,7 +85,7 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             top={MARGIN_TOP_TO_AVOID_NAV_BAR}
             zIndex={NAV_BAR_Z_INDEX}
         >
-            <CustomAutoComplete id='userManagementSearchBox'
+            <SearchInput id='userManagementSearchBox'
                 sx={styles.searchBox}
                 value={search}
                 handleChange={(value) => {
@@ -119,14 +118,20 @@ const UsersListFilterDesktop = (props: UsersListFilterDesktopProps) => {
             />
             {
                 isClientSuperAdmin && (
-                    <Tooltip title='Add a new admin'>
-                        <Button variant='contained' onClick={() => {
-                            navigate(CREATE_ADMIN_USER);
-                        }}>
-                            <Add />
-                            <Typography variant='body1'>Add Admin</Typography>
-                        </Button>
-                    </Tooltip>
+                    <>
+                        <Divider
+                            orientation='vertical'
+                            flexItem={true}
+                        />
+                        <Tooltip title='Add a new admin'>
+                            <Button variant='contained' onClick={() => {
+                                navigate(CREATE_ADMIN_USER);
+                            }}>
+                                <Add />
+                                <Typography variant='body1'>Add Admin</Typography>
+                            </Button>
+                        </Tooltip>
+                    </>
                 )
             }
         </Stack>

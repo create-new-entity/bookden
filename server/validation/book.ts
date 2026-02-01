@@ -15,7 +15,7 @@ export const UpdateBookPayloadSchema = z.object({
     yearPublished: z.number()
         .int()
         .gte(EARLIEST_YEAR_PUBLISHED, { message: `Year must be at least ${EARLIEST_YEAR_PUBLISHED}` })
-        .lte(CURRENT_YEAR, { message: `Year must be at most ${CURRENT_YEAR}` }),
+        .lte(CURRENT_YEAR, { message: `Year must be at most ${CURRENT_YEAR}` }).optional(),
     language: z.string().min(1, { message: 'Language must be a non-empty string' }).optional(),
     pages: z.number().min(1, { message: 'Pages must be a positive number' }).optional(),
 });

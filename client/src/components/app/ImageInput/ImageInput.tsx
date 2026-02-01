@@ -156,6 +156,7 @@ const ImageInput = (props: ImageInputProps) => {
             />
             <Badge badgeContent={badgeContent}>
                 <Avatar
+                    data-testid='profile-avatar'
                     sx={avatarStyles}
                     src={objectUrl || defaultPlaceholderImageUrl}
                     alt={alt}

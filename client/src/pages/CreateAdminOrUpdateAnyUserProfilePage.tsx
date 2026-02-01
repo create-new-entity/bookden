@@ -7,7 +7,7 @@ import {
 } from '../components';
 import { useAuthContext } from '../contexts';
 import { useAvatar, useSetTabTitle } from '../hooks';
-import { AVATAR_DIMENSIONS } from '../constants';
+import { AVATAR_DIMENSIONS, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../constants';
 
 
 type ProfilePageStyles = {
@@ -26,7 +26,8 @@ const getProfilePageStyles = (theme: Theme): ProfilePageStyles => {
             },
         },
         rootStack: {
-            height: '90vh'
+            minHeight: '70vh',
+            paddingTop: MARGIN_TOP_TO_AVOID_NAV_BAR
         },
         avatar: {
             width: `${AVATAR_DIMENSIONS}px`,
@@ -60,6 +61,7 @@ const CreateAdminOrUpdateAnyUserProfilePage = (props: CreateAdminOrUpdateAnyUser
     useSetTabTitle('Update Profile');
 
     const styles = getProfilePageStyles(theme);
+
 
     return (
         <Stack sx={styles.rootStack} direction={'column'} justifyContent={'center'} alignItems={'center'}>

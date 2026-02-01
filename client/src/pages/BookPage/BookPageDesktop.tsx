@@ -2,10 +2,13 @@ import {
     Button, Chip, Container, Divider, Paper,
     Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useBook, useBookCover } from '../../hooks';
-import { DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER } from '../../constants';
+import {
+    DEFAULT_BORDER_RADIUS, DEFAULT_GAP, LANGUAGE_LABEL_MAP,
+    MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER
+} from '../../constants';
 import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
 import { useAuthContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
@@ -118,6 +121,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                             <EditActionIcon
                                                 onClick={handleEditBook}
                                                 tooltipTitle='Edit Book'
+                                                testId='edit-book-icon'
                                             />
                                         )
                                     }
@@ -169,9 +173,13 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                     <Typography>
                                         Pages: {bookQuery.data?.pages}
                                     </Typography>
-                                    <Typography>
-                                        Language: {bookQuery.data?.language}
-                                    </Typography>
+                                    {
+                                        bookQuery.data?.language && (
+                                            <Typography>
+                                                Language: {LANGUAGE_LABEL_MAP[bookQuery.data?.language]}
+                                            </Typography>
+                                        )
+                                    }
                                     <Typography>
                                         Tags: {bookQuery.data?.tags?.join(', ')}
                                     </Typography>

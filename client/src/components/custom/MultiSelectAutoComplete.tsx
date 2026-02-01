@@ -7,7 +7,7 @@ import {
 
 import type { MultiSelectOption } from '../../types';
 
-type CustomMultiAutoCompleteProps<V extends string | number> = {
+type MultiSelectAutoCompleteProps<V extends string | number> = {
   id: string;
   label: string;
   placeholder?: string;
@@ -20,8 +20,14 @@ type CustomMultiAutoCompleteProps<V extends string | number> = {
   disabled?: boolean;
 };
 
+/* 
+    Note to future self:
 
-const CustomMultiAutoComplete = <V extends string | number>(props: CustomMultiAutoCompleteProps<V>) => {
+    Allow search and selection of multiple values from a predefined list of options.
+    For example, a list of tags for a book.
+*/
+
+const MultiSelectAutoComplete = <V extends string | number>(props: MultiSelectAutoCompleteProps<V>) => {
     const {
         id, label, placeholder,
         options, value, onChange,
@@ -67,4 +73,4 @@ const CustomMultiAutoComplete = <V extends string | number>(props: CustomMultiAu
     );
 };
 
-export default CustomMultiAutoComplete;
+export default MultiSelectAutoComplete;

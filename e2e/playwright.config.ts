@@ -14,7 +14,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
     launchOptions: {
-      slowMo: isCI ? 0 : 200,
+      slowMo: isCI ? 0 : 700,
     },
   },
   outputDir: './test-results',

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Button, Collapse, Stack,
+    Button, Collapse, Divider, Stack,
     Tooltip, Typography, useTheme
 } from '@mui/material';
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
@@ -14,7 +14,7 @@ import {
     MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
     NAV_BAR_Z_INDEX, STACK_DEFAULT_GAP, SUPERADMIN
 } from '../../../constants';
-import { CustomAutoComplete } from '../../custom';
+import { SearchInput } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
 import { useAuthContext } from '../../../contexts';
@@ -119,7 +119,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                     top={MARGIN_TOP_TO_AVOID_NAV_BAR}
                     zIndex={NAV_BAR_Z_INDEX}
                 >
-                    <CustomAutoComplete id='bookManagementSearchBox'
+                    <SearchInput id='bookManagementSearchBox'
                         sx={styles.searchBox}
                         value={search}
                         handleChange={(value) => {
@@ -141,14 +141,20 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                     />
                     {
                         isClientAdminOrSuperAdmin && (
-                            <Tooltip title='Add a new book'>
-                                <Button variant='contained' onClick={() => {
-                                    navigate(CREATE_BOOK);
-                                }}>
-                                    <Add/>
-                                    <Typography variant='body1'>Add Book</Typography>
-                                </Button>
-                            </Tooltip>
+                            <>
+                                <Divider
+                                    orientation='vertical'
+                                    flexItem={true}
+                                />
+                                <Tooltip title='Add a new book'>
+                                    <Button variant='contained' onClick={() => {
+                                        navigate(CREATE_BOOK);
+                                    }}>
+                                        <Add/>
+                                        <Typography variant='body1'>Add Book</Typography>
+                                    </Button>
+                                </Tooltip>
+                            </>
                         )
                     }
                 </Stack>

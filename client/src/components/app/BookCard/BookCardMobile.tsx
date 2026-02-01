@@ -132,7 +132,10 @@ const BookCardMobile = (props: BookCardMobileProps) => {
 
     return (
         <Link to={`/books/${book.bookId}`}>
-            <Card sx={styles.card}>
+            <Card
+                sx={styles.card}
+                data-testid={`book-card-${book.title.toLowerCase().replace(/ /g, '-')}`}
+            >
                 <Stack
                     direction={'row'}
                     justifyContent={'flex-start'}

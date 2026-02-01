@@ -6,7 +6,7 @@ import {
 import * as R from 'ramda';
 
 import {
-    CustomSingleAutoComplete, CustomTextField, MultiValueInput
+    SingleSelectAutoComplete, CustomTextField, MultiValueFreeInput
 } from '../../custom';
 import type { CreateUpdateBookData } from '../../../validations/book';
 import { Controller, type UseFormReturn } from 'react-hook-form';
@@ -162,7 +162,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                             name={LANGUAGE_FIELD_NAME}
                             control={form.control}
                             render={({ field }) => (
-                                <CustomSingleAutoComplete<LanguageCode>
+                                <SingleSelectAutoComplete<LanguageCode>
                                     id="language-select"
                                     label=""
                                     placeholder="Select language"
@@ -262,7 +262,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                     name={AUTHORS_FIELD_NAME}
                     control={form.control}
                     render={({ field }) => (
-                        <MultiValueInput
+                        <MultiValueFreeInput
                             id="create-book-authors-input"
                             placeholder="Type and hit enter to add an author"
                             value={field.value ?? []}
@@ -308,6 +308,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                         color='primary'
                         type='submit'
                         disabled={hasErrors || isDeletedBook}
+                        data-testid={`${mode}-book-submit`}
                     >
                         {mode === 'create' ? 'Create Book' : 'Update Book'}
                     </Button>
@@ -332,6 +333,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                 type='button'
                                 onClick={onRestore}
                                 disabled={!isDeletedBook}
+                                data-testid='restore-book-button'
                             >
                                 Restore Book
                             </Button>

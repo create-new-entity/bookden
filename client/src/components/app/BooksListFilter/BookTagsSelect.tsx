@@ -1,7 +1,7 @@
 import { type SxProps, type Theme } from '@mui/material';
 
 import { useBookTags } from '../../../hooks';
-import { CustomMultiAutoComplete } from '../../custom';
+import { MultiSelectAutoComplete } from '../../custom';
 
 
 type BookTagsSelectProps = {
@@ -22,11 +22,11 @@ const BookTagsSelect = (props: BookTagsSelectProps) => {
     const allBookTagsOptions = allBookTags?.map((tag) => ({ value: tag.tag, label: tag.tag })) || [];
     
     return (
-        <CustomMultiAutoComplete<string>
+        <MultiSelectAutoComplete<string>
             id='book-tags-input'
             multiAutoCompleteStyles={multiAutoCompleteStyles}
             label={label ?? ''}
-            placeholder='Search and select tags'
+            placeholder={tags.length > 0 ? '' : 'Search and select tags'}
             options={allBookTagsOptions}
             value={tags}
             onChange={onChange}

@@ -7,7 +7,7 @@ import type { SxProps, Theme } from '@mui/material';
 
 type ItemsProps<T> = {
     items: T[];
-    ItemComponent: React.ComponentType<{ item: T, onItemDelete?: () => void, onItemRestore?: () => void }>;
+    ItemComponent: React.ComponentType<{ item: T }>;
     getKey: (item: T) => React.Key;
     viewOption: ViewOptionsTypes;
     sx?: SxProps<Theme>;

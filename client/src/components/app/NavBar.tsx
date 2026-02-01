@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 
 import { useNavContext } from '../../contexts';
-import { CustomAutoComplete } from '../custom';
+import { SearchInput } from '../custom';
 import { NAV_BAR_Z_INDEX } from '../../constants';
 import { useBookSearchVisibility } from '../../hooks';
 
@@ -79,7 +79,7 @@ const NavBar = () => {
                     </Link>
                     {
                         showBookSearch && (
-                            <CustomAutoComplete
+                            <SearchInput
                                 id='navSearchBox'
                                 sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
                                 handleChange={() => {}}
@@ -98,6 +98,7 @@ const NavBar = () => {
                             setMenuOpen(false);
                             setAnchorElement(null);
                         }}
+                        disableScrollLock
                     >
                         {
                             options.map((option) => {

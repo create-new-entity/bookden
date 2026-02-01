@@ -11,14 +11,15 @@ import {
     deleteBook, seedSuperAdminUser, adminUsersSeedData,
     updateBook,
     createBook,
-    EXPECT_201
+    EXPECT_201,
+    restoreBook
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
 jest.setTimeout(TWENTY_SECONDS);
 
 
-describe('GET Book(s) related tests', () => {
+describe('Books CRUD tests', () => {
     let response;
 
     beforeAll(async () => {
@@ -213,7 +214,6 @@ describe('GET Book(s) related tests', () => {
             response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=createdAt&sortOrder=asc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
-            console.log(receivedListOfTitles);
 
             expect(receivedListOfTitles).toStrictEqual(expectedListOfTitles);
         });
@@ -365,6 +365,37 @@ describe('GET Book(s) related tests', () => {
             expect(response.body.language).toBe('en');
             expect(response.body.pages).toBe(100);
         });
+    });
+
+    test('An admin or superadmin can restore a deleted book', async () => {
+        const bookTitle = 'Bleak House';
+        response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+        const { data: books } = response.body as PaginatedDataList<Book>;
+
+        const book = books[0];
+        const bookId = book.bookId;
+
+        const deleteAndRestoreBook = async (token: string) => {
+            response = await deleteBook(bookId, EXPECT_200, token);
+            expect(response.status).toBe(EXPECT_200);
+            response = await getBook(bookId, EXPECT_200, token);
+            expect(response.body.deletedAt).not.toBeNull();
+            response = await restoreBook(bookId, EXPECT_200, token);
+            expect(response.status).toBe(EXPECT_200);
+            response = await getBook(bookId, EXPECT_200, token);
+            expect(response.body.deletedAt).toBeNull();
+        };
+
+        const loginAndTest = async (user: { username: string, password: string }) => {
+            const token = await login({
+                username: user.username,
+                password: user.password
+            });
+            await deleteAndRestoreBook(token);
+        };
+
+        await loginAndTest(seedSuperAdminUser);
+        await loginAndTest(adminUsersSeedData[0]);
     });
 
     afterAll(async () => {

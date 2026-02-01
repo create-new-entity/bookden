@@ -7,8 +7,6 @@ const INVALID_PASSWORD = 'InvalidPassword' as const;
 const TOKEN_EXPIRED = 'TokenExpired' as const;
 const TOKEN_INVALID = 'TokenInvalid' as const;
 const ENV_VAR_NOT_DEFINED = 'EnvVariableNotDefined' as const;
-const USERNAME_NOT_AVAILABLE = 'UsernameNotAvailable' as const;
-const EMAIL_NOT_AVAILABLE = 'EmailNotAvailable' as const;
 const RESOURCE_CONFLICT = 'ResourceConflict' as const;
 const INTERNAL_SERVER_ERROR = 'InternalServerError' as const;
 const VALIDATION_FAILED = 'ValidationFailed' as const;
@@ -33,8 +31,6 @@ export const errorNames = {
     tokenExpired: TOKEN_EXPIRED,
     tokenInvalid: TOKEN_INVALID,
     envVarUndefined: ENV_VAR_NOT_DEFINED,
-    emailNotAvailable: EMAIL_NOT_AVAILABLE,
-    usernameNotAvailable: USERNAME_NOT_AVAILABLE,
     resourceConflict: RESOURCE_CONFLICT,
     internalServerError: INTERNAL_SERVER_ERROR,
     validationFailed: VALIDATION_FAILED,
@@ -60,8 +56,6 @@ export const errorMessages = {
     [TOKEN_EXPIRED]: 'Authentication token has expired',
     [TOKEN_INVALID]: 'Authentication token is invalid',
     [ENV_VAR_NOT_DEFINED]: 'Some env variable is not defined',
-    [EMAIL_NOT_AVAILABLE]: 'Email is not available',
-    [USERNAME_NOT_AVAILABLE]: 'Username is not available',
     [RESOURCE_CONFLICT]: 'Resource conflicts with existing resource ( duplicate and so on )',
     [INTERNAL_SERVER_ERROR]: 'Internal server error',
     [VALIDATION_FAILED]: 'Validation failed',

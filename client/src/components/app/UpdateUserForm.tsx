@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 
 import { UpdateUserResolver, type UpdateUserFormData } from '../../validations';
 import { useAuthContext, useAvatarContext, useNotificationContext } from '../../contexts';
-import { AVATAR_DIMENSIONS, CONFIRM_PASSWORD, CUSTOMER, EMAIL_FIELD, NEW_PASSWORD, NOTIFICATION_DELAY, PLACE_HOLDER_AVATAR, USERNAME_FIELD } from '../../constants';
+import {
+    AVATAR_DIMENSIONS, CONFIRM_PASSWORD, CUSTOMER,
+    EMAIL_FIELD, NEW_PASSWORD, NOTIFICATION_DELAY,
+    PLACE_HOLDER_AVATAR, USERNAME_FIELD
+} from '../../constants';
 import { useAvatar, useImagePreview, useUpdateProfile } from '../../hooks';
 import UserFormFields from './UserFormFields';
 import { deleteUser } from '../../api';

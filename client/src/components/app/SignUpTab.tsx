@@ -74,8 +74,7 @@ const SignUpTab = () => {
             username: formData.username,
             password: formData.password,
             email: formData.email,
-            userType: 'customer',
-            isActive: true
+            userType: 'customer'
         };
         signUpMutation.mutate(signUpPayload);
     };
@@ -94,6 +93,7 @@ const SignUpTab = () => {
                             'data-testid': 'signup-username'
                         }
                     }}
+                    label='Username'
                     placeholder='Username'
                     fullWidth
                     {...register('username')}
@@ -109,6 +109,7 @@ const SignUpTab = () => {
                             'data-testid': 'signup-email'
                         }
                     }}
+                    label='Email'
                     placeholder='Email'
                     fullWidth
                     {...register('email')}
@@ -124,6 +125,7 @@ const SignUpTab = () => {
                             'data-testid': 'signup-password'
                         }
                     }}
+                    label='Password'
                     placeholder='Password'
                     fullWidth
                     {...register('password')}
@@ -140,6 +142,7 @@ const SignUpTab = () => {
                             'data-testid': 'signup-confirm-password'
                         }
                     }}
+                    label='Confirm Password'
                     placeholder='Confirm Password'
                     fullWidth
                     {...register('confirmPassword')}

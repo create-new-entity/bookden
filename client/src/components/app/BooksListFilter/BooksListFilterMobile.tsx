@@ -7,7 +7,7 @@ import {
     BOOKS_LIST_SORT_BY_OPTIONS, DEFAULT_GAP, MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY
 } from '../../../constants';
 import BookTagsSelect from './BookTagsSelect';
-import { CustomAutoComplete } from '../../custom';
+import { SearchInput } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
 import type { BookSearchParams } from '../../../validations';
@@ -75,7 +75,7 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
                     <Stack direction={'row'} justifyContent={'center'} alignItems={'center'}>
                         <Typography variant='h6'>Filters</Typography>
                     </Stack>
-                    <CustomAutoComplete id='booksListFilterSearchBox'
+                    <SearchInput id='booksListFilterSearchBox'
                         value={search}
                         handleChange={(value) => {
                             updateParams({ search: value, page: 1 }, 'merge');

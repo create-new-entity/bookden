@@ -23,7 +23,20 @@ type MultiValueInputProps = {
   disabled?: boolean;
 };
 
-const MultiValueInput = (props: MultiValueInputProps) => {
+
+
+/*
+    Note to future self:
+
+    Use case: Freely type in and allow multiple values.
+    Show recently searched values as dropdown options.
+
+    For example, A list of authors for a book.
+    We don't save authors in a separate table and keep it
+    loose and dynamic for authors field. In this case,
+    MultiValueFreeInput is good enough.
+*/
+const MultiValueFreeInput = (props: MultiValueInputProps) => {
     const [previouslySearchedValues, setPreviouslySearchedValues] = useLocalStorage<string[]>(props.id, []);
 
     const {
@@ -93,4 +106,4 @@ const MultiValueInput = (props: MultiValueInputProps) => {
     );
 };
 
-export default MultiValueInput;
+export default MultiValueFreeInput;

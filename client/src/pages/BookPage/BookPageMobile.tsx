@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBook, useBookCover } from '../../hooks';
 import {
     DEFAULT_BORDER_RADIUS, DEFAULT_GAP,
+    LANGUAGE_LABEL_MAP,
     MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER
 } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
@@ -137,9 +138,13 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                         <Typography>
                             Pages: {bookQuery.data?.pages}
                         </Typography>
-                        <Typography>
-                            Language: {bookQuery.data?.language}
-                        </Typography>
+                        {
+                            bookQuery.data?.language && (
+                                <Typography>
+                                    Language: {LANGUAGE_LABEL_MAP[bookQuery.data?.language]}
+                                </Typography>
+                            )
+                        }
                         <Typography>
                             Tags: {bookQuery.data?.tags?.join(', ')}
                         </Typography>
