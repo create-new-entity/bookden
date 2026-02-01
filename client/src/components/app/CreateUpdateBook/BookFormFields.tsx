@@ -333,6 +333,7 @@ const BookFormFields = (props: BookFormFieldsProps) => {
                                 type='button'
                                 onClick={onRestore}
                                 disabled={!isDeletedBook}
+                                data-testid='restore-book-button'
                             >
                                 Restore Book
                             </Button>
