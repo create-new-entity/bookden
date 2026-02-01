@@ -1,7 +1,7 @@
 import { Paper, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import BarChartIcon from '@mui/icons-material/BarChart';
+// import BarChartIcon from '@mui/icons-material/BarChart';
 
 import AdminToolCard from './AdminToolCard';
 import { useNavigate } from 'react-router-dom';
@@ -87,16 +87,20 @@ const AdminToolsPage = () => {
                         onClick={handleBookManagementClick}
                         paperStyles={styles.toolPaper}
                     />
-                    <AdminToolCard
-                        data-testid='analytics-card'
-                        icon={<BarChartIcon fontSize='large'/>}
-                        iconButtonStyles={styles.iconButton}
-                        title='Analytics'
-                        subtitle='View analytics data for users and books.'
-                        iconAndTextStackStyles={styles.iconAndTextStack}
-                        onClick={() => {}}
-                        paperStyles={styles.toolPaper}
-                    />
+                    {
+                        /*
+                            <AdminToolCard
+                                data-testid='analytics-card'
+                                icon={<BarChartIcon fontSize='large'/>}
+                                iconButtonStyles={styles.iconButton}
+                                title='Analytics'
+                                subtitle='View analytics data for users and books.'
+                                iconAndTextStackStyles={styles.iconAndTextStack}
+                                onClick={() => {}}
+                                paperStyles={styles.toolPaper}
+                            />
+                        */
+                    }
                 </Stack>
             </Paper>
         </Stack>
