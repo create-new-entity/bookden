@@ -1,10 +1,13 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { getUsersList } from '../api';
-import { useAuthContext } from '../contexts';
+import { useAuthContext, useNotificationContext } from '../contexts';
 import type { UserSearchParams } from '../validations';
-import type { PaginatedDataList, User } from '../types';
+import type { AxiosErrorResponse, PaginatedDataList, User } from '../types';
 import { useUserManagementDeepLinking } from './useUserManagementDeepLinking';
+import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 
 type UseUsersListReturn = {
@@ -16,6 +19,8 @@ type UseUsersListReturn = {
 export const useUsersList = (): UseUsersListReturn => {
     const { token } = useAuthContext();
     const { params, updateParams } = useUserManagementDeepLinking();
+    const navigate = useNavigate();
+    const { handleShowNotification } = useNotificationContext();
 
     const { search, page, sortBy, sortOrder, userType } = params;
 
@@ -24,10 +29,22 @@ export const useUsersList = (): UseUsersListReturn => {
         return getUsersList({ search, page, sortBy, sortOrder, userType: userTypeQuery }, token);
     };
 
-    const usersList = useQuery({
+    const usersList = useQuery<PaginatedDataList<User>, AxiosErrorResponse>({
         queryKey: ['usersList', search, page, sortBy, sortOrder, userType, token],
-        queryFn
+        queryFn,
+        retry: false,
+        enabled: !!token,
     });
+
+    useEffect(() => {
+        if(usersList.isError && usersList.error?.response?.status === UNAUTHORIZED_STATUS_CODE) {
+            handleShowNotification('Session expired or user deleted. Please log in again.');
+            navigate(AUTH);
+        }
+        else if(usersList.isError) {
+            handleShowNotification('Failed to get users list.');
+        }
+    }, [usersList.isError, usersList.error?.response?.status, navigate, handleShowNotification]);
     
     return { usersList, params, updateParams };
 };

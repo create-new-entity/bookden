@@ -88,7 +88,6 @@ const UserManagementPage = () => {
     const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
     
     const openFilterModal = () => {
-        console.log('Attempting to open filter modal');
         modalRef.current?.openModal();
     };
 

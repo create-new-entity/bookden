@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     Avatar,
     Chip,
@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 
 import { getUser } from '../api/users';
-import { useAuthContext } from '../contexts';
+import { useAuthContext, useNotificationContext } from '../contexts';
 import { useBlobImage } from '../hooks';
-import { AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR } from '../constants';
+import { AUTH, AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR, UNAUTHORIZED_STATUS_CODE } from '../constants';
 import { UserTypeChip } from '../components/app';
 import { getUserAvatarBlob } from '../api';
 import { getFormattedDate } from '../utility';
@@ -24,6 +24,8 @@ import RestoreActionButton from '../components/app/ActionIcons/RestoreActionButt
 import { useRestoreUser } from '../hooks/useRestoreUser';
 import DeleteActionIcon from '../components/app/ActionIcons/DeleteActionIcon';
 import { useDeleteUser } from '../hooks/useDeleteUser';
+import { useEffect } from 'react';
+import type { AxiosErrorResponse, User } from '../types';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -86,11 +88,23 @@ const UserPage = () => {
     const { token } = useAuthContext();
     const theme = useTheme();
     const styles = getStyles(theme);
+    const navigate = useNavigate();
+    const { handleShowNotification } = useNotificationContext();
 
-    const { data: user, isLoading } = useQuery({
+    const { data: user, isLoading, isFetched, isError, error } = useQuery<User, AxiosErrorResponse>({
         queryKey: ['user', parsedUserId],
         queryFn: () => getUser(parsedUserId, token),
+        retry: false,
+        enabled: !!token,
     });
+
+    useEffect(() => {
+        const shouldLoginAgain = isFetched && isError && error?.response?.status === UNAUTHORIZED_STATUS_CODE;
+        if(shouldLoginAgain) {
+            handleShowNotification('Session expired or user deleted. Please log in again.');
+            navigate(AUTH);
+        }
+    }, [isFetched, isError, error, navigate, handleShowNotification]);
 
     const blobOptions = {
         queryKey: ['avatar', token, user?.userId],

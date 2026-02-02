@@ -2,10 +2,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useAvatarContext, useAuthContext, useNotificationContext } from '../contexts';
 import type { AxiosErrorResponse } from '../types';
 import { addOrUpdate, deleteAvatar, getAvatar } from '../api';
+import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 export const useAvatar = () => {
 
@@ -13,6 +15,7 @@ export const useAvatar = () => {
     const { avatarUrl, setAvatarUrl } = useAvatarContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
+    const navigate = useNavigate();
 
     const getAvatarResult = useQuery<Blob, AxiosError>({
         queryKey: ['avatar', token],
@@ -48,6 +51,10 @@ export const useAvatar = () => {
         onError: (err) => {
             const message = `${err.response?.data.message}. Image size should be smaller than 2MB.`;
             handleShowNotification(message);
+            if(err.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
         }
     });
 

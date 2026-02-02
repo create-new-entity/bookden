@@ -1,15 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 import { restoreBook } from '../api';
 import type { AxiosErrorResponse } from '../types';
 import { useAuthContext, useNotificationContext } from '../contexts';
+import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 
 export const useRestoreBook = () => {
     const { token } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
-
+    const navigate = useNavigate();
+    
     const restoreBookMutation = useMutation<void, AxiosErrorResponse, number>({
         mutationFn: (bookId: number) => restoreBook(bookId, token),
         onSuccess: (_, bookId) => {
@@ -17,8 +20,12 @@ export const useRestoreBook = () => {
             queryClient.invalidateQueries({ queryKey: ['book', bookId] });
             handleShowNotification('Book restored successfully. Cover pick will not be restored.');
         },
-        onError: () => {
+        onError: (error) => {
             handleShowNotification('Failed to restore book.');
+            if(error.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
         }
     });
 

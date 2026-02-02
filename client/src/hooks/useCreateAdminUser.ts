@@ -5,7 +5,7 @@ import { useAuthContext, useNotificationContext } from '../contexts';
 import type { AxiosErrorResponse } from '../types';
 import type { CreateAdminUserData } from '../validations';
 import { createAdminUser } from '../api';
-import { USER_MANAGEMENT } from '../constants';
+import { AUTH, UNAUTHORIZED_STATUS_CODE, USER_MANAGEMENT } from '../constants';
 
 type UseCreateAdminUserReturn = {
     mutation: UseMutationResult<void, AxiosErrorResponse, CreateAdminUserData>;
@@ -28,8 +28,12 @@ export const useCreateAdminUser = (): UseCreateAdminUserReturn => {
             handleShowNotification('Admin user successfully created.');
             navigate(USER_MANAGEMENT);
         },
-        onError: (_error) => {
+        onError: (error) => {
             handleShowNotification('Failed to create admin user.');
+            if(error.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
         }
     });
 

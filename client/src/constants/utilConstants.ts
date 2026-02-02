@@ -128,3 +128,5 @@ export const MIN_EMAIL_LENGTH = 6;
 export const MAX_EMAIL_LENGTH = 250;
 
 export const IMAGE_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'] as const;
+
+export const UNAUTHORIZED_STATUS_CODE = 401;
