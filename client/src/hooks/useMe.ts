@@ -6,12 +6,10 @@ import { useEffect } from 'react';
 import { getMe } from '../api/profile';
 import type { LoggedInUserData } from '../types';
 import { AUTH } from '../constants';
-import { useNotificationContext } from '../contexts';
 
 
 export const useMe = (token: string) => {
     const navigate = useNavigate();
-    const { handleShowNotification } = useNotificationContext();
 
     const meQuery = useQuery<Omit<LoggedInUserData, | 'token' >>({
         queryKey: ['me'],
@@ -29,12 +27,11 @@ export const useMe = (token: string) => {
     });
 
     useEffect(() => {
-        const shouldLoginAgain = !meQuery.isPending && meQuery.isError;
+        const shouldLoginAgain = !meQuery.isFetched && !meQuery.isPending && meQuery.isError;
         if (shouldLoginAgain) {
-            handleShowNotification('Session expired or user deleted. Please log in again.');
             navigate(AUTH);
         }
-    }, [meQuery.isPending, meQuery.isError, navigate, handleShowNotification]);
+    }, [meQuery.isFetched, meQuery.isPending, meQuery.isError, navigate]);
 
     return R.pick(['data', 'isSuccess', 'isLoading', 'isError', 'failureReason'], meQuery);
 };
