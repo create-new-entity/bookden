@@ -1,4 +1,4 @@
-export const TOKEN_VALIDITY_SECONDS = 24 * 60 * 60; // 24 hours in seconds
+export const TOKEN_VALIDITY_SECONDS = 60 * 60; // 1 hour in seconds
 
 
 export const SALT_ROUNDS = 10;

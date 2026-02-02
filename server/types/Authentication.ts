@@ -17,4 +17,5 @@ export type JWTSignPayload = {
     userId: number;
     username: string;
     userType: UserTypes;
+    tokenVersion: number;
 };

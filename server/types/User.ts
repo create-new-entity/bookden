@@ -24,7 +24,7 @@ export type User = CamelCaseDeep<Omit<UserDBRow, 'created_at' | 'updated_at' | '
 };
 
 
-export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt'> {
+export interface NewUserPayload extends Omit<User, 'userId' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'tokenVersion'> {
     password: string;
 };
 
