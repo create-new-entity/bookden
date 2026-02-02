@@ -9,7 +9,7 @@ import type { CreateUpdateBookData } from '../validations';
 import { useAuthContext, useNotificationContext } from '../contexts';
 import { addBook } from '../api';
 import type { AxiosErrorResponse } from '../types';
-import { BOOK_MANAGEMENT } from '../constants';
+import { AUTH, BOOK_MANAGEMENT, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 
 type CreateBookArgs = {
@@ -32,8 +32,12 @@ export const useCreateBook = () => {
             handleShowNotification('Book created successfully.');
             navigate(BOOK_MANAGEMENT);
         },
-        onError: (err) => {
-            handleShowNotification(err.response?.data?.message ?? 'Something went wrong');
+        onError: (error) => {
+            handleShowNotification(error.response?.data?.message ?? 'Something went wrong');
+            if(error.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
         }
     });
 

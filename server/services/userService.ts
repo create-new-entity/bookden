@@ -15,7 +15,7 @@ import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsT
 import { getPGDBPool, sqlTag } from '../configs';
 
 
-const mapDate = (user: UserDBRow): User => {
+const mapDate = (user: UserDBRow): Omit<User, 'tokenVersion'> => {
     const timeStamps = {
         createdAt: user.created_at,
         updatedAt: user.updated_at,
@@ -31,7 +31,7 @@ const mapDate = (user: UserDBRow): User => {
     };
 };
 
-const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestorType: UserTypes): Promise<PaginatedDataList<User>> => {
+const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestorType: UserTypes): Promise<PaginatedDataList<Omit<User, 'tokenVersion'>>> => {
     const dbPool = await getPGDBPool();
 
     const { search } = queryFilteringOptions;
@@ -103,7 +103,10 @@ const getUser = async (requestorUser: JWTSignPayload, targetUserId: number) => {
     const dbPool = await getPGDBPool();
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
-        SELECT username, email, user_type, user_id, created_at, updated_at, deleted_at
+        SELECT
+            username, email, user_type,
+            user_id, token_version,
+            created_at, updated_at, deleted_at
         FROM users
         WHERE user_id = ${targetUserId};
     `);
@@ -257,7 +260,9 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
     if(isAllowedToDelete) {
         await dbPool.query(sqlTag.typeAlias('User')`
             UPDATE users
-            SET deleted_at = NOW()
+            SET
+                deleted_at = NOW(),
+                token_version = token_version + 1
             WHERE user_id = ${targetUserId}
         `);
     }
@@ -289,7 +294,9 @@ const restoreUser = async (requestorUser: JWTSignPayload, targetUserId: string):
 
     await dbPool.query(sqlTag.typeAlias('User')`
         UPDATE users
-        SET deleted_at = NULL
+        SET
+            deleted_at = NULL,
+            token_version = token_version + 1
         WHERE user_id = ${targetUserId}
     `);
 };

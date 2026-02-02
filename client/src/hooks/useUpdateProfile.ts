@@ -1,12 +1,14 @@
-import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
+import {
+    useMutation, useQueryClient, type UseMutationResult
+} from '@tanstack/react-query';
 import type { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import type { AxiosErrorResponse } from '../types';
 import { updateProfile } from '../api';
 import { useAuthContext, useNotificationContext } from '../contexts';
 import type { UpdateUserFormData } from '../validations';
-import { useNavigate } from 'react-router-dom';
-import { HOME } from '../constants';
+import { AUTH, HOME, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 export type UseUpdateProfileReturn = {
     mutation: UseMutationResult<AxiosResponse, AxiosErrorResponse, UpdateUserFormData>;
@@ -28,8 +30,14 @@ export const useUpdateProfile = (): UseUpdateProfileReturn => {
             handleShowNotification('Profile successfully updated.');
             navigate(HOME);
         },
-        onError: (_error) => {
-            handleShowNotification('Failed to update profile.');
+        onError: (error) => {
+            if(error.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
+            else {
+                handleShowNotification('Failed to update profile.');
+            }
         }
     });
 
