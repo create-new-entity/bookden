@@ -32,5 +32,5 @@ export const useMe = (token: string) => {
         }
     }, [meQuery.isFetched, meQuery.isError, navigate]);
 
-    return R.pick(['data', 'isSuccess', 'isLoading', 'isError', 'failureReason', 'isPending'], meQuery);
+    return R.pick(['data', 'isSuccess', 'isLoading', 'isError', 'failureReason', 'isPending'], meQuery); // Not to future self: For later read: https://chatgpt.com/share/6981f8e2-2fc0-8012-9cae-b8fdb7f3f570
 };
