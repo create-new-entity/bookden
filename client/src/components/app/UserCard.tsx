@@ -35,7 +35,16 @@ const getStyles = (_theme: Theme): Styles => {
         card: {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            '& .user-card-actions': {
+                opacity: 0,
+                pointerEvents: 'none',
+                transition: 'opacity 0.15s ease-in-out'
+            },
+            '&:hover .user-card-actions': {
+                opacity: 1,
+                pointerEvents: 'auto'
+            }
         },
         rootStack: {
             paddingLeft: '10px',
@@ -122,20 +131,22 @@ const UserCard = ({ item }: UserCardProps) => {
                             <Tooltip title={user.username} placement='bottom-start'>
                                 <Typography sx={styles.overflow} variant='h6'>{user.username}</Typography>
                             </Tooltip>
-                            {
-                                !isDeleted &&
-                                <DeleteActionIcon
-                                    onClick={handleDeleteUser}
-                                    tooltipTitle='Delete User'
-                                />
-                            }
-                            {
-                                isDeleted &&
-                                <RestoreActionButton
-                                    onClick={handleRestoreUser}
-                                    tooltipTitle='Restore User'
-                                />
-                            }
+                            <Box className='user-card-actions'>
+                                {
+                                    !isDeleted &&
+                                    <DeleteActionIcon
+                                        onClick={handleDeleteUser}
+                                        tooltipTitle='Delete User'
+                                    />
+                                }
+                                {
+                                    isDeleted &&
+                                    <RestoreActionButton
+                                        onClick={handleRestoreUser}
+                                        tooltipTitle='Restore User'
+                                    />
+                                }
+                            </Box>
                         </Stack>
                         <Tooltip title={user.email} placement='bottom-start'>
                             <Typography sx={styles.overflow} variant='body1'>{user.email}</Typography>

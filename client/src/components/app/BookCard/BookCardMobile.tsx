@@ -33,6 +33,15 @@ const getStyles = (theme: Theme): Styles => {
             height: cardHeight,
             '& .MuiIconButton-root': {
                 padding: 0
+            },
+            '& .book-card-actions': {
+                opacity: 0,
+                pointerEvents: 'none',
+                transition: 'opacity 0.15s ease-in-out'
+            },
+            '&:hover .book-card-actions': {
+                opacity: 1,
+                pointerEvents: 'auto'
             }
         },
         cardMedia: {
@@ -186,14 +195,16 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                                         isDeleted &&
                                         <Chip label='Deleted' color='error' size='small' />
                                     }
-                                    <BookCardActions
-                                        bookId={book.bookId}
-                                        isDeleted={isDeleted}
-                                        allowedActions={['edit', 'delete', 'restore']}
-                                        onEdit={onEdit}
-                                        onDelete={onDelete}
-                                        onRestore={onRestore}
-                                    />
+                                    <Box className='book-card-actions'>
+                                        <BookCardActions
+                                            bookId={book.bookId}
+                                            isDeleted={isDeleted}
+                                            allowedActions={['edit', 'delete', 'restore']}
+                                            onEdit={onEdit}
+                                            onDelete={onDelete}
+                                            onRestore={onRestore}
+                                        />
+                                    </Box>
                                 </Stack>
                             }
                         </Stack>
