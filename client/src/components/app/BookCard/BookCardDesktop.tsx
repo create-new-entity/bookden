@@ -47,7 +47,19 @@ const getStyles = (_theme: Theme): Styles => {
             },
             padding: `${BOOK_CARD_PADDING}rem`,
             height: BOOK_CARD_HEIGHT,
-            minWidth: `${BOOK_COVER_WIDTH + BOOK_CARD_PADDING * 2}rem`
+            minWidth: `${BOOK_COVER_WIDTH + BOOK_CARD_PADDING * 2}rem`,
+            // default (not hovered)
+            '& .book-card-actions': {
+                opacity: 0,
+                pointerEvents: 'none',
+                transition: 'opacity 0.15s ease-in-out'
+            },
+
+            // hovered
+            '&:hover .book-card-actions': {
+                opacity: 1,
+                pointerEvents: 'auto'
+            }
         },
         actionsContainer: {
             height: '2rem'
@@ -124,14 +136,16 @@ const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
                             isDeleted &&
                             <Chip label='Deleted' color='error' size='small' />
                         }
-                        <BookCardActions
-                            bookId={book.bookId}
-                            isDeleted={isDeleted}
-                            allowedActions={['edit', 'delete', 'restore']}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                            onRestore={onRestore}
-                        />
+                        <Box className='book-card-actions'>
+                            <BookCardActions
+                                bookId={book.bookId}
+                                isDeleted={isDeleted}
+                                allowedActions={['edit', 'delete', 'restore']}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                                onRestore={onRestore}
+                            />
+                        </Box>
                         
                     </Stack>
                 </Box>

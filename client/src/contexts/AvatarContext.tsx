@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { PLACE_HOLDER_AVATAR } from '../constants';
+
 import type { AvatarContextValue } from '../types';
 
 const defaultValue: AvatarContextValue = {

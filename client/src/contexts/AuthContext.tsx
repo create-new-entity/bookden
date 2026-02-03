@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { LOGGED_IN_USER_DATA } from '../constants';
 import { isLoggedInUserData, type AuthContextType } from '../types';
@@ -50,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string>('');
     const me = useMe(token);
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const { isUserLoggedIn, existingLoggedInData } = hasExistingLoggedInUser();
@@ -79,6 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setToken('');
         localStorage.removeItem(LOGGED_IN_USER_DATA);
         navigate('/auth');
+        queryClient.invalidateQueries({ queryKey: ['me'] });
     };
 
     const value: AuthContextType = {

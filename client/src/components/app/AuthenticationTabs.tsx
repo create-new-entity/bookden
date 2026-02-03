@@ -1,5 +1,8 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Box, Tab, Typography, useMediaQuery, useTheme, type SxProps, type Theme } from '@mui/material';
+import {
+    Box, Tab, Typography,
+    useMediaQuery, useTheme, type SxProps, type Theme
+} from '@mui/material';
 import React from 'react';
 
 import LogInTab from './LogInTab';
@@ -13,7 +16,7 @@ type Styles = {
     bookdenLogo: SxProps<Theme>;
 };
 
-const getStyles = (theme: Theme): Styles => {
+const getStyles = (_theme: Theme): Styles => {
     return {
         rootContainer: {
             alignSelf: 'stretch',
