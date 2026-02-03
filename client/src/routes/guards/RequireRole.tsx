@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { AUTH, UNAUTHORIZED } from '../../constants';
+import { UNAUTHORIZED } from '../../constants';
 import { useAuthContext } from '../../contexts';
 import type { UserType } from '../../types';
 
