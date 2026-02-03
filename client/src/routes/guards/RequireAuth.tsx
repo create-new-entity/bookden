@@ -2,15 +2,38 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { AUTH } from '../../constants';
-import { useAuthContext } from '../../contexts';
+import { useAuthContext, useNotificationContext } from '../../contexts';
+import { useMe } from '../../hooks';
+import { isTokenExpired } from '../../utility/utility';
 
 const RequireAuth = () => {
-    const { hasExistingLoggedInUser, isLoggedIn } = useAuthContext();
-    const { isUserLoggedIn: isLoggedInViaLocalStorage } = hasExistingLoggedInUser();
+    const { hasExistingLoggedInUser, token, clearAuthentication } = useAuthContext();
+    const { handleShowNotification } = useNotificationContext();
 
-    const resolvedIsUserLoggedIn = isLoggedInViaLocalStorage || isLoggedIn;
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const tokenFromLocalStorage = existingLoggedInData?.token;
+    const resolvedToken = token || tokenFromLocalStorage;
 
-    if (!resolvedIsUserLoggedIn) {
+    const meQuery = useMe(resolvedToken || '');
+
+    if (!resolvedToken) {
+        handleShowNotification('Session expired or user deleted. Please log in again.');
+        return <Navigate to={AUTH} replace />;
+    }
+
+    if (isTokenExpired(resolvedToken)) {
+        clearAuthentication();
+        handleShowNotification('Session expired or user deleted. Please log in again.');
+        return <Navigate to={AUTH} replace />;
+    }
+
+    if (meQuery.isPending) {
+        return null; // or spinner
+    }
+
+    if (meQuery.isError) {
+        clearAuthentication();
+        handleShowNotification('Session expired or user deleted. Please log in again.');
         return <Navigate to={AUTH} replace />;
     }
 

@@ -130,3 +130,5 @@ export const MAX_EMAIL_LENGTH = 250;
 export const IMAGE_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'] as const;
 
 export const UNAUTHORIZED_STATUS_CODE = 401;
+
+export const CACHE_TIME_FOR_ME_QUERY = 1000 * 60 * 5; // 5 minutes in milliseconds
