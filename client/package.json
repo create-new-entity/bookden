@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test:watch": "vitest",
+    "test": "vitest run",
     "test:ui": "vitest --ui",
     "e2etest": "npx playwright test"
   },

@@ -1,0 +1,74 @@
+
+
+
+name: bookden-test
+
+services:
+  bookden-test-postgres:
+    image: postgres:16-alpine
+    env_file:
+      - ./env/test/postgres.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d bookden_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis-test:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  server-test:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    depends_on:
+      bookden-test-postgres:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    env_file:
+      - ./env/test/server.env
+    command: npm run test
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: 'no'
+
+  client-test:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./env/test/client.env
+    command: npm run test
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: 'no'
+
+  server-lint:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    command: npm run lint
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: "no"
+
+  client-lint:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    command: npm run lint
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: "no"
+
+
