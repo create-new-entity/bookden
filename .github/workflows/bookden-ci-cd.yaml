@@ -9,15 +9,13 @@ on:
     branches: [development, production]
 
 
-
 jobs:
 
-  lint_and_test:
+  lint-and-unit-tests:
     name: lint and test (server and client)
     runs-on: ubuntu-24.04
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -26,85 +24,75 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install root deps
+        run: npm ci
 
-      - name: Install root deps (for Playwright e2e tests)
+      - name: Generate env files for test docker compose
+        run: |
+          mkdir -p env/test
+          
+          echo "POSTGRES_DB=bookden_test" > env/test/postgres.env
+          echo "POSTGRES_USER=${{ secrets.DB_ADMIN }}" >> env/test/postgres.env
+          echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/test/postgres.env
+
+          echo "DB_NAME=bookden_test" > env/test/server.env
+          echo "DB_ADMIN=${{ secrets.DB_ADMIN }}" >> env/test/server.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/test/server.env
+          echo "DB_HOST=bookden-test-postgres" >> env/test/server.env
+          echo "DB_PORT=5432" >> env/test/server.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/test/server.env
+          echo "NODE_ENV=test" >> env/test/server.env
+
+          echo "VITE_API_BASE=http://localhost:3000/api" > env/test/client.env
+          echo "VITE_BASE_PATH=/" >> env/test/client.env
+
+      - name: Lint & Unit Tests (Docker jobs)
+        run: npm run ci
+
+  e2e-tests:
+    name: E2E – Playwright
+    runs-on: ubuntu-24.04
+    needs: ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install root deps
         run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-
-      # The idea is to:
-      # 1. Generate env files for docker compose
-      # 2. Start app in dev mode
-      # 3. Lint and test server and client inside Docker containers
-      # 4. Run Playwright e2e tests
-      # 5. Stop app
-
-
-      # Generate env files for docker compose
-      - name: Generate env files for docker compose
+      - name: Generate env files for dev docker compose
         run: |
           mkdir -p env/dev
-          
-          echo "POSTGRES_DB=bookden_test" > env/dev/postgres.env
+
+          echo "POSTGRES_DB=bookden_dev" > env/dev/postgres.env
           echo "POSTGRES_USER=${{ secrets.DB_ADMIN }}" >> env/dev/postgres.env
           echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/postgres.env
 
-          echo "DB_NAME=bookden_test" > env/dev/server.env
+          echo "DB_NAME=bookden_dev" > env/dev/server.env
           echo "DB_ADMIN=${{ secrets.DB_ADMIN }}" >> env/dev/server.env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/server.env
           echo "DB_HOST=local-postgres-database" >> env/dev/server.env
           echo "DB_PORT=5432" >> env/dev/server.env
           echo "PORT=3000" >> env/dev/server.env
-          echo "FIRST_SUPERADMIN_USERNAME=${{ secrets.FIRST_SUPERADMIN_USERNAME }}" >> env/dev/server.env
-          echo "FIRST_SUPERADMIN_PASSWORD=${{ secrets.FIRST_SUPERADMIN_PASSWORD }}" >> env/dev/server.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/dev/server.env
-          echo "NODE_ENV=test" >> env/dev/server.env
+          echo "NODE_ENV=development" >> env/dev/server.env
 
           echo "VITE_API_BASE=http://localhost:3000/api" > env/dev/client.env
           echo "VITE_BASE_PATH=/" >> env/dev/client.env
 
-
-      # Start app in dev mode
-      - name: Start App (docker compose dev mode)
+      - name: Start app (dev stack)
         run: docker compose -f docker-compose.dev.yml up -d --build --remove-orphans
 
-      
-
-      # Tests of server and client follows below.
-      # At the end of this job, we will run Playwright e2e tests on CI host.
-
-      # Server lint and test
-
-      - name: Server Lint (inside Docker)
-        run: docker compose -f docker-compose.dev.yml exec -T server npm run lint
-
-      - name: Test server (Running tests inside server container). # It is easier this way. Otherwise will need to create another postgres service on CI level, which is unnecessary.
-        run: docker compose -f docker-compose.dev.yml exec -T server npm run test  # -T means no TTY (to avoid interactive mode)
-
-      # End of server lint and test
-
-      # Client lint and test
-      
-      - name: Client Lint (inside Docker)
-        run: docker compose -f docker-compose.dev.yml exec -T client npm run lint
-
-      - name: Client Tests (inside Docker)
-        run: docker compose -f docker-compose.dev.yml exec -T client npm run test
-
-      # End of client lint and test
-
-      - name: Show server logs
-        if: always()
-        run: docker compose -f docker-compose.dev.yml logs server
-
-
-
-
-      # Playwright e2e tests
-            
-      - name: Wait for server health
+      - name: Wait for backend health
         run: |
           echo "Waiting for backend..."
           for i in {1..10}; do
@@ -112,26 +100,23 @@ jobs:
               echo "Backend ready!"
               exit 0
             fi
-            echo "Retry..."
             sleep 2
           done
           echo "Backend never became ready"
           exit 1
 
-
-      - name: Show postgres logs
-        if: always()
-        run: docker compose -f docker-compose.dev.yml logs local-postgres-database
-
       - name: Run Playwright E2E
         run: npm run e2e
 
-      # End of Playwright e2e tests
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          docker compose -f docker-compose.dev.yml logs server
+          docker compose -f docker-compose.dev.yml logs local-postgres-database
 
-      - name: Stop App
+      - name: Stop app
         if: always()
-        run: docker compose -f docker-compose.dev.yml down
-        
+        run: docker compose -f docker-compose.dev.yml down 
 
   deploy:
     name: Deploy to Production

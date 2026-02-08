@@ -1,7 +1,19 @@
 {
   "scripts": {
     "e2e": "npx playwright test --config=e2e/playwright.config.ts",
-    "e2e:ui": "npx playwright test --ui --config=e2e/playwright.config.ts"
+    "e2e:ui": "npx playwright test --ui --config=e2e/playwright.config.ts",
+
+    "test:server": "docker compose -f docker-compose.test.yml run --rm server-test",
+    "test:client": "docker compose -f docker-compose.test.yml run --rm client-test",
+    "test": "npm run test:server && npm run test:client",
+
+    "lint:server": "docker compose -f docker-compose.test.yml run --rm server-lint",
+    "lint:client": "docker compose -f docker-compose.test.yml run --rm client-lint",
+    "lint": "npm run lint:server && npm run lint:client",
+
+    "test:ci": "docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm server-test && docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm client-test",
+    "lint:ci": "docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm server-lint && docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm client-lint",
+    "ci": "npm run test:ci && npm run lint:ci"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

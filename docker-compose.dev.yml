@@ -10,7 +10,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d bookden_dev || pg_isready -U admin -d bookden_test"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d bookden_dev"]
       interval: 5s
       timeout: 5s
       retries: 10
