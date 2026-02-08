@@ -52,7 +52,7 @@ jobs:
   e2e-tests:
     name: E2E - Playwright
     runs-on: ubuntu-24.04
-    needs: ci
+    needs: lint-and-unit-tests
 
     steps:
       - name: Checkout
