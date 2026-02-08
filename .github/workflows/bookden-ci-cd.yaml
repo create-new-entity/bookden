@@ -42,6 +42,8 @@ jobs:
           echo "DB_PORT=5432" >> env/test/server.env
           echo "PORT=3000" >> env/test/server.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/test/server.env
+          echo "FIRST_SUPERADMIN_USERNAME=${{ secrets.FIRST_SUPERADMIN_USERNAME }}" >> env/test/server.env
+          echo "FIRST_SUPERADMIN_PASSWORD=${{ secrets.FIRST_SUPERADMIN_PASSWORD }}" >> env/test/server.env
           echo "NODE_ENV=test" >> env/test/server.env
 
           echo "VITE_API_BASE=http://localhost:3000/api" > env/test/client.env
@@ -85,6 +87,8 @@ jobs:
           echo "DB_PORT=5432" >> env/dev/server.env
           echo "PORT=3000" >> env/dev/server.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/dev/server.env
+          echo "FIRST_SUPERADMIN_USERNAME=${{ secrets.FIRST_SUPERADMIN_USERNAME }}" >> env/dev/server.env
+          echo "FIRST_SUPERADMIN_PASSWORD=${{ secrets.FIRST_SUPERADMIN_PASSWORD }}" >> env/dev/server.env
           echo "NODE_ENV=development" >> env/dev/server.env
 
           echo "VITE_API_BASE=http://localhost:3000/api" > env/dev/client.env
