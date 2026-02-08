@@ -33,6 +33,12 @@ export const initPGDBPool = async (): Promise<DatabasePool> => {
     const DB_URL = getDBUrl();
     console.log(`NODE_ENV: ${process.env.NODE_ENV}\nDB Connection URL: ${DB_URL}`);
     pgDBPool = await createPool(DB_URL + '', poolOptions);
+
+    // Note to future self: Error handing gets mucked up if I don't add this on error handler. Discussion with chatgpt: https://chatgpt.com/share/6988dbf1-134c-8012-9591-3cc6e7faeca6
+    pgDBPool.on('error', (error) => {
+        console.log('PostgreSQL connection pool error:', error);
+    });
+
     console.log('PostgreSQL connection pool initialized.');
     isPoolActive = true;
     return pgDBPool;

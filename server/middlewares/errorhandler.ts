@@ -27,12 +27,12 @@ export const errorHandler = ( error: unknown, _req: Request, res: Response, _nex
         });
     }
 
-    if (error instanceof AppError) {
-        return res.status(error.statusCode).json({ message: error.message, });
-    }
-
     if(error instanceof ConflictError) {
         return res.status(409).json({ message: error.message });
+    }
+
+    if (error instanceof AppError) {
+        return res.status(error.statusCode).json({ message: error.message, });
     }
 
     if (isPostgresError(error)) {

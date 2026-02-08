@@ -311,11 +311,11 @@ describe('User accounts related tests', () => {
 
         test('UPDATE fails if email is duplicate.', async () => {
             const existingAdminUser = adminUsersSeedData[0];
-            const existingCustomerUser = customerUsersSeedData[0];
+            const existingAdminUser2 = adminUsersSeedData[1];
             const user = {
                 username: existingAdminUser.username,
                 password: 'password',
-                email: existingCustomerUser.email
+                email: existingAdminUser2.email
             };
             const loginPayload = {
                 username: existingAdminUser.username,
