@@ -6,7 +6,7 @@ on:
     branches:
       - production
   pull_request:
-    branches: [development, production, book-managment]
+    branches: [development, production]
 
 
 jobs:
