@@ -24,7 +24,12 @@ test.describe('Delete & Restore Book Flow', () => {
     const bookCard = page.getByTestId('book-card-the-wicked-king');
     await expect(bookCard).toBeVisible();
     await page.keyboard.press('Escape');
-    await bookCard.getByRole('button', { name: 'Delete Book' }).click();
+
+    await bookCard.hover();
+
+    const deleteButton = bookCard.getByRole('button', { name: 'Delete Book' });
+    await expect(deleteButton).toBeVisible();
+    await deleteButton.click();
     await expect(bookCard.getByText('Deleted')).toBeVisible();
 
     // Navigate to the book details page and go to the update page

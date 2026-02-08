@@ -11,7 +11,14 @@ It is a full stack application developed in:
 4. Playwright
 
 
-To run the e2e tests locally, do the followings in the root director:
-    1. docker compose -f docker-compose.dev.yml -f docker-compose.e2e.yml up --build
-    2. npm run e2e
+How to run e2e tests locally ( from root directory ):
+1. npm run e2e
+2. Once tests are done, run: npm run e2e:infra:down
+
+How to run other tests locally ( from root directory ):
+1. Run: npm run test:server
+2. Run: npm run test:client
+3. To run bother server and client tests in one go, run: npm run test
+4. Similarly lint command variants are: lint:server, lint:client and lint
+
      

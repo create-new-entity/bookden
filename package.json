@@ -1,7 +1,16 @@
 {
   "scripts": {
-    "e2e": "npx playwright test --config=e2e/playwright.config.ts",
-    "e2e:ui": "npx playwright test --ui --config=e2e/playwright.config.ts",
+    "e2e:infra:up": "docker compose -f docker-compose.dev.yml -f docker-compose.e2e.yml up -d --build",
+    "e2e:infra:down": "docker compose -f docker-compose.dev.yml -f docker-compose.e2e.yml down",
+    
+    "e2e:run": "npx playwright test --config=e2e/playwright.config.ts",
+    "e2e:run:ui": "npx playwright test --ui --config=e2e/playwright.config.ts",
+
+    "e2e": "npm run e2e:infra:up && npm run e2e:run",
+    "e2e:ui": "npm run e2e:infra:up && npm run e2e:run:ui",
+
+    "e2e:ci:infra": "docker compose -f docker-compose.dev.yml -f docker-compose.e2e.yml up -d --build",
+    "e2e:ci": "CI=true npx playwright test --config=e2e/playwright.config.ts",
 
     "test:server": "docker compose -f docker-compose.test.yml run --rm server-test",
     "test:client": "docker compose -f docker-compose.test.yml run --rm client-test",
