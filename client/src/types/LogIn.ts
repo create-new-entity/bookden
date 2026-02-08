@@ -17,7 +17,6 @@ export interface SignUpFormInputs extends SignUp {
 }
 export interface SignUpPayload extends SignUp {
   userType: UserType;
-  isActive: boolean;
 }
 
 export type LoggedInUserData = {

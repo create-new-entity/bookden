@@ -1,12 +1,22 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import QueryString from 'qs';
 import * as R from 'ramda';
 
-import { ADMIN, AuthenticatedRequest, CreateBookRequestBody, GetBooksQueryParams, SUPERADMIN } from '../types';
-import { createBook, deleteBook, deleteBookCover, getAllBooks, getBook, getBookCover, updateBook, updateBookCover } from '../services';
-import { AuthenticationError, BadRequestError, errorMessages, errorNames, NotFoundError, UnauthorizedError } from '../errors';
-import { UpdateBookPayload } from '../types';
+import {
+    ADMIN, AuthenticatedRequest, CreateBookRequestBody,
+    GetBooksQueryParams, isString, SUPERADMIN, UpdateBookPayload
+} from '../types';
+import {
+    createBook, deleteBook, deleteBookCover,
+    getAllBooks, getBook, getBookCover,
+    getBooksPriceRange, getTags, restoreBook, updateBook, updateBookCover
+} from '../services';
+import {
+    AuthenticationError, BadRequestError, errorMessages,
+    errorNames, NotFoundError, UnauthorizedError
+} from '../errors';
 import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
+import { DEFAULT_PRICE_MAX, DEFAULT_PRICE_MIN } from '../constants';
 
 
 const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryParams>, res: Response) => {
@@ -14,27 +24,48 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     if(req.user) {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
-    const validatedQueryParams = GetBooksQueryParamsSchema.parse(req.query);
+    const rawTags = req.query.tags;
+
+    const normalizedTags = isString(rawTags) ? rawTags.split(',') : [];
+
+    const validatedQueryParams = GetBooksQueryParamsSchema.parse({
+        ...req.query,
+        tags: normalizedTags,
+    });
+    const priceRanges = (validatedQueryParams.priceMin || validatedQueryParams.priceMax) ? {
+        priceMin: validatedQueryParams.priceMin ?? DEFAULT_PRICE_MIN,
+        priceMax: validatedQueryParams.priceMax ?? DEFAULT_PRICE_MAX
+    } : undefined;
     const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
-    const books = await getAllBooks(includeDeleted, validatedPage, validatedQueryParams.search, validatedQueryParams.sortBy, validatedQueryParams.sortOrder);
+    
+    const books = await getAllBooks(
+        includeDeleted, validatedPage, validatedQueryParams.search,
+        validatedQueryParams.sortBy, validatedQueryParams.sortOrder,
+        validatedQueryParams.tags, priceRanges
+    );
+    
     res.status(200).json(books);
 };
 
 const getBookController = async (req: AuthenticatedRequest, res: Response) => {
     const bookId = parseInt(req.params.id, 10);
+    
     if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
         const invalidBookIdError = new BadRequestError('Invalid book ID');
         throw invalidBookIdError;
     }
+
     let includeDeleted = false;
     if(req.user) {
         includeDeleted = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
     };
+
     const book = await getBook(bookId, includeDeleted);
     if(!book) {
         const bookNotFoundError = new NotFoundError();
         throw bookNotFoundError;
     }
+
     res.status(200).json(book);
 };
 
@@ -67,19 +98,20 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         How to create a book with a cover image from terminal:
 
         curl -X POST http://localhost:3000/api/books \
-        -H "Authorization: Bearer <token of superadmin or admin>" \
+        -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2ODI2NTkwMCwiZXhwIjoxNzY4MzUyMzAwfQ.yBszDc5DW9jV4AI22gty2NSN5ZVpU1qTIL7vXL9ifZo" \
         -H "Content-Type: multipart/form-data" \
         -F 'payload={
-                "title":"Mockingbird new book",
-                "synopsis":"This is a new book for sure. It is about testing the book creation endpoint.",
-                "authors":["John Doe"],
-                "isbn":"9780743331199",
-                "price":100,
-                "yearPublished":2025,
-                "language":"en",
-                "pages":100
-            };type=application/json' \
-        -F "coverImage=@<Absolute path to book cover image>"
+            "title": "Mockingbird",
+            "synopsis": "This is a new book for sure. It is about testing the book creation endpoint.",
+            "authors": ["John Doe"],
+            "price": 100,
+            "language": "en",
+            "pages": 100,
+            "tags": ["horror"],
+            "yearPublished": 2025,
+            "isbn": "9780743330004"
+        };type=application/json' \
+        -F "coverImage=@/Users/mdimranpavel/Desktop/bookden/server/__tests__/files/dummy.jpeg"
 
     */
 
@@ -94,14 +126,22 @@ const createBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         throw unauthorizedError;
     }
 
-    const validated = CreateBookPayloadSchema.parse(JSON.parse(req.body.payload));
+    const payload = typeof req.body.payload === 'string'
+        ? JSON.parse(req.body.payload)
+        : req.body.payload;
+
+    const validated = CreateBookPayloadSchema.parse(payload);
 
     if(!req.file) {
         const noFileUploadedError = new BadRequestError(errorMessages[errorNames.noCoverImageUploaded]);
         throw noFileUploadedError;
     }
 
-    const createdBook = await createBook(validated, req.file.buffer, req.file.mimetype);
+    const normalizedTags = validated.tags.map(t =>{
+        return t.trim().toLowerCase();
+    });
+
+    const createdBook = await createBook({ ...validated, tags: normalizedTags }, req.file.buffer, req.file.mimetype);
     res.status(201).json(createdBook);
 };
 
@@ -129,7 +169,14 @@ const updateBookController = async (req: AuthenticatedRequest<QueryString.Parsed
         throw badRequestError;
     }
 
-    await updateBook(bookId, validated);
+    const normalizedTags = validated.tags?.map(t =>{
+        return t.trim().toLowerCase();
+    });
+
+    await updateBook(bookId, {
+        ...validated,
+        tags: normalizedTags
+    });
     res.status(200).end();
 };
 
@@ -207,6 +254,38 @@ const deleteBookCoverController = async (req: AuthenticatedRequest, res: Respons
 };
 
 
+const getTagsController = async (_req: Request, res: Response) => {
+    const tags = await getTags();
+    res.status(200).json(tags);
+};
+
+const getBooksPriceRangeController = async (_req: Request, res: Response) => {
+    const priceRange = await getBooksPriceRange();
+    res.status(200).json(priceRange);
+};
+
+const restoreBookController = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        throw loginRequiredError;
+    }
+
+    const userIsAdminOrSuperadmin = req.user.userType === ADMIN || req.user.userType === SUPERADMIN;
+    if(!userIsAdminOrSuperadmin) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    const bookId = parseInt(req.params.id, 10);
+    if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
+        const invalidBookIdError = new BadRequestError(errorMessages[errorNames.invalidBookId]);
+        throw invalidBookIdError;
+    }
+
+    await restoreBook(bookId);
+    res.status(200).end();
+};
+
 
 export {
     getAllBooksController,
@@ -216,5 +295,8 @@ export {
     deleteBookController,
     getBookCoverController,
     updateBookCoverController,
-    deleteBookCoverController
+    deleteBookCoverController,
+    getTagsController,
+    getBooksPriceRangeController,
+    restoreBookController
 };

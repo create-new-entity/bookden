@@ -7,7 +7,7 @@ import { useAuthContext } from '../contexts';
 import { login, signUp } from '../api';
 
 
-const useAuthentication = () => {
+export const useAuthentication = () => {
     const navigate = useNavigate();
     const { saveToken } = useAuthContext();
     
@@ -30,5 +30,3 @@ const useAuthentication = () => {
         loginMutation, signUpMutation
     };
 };
-
-export default useAuthentication;

@@ -2,18 +2,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useAvatarContext, useAuthContext, useNotificationContext } from '../contexts';
 import type { AxiosErrorResponse } from '../types';
-import { PLACE_HOLDER_AVATAR } from '../constants';
 import { addOrUpdate, deleteAvatar, getAvatar } from '../api';
+import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
-const useAvatar = () => {
+export const useAvatar = () => {
 
     const { token } = useAuthContext();
     const { avatarUrl, setAvatarUrl } = useAvatarContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
+    const navigate = useNavigate();
 
     const getAvatarResult = useQuery<Blob, AxiosError>({
         queryKey: ['avatar', token],
@@ -29,8 +31,10 @@ const useAvatar = () => {
         mutationFn: () => deleteAvatar(token),
         onSuccess: () => {
             setAvatarUrl(() => {
-                URL.revokeObjectURL(avatarUrl);
-                return PLACE_HOLDER_AVATAR;
+                if(avatarUrl) {
+                    URL.revokeObjectURL(avatarUrl);
+                }
+                return null;
             });
             queryClient.invalidateQueries({ queryKey: ['avatar', token] });
         },
@@ -39,15 +43,18 @@ const useAvatar = () => {
         },
     });
 
-    const addOrUpdateMutation = useMutation<void, AxiosErrorResponse, File>({
+    const addOrUpdateAvatarMutation = useMutation<void, AxiosErrorResponse, File>({
         mutationFn: (newAvatar: File) => addOrUpdate(newAvatar, token),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['avatar', token] });
-            handleShowNotification('Avatar updated.');
         },
         onError: (err) => {
             const message = `${err.response?.data.message}. Image size should be smaller than 2MB.`;
             handleShowNotification(message);
+            if(err.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
         }
     });
 
@@ -70,7 +77,5 @@ const useAvatar = () => {
 
     }, [getAvatarResult.isSuccess, getAvatarResult.isError, getAvatarResult.data, setAvatarUrl]);
 
-    return { getAvatarResult, deleteAvatarMutation, addOrUpdateMutation };
+    return { getAvatarResult, deleteAvatarMutation, addOrUpdateAvatarMutation };
 };
-
-export default useAvatar;

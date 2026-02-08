@@ -28,7 +28,7 @@ const styles: Record<string, React.CSSProperties> = {
         borderRadius: '2rem'
     },
     bookdenLogo: {
-        height: '5rem'
+        height: '7rem'
     }
 };
 

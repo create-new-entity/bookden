@@ -15,9 +15,9 @@ const ThemeSwitch = () => {
 
     return (
         <Stack direction={'row'} alignItems={'center'}>
-            <LightModeIcon fontSize='small'/>
+            <LightModeIcon fontSize='medium'/>
             <Switch checked={!isLightMode} onChange={handleSwitch}/>
-            <ModeNightIcon fontSize='small'/>
+            <ModeNightIcon fontSize='medium'/>
         </Stack>
     );
 };

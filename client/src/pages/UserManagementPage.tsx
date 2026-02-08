@@ -1,31 +1,30 @@
 
 
-import { IconButton, Stack, Tooltip, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
+import {
+    IconButton, Stack, Tooltip,
+    Typography, useTheme, type SxProps,
+    type Theme
+} from '@mui/material';
 import { Add } from '@mui/icons-material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useNavigate } from 'react-router-dom';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { useResponsive, useSetTabTitle, useUsersList } from '../hooks';
 import {
     CONTENT_MARGIN,
     CREATE_ADMIN_USER,
     DEFAULT_GAP,
-    GRID_VIEW,
     SUPERADMIN
 } from '../constants';
 import {
-    UserCard,
-    Items,
-    CustomPagination,
-    UsersListFilterDesktop,
-    UsersListFilterMobile,
-    CustomModal,
+    UserCard, Items, CustomPagination,
+    UsersListFilterDesktop, UsersListFilterMobile, CustomModal,
     type CustomModalRef
 } from '../components';
 import type { User } from '../types';
 import { useAuthContext } from '../contexts';
+import type { ViewSelectorProps } from '../components/app/ViewSelector';
 
 
 
@@ -77,27 +76,23 @@ const getStyles = (theme: Theme): Styles => {
 
 
 const UserManagementPage = () => {
+    const { isDesktop } = useResponsive();
     const theme = useTheme();
     const styles = getStyles(theme);
-    const queryClient = useQueryClient();
-    const { token } = useAuthContext();
     const { usersList, params, updateParams } = useUsersList();
     const { search, sortBy, sortOrder, userType } = params;
     const { userType: clientUserType } = useAuthContext();
     const isClientSuperAdmin = clientUserType === SUPERADMIN;
     const navigate = useNavigate();
-    const { isDesktop } = useResponsive();
     const modalRef = useRef<CustomModalRef | null>(null);
-    const queryKey = ['usersList', params.search, params.page, params.sortBy, params.sortOrder, params.userType, token];
-    
-
-    const handleQueryClientInvalidation = () => {
-        queryClient.invalidateQueries({ queryKey });
-    };
+    const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
     
     const openFilterModal = () => {
-        console.log('Attempting to open filter modal');
         modalRef.current?.openModal();
+    };
+
+    const onPageChange = (page: number) => {
+        updateParams({ page });
     };
     
     useSetTabTitle('User Management');
@@ -110,10 +105,12 @@ const UserManagementPage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
             >
-                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
-                    <IconButton onClick={openFilterModal}>
-                        <FilterAltIcon />
-                    </IconButton>
+                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
+                    <Tooltip title='Filter options'>
+                        <IconButton onClick={openFilterModal}>
+                            <FilterAltIcon />
+                        </IconButton>
+                    </Tooltip>
                     {
                         isClientSuperAdmin && (
                             <Tooltip title='Add a new admin'>
@@ -134,6 +131,8 @@ const UserManagementPage = () => {
                         sortOrder={sortOrder}
                         userType={userType}
                         updateParams={updateParams}
+                        selectedView={selectedView}
+                        onViewChange={setSelectedView}
                     />
                 }
                 {
@@ -147,22 +146,21 @@ const UserManagementPage = () => {
                     <CustomPagination<User>
                         sx={styles.topPagination}
                         paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        onPageChange={onPageChange}
                     />
                 }
-                <Items
+                <Items<User>
                     sx={styles.items}
                     items={usersList.data?.data || []}
                     ItemComponent={UserCard}
                     getKey={(user) => user.userId}
-                    viewOption={GRID_VIEW}
-                    onItemDelete={handleQueryClientInvalidation}
+                    viewOption={selectedView}
                 />
                 {
                     usersList.data &&
                     <CustomPagination<User>
                         paginatedDataList={usersList.data}
-                        updateParams={updateParams}
+                        onPageChange={onPageChange}
                     />
                 }
             </Stack>

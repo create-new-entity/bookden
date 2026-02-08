@@ -13,24 +13,20 @@ export const clearDB = async () => {
     await pgDBpool.query(sqlTag.typeAlias('User')`
         DELETE FROM users;
     `);
-    console.log('Cleared users');
 
 
     await pgDBpool.query(sqlTag.typeAlias('User')`
         DELETE FROM avatars;
     `);
-    console.log('Cleared avatars');
 
 
     await pgDBpool.query(sqlTag.typeAlias('Book')`
         DELETE FROM books;
     `);
-    console.log('Cleared books');
 
     await pgDBpool.query(sqlTag.typeAlias('BookCover')`
         DELETE FROM book_covers;
     `);
-    console.log('Cleared book covers');
 };
 
 export const createSomeSeedUsers = async () => {

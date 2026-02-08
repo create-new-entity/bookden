@@ -10,10 +10,20 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d bookden_dev || pg_isready -U admin -d bookden_test"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d bookden_dev"]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  redis:
+    container_name: bookden-redis
+    image: redis:7-alpine
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   server:
     container_name: bookden-dev-server

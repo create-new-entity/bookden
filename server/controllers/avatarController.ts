@@ -38,7 +38,7 @@ const updateAvatarController = async (req: AuthenticatedRequest, res: Response, 
     if (!req.user) {
         throw new AuthenticationError();
     }
-
+    
     if (!req.file) {
         throw new BadRequestError(errorMessages[errorNames.noFileUploaded]);
     }

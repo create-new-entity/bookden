@@ -3,15 +3,18 @@
 
 POST http://localhost:3000/api/books
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2NTE4OTExMSwiZXhwIjoxNzY1Mjc1NTExfQ.6WXqo-WtorWQEq3TRCw7yuw04Rd-epygoK0iKUZ45zI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVyYWRtaW4iLCJ1c2VySWQiOjEsInVzZXJUeXBlIjoic3VwZXJhZG1pbiIsImlhdCI6MTc2ODI2NDQzMSwiZXhwIjoxNzY4MzUwODMxfQ.HrBbRJ4tbHKtMlInZJZ58nGPZgXL601PiM_a-dsOprc
 
 {
-    "title": "Mockingbird new book 2",
-    "synopsis": "This is a new book for sure. It is about testing the book creation endpoint.",
-    "authors": ["John Doe"],
-    "price": 100,
-    "language": "en",
-    "pages": 100,
-    "yearPublished": 2025,
-    "isbn": "9780743330000"
+    "payload": {
+        "title": "Mockingbird new book",
+        "synopsis": "This is a new book for sure. It is about testing the book creation endpoint.",
+        "authors": ["John Doe"],
+        "price": 100,
+        "language": "en",
+        "pages": 100,
+        "tags": ["nosto"],
+        "yearPublished": 2025,
+        "isbn": "9780743330000"
+    }
 }

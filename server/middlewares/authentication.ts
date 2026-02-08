@@ -3,8 +3,9 @@ import jwt from 'jsonwebtoken';
 
 import { AuthenticatedRequest, JWTSignPayload } from '../types';
 import { AuthenticationError, errorMessages, errorNames } from '../errors';
+import { getPGDBPool, sqlTag } from '../configs';
 
-export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const tokenExtractor = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const authHeader = req.headers.authorization;
     if(authHeader) {
         if (!authHeader.startsWith('Bearer ')) {
@@ -16,8 +17,22 @@ export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: N
             try {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
                 req.user = decoded as JWTSignPayload;
-                next();
-                return;
+
+                const pgDBPool = await getPGDBPool();
+                const result = await pgDBPool.query(sqlTag.typeAlias('User')`
+                    SELECT token_version
+                    FROM users
+                    WHERE user_id = ${req.user.userId}
+                `);
+
+                const tokenVersionWhenUserLoggedIn = req.user.tokenVersion;
+                const latestTokenVersionInDB = result.rows[0].token_version;
+                if(tokenVersionWhenUserLoggedIn !== latestTokenVersionInDB) {
+                    // Token version in db will get changed if user is deleted or restored is changed.
+                    const authenticationError = new AuthenticationError(errorMessages[errorNames.tokenInvalid]);
+                    next(authenticationError);
+                    return;
+                }
             }
             catch(error) {
                 if(error instanceof jwt.TokenExpiredError) {
@@ -32,6 +47,23 @@ export const tokenExtractor = (req: AuthenticatedRequest, res: Response, next: N
                 }
             }
         }
+        else {
+            next(new AuthenticationError(errorMessages[errorNames.tokenInvalid]));
+            return;
+        }
     }
     next();
 };
+
+export const enforceAuthentication = (
+    req: AuthenticatedRequest,
+    _res: Response,
+    next: NextFunction
+): void => {
+    if (!req.user) {
+        next(new AuthenticationError());
+        return;
+    }
+    next();
+};
+  
