@@ -75,34 +75,28 @@ jobs:
       - name: Generate env files for dev docker compose
         run: |
           mkdir -p env/dev
+          mkdir -p env/e2e
 
           echo "POSTGRES_DB=bookden_dev" > env/dev/postgres.env
           echo "POSTGRES_USER=${{ secrets.DB_ADMIN }}" >> env/dev/postgres.env
           echo "POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/postgres.env
 
-          echo "DB_NAME=bookden_dev" > env/dev/server.env
-          echo "DB_ADMIN=${{ secrets.DB_ADMIN }}" >> env/dev/server.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/dev/server.env
-          echo "DB_HOST=local-postgres-database" >> env/dev/server.env
-          echo "DB_PORT=5432" >> env/dev/server.env
-          echo "PORT=3000" >> env/dev/server.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/dev/server.env
-          echo "FIRST_SUPERADMIN_USERNAME=${{ secrets.FIRST_SUPERADMIN_USERNAME }}" >> env/dev/server.env
-          echo "FIRST_SUPERADMIN_PASSWORD=${{ secrets.FIRST_SUPERADMIN_PASSWORD }}" >> env/dev/server.env
-          echo "NODE_ENV=development" >> env/dev/server.env
+          echo "DB_NAME=bookden_dev" > env/e2e/server.env
+          echo "DB_ADMIN=${{ secrets.DB_ADMIN }}" >> env/e2e/server.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/e2e/server.env
+          echo "DB_HOST=local-postgres-database" >> env/e2e/server.env
+          echo "DB_PORT=5432" >> env/e2e/server.env
+          echo "PORT=3000" >> env/e2e/server.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/e2e/server.env
+          echo "FIRST_SUPERADMIN_USERNAME=${{ secrets.FIRST_SUPERADMIN_USERNAME }}" >> env/e2e/server.env
+          echo "FIRST_SUPERADMIN_PASSWORD=${{ secrets.FIRST_SUPERADMIN_PASSWORD }}" >> env/e2e/server.env
+          echo "NODE_ENV=development" >> env/e2e/server.env
 
           echo "VITE_API_BASE=http://localhost:3000/api" > env/dev/client.env
           echo "VITE_BASE_PATH=/" >> env/dev/client.env
 
       - name: Start app (dev stack)
         run: docker compose -f docker-compose.dev.yml -f docker-compose.dev.ci.yml up -d --build --remove-orphans
-
-      - name: Debug server startup
-        run: |
-          docker compose -f docker-compose.dev.yml ps
-          docker compose -f docker-compose.dev.yml logs server
-          docker compose -f docker-compose.dev.yml logs local-postgres-database
-
 
       - name: Wait for backend health
         run: |
