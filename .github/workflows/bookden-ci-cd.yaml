@@ -40,6 +40,7 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> env/test/server.env
           echo "DB_HOST=bookden-test-postgres" >> env/test/server.env
           echo "DB_PORT=5432" >> env/test/server.env
+          echo "PORT=3000" >> env/test/server.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> env/test/server.env
           echo "NODE_ENV=test" >> env/test/server.env
 
