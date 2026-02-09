@@ -1,14 +1,21 @@
-import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, IconButton } from '@mui/material';
+
+
+
+import { Box, Card, CardContent, CardMedia, Stack, Typography, Chip, Tooltip } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import type { User } from '../../types';
-import { useAvatarBlob } from '../../hooks';
+import { useBlobImage } from '../../hooks';
 import { BORDER_RADIUS, DEFAULT_GAP } from '../../constants';
-import { useAuthContext, useNotificationContext } from '../../contexts';
-import { deleteUser } from '../../api';
+import { useAuthContext } from '../../contexts';
+import { getUserAvatarBlob } from '../../api';
 import UserTypeChip from './UserTypeChip';
+import { getFormattedDate } from '../../utility';
+import DeleteActionIcon from './ActionIcons/DeleteActionIcon';
+import { useRestoreUser } from '../../hooks/useRestoreUser';
+import RestoreActionButton from './ActionIcons/RestoreActionButton';
+import { useDeleteUser } from '../../hooks/useDeleteUser';
 
 
 type Styles = {
@@ -16,6 +23,7 @@ type Styles = {
     card: SxProps<Theme>;
     cardMedia: SxProps<Theme>;
     cardContent: SxProps<Theme>;
+    overflow: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
@@ -28,15 +36,14 @@ const getStyles = (_theme: Theme): Styles => {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            '& .MuiIconButton-root': {
-                display: 'none',
-                padding: 0
+            '& .user-card-actions': {
+                opacity: 0,
+                pointerEvents: 'none',
+                transition: 'opacity 0.15s ease-in-out'
             },
-            '&:not(:hover) .MuiIconButton-root': {
-                display: 'none'
-            },
-            '&:hover .MuiIconButton-root': {
-                display: 'block'
+            '&:hover .user-card-actions': {
+                opacity: 1,
+                pointerEvents: 'auto'
             }
         },
         rootStack: {
@@ -59,6 +66,12 @@ const getStyles = (_theme: Theme): Styles => {
             paddingLeft: 0,
             paddingRight: 0,
             paddingBottom: 0
+        },
+        overflow: {
+            width: '95%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         }
     };
 };
@@ -66,23 +79,33 @@ const getStyles = (_theme: Theme): Styles => {
 
 type UserCardProps = {
     item: User;
-    onItemDelete?: () => void;
 };
 
-const UserCard = ({ item, onItemDelete }: UserCardProps) => {
+const UserCard = ({ item }: UserCardProps) => {
     const user = item;
-    const { objectUrl } = useAvatarBlob(user.userId);
     const { token } = useAuthContext();
     const theme = useTheme();
     const styles = getStyles(theme);
-    const { handleShowNotification } = useNotificationContext();
-    const isAlreadyDeleted = user.deletedAt !== null;
-
-    const handleDeleteUser = async () => {
-        await deleteUser(token, user.userId);
-        onItemDelete?.();
-        handleShowNotification('User deleted successfully.');
+    const blobOptions = {
+        queryKey: ['avatar', token, user.userId],
+        queryFn: () => getUserAvatarBlob(token, user.userId),
+        enabled: !!token && !!user.userId,
     };
+    const { objectUrl } = useBlobImage(blobOptions);
+    const { restoreUserMutation } = useRestoreUser(user.userId);
+    const { deleteUserMutation } = useDeleteUser(user.userId);
+
+    const handleRestoreUser = () => {
+        restoreUserMutation.mutate();
+    };
+
+    const isDeleted = user.deletedAt !== null;
+
+    const handleDeleteUser = () => {
+        deleteUserMutation.mutate();
+    };
+
+    const createdAt = getFormattedDate(new Date(user.createdAt));
 
     return (
         <Link to={`/users/${user.userId}`}>
@@ -105,13 +128,29 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                     }
                     <CardContent sx={styles.cardContent}>
                         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-                            <Typography variant='h6'>{user.username}</Typography>
-                            {
-                                !isAlreadyDeleted &&
-                                <IconButton onClick={handleDeleteUser}><DeleteIcon /></IconButton>
-                            }
+                            <Tooltip title={user.username} placement='bottom-start'>
+                                <Typography sx={styles.overflow} variant='h6'>{user.username}</Typography>
+                            </Tooltip>
+                            <Box className='user-card-actions'>
+                                {
+                                    !isDeleted &&
+                                    <DeleteActionIcon
+                                        onClick={handleDeleteUser}
+                                        tooltipTitle='Delete User'
+                                    />
+                                }
+                                {
+                                    isDeleted &&
+                                    <RestoreActionButton
+                                        onClick={handleRestoreUser}
+                                        tooltipTitle='Restore User'
+                                    />
+                                }
+                            </Box>
                         </Stack>
-                        <Typography variant='body1'>{user.email}</Typography>
+                        <Tooltip title={user.email} placement='bottom-start'>
+                            <Typography sx={styles.overflow} variant='body1'>{user.email}</Typography>
+                        </Tooltip>
                         <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
                             <UserTypeChip userType={user.userType} />
                             {
@@ -119,7 +158,9 @@ const UserCard = ({ item, onItemDelete }: UserCardProps) => {
                                 <Chip label='Deleted' color='error' size='small' />
                             }
                         </Stack>
-                        <Typography variant='body1'>{user.createdAt}</Typography>
+                        <Tooltip title={`Created on ${createdAt}`} placement='bottom-start'>
+                            <Typography sx={styles.overflow} variant='body1'>Created on {createdAt}</Typography>
+                        </Tooltip>
                     </CardContent>
                 </Stack>
             </Card>

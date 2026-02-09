@@ -1,26 +1,31 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     Avatar,
     Chip,
     CircularProgress,
     Paper,
     Stack,
-    IconButton,
     Typography,
     useTheme,
     type SxProps,
     type Theme,
     Box
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import { getUser } from '../api/users';
 import { useAuthContext, useNotificationContext } from '../contexts';
-import { useAvatarBlob } from '../hooks';
-import { AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR } from '../constants';
+import { useBlobImage } from '../hooks';
+import { AUTH, AVATAR_DIMENSIONS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_AVATAR, UNAUTHORIZED_STATUS_CODE } from '../constants';
 import { UserTypeChip } from '../components/app';
-import { deleteUser } from '../api';
+import { getUserAvatarBlob } from '../api';
+import { getFormattedDate } from '../utility';
+import RestoreActionButton from '../components/app/ActionIcons/RestoreActionButton';
+import { useRestoreUser } from '../hooks/useRestoreUser';
+import DeleteActionIcon from '../components/app/ActionIcons/DeleteActionIcon';
+import { useDeleteUser } from '../hooks/useDeleteUser';
+import { useEffect } from 'react';
+import type { AxiosErrorResponse, User } from '../types';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -79,26 +84,44 @@ const getStyles = (theme: Theme): Styles => {
 
 const UserPage = () => {
     const { userId } = useParams();
+    const parsedUserId = Number(userId);
     const { token } = useAuthContext();
-    const { handleShowNotification } = useNotificationContext();
     const theme = useTheme();
     const styles = getStyles(theme);
+    const navigate = useNavigate();
+    const { handleShowNotification } = useNotificationContext();
 
-    const { data: user, isLoading } = useQuery({
-        queryKey: ['user', userId],
-        queryFn: () => getUser(parseInt(userId || '-1', 10), token),
+    const { data: user, isLoading, isFetched, isError, error } = useQuery<User, AxiosErrorResponse>({
+        queryKey: ['user', parsedUserId],
+        queryFn: () => getUser(parsedUserId, token),
+        retry: false,
+        enabled: !!token,
     });
-    const queryClient = useQueryClient();
 
-    const { objectUrl: avatarBlobUrl } = useAvatarBlob(user?.userId || -1);
-
-    const handleDeleteUser = async () => {
-        if(user) {
-            await deleteUser(token, user.userId);
-            handleShowNotification('User deleted successfully.');
-            queryClient.invalidateQueries({ queryKey: ['usersList'] });
-            queryClient.invalidateQueries({ queryKey: ['user', userId] });
+    useEffect(() => {
+        const shouldLoginAgain = isFetched && isError && error?.response?.status === UNAUTHORIZED_STATUS_CODE;
+        if(shouldLoginAgain) {
+            handleShowNotification('Session expired or user deleted. Please log in again.');
+            navigate(AUTH);
         }
+    }, [isFetched, isError, error, navigate, handleShowNotification]);
+
+    const blobOptions = {
+        queryKey: ['avatar', token, user?.userId],
+        queryFn: () => getUserAvatarBlob(token, user?.userId || -1),
+        enabled: !!token && !!user?.userId,
+    };
+
+    const { objectUrl: avatarBlobUrl } = useBlobImage(blobOptions);
+    const { restoreUserMutation } = useRestoreUser(parsedUserId);
+    const { deleteUserMutation } = useDeleteUser(parsedUserId);
+
+    const handleDeleteUser = () => {
+        deleteUserMutation.mutate();
+    };
+
+    const handleRestoreUser = () => {
+        restoreUserMutation.mutate();
     };
 
     return (
@@ -115,7 +138,7 @@ const UserPage = () => {
                                 <Stack sx={styles.detailsStack} direction={'row'} justifyContent={'center'} alignItems={'center'}>
                                     <Stack direction={'column'} justifyContent={'flex-start'} alignItems={'flex-start'}>
                                         <Box sx={styles.textContainer}>
-                                            <Typography variant='body1'>{user.username}</Typography>
+                                            <Typography variant='h4'>{user.username}</Typography>
                                             <Typography variant='body1'>{user.email}</Typography>
                                         </Box>
                                         <Stack sx={styles.chipStack} direction={'row'} justifyContent={'flex-start'} alignItems={'center'} gap={`${DEFAULT_GAP}px`}>
@@ -126,15 +149,29 @@ const UserPage = () => {
                                             }
                                             {
                                                 !user.deletedAt &&
-                                                <IconButton onClick={handleDeleteUser}>
-                                                    <DeleteIcon />
-                                                </IconButton>
+                                                <DeleteActionIcon
+                                                    onClick={handleDeleteUser}
+                                                    tooltipTitle='Delete User'
+                                                />
+                                            }
+                                            {
+                                                user.deletedAt &&
+                                                <RestoreActionButton
+                                                    onClick={handleRestoreUser}
+                                                    tooltipTitle='Restore User'
+                                                />
                                             }
                                         </Stack>
                                         <Box sx={styles.textContainer}>
-                                            <Typography variant='body1'>Created At: {user.createdAt}</Typography>
-                                            <Typography variant='body1'>Updated At: {user.updatedAt}</Typography>
-                                            <Typography variant='body1'>Deleted At: {user.deletedAt}</Typography>
+                                            <Typography variant='body1'>Created At: {getFormattedDate(new Date(user.createdAt))}</Typography>
+                                            {
+                                                user.updatedAt &&
+                                                <Typography variant='body1'>Updated At: {getFormattedDate(new Date(user.updatedAt))}</Typography>
+                                            }
+                                            {
+                                                user.deletedAt &&
+                                                <Typography variant='body1'>Deleted At: {getFormattedDate(new Date(user.deletedAt))}</Typography>
+                                            }
                                         </Box>
                                     </Stack>
                                 </Stack>

@@ -42,7 +42,7 @@ export const customColors = {
     darkPrimaryMain: '#A78ED1',
     darkPrimaryLight: '#CBB7E5',
     darkPrimaryDark: '#7A5FA3',
-    darkPrimaryText: '#0B0B0B',
+    darkPrimaryText: '#FFFFFF',
 
     darkSecondaryMain: '#E68796',
     darkSecondaryLight: '#F0B0B9',

@@ -47,6 +47,16 @@ export const deleteUser = async (userId: number, expectedCode: number, token: st
         .expect(expectedCode);
 };
 
+export const restoreUser = async (userId: number, expectedCode: number, token: string) => {
+    await apiSupertest(app)
+        .post(`${userBaseUrl}/${userId}/restore`)
+        .set({
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        })
+        .expect(expectedCode);
+};
+
 
 export const getUsers = async (expectedCode: number, token: string, queryParams?: string) => {
     return await apiSupertest(app)

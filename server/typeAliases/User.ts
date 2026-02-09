@@ -11,8 +11,5 @@ export const UserTypeAlias = z.object({
     deleted_at: z.string().nullable(),
     updated_at: z.string().nullable(),
     created_at: z.string(),
-});
-
-export const TotalTypeAlias = z.object({
-    total: z.number(),
+    token_version: z.number()
 });

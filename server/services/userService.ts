@@ -4,38 +4,34 @@ import camelcaseKeys from 'camelcase-keys';
 
 import { SALT_ROUNDS, USERS_PAGINATION_LIMIT } from '../constants';
 import {
-    errorMessages,
-    errorNames,
-    ConflictError,
-    UnauthorizedError,
-    NotFoundError
+    UnauthorizedError, NotFoundError
 } from '../errors';
 import {
-    NewUserPayload,
-    UserTypes,
-    JWTSignPayload,
+    NewUserPayload, UserTypes, JWTSignPayload,
     ADMIN, CUSTOMER, UpdateUserPayload, User,
-    UserDBRow,
-    GetUsersQueryParams,
-    PaginatedDataList
+    UserDBRow, GetUsersQueryParams, PaginatedDataList
 } from '../types';
-import { convertStringToSnakeCase, convertToSnakeCaseDeep } from '../utilities';
+import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
 import { getPGDBPool, sqlTag } from '../configs';
 
 
-const mapDate = (user: UserDBRow): User => {
+const mapDate = (user: UserDBRow): Omit<User, 'tokenVersion'> => {
+    const timeStamps = {
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+        deletedAt: user.deleted_at
+    };
+    const dateStamps = mapNumericTimeStampsToDate(timeStamps);
     return {
         userId: user.user_id,
         username: user.username,
         email: user.email,
         userType: user.user_type,
-        createdAt: new Date(user.created_at),
-        updatedAt: user.updated_at ? new Date(user.updated_at) : null,
-        deletedAt: user.deleted_at ? new Date(user.deleted_at) : null
+        ...dateStamps
     };
 };
 
-const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestorType: UserTypes): Promise<PaginatedDataList<User>> => {
+const getAllUsers = async (queryFilteringOptions: GetUsersQueryParams, requestorType: UserTypes): Promise<PaginatedDataList<Omit<User, 'tokenVersion'>>> => {
     const dbPool = await getPGDBPool();
 
     const { search } = queryFilteringOptions;
@@ -107,7 +103,10 @@ const getUser = async (requestorUser: JWTSignPayload, targetUserId: number) => {
     const dbPool = await getPGDBPool();
 
     const result = await dbPool.query(sqlTag.typeAlias('User')`
-        SELECT username, email, user_type, user_id, created_at, updated_at, deleted_at
+        SELECT
+            username, email, user_type,
+            user_id, token_version,
+            created_at, updated_at, deleted_at
         FROM users
         WHERE user_id = ${targetUserId};
     `);
@@ -119,7 +118,7 @@ const getUser = async (requestorUser: JWTSignPayload, targetUserId: number) => {
         throw notFoundError;
     }
 
-    const foundUser = camelcaseKeys(foundRow, { deep: true });
+    const foundUser = mapDate(foundRow);
 
     const canViewUser = canViewUserInUserManagement(requestorUser.userType, foundUser.userType);
     
@@ -167,6 +166,15 @@ const canCreateUser = (creatorUserType: UserTypes, targetUserType: UserTypes): b
     return hierarchy[creatorUserType].includes(targetUserType);
 };
 
+const canRestoreUser = (restorerUserType: UserTypes, targetUserType: UserTypes): boolean => {
+    const hierarchy: Record<UserTypes, UserTypes[]>= {
+        superadmin: [ADMIN, CUSTOMER],
+        admin: [CUSTOMER],
+        customer: []
+    };
+    return hierarchy[restorerUserType].includes(targetUserType);
+};
+
 const canDeleteUser = (deletorUserType: UserTypes, targetUserType: UserTypes): boolean => {
     const hierarchy: Record<UserTypes, UserTypes[]>= {
         superadmin: [ADMIN, CUSTOMER],
@@ -194,10 +202,6 @@ const createUser = async (newUserData: NewUserPayload) => {
     newUserData.password = await getPasswordHash(newUserData.password);
     const snakeCasedData = convertToSnakeCaseDeep(newUserData);
 
-    // Unique constraints are there. Want to have better error messaging though.
-    await checkDuplicateUsername(snakeCasedData.username);
-    await checkDuplicateEmail(snakeCasedData.email);
-    
     await dbPool.query(sqlTag.typeAlias('User')`
         INSERT INTO users (username, password_hash, email, user_type)
         VALUES (
@@ -209,44 +213,6 @@ const createUser = async (newUserData: NewUserPayload) => {
     `);
 };
 
-const checkDuplicateUsername = async (username: string, userId?: number): Promise<void> => {
-    const dbPool = await getPGDBPool();
-
-    const userIdFragment = userId ? sqlTag.fragment`AND u.user_id != ${userId}` : sqlTag.fragment``;
-
-    const found = await dbPool.maybeOne(sqlTag.typeAlias('User')`
-        SELECT 1
-        FROM users u
-        WHERE
-            u.username = ${username}
-            ${userIdFragment}
-    `);
-    
-    if(found) {
-        const userNameNotAvailableError = new ConflictError(errorMessages[errorNames.usernameNotAvailable]);
-        throw userNameNotAvailableError;
-    }
-};
-
-const checkDuplicateEmail = async (email: string, userId?: number): Promise<void> => {
-    const dbPool = await getPGDBPool();
-
-    const userIdFragment = userId ? sqlTag.fragment`AND u.user_id != ${userId}` : sqlTag.fragment``;
-
-    const found = await dbPool.maybeOne(sqlTag.typeAlias('User')`
-        SELECT 1
-        FROM users u
-        WHERE
-            u.email = ${email}
-            ${userIdFragment}
-    `);
-    
-    if(found) {
-        const emailIsNotAvailableError = new ConflictError(errorMessages[errorNames.emailNotAvailable]);
-        throw emailIsNotAvailableError;
-    }
-};
-
 const updateUser = async (userId: number, updateUserData: UpdateUserPayload): Promise<void> => {
     const dbPool = await getPGDBPool();
     const snakeCasedData = convertToSnakeCaseDeep(updateUserData);
@@ -256,16 +222,7 @@ const updateUser = async (userId: number, updateUserData: UpdateUserPayload): Pr
         updatedData.password = await getPasswordHash(snakeCasedData.password);
     };
     updatedData.username = snakeCasedData.username;
-
-    // Unique constraints are there. Want to have better error messaging though.
-    if(updatedData.username) {
-        await checkDuplicateUsername(updatedData.username, userId);
-    }
     updatedData.email = snakeCasedData.email;
-    if(updatedData.email) {
-        await checkDuplicateEmail(updatedData.email, userId);
-    }
-
 
     await dbPool.query(sqlTag.typeAlias('User')`
         UPDATE users
@@ -303,7 +260,9 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
     if(isAllowedToDelete) {
         await dbPool.query(sqlTag.typeAlias('User')`
             UPDATE users
-            SET deleted_at = NOW()
+            SET
+                deleted_at = NOW(),
+                token_version = token_version + 1
             WHERE user_id = ${targetUserId}
         `);
     }
@@ -313,12 +272,43 @@ const deleteUser = async (targetUserId: string, user: JWTSignPayload): Promise<v
     }
 };
 
+const restoreUser = async (requestorUser: JWTSignPayload, targetUserId: string): Promise<void> => {
+    const dbPool = await getPGDBPool();
+
+    const targetUserResult = await dbPool.one(sqlTag.typeAlias('User')`
+        SELECT user_type
+        FROM users
+        WHERE user_id = ${targetUserId}
+    `);
+
+    if(!targetUserResult) {
+        const notFoundError = new NotFoundError();
+        throw notFoundError;
+    }
+    const targetUserType = targetUserResult.user_type;
+
+    if(!canRestoreUser(requestorUser.userType, targetUserType)) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    await dbPool.query(sqlTag.typeAlias('User')`
+        UPDATE users
+        SET
+            deleted_at = NULL,
+            token_version = token_version + 1
+        WHERE user_id = ${targetUserId}
+    `);
+};
+
 export {
     getAllUsers,
     getUser,
     getMyself,
     createUser,
     canCreateUser,
+    canRestoreUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    restoreUser
 };

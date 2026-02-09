@@ -53,3 +53,12 @@ export const createAdminUser = async (createAdminUserData: CreateAdminUserData, 
     await axios.post(`${usersUrl}`, { ...createAdminUserData, userType: ADMIN }, requestConfig);
 };
 
+export const restoreUser = async (token: string, userId: number) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.post(`${usersUrl}/${userId}/restore`, null, requestConfig);
+};
+

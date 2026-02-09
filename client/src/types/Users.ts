@@ -1,5 +1,4 @@
 import type { SELECT_USER_TYPE_OPTIONS, USERS_LIST_SORT_BY_OPTIONS_TEXTS } from '../constants';
-import type { Pagination } from './Pagination';
 import type { SortOrder } from './UtilTypes';
 
 export type AdminOrCustomer = 'admin' | 'customer';
@@ -15,28 +14,22 @@ export type User = {
     deletedAt: string;
 };
 
+export type UsersSortByOptions = keyof typeof USERS_LIST_SORT_BY_OPTIONS_TEXTS;
+
 export type UserTypeOptions = (typeof SELECT_USER_TYPE_OPTIONS)[number];
 export type UsersListLocalOptions = {
     search: string;
     page: number;
-    sortBy: SortByOptions;
+    sortBy: UsersSortByOptions;
     sortOrder: SortOrder;
     userType: UserTypeOptions;
 
     setSearch: React.Dispatch<React.SetStateAction<string>>;
     setPage: React.Dispatch<React.SetStateAction<number>>;
-    setSortBy: React.Dispatch<React.SetStateAction<SortByOptions>>;
+    setSortBy: React.Dispatch<React.SetStateAction<UsersSortByOptions>>;
     setSortOrder: React.Dispatch<React.SetStateAction<SortOrder>>;
     setUserType: React.Dispatch<React.SetStateAction<UserType>>;
 };
-
-export type SortByOptions = keyof typeof USERS_LIST_SORT_BY_OPTIONS_TEXTS;
-
-export type PaginatedDataList<DataType> = {
-    data: DataType[];
-    pagination: Pagination;
-};
-
 
 
 export type CreateUserPayload = {

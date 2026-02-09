@@ -26,7 +26,9 @@ COPY server/migrations ./migrations
 
 COPY server/seed/seedData/customers_seed_data.json ./seed/seedData/customers_seed_data.json
 COPY server/seed/seedData/admins_seed_data.json ./seed/seedData/admins_seed_data.json
+COPY server/seed/seedData/books_seed_data.json ./seed/seedData/books_seed_data.json
 COPY server/seed/seedData/avatarImages ./seed/seedData/avatarImages
+COPY server/seed/seedData/coverImages ./seed/seedData/coverImages
 
 COPY server/run-prod.sh ./run-prod.sh
 RUN chmod +x run-prod.sh

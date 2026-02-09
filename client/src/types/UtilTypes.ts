@@ -10,3 +10,16 @@ export type ViewOptionsTypes = typeof VIEW_OPTIONS[number];
 export const isObject = (error: unknown): error is object => {
     return typeof error === 'object' && error !== null;
 };
+
+export type MultiSelectOption<V extends string | number> = {
+    value: V;
+    label: string;
+};
+
+export type SingleSelectOption<V extends string | number> = {
+    value: V;
+    label: string;
+};
+  
+
+export type ItemActions = 'edit' | 'delete' | 'restore';

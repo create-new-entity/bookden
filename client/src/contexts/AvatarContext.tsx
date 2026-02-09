@@ -1,22 +1,20 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { PLACE_HOLDER_AVATAR } from '../constants';
+
 import type { AvatarContextValue } from '../types';
 
 const defaultValue: AvatarContextValue = {
-    avatarUrl: PLACE_HOLDER_AVATAR,
-    setAvatarUrl: () => {},
-    isPlaceHolderAvatar: true
+    avatarUrl: null,
+    setAvatarUrl: () => {}
 };
 
 const AvatarContext = createContext(defaultValue);
 
 export const AvatarProvider = ({ children } : { children: ReactNode }) => {
-    const [avatarUrl, setAvatarUrl] = useState<string>(defaultValue.avatarUrl);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(defaultValue.avatarUrl);
     
     const value = {
         avatarUrl,
-        setAvatarUrl,
-        isPlaceHolderAvatar: avatarUrl === PLACE_HOLDER_AVATAR
+        setAvatarUrl
     };
 
     return (

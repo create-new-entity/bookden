@@ -36,12 +36,12 @@ const getStyles = (_theme: Theme): Styles => {
     };
 };
 
-const ErrorText = ({ isError, errorMessage }: { isError: boolean, errorMessage: string }) => {
+export const ErrorText = ({ isError, errorMessage }: { isError: boolean, errorMessage: string }) => {
     if(!isError) {
         return null;
     }
     return (
-        <Typography color='error'>{errorMessage}</Typography>
+        <Typography sx={{ marginTop: '0.3rem' }} variant="body1" color="error">{errorMessage}</Typography>
     );
 };
 
@@ -60,7 +60,7 @@ type UserFormFieldsProps<FormType extends FieldValues> = {
 
     handleDeleteAccount?: () => void;
     isPending?: boolean;
-
+    hasChangedAvatar?: boolean;
     mode: CreateOrUpdateUserMode
 };
 
@@ -76,7 +76,8 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
         isCustomer,
         handleDeleteAccount,
         isPending,
-        mode
+        mode,
+        hasChangedAvatar
     } = props;
     const theme = useTheme();
     const styles = getStyles(theme);
@@ -150,7 +151,7 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
                     }
                     <Button 
                         data-testid='submit-button'
-                        disabled={isError || !formState.isDirty || isPending} 
+                        disabled={ isError || !(hasChangedAvatar || formState.isDirty) || isPending } 
                         type='submit' 
                         variant='contained'
                     >

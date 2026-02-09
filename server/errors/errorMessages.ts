@@ -7,8 +7,6 @@ const INVALID_PASSWORD = 'InvalidPassword' as const;
 const TOKEN_EXPIRED = 'TokenExpired' as const;
 const TOKEN_INVALID = 'TokenInvalid' as const;
 const ENV_VAR_NOT_DEFINED = 'EnvVariableNotDefined' as const;
-const USERNAME_NOT_AVAILABLE = 'UsernameNotAvailable' as const;
-const EMAIL_NOT_AVAILABLE = 'EmailNotAvailable' as const;
 const RESOURCE_CONFLICT = 'ResourceConflict' as const;
 const INTERNAL_SERVER_ERROR = 'InternalServerError' as const;
 const VALIDATION_FAILED = 'ValidationFailed' as const;
@@ -16,6 +14,12 @@ const UNSUPPORTED_AVATAR_EXTENSION = 'UnsupportedAvatarExtension' as const;
 const NO_FILE_UPLOADED = 'NoFileUploaded' as const;
 const AVATAR_NOT_FOUND = 'AvatarNotFound' as const;
 const INVALID_AUTH_HEADER = 'InvalidAuthHeader' as const;
+const INVALID_BOOK_ID = 'InvalidBookId' as const;
+const NO_COVER_IMAGE_UPLOADED = 'NoCoverImageUploaded' as const;
+const BOOK_COVER_NOT_FOUND = 'BookCoverNotFound' as const;
+const INVALID_BOOK_TAGS = 'InvalidBookTags' as const;
+const IMAGE_TOO_LARGE = 'ImageTooLarge' as const;
+const INVALID_FILE_UPLOAD = 'InvalidFileUpload' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -27,8 +31,6 @@ export const errorNames = {
     tokenExpired: TOKEN_EXPIRED,
     tokenInvalid: TOKEN_INVALID,
     envVarUndefined: ENV_VAR_NOT_DEFINED,
-    emailNotAvailable: EMAIL_NOT_AVAILABLE,
-    usernameNotAvailable: USERNAME_NOT_AVAILABLE,
     resourceConflict: RESOURCE_CONFLICT,
     internalServerError: INTERNAL_SERVER_ERROR,
     validationFailed: VALIDATION_FAILED,
@@ -36,6 +38,12 @@ export const errorNames = {
     noFileUploaded: NO_FILE_UPLOADED,
     avatarNotFound: AVATAR_NOT_FOUND,
     invalidAuthHeader: INVALID_AUTH_HEADER,
+    invalidBookId: INVALID_BOOK_ID,
+    noCoverImageUploaded: NO_COVER_IMAGE_UPLOADED,
+    bookCoverNotFound: BOOK_COVER_NOT_FOUND,
+    invalidBookTags: INVALID_BOOK_TAGS,
+    imageTooLarge: IMAGE_TOO_LARGE,
+    invalidFileUpload: INVALID_FILE_UPLOAD
 };
 
 export const errorMessages = {
@@ -48,15 +56,19 @@ export const errorMessages = {
     [TOKEN_EXPIRED]: 'Authentication token has expired',
     [TOKEN_INVALID]: 'Authentication token is invalid',
     [ENV_VAR_NOT_DEFINED]: 'Some env variable is not defined',
-    [EMAIL_NOT_AVAILABLE]: 'Email is not available',
-    [USERNAME_NOT_AVAILABLE]: 'Username is not available',
     [RESOURCE_CONFLICT]: 'Resource conflicts with existing resource ( duplicate and so on )',
     [INTERNAL_SERVER_ERROR]: 'Internal server error',
     [VALIDATION_FAILED]: 'Validation failed',
     [UNSUPPORTED_AVATAR_EXTENSION]: 'Only JPEG, PNG, and WebP are allowed',
     [NO_FILE_UPLOADED]: 'No file uploaded',
     [AVATAR_NOT_FOUND]: 'Avatar not found',
-    [INVALID_AUTH_HEADER]: 'Invalid Authorization header format'
+    [INVALID_AUTH_HEADER]: 'Invalid Authorization header format',
+    [INVALID_BOOK_ID]: 'Invalid book ID',
+    [NO_COVER_IMAGE_UPLOADED]: 'No cover image uploaded',
+    [BOOK_COVER_NOT_FOUND]: 'Book cover not found',
+    [INVALID_BOOK_TAGS]: 'One or more booktags are invalid',
+    [IMAGE_TOO_LARGE]: 'Image is too large. Maximum allowed size is 3MB.',
+    [INVALID_FILE_UPLOAD]: 'Invalid file upload'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;

@@ -1,3 +1,4 @@
+import { isObject } from './TypeGuards';
 
 
 export interface PostgresError extends Error {
@@ -10,13 +11,6 @@ export interface PostgresError extends Error {
     table: string;
 };
 
-export const isObject = (error: unknown): error is object => {
-    return typeof error === 'object' && error !== null;
-};
-
-export const isString = (text: unknown): text is string => {
-    return (typeof text === 'string') || (text instanceof String);
-};
 
 export const isPostgresError = (error: unknown): error is PostgresError => {
     return isObject(error)

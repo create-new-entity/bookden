@@ -67,6 +67,7 @@ const LogInTab = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Paper sx={styles.paper}>
                 <TextField
+                    label='Username'
                     slotProps={{
                         htmlInput: {
                             'data-testid': 'login-username'
@@ -78,6 +79,7 @@ const LogInTab = () => {
                     error={usernameHasError}
                 />
                 <TextField
+                    label='Password'
                     slotProps={{
                         htmlInput: {
                             'data-testid': 'login-password'

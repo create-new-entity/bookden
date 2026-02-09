@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import { ADMIN, CUSTOMER } from '../types';
-import { usersSortByOptions, usersSortOrderOptions, userTypes } from '../constants';
+import { usersSortByOptions, sortOrderOptions, userTypes } from '../constants';
 
 
 export const User = z.object({
@@ -46,7 +46,7 @@ export const GetUsersQueryParamsSchema = z.object({
     search: z.string().optional(),
     userType: z.enum(userTypes).optional(),
     sortBy: z.enum(usersSortByOptions).optional(),
-    sortOrder: z.enum(usersSortOrderOptions).optional(),
+    sortOrder: z.enum(sortOrderOptions).optional(),
     page: z.string().optional(),
 });
 

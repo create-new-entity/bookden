@@ -1,0 +1,7 @@
+
+
+# Separate dev:ci script to avoid watch mode
+
+services:
+  server:
+    command: npm run dev:ci

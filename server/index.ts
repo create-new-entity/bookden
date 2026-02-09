@@ -1,10 +1,10 @@
 import app from './app';
-import { endConnectionPool, ENV_VARIABLES, initPGDBPool } from './configs';
+import { endConnectionPool, endRedis, ENV_VARIABLES, initRedis } from './configs';
 
 const PORT = ENV_VARIABLES.PORT;
 
 const start = async () => {
-    await initPGDBPool();
+    await initRedis();
     const server = app.listen(PORT, (error) => {
         if(error) {
             console.log('App failed to start.');
@@ -20,6 +20,7 @@ const start = async () => {
         console.log(`\nReceived ${signal}. Shutting down server.`);
         server.close(async () => {
             await endConnectionPool();
+            await endRedis();
             process.exit(0);
         });
     };

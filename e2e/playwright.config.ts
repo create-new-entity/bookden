@@ -7,6 +7,7 @@ export default defineConfig({
   testDir: './',
   fullyParallel: false,
   workers: 1,
+
   use: {
     baseURL: 'http://localhost:5173',
     browserName: 'chromium',
@@ -14,9 +15,11 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
     launchOptions: {
-      slowMo: isCI ? 0 : 200,
+      slowMo: isCI ? 0 : 700,
     },
   },
+
   outputDir: './test-results',
-  globalSetup: './globalSetup.ts'
+  globalSetup: './globalSetup.ts',
+  globalTeardown: './globalTeardown.ts',
 });

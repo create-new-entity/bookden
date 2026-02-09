@@ -1,7 +1,4 @@
 
-
-
-
 export type Pagination = {
     page: number;
     limit: number;
@@ -9,4 +6,9 @@ export type Pagination = {
     totalPages: number;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
+};
+
+export type PaginatedDataList<DataType> = {
+    data: DataType[];
+    pagination: Pagination;
 };

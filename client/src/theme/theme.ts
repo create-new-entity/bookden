@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
-import { customColors, DEFAULT_SPACING } from '../constants';
+import { customColors, DEFAULT_BORDER_RADIUS, DEFAULT_SPACING, MEDIUM_SVG_ICON_FONT_SIZE, SMALL_SVG_ICON_FONT_SIZE } from '../constants';
 import {
     BORDER_RADIUS,
     LARGE_SVG_ICON_FONT_SIZE,
@@ -118,7 +118,12 @@ export const getTheme = (mode: ThemeMode) => {
     const additionalThemeOptions: ThemeOptions = {
         typography: {
             fontFamily: '\'Roboto\', \'Helvetica\', \'Arial\', sans-serif',
-            fontSize: 14,
+            button: {
+                textTransform: 'none'
+            },
+            body1: {
+                fontSize: '1.2rem'
+            }
         },
         shape: {
             borderRadius: 8,
@@ -142,11 +147,6 @@ export const getTheme = (mode: ThemeMode) => {
                         color: 'inherit',
                     },
 
-                    // WebKit-based scrollbars (Chrome, Safari, Edge). Ignoring firefox for now.
-                    '*::-webkit-scrollbar': {
-                        width: '8px',
-                        height: '8px',
-                    },
                     '*::-webkit-scrollbar-thumb': {
                         backgroundColor: '#bdbdbd',
                         borderRadius: '4px',
@@ -184,7 +184,7 @@ export const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                        borderRadius: DEFAULT_BORDER_RADIUS,
                     }
                 }
             },
@@ -201,7 +201,7 @@ export const getTheme = (mode: ThemeMode) => {
                 },
                 styleOverrides: {
                     root: {
-                        backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
+                        backgroundColor: mode === 'light' ? theme.palette.background.elevated : theme.palette.primary.dark,
                     }
                 }
             },
@@ -248,6 +248,12 @@ export const getTheme = (mode: ThemeMode) => {
                 styleOverrides: {
                     fontSizeLarge: {
                         fontSize: LARGE_SVG_ICON_FONT_SIZE
+                    },
+                    fontSizeMedium: {
+                        fontSize: MEDIUM_SVG_ICON_FONT_SIZE
+                    },
+                    fontSizeSmall: {
+                        fontSize: SMALL_SVG_ICON_FONT_SIZE
                     }
                 }
             },
@@ -255,7 +261,7 @@ export const getTheme = (mode: ThemeMode) => {
                 styleOverrides: {
                     root: {
                         backgroundColor: mode === 'light' ? theme.palette.primary.light : theme.palette.primary.dark,
-                        borderRadius: '0.5rem'
+                        borderRadius: DEFAULT_BORDER_RADIUS,
                     },
                     paper: {
                         backgroundColor: theme.palette.background.elevated,
@@ -292,6 +298,13 @@ export const getTheme = (mode: ThemeMode) => {
                 styleOverrides: {
                     sizeSmall: {
                         fontSize: '0.6rem'
+                    }
+                }
+            },
+            MuiFormHelperText: {
+                styleOverrides: {
+                    root: {
+                        marginLeft: 0
                     }
                 }
             }
