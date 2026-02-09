@@ -12,7 +12,7 @@ on:
 jobs:
 
   lint-and-unit-tests:
-    name: lint and test (server and client)
+    name: Lint and Unit Tests (server and client)
     runs-on: ubuntu-24.04
 
     steps:
@@ -53,7 +53,7 @@ jobs:
         run: npm run ci
 
   e2e-tests:
-    name: E2E - Playwright
+    name: E2E Tests - Playwright
     runs-on: ubuntu-24.04
     needs: lint-and-unit-tests
 
