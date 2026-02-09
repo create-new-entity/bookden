@@ -16,7 +16,6 @@ services:
       retries: 10
 
   redis:
-    container_name: bookden-redis
     image: redis:7-alpine
     restart: always
     healthcheck:
