@@ -22,6 +22,8 @@ services:
     restart: always
     networks:
       - bookden-network
+    env_file:
+      - ./env/redis.env
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
