@@ -1,0 +1,7 @@
+POST http://localhost:3000/api/books/133/wishlist
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inppb25fZ2xhZGUiLCJ1c2VySWQiOjEzMywidXNlclR5cGUiOiJjdXN0b21lciIsInRva2VuVmVyc2lvbiI6MCwiaWF0IjoxNzcxMTk0MjAwLCJleHAiOjE3NzExOTc4MDB9.m8SCerJ9rzKyEMta65PZdkn76ri8BE8wU6_oO1H46yo
+
+{
+    "bookId": 133
+}
