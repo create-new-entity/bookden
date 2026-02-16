@@ -1,7 +1,10 @@
 import z from 'zod';
+import { SqlFragmentToken } from '@slonik/sql-tag';
 
 import { BookTypeAlias } from '../typeAliases';
-import { CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema } from '../validation';
+import {
+    CreateBookPayloadSchema, GetBooksQueryParamsSchema, UpdateBookPayloadSchema
+} from '../validation';
 import { CamelCaseDeep } from './Utilities';
 
 
@@ -27,4 +30,20 @@ export type GetBooksQueryParams = z.infer<typeof GetBooksQueryParamsSchema>;
 export type PriceRange = {
     priceMin: number;
     priceMax: number;
+};
+
+
+export type BooksQueryOptions = {
+    includeDeleted: boolean;
+    search: string;
+    sortBy: BooksSortByOptions;
+    sortOrder: BooksSortOrderOptions;
+    tags: string[];
+    priceRanges: PriceRange;
+    page: number;
+};
+
+export type BooksQueryContext = {
+    baseWhereFragment?: SqlFragmentToken;
+    requestingUserId?: number;
 };

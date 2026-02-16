@@ -1,3 +1,5 @@
+import { BooksQueryOptions } from './types';
+
 export const TOKEN_VALIDITY_SECONDS = 60 * 60; // 1 hour in seconds
 
 
@@ -30,3 +32,17 @@ export const PRICE_RANGE_CACHE_KEY = 'books:price-range';
 export const PRICE_RANGE_TTL_SECONDS = 60 * 10; // 10 minutes. Redis EX = seconds. No need to multiply by 1000.
 export const DEFAULT_PRICE_MIN = 0;
 export const DEFAULT_PRICE_MAX = 100000;
+
+
+export const DEFAULT_BOOK_FILTER_OPTIONS: BooksQueryOptions = {
+    includeDeleted: false,
+    page: 1,
+    search: '',
+    sortBy: 'title',
+    sortOrder: 'desc',
+    tags: [],
+    priceRanges: {
+        priceMin: DEFAULT_PRICE_MIN,
+        priceMax: DEFAULT_PRICE_MAX
+    }
+};
