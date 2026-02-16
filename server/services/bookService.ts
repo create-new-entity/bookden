@@ -42,6 +42,22 @@ const mapDate = (book: BookDBRow): Book => {
 };
 
 
+/*
+    Note to future self:
+
+    Why the 'context'? Why this refactor? -> https://chatgpt.com/share/699317ca-c388-8012-8ef9-039971adf36d
+
+    In short, decouple the logic that gets a bunch of books from db.
+    "A bunch of books" can be fetched for different purposes / contexts.
+
+    For example:
+        1. A bunch of books that are in user's wishlist.
+        2. Just a bunch of books without any addtional context.
+        3. Not implemented yet, but some additional contexts can be: recommended books, most popular books and so on.
+
+    In other words, pass the context from outside and let the function get the relevant books.
+*/
+
 const getBooksInternal = async (
     context: BooksQueryContext,
     options: BooksQueryOptions
