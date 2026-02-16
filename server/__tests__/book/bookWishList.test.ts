@@ -103,6 +103,13 @@ describe('Books Wish List tests', () => {
         expect(response.status).toBe(EXPECT_403);
     });
 
+    /*
+        We soft delete books, not entirely delete them. Intention is to use
+        data for analytics features that are yet to come.
+
+        Following tests are to ensure that, "deleted" books can not be added to wishlist or removed from wishlist.
+    */
+
     test('Deleted book can not be added to wishlist', async () => {
 
         const superAdminUser = seedSuperAdminUser;
@@ -119,6 +126,28 @@ describe('Books Wish List tests', () => {
         const customerUser = customerUsersSeedData[0];
         const customerToken = await login({ username: customerUser.username, password: customerUser.password });
         response = await addBookToWishlist(EXPECT_404, customerToken, book.bookId);
+        expect(response.status).toBe(EXPECT_404);
+    });
+
+    test('Deleted book can not be removed from wishlist', async () => {
+        const superAdminUser = seedSuperAdminUser;
+        const superAdminToken = await login({ username: superAdminUser.username, password: superAdminUser.password });
+
+        const customerUser = customerUsersSeedData[0];
+        const customerToken = await login({ username: customerUser.username, password: customerUser.password });
+
+        const books = await getBooks(EXPECT_200, superAdminToken, 'page=1&limit=10');
+        expect(books.status).toBe(EXPECT_200);
+        const booksData = books.body.data;
+        const book = booksData[0];
+
+        response = await addBookToWishlist(EXPECT_200, customerToken, book.bookId);
+        expect(response.status).toBe(EXPECT_200);
+
+        response = await deleteBook(book.bookId, EXPECT_200, superAdminToken);
+        expect(response.status).toBe(EXPECT_200);
+
+        response = await removeBookFromWishlist(EXPECT_404, customerToken, book.bookId);
         expect(response.status).toBe(EXPECT_404);
     });
     

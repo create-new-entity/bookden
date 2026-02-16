@@ -582,6 +582,23 @@ const removeBookFromWishlist = async (userId: number, bookId: number) => {
             throw new UnauthorizedError('User not found');
         }
 
+        /*
+            Note to future self:
+            We use soft deletion of books. So we need to check if the book is deleted.
+            If yes, throw an error.
+         */
+        const bookResult = await trx.query(sqlTag.typeAlias('Book')`
+            SELECT 1
+            FROM books
+            WHERE book_id = ${bookId}
+            AND deleted_at IS NULL
+        `);
+
+        if (bookResult.rows.length === 0) {
+            throw new NotFoundError('Book not found');
+        }
+
+        // At this point, it is guaranteed that, both the user and the book are not deleted.
         await trx.query(sqlTag.typeAlias('UserBookWishlist')`
             DELETE FROM user_book_wishlist
             WHERE user_id = ${userId} AND book_id = ${bookId};
