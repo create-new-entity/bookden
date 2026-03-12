@@ -8,7 +8,7 @@ import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import type { BookSearchParams, BookSearchParamsWithTagsArray } from '../../../validations';
-import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
+import type { BooksPageMode, BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import {
     ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, CREATE_BOOK, MARGIN_TOP_TO_AVOID_NAV_BAR,
     MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
@@ -67,6 +67,7 @@ const getStyles = (theme: Theme): Styles => {
 
 
 type BooksListFilterDesktopProps = {
+    mode: BooksPageMode;
     tags: string[];
     updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
     priceRangeMeta: BooksPriceRangeMeta;
@@ -76,6 +77,7 @@ type BooksListFilterDesktopProps = {
 };
 
 const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
+    const { mode } = props;
     const theme = useTheme();
     const styles = getStyles(theme);
     const { userType } = useAuthContext();
@@ -140,7 +142,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         onViewChange={onViewChange}
                     />
                     {
-                        isClientAdminOrSuperAdmin && (
+                        isClientAdminOrSuperAdmin && mode === 'admin' && (
                             <>
                                 <Divider
                                     orientation='vertical'

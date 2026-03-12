@@ -17,6 +17,7 @@ export { default as UpdateUserForm } from './UpdateUserForm';
 export { default as CreateAdminUserForm } from './CreateAdminUserForm';
 export { default as ViewSelector } from './ViewSelector';
 export { default as UserCard } from './UserCard';
+export { default as BookListLayout } from './BookListLayout';
 
 export * from './UsersListFilter';
 export * from './BooksListFilter';

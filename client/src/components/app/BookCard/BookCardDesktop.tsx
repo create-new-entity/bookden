@@ -1,20 +1,17 @@
 
 import {
     Box, Card, CardContent, CardMedia,
-    Stack, Typography, Tooltip,
-    Chip
+    Stack, Typography, Tooltip, Chip
 } from '@mui/material';
 import {useTheme,type SxProps,type Theme } from '@mui/material/styles';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import type { Book } from '../../../types';
+import type { Book, BookAction } from '../../../types';
 import {
-    BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP,
-    PLACE_HOLDER_BOOK_COVER
+    BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER
 } from '../../../constants';
 import { getBookCover } from '../../../api';
-import { useBlobImage, useDeleteBook, useRestoreBook } from '../../../hooks';
-import BookCardActions from './BookCardActions';
+import { useBlobImage } from '../../../hooks';
 
 
 
@@ -85,10 +82,11 @@ const getStyles = (_theme: Theme): Styles => {
 
 
 type BookCardDesktopProps = {
-    item: Book
+    item: Book;
+    getActions: (book: Book) => BookAction[];
 };
 
-const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
+const BookCardDesktop = ({ item, getActions }: BookCardDesktopProps) => {
     const book = item;
     const blobOptions = {
         queryKey: ['bookCover', book.bookId],
@@ -97,29 +95,12 @@ const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
     };
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
-    const { deleteBookCoverAndBookData } = useDeleteBook();
-    const { restoreBookMutation } = useRestoreBook();
-    const navigate = useNavigate();
-
+    const actions = getActions(book);
 
     const styles = getStyles(theme);
     const isDeleted = book.deletedAt !== null;
 
-    const handleDeleteBook = async () => {
-        deleteBookCoverAndBookData(book.bookId);
-    };
     
-    const onEdit = () => {
-        navigate(`/books/${book.bookId}/update`);
-    };
-
-    const onDelete = () => {
-        handleDeleteBook();
-    };
-
-    const onRestore = () => {
-        restoreBookMutation.mutate(book.bookId);
-    };
 
     return (
         <Link to={`/books/${book.bookId}`} data-testid={`book-card-${book.title.toLowerCase().replace(/ /g, '-')}`}>
@@ -137,16 +118,19 @@ const BookCardDesktop = ({ item }: BookCardDesktopProps) => {
                             <Chip label='Deleted' color='error' size='small' />
                         }
                         <Box className='book-card-actions'>
-                            <BookCardActions
-                                bookId={book.bookId}
-                                isDeleted={isDeleted}
-                                allowedActions={['edit', 'delete', 'restore']}
-                                onEdit={onEdit}
-                                onDelete={onDelete}
-                                onRestore={onRestore}
-                            />
+                            {
+                                actions.map((action) => {
+                                    const { id, onClick, toolTipTitle, IconComponent } = action;
+                                    return (
+                                        <IconComponent
+                                            key={id}
+                                            onClick={onClick}
+                                            tooltipTitle={toolTipTitle}
+                                        />
+                                    );
+                                })
+                            }
                         </Box>
-                        
                     </Stack>
                 </Box>
                 <Stack
