@@ -46,7 +46,7 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
         page: validatedPage,
         includeDeleted
     };
-    const books = await getAllBooks(options);
+    const books = await getAllBooks(options, req.user?.userId);
     
     res.status(200).json(books);
 };
@@ -367,7 +367,7 @@ const getWishlistedBooksController = async (req: AuthenticatedRequest, res: Resp
         page: validatedPage
     };
 
-    const wishlistedBooks = await getWishlistedBooks(req.user.userId, options);
+    const wishlistedBooks = await getWishlistedBooks(options, req.user.userId);
     res.status(200).json(wishlistedBooks);
 };
 

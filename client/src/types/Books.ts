@@ -1,4 +1,7 @@
+import type { ComponentType } from 'react';
+
 import type { BOOKS_LIST_SORT_BY_OPTIONS_TEXTS, LANGUAGE_CODES } from '../constants';
+import type { ActionProps } from '../components/app/ActionIcons/ActionIcon';
 
 
 export type Book = {
@@ -15,7 +18,8 @@ export type Book = {
     updatedAt: string | null;
     createdAt: string;
     tags: string[];
-}
+    isWishlisted: boolean;
+};
 
 
 export type BookTag = {
@@ -31,3 +35,14 @@ export type BooksPriceRangeMeta = {
 };
 
 export type LanguageCode = typeof LANGUAGE_CODES[number];
+
+export type BooksPageMode = 'admin' | 'customer'
+
+
+
+export type BookAction = {
+    id: string;
+    IconComponent: ComponentType<ActionProps>;
+    onClick: () => void;
+    toolTipTitle: string;
+};

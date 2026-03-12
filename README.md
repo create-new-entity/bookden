@@ -10,6 +10,10 @@ It is a full stack application developed in:
 3. Containerzation ( Docker ) + Github Actions ( CI/CD )
 4. Playwright
 
+How to run the project locally ( from root directory ):
+1. To start the app run: npm run start:dev
+2. To stop the app run: npm run stop:dev
+
 
 How to run e2e tests locally ( from root directory ):
 1. npm run e2e

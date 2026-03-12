@@ -18,7 +18,7 @@ export const BookTypeAlias = z.object({
         .lte(2025, { message: 'Year cannot exceed 2025' }),
     language: z.string(),
     pages: z.number(),
-    wish_listed: z.boolean().optional(),
+    is_wishlisted: z.boolean().optional(),
 
     deleted_at: z.string().nullable(),
     updated_at: z.string().nullable(),

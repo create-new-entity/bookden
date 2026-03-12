@@ -36,7 +36,7 @@ const mapDate = (book: BookDBRow): Book => {
         yearPublished: book.year_published,
         language: book.language,
         pages: book.pages,
-        ...(book.wish_listed !== undefined ? { wishListed: book.wish_listed } : {}),
+        ...(book.is_wishlisted !== undefined ? { isWishlisted: book.is_wishlisted } : {}),
         ...dateStamps
     };
 };
@@ -123,7 +123,7 @@ const getBooksInternal = async (
     const wishlistSelectFragment = requestingUserId
         ? sqlTag.fragment`
             ,
-            (uw.user_id IS NOT NULL) AS wish_listed    -- If user_id is not null, then the book is wishlisted by the user.
+            (uw.user_id IS NOT NULL) AS is_wishlisted    -- If user_id is not null, then the book is wishlisted by the user.
         `
         : sqlTag.fragment``;
     const wishlistJoinFragment = requestingUserId
@@ -196,19 +196,7 @@ const getBooksInternal = async (
     };
 };
 
-const getAllBooks = async (options: Partial<BooksQueryOptions>): Promise<PaginatedDataList<Book>> => {
-    const resolvedOptions = R.mergeAll([DEFAULT_BOOK_FILTER_OPTIONS, options]);
-    return getBooksInternal(
-        { baseWhereFragment: sqlTag.fragment`` },
-        resolvedOptions
-    );
-};
-
-const getWishlistedBooks = async (
-    userId: number,
-    options: Partial<BooksQueryOptions>
-): Promise<PaginatedDataList<Book>> => {
-
+const checkIfUserIsDeleted = async (userId: number) => {
     const dbPool = await getPGDBPool();
 
     /* 
@@ -226,6 +214,35 @@ const getWishlistedBooks = async (
     if (result.rows.length === 0) {
         throw new UnauthorizedError('User not found');
     }
+};
+
+const getAllBooks = async (options: Partial<BooksQueryOptions>, userId?: number): Promise<PaginatedDataList<Book>> => {
+    const resolvedOptions = R.mergeAll([DEFAULT_BOOK_FILTER_OPTIONS, options]);
+    
+    if(userId !== undefined) {
+        await checkIfUserIsDeleted(userId);
+    }
+    return getBooksInternal(
+        {
+            baseWhereFragment: sqlTag.fragment``,
+            ...(
+                userId !== undefined
+                    ?
+                    { requestingUserId: userId }
+                    :
+                    {}
+            )
+        },
+        resolvedOptions
+    );
+};
+
+const getWishlistedBooks = async (
+    options: Partial<BooksQueryOptions>,
+    userId: number
+): Promise<PaginatedDataList<Book>> => {
+    
+    await checkIfUserIsDeleted(userId);
     
     /*
         Merge the default options with the provided options.
