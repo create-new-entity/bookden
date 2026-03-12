@@ -22,9 +22,11 @@ type UseBooksWishListReturn = {
 };
 
 export const useBooksWishList = (): UseBooksWishListReturn => {
-    const { token, userId } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const { params: originalParams, updateParams } = useBookManagementDeepLinking();
     const { data: priceRangeMeta } = useBooksFiltersMeta();
+    const existingLoggedInUser = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInUser.existingLoggedInData?.token;
 
     const params = {
         ...originalParams,
@@ -35,7 +37,7 @@ export const useBooksWishList = (): UseBooksWishListReturn => {
     const tagsString = tags.join(',');
     const booksList = useQuery({
         queryKey: ['wishlistedBooks', search, page, sortBy, sortOrder, tagsString, priceMin, priceMax],
-        queryFn: () => getWishlistedBooks({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, userId, token)
+        queryFn: () => getWishlistedBooks({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, resolvedToken)
     });
     
     return { booksList, params, updateParams, priceRangeMeta };

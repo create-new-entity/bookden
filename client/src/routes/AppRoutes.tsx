@@ -8,7 +8,8 @@ import {
     UPDATE_PROFILE, USER, USER_MANAGEMENT, BOOK_MANAGEMENT,
     BOOK, CREATE_BOOK, SUPERADMIN,
     ADMIN, UPDATE_BOOK, BOOKS,
-    UNAUTHORIZED, NOT_FOUND
+    UNAUTHORIZED, NOT_FOUND, WISHLIST,
+    CUSTOMER
 } from '../constants';
 import {
     RequireAuth, RequireRole
@@ -18,7 +19,8 @@ import {
     CreateAdminOrUpdateAnyUserProfilePage, UserPage, BookPage,
     AdminToolsPage, UserManagementPage, HomePage,
     UnauthorizedPage, NotFoundPage, BookCatalogPage,
-    AdminBookManagementPage
+    AdminBookManagementPage,
+    WishListPage
 } from '../pages';
 
 const AppRoutes = () => {
@@ -44,6 +46,11 @@ const AppRoutes = () => {
                     <Route path={UPDATE_BOOK} element={<UpdateBookPage/>}/>
                     <Route path={USER_MANAGEMENT} element={<UserManagementPage/>} />
                     <Route path={BOOK_MANAGEMENT} element={<AdminBookManagementPage/>} />
+                </Route>
+
+                { /* Routes allowed for logged in customer */ }
+                <Route element={<RequireRole allowedRoles={[CUSTOMER]} />}>
+                    <Route path={WISHLIST} element={<WishListPage/>} />
                 </Route>
             </Route>
             

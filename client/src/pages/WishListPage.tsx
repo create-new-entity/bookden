@@ -1,16 +1,18 @@
 
 
+
+
 import { getPublicBookActions } from '../actions';
 import { BookListLayout } from '../components';
 import { useAuthContext } from '../contexts';
-import { useBooksList, useSetTabTitle, useBooksWishListMutation } from '../hooks';
+import { useSetTabTitle, useBooksWishListMutation, useBooksWishList } from '../hooks';
 import type { Book } from '../types';
 
 
-const BookCatalogPage = () => {
-    const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
+const WishListPage = () => {
+    const { booksList, params, updateParams, priceRangeMeta } = useBooksWishList();
     const { addToWishList, removeFromWishList } = useBooksWishListMutation();
-    useSetTabTitle('Books');
+    useSetTabTitle('Wishlist');
     const { userType } = useAuthContext();
 
     const onAddToWishlist = (bookId: number) => {
@@ -43,4 +45,4 @@ const BookCatalogPage = () => {
     );
 };
 
-export default BookCatalogPage;
+export default WishListPage;

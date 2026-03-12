@@ -37,14 +37,14 @@ export const getBooksList = async (params: BookSearchParams, token?: string): Pr
     return response.data;
 };
 
-export const getWishlistedBooks = async (params: BookSearchParams, userId: number, token: string): Promise<PaginatedDataList<Book>> => {
+export const getWishlistedBooks = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
     const cleanedParams = removeEmptyValues(params);
-    const response = await axios.get(`${bookUrl}/${userId}/wishlist`, { params: cleanedParams, ...requestConfig });
+    const response = await axios.get(`${bookUrl}/wishlist`, { params: cleanedParams, ...requestConfig });
 
     return response.data;
 };

@@ -9,6 +9,7 @@ export { AdminToolsPage } from './AdminToolsPage';
 export { BookPage } from './BookPage';
 export { default as AdminBookManagementPage } from './AdminBookManagementPage';
 export { default as BookCatalogPage } from './BookCatalogPage';
+export { default as WishListPage } from './WishListPage';
 export * from './CreateUpdateBook';
 export * from './ErrorPages';
 
