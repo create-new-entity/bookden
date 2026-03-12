@@ -61,12 +61,37 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 },
                 {
                     name: 'logout',
-                    action: clearAuthentication,
+                    action: () => {
+                        clearAuthentication();
+                        setShowNavDrawer(false);
+                    },
                     component: <Typography>Logout</Typography>,
                     access: ALL_TYPES_OF_USERS
                 }
             ].filter(filterOutUnAuthorizedOptions(userType));
             setOptions(defaultOptions);
+        }
+        else {
+            setOptions([
+                {
+                    name: 'books',
+                    action: () => {
+                        navigate('/books');
+                        setShowNavDrawer(false);
+                    },
+                    component: <Typography>Books</Typography>,
+                    access: []
+                },
+                {
+                    name: 'login',
+                    action: () => {
+                        navigate('/auth');
+                        setShowNavDrawer(false);
+                    },
+                    component: <Typography>Login</Typography>,
+                    access: []
+                }
+            ]);
         }
     }, [userType, clearAuthentication, navigate, isUserLoggedIn]);
     

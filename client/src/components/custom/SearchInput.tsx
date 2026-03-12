@@ -5,6 +5,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 import { isString } from '../../types';
 import { MAX_NUMBER_OF_RECENT_SEARCH_VALUES } from '../../constants';
+import { useState } from 'react';
 
 
 type SearchInputProps = {
@@ -32,7 +33,10 @@ const SearchInput = (props: SearchInputProps) => {
     const [previouslySearchedValues, setPreviouslySearchedValues] = useLocalStorage<string[]>(props.id, []);
     const { handleChange, placeholder } = props;
 
+    const [open, setOpen] = useState(false);
+
     const save = (value: string) => {
+        setOpen(false);
         handleChange(value);
         if(!value) {
             return;
@@ -48,6 +52,7 @@ const SearchInput = (props: SearchInputProps) => {
     return (
         <Autocomplete
             id={`autocomplete-${props.id}`}
+            open={open}
             sx={props.sx}
             value={props.value}
             options={previouslySearchedValues}
@@ -64,6 +69,8 @@ const SearchInput = (props: SearchInputProps) => {
                         ...params.InputProps,
                         startAdornment: <IconButton><SearchIcon/></IconButton>
                     }}
+                    onFocus={() => setOpen(true)}
+                    onBlur={() => setOpen(false)}
                     placeholder={placeholder}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
