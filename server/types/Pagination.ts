@@ -12,5 +12,5 @@ export type Pagination = {
 
 export type PaginatedDataList<DataType> = {
     data: DataType[];
-    pagination: Pagination;
+    pagination?: Pagination;
 };

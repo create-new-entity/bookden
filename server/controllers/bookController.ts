@@ -11,7 +11,7 @@ import {
     addBookToWishlist,
     createBook, deleteBook, deleteBookCover,
     getAllBooks, getBook, getBookCover,
-    getBooksPriceRange, getTags, getWishlistedBooks, removeBookFromWishlist, restoreBook, updateBook, updateBookCover
+    getBooksPriceRange, getHomepageBookLists, getTags, getWishlistedBooks, removeBookFromWishlist, restoreBook, updateBook, updateBookCover
 } from '../services';
 import {
     AuthenticationError, BadRequestError, errorMessages,
@@ -48,6 +48,11 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     };
     const books = await getAllBooks(options, req.user?.userId);
     
+    res.status(200).json(books);
+};
+
+const getHomePageBooksController = async (_req: Request, res: Response) => {
+    const books = await getHomepageBookLists();
     res.status(200).json(books);
 };
 
@@ -374,6 +379,7 @@ const getWishlistedBooksController = async (req: AuthenticatedRequest, res: Resp
 
 export {
     getAllBooksController,
+    getHomePageBooksController,
     getWishlistedBooksController,
     getBookController,
     createBookController,

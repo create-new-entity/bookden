@@ -10,7 +10,8 @@ import {
     updateBookController, deleteBookController, getBookCoverController,
     updateBookCoverController, deleteBookCoverController, getTagsController,
     getBooksPriceRangeController, restoreBookController, addBookToWishlistController,
-    removeBookFromWishlistController, getWishlistedBooksController
+    removeBookFromWishlistController, getWishlistedBooksController,
+    getHomePageBooksController
 } from '../controllers';
 
 export const bookBaseUrl = '/api/books';
@@ -20,6 +21,7 @@ const bookRouter = Router();
 bookRouter.get('/tags', asyncHandler(getTagsController));
 bookRouter.get('/filters/meta', asyncHandler(getBooksPriceRangeController));
 
+bookRouter.get('/homepage-books', asyncHandler(getHomePageBooksController));
 
 bookRouter.get('/:id/cover', tokenExtractor, asyncHandler(getBookCoverController));
 bookRouter.put('/:id/cover', tokenExtractor, enforceAuthentication, uploadImage.single('coverImage'), asyncHandler(updateBookCoverController));
