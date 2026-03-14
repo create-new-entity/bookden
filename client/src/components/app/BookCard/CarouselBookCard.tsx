@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 
 import { getBookCover } from '../../../api';
-import { useBlobImage } from '../../../hooks';
+import { useBlobImage, useResponsive } from '../../../hooks';
 import type { Book } from '../../../types';
 import { BORDER_RADIUS, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
 import { Link } from 'react-router-dom';
@@ -16,15 +16,17 @@ type Styles = {
     bannerImage: SxProps<Theme>
 };
 
-const getStyles = (_theme: Theme): Styles => {
+const getStyles = (_theme: Theme, { isSm, isXs }: { isSm: boolean; isXs: boolean }): Styles => {
+    const resolvedBookCoverWidth = isXs ? BOOK_COVER_WIDTH * 0.5 : (isSm ? BOOK_COVER_WIDTH * 0.85 : BOOK_COVER_WIDTH);
+    const resolvedBookCoverHeight = isXs ? BOOK_COVER_HEIGHT * 0.5 : (isSm ? BOOK_COVER_HEIGHT * 0.85 : BOOK_COVER_HEIGHT);
     return {
         bannerWrapper: {
             borderRadius: BORDER_RADIUS,
             overflow: 'hidden'
         },
         bannerImage: {
-            width: `${BOOK_COVER_WIDTH}rem`,
-            height: `${BOOK_COVER_HEIGHT}rem`,
+            width: `${resolvedBookCoverWidth}rem`,
+            height: `${resolvedBookCoverHeight}rem`,
             objectFit: 'cover',
             display: 'block',
             '& img': {
@@ -50,8 +52,9 @@ const CarouselBookCard = (props: CarouselBookCardProps) => {
     };
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
+    const { isSm, isXs} = useResponsive();
 
-    const styles = getStyles(theme);
+    const styles = getStyles(theme, { isSm, isXs });
 
     return (
         <Link to={`/books/${book.bookId}`}>

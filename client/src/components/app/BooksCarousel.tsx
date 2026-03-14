@@ -5,6 +5,7 @@ import { Paper, Typography, useTheme, type SxProps, type Theme } from '@mui/mate
 import type { Book, CarouselBookList } from '../../types';
 import { Carousel } from '../custom';
 import { CarouselBookCard } from './BookCard';
+import { useResponsive } from '../../hooks';
 
 
 
@@ -34,11 +35,14 @@ const BooksCarousal = (props: CarouselBookList) => {
     const { title, books } = props;
 
     const theme = useTheme();
+    const { isXs } = useResponsive();
     const styles = getStyles(theme);
+
+    const resolvedVariant = isXs ? 'subtitle2' : 'h6';
 
     return (
         <Paper sx={styles.rootPaper}>
-            <Typography variant='h6' sx={styles.carouselTitle}>
+            <Typography variant={resolvedVariant} sx={styles.carouselTitle}>
                 {title}
             </Typography>
             <Carousel
