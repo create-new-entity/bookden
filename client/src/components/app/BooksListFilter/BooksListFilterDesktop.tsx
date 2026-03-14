@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Button, Collapse, Divider, Stack,
@@ -88,6 +88,20 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const { tags, params, updateParams, priceRangeMeta, selectedView, onViewChange } = props;
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
+    const resolvedBookListOptions = useMemo(() => {
+        if(!userType) {
+            return [];
+        }
+        return BOOKS_LIST_SORT_BY_OPTIONS.filter((option) => {
+            const { access } = option;
+            if(!access) {
+                // If access is not defined, it means the option is accessible to all user types.
+                return true;
+            }
+            return access.includes(userType);
+        });
+    }, [userType]);
+
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
         updateParams({ sortOrder: event.target.value }, 'merge');
     };
@@ -132,7 +146,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                     <SelectSortBy<BooksSortByOptions>
                         id="books-list-sort-by"
                         value={sortBy}
-                        options={BOOKS_LIST_SORT_BY_OPTIONS}
+                        options={resolvedBookListOptions}
                         onChange={handleSortByChange}
                         formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY }}
                     />

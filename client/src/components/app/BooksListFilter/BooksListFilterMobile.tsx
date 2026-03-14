@@ -14,6 +14,8 @@ import type { BookSearchParams } from '../../../validations';
 import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import type { UpdateMode } from '../../../hooks';
 import BooksPriceFilter from './BooksPriceFilter';
+import { useAuthContext } from '../../../contexts';
+import { useMemo } from 'react';
 
 
 
@@ -50,9 +52,24 @@ type BooksListFilterMobileProps = {
 
 const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
     const theme = useTheme();
+    const { userType } = useAuthContext();
     const styles = getStyles(theme);
     const { tags, params, updateParams, priceRangeMeta } = props;
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
+
+    const resolvedBookListOptions = useMemo(() => {
+        if(!userType) {
+            return [];
+        }
+        return BOOKS_LIST_SORT_BY_OPTIONS.filter((option) => {
+            const { access } = option;
+            if(!access) {
+                // If access is not defined, it means the option is accessible to all user types.
+                return true;
+            }
+            return access.includes(userType);
+        });
+    }, [userType]);
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
         updateParams({ sortOrder: event.target.value }, 'merge');
@@ -96,7 +113,7 @@ const BooksListFilterMobile = (props: BooksListFilterMobileProps) => {
                         id="books-list-sort-by"
                         formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY }}
                         value={sortBy}
-                        options={BOOKS_LIST_SORT_BY_OPTIONS}
+                        options={resolvedBookListOptions}
                         onChange={handleSortByChange}
                     />
                     <SelectSortOrder sortOrder={sortOrder} onChange={handleSortOrderChange} />

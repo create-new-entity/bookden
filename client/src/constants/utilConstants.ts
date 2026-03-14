@@ -82,8 +82,17 @@ export const BOOKS_LIST_SORT_BY_OPTIONS: Array<SelectOption<BooksSortByOptions>>
     { optionValue: PRICE, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[PRICE] },
     { optionValue: YEAR_PUBLISHED, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[YEAR_PUBLISHED] },
     { optionValue: CREATED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[CREATED_AT] },
-    { optionValue: UPDATED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[UPDATED_AT] },
-    { optionValue: DELETED_AT, optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[DELETED_AT] },
+
+    {
+        optionValue: UPDATED_AT,
+        optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[UPDATED_AT],
+        access: [ADMIN, SUPERADMIN] // Only admin and superadmin can sort by updatedAt, because normal customers won't see the updated books.
+    },
+    {
+        optionValue: DELETED_AT,
+        optionLabel: BOOKS_LIST_SORT_BY_OPTIONS_TEXTS[DELETED_AT],
+        access: [ADMIN, SUPERADMIN] // Only admin and superadmin can sort by deletedAt, because normal customers won't see the deleted books.
+    },
 ] as const;
 
 export const DEFAULT_PRICE_MIN = 0;
