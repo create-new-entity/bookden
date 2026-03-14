@@ -15,8 +15,8 @@ import { useBlobImage } from '../../../hooks';
 
 
 
-const BOOK_COVER_WIDTH = 17;
-const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH * 1.5;
+export const BOOK_COVER_WIDTH = 17;
+export const BOOK_COVER_HEIGHT = BOOK_COVER_WIDTH * 1.5;
 const BOOK_CARD_HEIGHT = '38rem';
 
 

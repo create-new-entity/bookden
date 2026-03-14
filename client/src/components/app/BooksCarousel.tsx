@@ -16,7 +16,8 @@ type Styles = {
 const getStyles = (theme: Theme): Styles => {
     return {
         rootPaper: {
-            padding: '1rem'
+            padding: '1rem',
+            width: '100%',
         },
         carouselTitle: {
             maxWidth: 'fit-content',

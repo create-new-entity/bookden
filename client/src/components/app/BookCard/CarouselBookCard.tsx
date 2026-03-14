@@ -9,6 +9,7 @@ import { useBlobImage } from '../../../hooks';
 import type { Book } from '../../../types';
 import { BORDER_RADIUS, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
 import { Link } from 'react-router-dom';
+import { BOOK_COVER_HEIGHT, BOOK_COVER_WIDTH } from './BookCardDesktop';
 
 type Styles = {
     bannerWrapper: SxProps<Theme>;
@@ -22,10 +23,15 @@ const getStyles = (_theme: Theme): Styles => {
             overflow: 'hidden'
         },
         bannerImage: {
-            width: '100%',
-            height: '20rem',
+            width: `${BOOK_COVER_WIDTH}rem`,
+            height: `${BOOK_COVER_HEIGHT}rem`,
             objectFit: 'cover',
-            display: 'block'
+            display: 'block',
+            '& img': {
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+            }
         }
     };
 };
