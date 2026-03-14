@@ -24,7 +24,8 @@ const getStyles = (theme: Theme): Styles => {
             padding: '0.5rem',
             color: theme.palette.primary.dark,
             backgroundColor: theme.palette.warning.light,
-            borderRadius: '0.5rem'
+            borderRadius: '0.5rem',
+            marginBottom: '1rem'
         }
     };
 };

@@ -32,7 +32,7 @@ const HomePage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
                 sx={styles.rootStack}
-                gap={'3rem'}
+                gap={'4rem'}
             >
                 <HeroBannerCarousel/>
                 <Divider sx={{ width: '100%' }} />
