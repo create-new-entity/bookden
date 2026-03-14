@@ -2,16 +2,17 @@
 import { Divider, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
 
 import { BooksCarousel, HeroBannerCarousel } from '../components';
-import { useHomePageBookLists, useSetTabTitle } from '../hooks';
+import { useHomePageBookLists, useResponsive, useSetTabTitle } from '../hooks';
 
 type Styles = {
     rootStack: SxProps<Theme>;
 };
 
-const getStyles = (_theme: Theme): Styles => {
+const getStyles = (_theme: Theme, { isXs }: { isXs: boolean }): Styles => {
+    const resolvedPadding = isXs ? '1rem' : '4.5rem';
     return {
         rootStack: {
-            padding: '4.5rem'
+            padding: resolvedPadding,
         }
     };
 };
@@ -20,7 +21,8 @@ const HomePage = () => {
 
     useSetTabTitle('Home');
     const theme = useTheme();
-    const styles = getStyles(theme);
+    const { isXs } = useResponsive();
+    const styles = getStyles(theme, { isXs });
     const { data } = useHomePageBookLists();
 
     const bookLists = data?.bookLists || [];
