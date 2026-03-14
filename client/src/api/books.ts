@@ -49,6 +49,11 @@ export const getWishlistedBooks = async (params: BookSearchParams, token?: strin
     return response.data;
 };
 
+export const getHomePageBookLists = async () => {
+    const response = await axios.get(`${bookUrl}/homepage-books`);
+    return response.data;
+};
+
 export const addBookToWishList = async (bookId: number, token: string) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {

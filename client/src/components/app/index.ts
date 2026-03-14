@@ -18,6 +18,7 @@ export { default as CreateAdminUserForm } from './CreateAdminUserForm';
 export { default as ViewSelector } from './ViewSelector';
 export { default as UserCard } from './UserCard';
 export { default as BookListLayout } from './BookListLayout';
+export { default as BooksCarousel } from './BooksCarousel';
 
 export * from './UsersListFilter';
 export * from './BooksListFilter';

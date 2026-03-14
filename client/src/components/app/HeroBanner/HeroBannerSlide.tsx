@@ -16,9 +16,9 @@ type Styles = {
     bannerImage: SxProps<Theme>
 };
 
-const BANNER_IMAGE_HEIGHT = 350;
-const SMALLER_BANNER_IMAGE_HEIGHT = 250;
-const SMALLEST_BANNER_IMAGE_HEIGHT = 150;
+const BANNER_IMAGE_HEIGHT = '25rem';
+const SMALLER_BANNER_IMAGE_HEIGHT = '20rem';
+const SMALLEST_BANNER_IMAGE_HEIGHT = '10rem';
 
 const getStyles = (_theme: Theme, isSm: boolean, isXs: boolean): Styles => {
     const resolvedBannerHeight = isXs ? SMALLEST_BANNER_IMAGE_HEIGHT : (isSm ? SMALLER_BANNER_IMAGE_HEIGHT : BANNER_IMAGE_HEIGHT);

@@ -56,16 +56,22 @@ const MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL = 30;
 const MAX_BOOK_PAGES_FOR_HOMEPAGE_CAROUSEL = 150;
 
 export const HOMEPAGE_BOOK_LISTS: HomepageBookListConfig[] = [
-    { key: 'drama', title: 'Drama', queryOptions: { tags: ['drama'] } },
+    {
+        key: 'cheap', title: `Under €${MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL}`,
+        queryOptions: { priceRanges: { priceMin: 0, priceMax: MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL } }
+    },
+    {
+        key: 'shortReads', title: 'Short Reads', extraWhereFragment: (sqlTag) => {
+            return sqlTag.fragment`
+                AND books.pages <= ${MAX_BOOK_PAGES_FOR_HOMEPAGE_CAROUSEL}
+            `;
+        }
+    },
     { key: 'classics', title: 'Classics', queryOptions: { tags: ['classics'] } },
-    { key: 'romance', title: 'Romance', queryOptions: { tags: ['romance'] } },
-    { key: 'horror', title: 'Horror', queryOptions: { tags: ['horror'] } },
-    { key: 'scifi', title: 'Science Fiction', queryOptions: { tags: ['science fiction'] } },
     { key: 'actionAdventure', title: 'Action & Adventure', queryOptions: { tags: ['action & adventure'] } },
-    { key: 'satire', title: 'Satire', queryOptions: { tags: ['satire'] } },
-    { key: 'cheap', title: `Under €${MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL}`, queryOptions: { priceRanges: { priceMin: 0, priceMax: MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL } } },
-    { key: 'shortReads', title: 'Short Reads', extraWhereFragment: (sqlTag) => sqlTag.fragment`
-            AND books.pages <= ${MAX_BOOK_PAGES_FOR_HOMEPAGE_CAROUSEL}
-        `
-    }
+    { key: 'scifi', title: 'Science Fiction', queryOptions: { tags: ['science fiction'] } },
+    { key: 'horror', title: 'Horror', queryOptions: { tags: ['horror'] } },
+    { key: 'drama', title: 'Drama', queryOptions: { tags: ['drama'] } },
+    { key: 'romance', title: 'Romance', queryOptions: { tags: ['romance'] } },
+    { key: 'satire', title: 'Satire', queryOptions: { tags: ['satire'] } }
 ];

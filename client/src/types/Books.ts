@@ -46,3 +46,14 @@ export type BookAction = {
     onClick: () => void;
     toolTipTitle: string;
 };
+
+
+export type CarouselBookList = {
+    key: string;
+    title: string;
+    books: Book[]
+};
+
+export type HomepageBookLists = {
+    bookLists: CarouselBookList[]
+};

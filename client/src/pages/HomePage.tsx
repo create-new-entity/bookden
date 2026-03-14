@@ -1,7 +1,8 @@
 
-import { Stack, useTheme, type SxProps, type Theme } from '@mui/material';
-import { HeroBannerCarousel } from '../components';
+import { Divider, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+import { BooksCarousel, HeroBannerCarousel } from '../components';
 import { useHomePageBookLists, useSetTabTitle } from '../hooks';
+import { DEFAULT_GAP } from '../constants';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -20,9 +21,9 @@ const HomePage = () => {
     useSetTabTitle('Home');
     const theme = useTheme();
     const styles = getStyles(theme);
-    const bookLists = useHomePageBookLists();
+    const { data } = useHomePageBookLists();
 
-    // console.log('bookLists', bookLists.data);
+    const bookLists = data?.bookLists || [];
 
     return (
         <>
@@ -31,8 +32,21 @@ const HomePage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
                 sx={styles.rootStack}
+                gap={'3rem'}
             >
                 <HeroBannerCarousel/>
+                <Divider sx={{ width: '100%' }} />
+                {
+                    bookLists.map((bookList) => {
+                        return (
+                            <BooksCarousel
+                                key={bookList.key}
+                                title={bookList.title}
+                                books={bookList.books}
+                            />
+                        );
+                    })
+                }
             </Stack>
         </>
     );
