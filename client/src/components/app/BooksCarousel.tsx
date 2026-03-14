@@ -14,8 +14,6 @@ type Styles = {
 };
 
 const getStyles = (theme: Theme): Styles => {
-    const mode = theme.palette.mode;
-    const resolvedBackgroundColor = mode === 'light' ? theme.palette.secondary.light : theme.palette.secondary.dark;
     return {
         rootPaper: {
             padding: '1rem'
@@ -23,7 +21,8 @@ const getStyles = (theme: Theme): Styles => {
         carouselTitle: {
             maxWidth: 'fit-content',
             padding: '0.5rem',
-            backgroundColor: resolvedBackgroundColor,
+            color: theme.palette.primary.dark,
+            backgroundColor: theme.palette.warning.light,
             borderRadius: '0.5rem'
         }
     };
