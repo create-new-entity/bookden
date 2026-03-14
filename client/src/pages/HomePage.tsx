@@ -1,8 +1,8 @@
 
 import { Divider, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+
 import { BooksCarousel, HeroBannerCarousel } from '../components';
 import { useHomePageBookLists, useSetTabTitle } from '../hooks';
-import { DEFAULT_GAP } from '../constants';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -11,7 +11,7 @@ type Styles = {
 const getStyles = (_theme: Theme): Styles => {
     return {
         rootStack: {
-            padding: '2rem'
+            padding: '4.5rem'
         }
     };
 };
@@ -32,7 +32,7 @@ const HomePage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
                 sx={styles.rootStack}
-                gap={'4rem'}
+                gap={'4.5rem'}
             >
                 <HeroBannerCarousel/>
                 <Divider sx={{ width: '100%' }} />
