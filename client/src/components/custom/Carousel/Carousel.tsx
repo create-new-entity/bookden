@@ -60,7 +60,8 @@ const getStyles = (_theme: Theme): Styles => {
 
                 ** WIP: Slide component will control width. Idea is to fix the dimension via props or something. **
             */
-            flex: '0 0 auto'
+            flex: '0 0 auto',
+            padding: '0.5rem'
         },
         dotsContainer: {
             display: 'flex',

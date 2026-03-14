@@ -26,4 +26,5 @@ export * from './ImageInput';
 export * from './ActionIcons';
 export * from './CreateUpdateBook';
 export * from './BookCard';
+export * from './HeroBanner';
 
