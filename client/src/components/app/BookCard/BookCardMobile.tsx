@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 
 import { getBookCover } from '../../../api';
-import { useBlobImage } from '../../../hooks';
+import { useBlobImage, useResponsive } from '../../../hooks';
 import type { Book, BookAction } from '../../../types';
 import { DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
 import { useAuthContext } from '../../../contexts';
@@ -109,6 +109,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     };
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
+    const { isXs } = useResponsive();
 
     const { userType, hasExistingLoggedInUser } = useAuthContext();
     const { existingLoggedInData } = hasExistingLoggedInUser();
@@ -120,6 +121,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     const isDeleted = book.deletedAt !== null;
 
     const actions = getActions(book);
+    const resolvedTitleVariant = isXs ? 'body2' : 'body1';
 
     return (
         <Link to={`/books/${book.bookId}`}>
@@ -162,7 +164,7 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                             gap={`${DEFAULT_GAP / 4}px`}
                             alignSelf={'stretch'}
                         >
-                            <Typography sx={styles.title} variant='h6'>
+                            <Typography sx={styles.title} variant={resolvedTitleVariant}>
                                 {book.title}
                             </Typography>
                             {
