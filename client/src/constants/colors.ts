@@ -31,7 +31,7 @@ export const customColors = {
     lightSuccessText: '#FFFFFF',
 
     // Light mode background & text
-    lightBackgroundDefault: '#F5F3F7',   // app background
+    lightBackgroundDefault: '#D4CFEB',   // app background
     lightBackgroundPaper: '#FFFFFF',     // cards, modals
     lightBackgroundSurface: '#E0DCEC',   // menus, TextField, dropdowns
 
@@ -70,7 +70,7 @@ export const customColors = {
     darkSuccessText: '#0B0B0B',
 
     // Dark mode background & text
-    darkBackgroundDefault: '#1C1A23',
+    darkBackgroundDefault: '#494262',
     darkBackgroundPaper: '#25232D',
     darkBackgroundSurface: '#2B2935',
     darkTextPrimary: '#EAE9F0',
