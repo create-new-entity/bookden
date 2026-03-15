@@ -156,7 +156,7 @@ const BookListLayout = (props: BookListLayoutProps) => {
                     </Typography>
                 }
                 {
-                    booksList.data &&
+                    booksList.data && booksList.data.pagination.totalPages > 0 &&
                     <CustomPagination<Book>
                         sx={styles.topPagination}
                         paginatedDataList={booksList.data}
@@ -172,7 +172,7 @@ const BookListLayout = (props: BookListLayoutProps) => {
                     viewOption={selectedView}
                 />
                 {
-                    booksList.data &&
+                    booksList.data && booksList.data.pagination.totalPages > 1 &&
                     <CustomPagination<Book>
                         paginatedDataList={booksList.data}
                         onPageChange={onPageChange}
