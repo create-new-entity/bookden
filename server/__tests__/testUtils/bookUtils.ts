@@ -97,3 +97,33 @@ export const deleteBookCover = async (bookId: number, expectedCode: number, toke
         })
         .expect(expectedCode);
 };
+
+export const getWishList = async (expectedCode: number, token: string) => {
+    return await apiSupertest(app)
+        .get(`${bookBaseUrl}/wishlist`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};
+
+export const addBookToWishlist = async (expectedCode: number, token: string, bookId: number) => {
+    return await apiSupertest(app)
+        .post(`${bookBaseUrl}/${bookId}/wishlist`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};
+
+export const removeBookFromWishlist = async (expectedCode: number, token: string, bookId: number) => {
+    return await apiSupertest(app)
+        .delete(`${bookBaseUrl}/${bookId}/wishlist`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};

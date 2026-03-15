@@ -3,13 +3,15 @@ import QueryString from 'qs';
 import * as R from 'ramda';
 
 import {
-    ADMIN, AuthenticatedRequest, CreateBookRequestBody,
+    ADMIN, AuthenticatedRequest, BooksQueryOptions, CreateBookRequestBody,
+    CUSTOMER,
     GetBooksQueryParams, isString, SUPERADMIN, UpdateBookPayload
 } from '../types';
 import {
+    addBookToWishlist,
     createBook, deleteBook, deleteBookCover,
     getAllBooks, getBook, getBookCover,
-    getBooksPriceRange, getTags, restoreBook, updateBook, updateBookCover
+    getBooksPriceRange, getHomepageBookLists, getTags, getWishlistedBooks, removeBookFromWishlist, restoreBook, updateBook, updateBookCover
 } from '../services';
 import {
     AuthenticationError, BadRequestError, errorMessages,
@@ -38,12 +40,19 @@ const getAllBooksController = async (req: AuthenticatedRequest<GetBooksQueryPara
     } : undefined;
     const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
     
-    const books = await getAllBooks(
-        includeDeleted, validatedPage, validatedQueryParams.search,
-        validatedQueryParams.sortBy, validatedQueryParams.sortOrder,
-        validatedQueryParams.tags, priceRanges
-    );
+    const options: Partial<BooksQueryOptions> = {
+        ...validatedQueryParams,
+        priceRanges: priceRanges,
+        page: validatedPage,
+        includeDeleted
+    };
+    const books = await getAllBooks(options, req.user?.userId);
     
+    res.status(200).json(books);
+};
+
+const getHomePageBooksController = async (_req: Request, res: Response) => {
+    const books = await getHomepageBookLists();
     res.status(200).json(books);
 };
 
@@ -286,9 +295,92 @@ const restoreBookController = async (req: AuthenticatedRequest, res: Response) =
     res.status(200).end();
 };
 
+const addBookToWishlistController = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        throw loginRequiredError;
+    }
+
+    const isUserCustomer = req.user.userType === CUSTOMER;
+    if(!isUserCustomer) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    const bookId = parseInt(req.params.id, 10);
+    if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
+        const invalidBookIdError = new BadRequestError(errorMessages[errorNames.invalidBookId]);
+        throw invalidBookIdError;
+    }
+
+    await addBookToWishlist(req.user.userId, bookId);
+    res.status(200).end();
+};
+
+const removeBookFromWishlistController = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        throw loginRequiredError;
+    }
+
+    const isUserCustomer = req.user.userType === CUSTOMER;
+    if(!isUserCustomer) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    const bookId = parseInt(req.params.id, 10);
+    if(isNaN(bookId) || bookId <= 0 || !Number.isInteger(bookId)) {
+        const invalidBookIdError = new BadRequestError(errorMessages[errorNames.invalidBookId]);
+        throw invalidBookIdError;
+    }
+
+    await removeBookFromWishlist(req.user.userId, bookId);
+    res.status(200).end();
+    
+};
+
+const getWishlistedBooksController = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user) {
+        const loginRequiredError = new AuthenticationError();
+        throw loginRequiredError;
+    }
+    
+    const isUserCustomer = req.user.userType === CUSTOMER;
+    if(!isUserCustomer) {
+        const unauthorizedError = new UnauthorizedError();
+        throw unauthorizedError;
+    }
+
+    const rawTags = req.query.tags;
+
+    const normalizedTags = isString(rawTags) ? rawTags.split(',') : [];
+
+    const validatedQueryParams = GetBooksQueryParamsSchema.parse({
+        ...req.query,
+        tags: normalizedTags,
+    });
+    const priceRanges = (validatedQueryParams.priceMin || validatedQueryParams.priceMax) ? {
+        priceMin: validatedQueryParams.priceMin ?? DEFAULT_PRICE_MIN,
+        priceMax: validatedQueryParams.priceMax ?? DEFAULT_PRICE_MAX
+    } : undefined;
+    const validatedPage = (validatedQueryParams.page && parseInt(validatedQueryParams.page, 10)) || 1;
+    
+    const options: Partial<BooksQueryOptions> = {
+        ...validatedQueryParams,
+        priceRanges: priceRanges,
+        page: validatedPage
+    };
+
+    const wishlistedBooks = await getWishlistedBooks(options, req.user.userId);
+    res.status(200).json(wishlistedBooks);
+};
+
 
 export {
     getAllBooksController,
+    getHomePageBooksController,
+    getWishlistedBooksController,
     getBookController,
     createBookController,
     updateBookController,
@@ -298,5 +390,7 @@ export {
     deleteBookCoverController,
     getTagsController,
     getBooksPriceRangeController,
-    restoreBookController
+    restoreBookController,
+    addBookToWishlistController,
+    removeBookFromWishlistController
 };

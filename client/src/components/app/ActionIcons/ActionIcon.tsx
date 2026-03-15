@@ -8,6 +8,8 @@ type ActionButtonProps = {
     testId?: string;
 };
 
+export type ActionProps = Pick<ActionButtonProps, 'onClick' | 'tooltipTitle'>;
+
 
 const ActionIcon = (props: ActionButtonProps) => {
     const { icon, onClick, tooltipTitle, testId } = props;

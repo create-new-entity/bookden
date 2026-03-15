@@ -1,8 +1,12 @@
 import type { SELECT_USER_TYPE_OPTIONS, USERS_LIST_SORT_BY_OPTIONS_TEXTS } from '../constants';
 import type { SortOrder } from './UtilTypes';
 
-export type AdminOrCustomer = 'admin' | 'customer';
-export type UserType = 'superadmin' | AdminOrCustomer;
+export type SuperAdmin = 'superadmin';
+export type Admin = 'admin';
+export type Customer = 'customer';
+export type AdminOrCustomer = Admin | Customer;
+
+export type UserType = SuperAdmin | Admin | Customer;
 
 export type User = {
     userId: number;

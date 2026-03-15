@@ -4,12 +4,19 @@ import { sql } from 'slonik';
 
 import { getPGDBPool, getRedis, sqlTag } from '../configs';
 import {
-    Book, BookDBRow, BooksSortByOptions, BooksSortOrderOptions,
-    CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload
+    Book, BookDBRow, BooksQueryContext, BooksQueryOptions,
+    CreateBookPayload, HomepageBookListsResponse, PaginatedDataList, PriceRange, UpdateBookPayload
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
-import { BOOKS_PAGINATION_LIMIT, PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS } from '../constants';
-import { BadRequestError, errorMessages, errorNames } from '../errors';
+import {
+    DEFAULT_BOOK_FILTER_OPTIONS, HOMEPAGE_BOOK_LISTS,
+    HOMEPAGE_BOOK_LISTS_CAROUSEL_LIMIT,
+    PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS
+} from '../constants';
+import {
+    BadRequestError, errorMessages, errorNames,
+    UnauthorizedError, NotFoundError
+} from '../errors';
 
 
 const mapDate = (book: BookDBRow): Book => {
@@ -30,16 +37,38 @@ const mapDate = (book: BookDBRow): Book => {
         yearPublished: book.year_published,
         language: book.language,
         pages: book.pages,
+        ...(book.is_wishlisted !== undefined ? { isWishlisted: book.is_wishlisted } : {}),
         ...dateStamps
     };
 };
 
-const getAllBooks = async (
-    includeDeleted: boolean = false, page: number = 1, search: string = '',
-    sortBy: BooksSortByOptions = 'title', sortOrder: BooksSortOrderOptions = 'desc',
-    tags: string[] = [], priceRanges: PriceRange | undefined = undefined
-): Promise<PaginatedDataList<Book>> => {
 
+/*
+    Note to future self:
+
+    Why the 'context'? Why this refactor? -> https://chatgpt.com/share/699317ca-c388-8012-8ef9-039971adf36d
+
+    In short, decouple the logic that gets a bunch of books from db.
+    "A bunch of books" can be fetched for different purposes / contexts.
+
+    For example:
+        1. A bunch of books that are in user's wishlist.
+        2. Just a bunch of books without any addtional context.
+        3. Not implemented yet, but some additional contexts can be: recommended books, most popular books and so on.
+
+    In other words, pass the context from outside and let the function get the relevant books.
+*/
+
+const getBooksInternal = async (
+    context: BooksQueryContext,
+    options: BooksQueryOptions
+): Promise<PaginatedDataList<Book>> => {
+    const {
+        includeDeleted, search, sortBy,
+        sortOrder, tags, priceRanges, page
+    } = options;
+    const { requestingUserId } = context;
+    
     const dbPool = await getPGDBPool();
     const searchFragment = search && search.trim() !== ''
         ? sqlTag.fragment`
@@ -75,6 +104,9 @@ const getAllBooks = async (
     const snakeCasedSortBy = convertStringToSnakeCase(sortBy);
     const sortOrderFragment = sortOrder === 'asc' ? sqlTag.fragment`ASC` : sqlTag.fragment`DESC`;
     const sortByFragment = sqlTag.fragment`ORDER BY ${sqlTag.identifier([snakeCasedSortBy])} ${sortOrderFragment}`;
+    const randomOrderFragment = options.randomOrder ? sqlTag.fragment`ORDER BY RANDOM()` : sqlTag.fragment``;
+    const randomOrderOrSortByFragment = options.randomOrder ? randomOrderFragment : sortByFragment;
+
     const tagsFragment = tags.length > 0 ? sqlTag.fragment`
         AND EXISTS (
             SELECT 1
@@ -89,33 +121,67 @@ const getAllBooks = async (
         :
         sqlTag.fragment``;
 
+    const baseWhereFragment = context.baseWhereFragment ?? sqlTag.fragment``;
+
+
+    const wishlistSelectFragment = requestingUserId
+        ? sqlTag.fragment`
+            ,
+            (uw.user_id IS NOT NULL) AS is_wishlisted    -- If user_id is not null, then the book is wishlisted by the user.
+        `
+        : sqlTag.fragment``;
+    const wishlistJoinFragment = requestingUserId
+        ? sqlTag.fragment`
+            LEFT JOIN user_book_wishlist uw
+                ON uw.book_id = books.book_id
+                AND uw.user_id = ${requestingUserId}
+        `
+        : sqlTag.fragment``;
+    const wishlistGroupByFragment = requestingUserId
+        ? sqlTag.fragment`, uw.user_id`
+        : sqlTag.fragment``;
+
+
     const result = await dbPool.query(sqlTag.typeAlias('Book')`
         SELECT
             books.book_id, title, synopsis,
             COALESCE(array_agg(DISTINCT t.tag) FILTER (WHERE t.tag IS NOT NULL), '{}') AS tags,
             authors, isbn, price,
             year_published, language, pages,
-            created_at, updated_at, deleted_at
+            books.created_at, books.updated_at, books.deleted_at
+            ${wishlistSelectFragment}
         FROM books
+        ${wishlistJoinFragment}
         LEFT JOIN book_tags bt
             ON bt.book_id = books.book_id   -- left join makes more sense. inner join will drop books if there are no tags.
         LEFT JOIN tags t
             ON t.tag_id = bt.tag_id
         WHERE 1 = 1
+        ${baseWhereFragment}
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
         ${priceMinFragment}
         ${priceMaxFragment}
-        GROUP BY books.book_id
-        ${sortByFragment}
-        LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
+        GROUP BY books.book_id ${wishlistGroupByFragment}
+        ${randomOrderOrSortByFragment}
+        LIMIT ${options.limit}
+        OFFSET ${(page - 1) * options.limit};
     `);
+
+    const books = result.rows;
+
+    if(!options.includePagination) {
+        return {
+            data: books.map(mapDate)
+        };
+    }
 
     const totalResult = await dbPool.one(sqlTag.typeAlias('Total')`
         SELECT COUNT(book_id)::int AS total
         FROM books
         WHERE 1 = 1
+        ${baseWhereFragment}
         ${tagsFragment}
         ${searchFragment}
         ${deletedAtFragment}
@@ -124,17 +190,15 @@ const getAllBooks = async (
     `);
     const totalBooks = totalResult.total;
 
-    const totalPages = Math.ceil(totalBooks / BOOKS_PAGINATION_LIMIT);
+    const totalPages = Math.ceil(totalBooks / options.limit);
     const hasNextPage = page < totalPages;
     const hasPreviousPage = page > 1;
     
-    const books = result.rows;
-
     return {
         data: books.map(mapDate),
         pagination: {
             page,
-            limit: BOOKS_PAGINATION_LIMIT,
+            limit: options.limit,
             total: totalBooks,
             totalPages,
             hasNextPage,
@@ -142,6 +206,127 @@ const getAllBooks = async (
         }
     };
 };
+
+const checkIfUserIsDeleted = async (userId: number) => {
+    const dbPool = await getPGDBPool();
+
+    /* 
+        Note to future self:
+        We use soft deletion of users. So we need to check if the user is deleted.
+        If yes, throw an error.
+    */
+    const result = await dbPool.query(sqlTag.typeAlias('User')`
+        SELECT 1
+        FROM users
+        WHERE user_id = ${userId}
+        AND deleted_at IS NULL
+    `);
+
+    if (result.rows.length === 0) {
+        throw new UnauthorizedError('User not found');
+    }
+};
+
+const getAllBooks = async (options: Partial<BooksQueryOptions>, userId?: number): Promise<PaginatedDataList<Book>> => {
+    const resolvedOptions = R.mergeAll([DEFAULT_BOOK_FILTER_OPTIONS, options]);
+    
+    if(userId !== undefined) {
+        await checkIfUserIsDeleted(userId);
+    }
+    return getBooksInternal(
+        {
+            baseWhereFragment: sqlTag.fragment``,
+            ...(
+                userId !== undefined
+                    ?
+                    { requestingUserId: userId }
+                    :
+                    {}
+            )
+        },
+        resolvedOptions
+    );
+};
+
+const getWishlistedBooks = async (
+    options: Partial<BooksQueryOptions>,
+    userId: number
+): Promise<PaginatedDataList<Book>> => {
+    
+    await checkIfUserIsDeleted(userId);
+    
+    /*
+        Merge the default options with the provided options.
+    */
+    const resolvedOptions = R.mergeAll([DEFAULT_BOOK_FILTER_OPTIONS, { ...options, includeDeleted: false }]);
+
+    return getBooksInternal(
+        {
+            baseWhereFragment: sqlTag.fragment`
+                AND EXISTS (
+                    SELECT 1
+                    FROM user_book_wishlist ubw
+                    WHERE ubw.book_id = books.book_id
+                    AND ubw.user_id = ${userId}
+                )
+            `,
+            requestingUserId: userId
+        },
+        resolvedOptions
+    );
+};
+
+
+/*
+    Note to future self:
+
+    getBooksInternal is basically a generic query that returns a bunch of
+    books based on how the query is constructed using the context and options.
+
+    getHomepageBookLists below calls getBooksInternal with different contexts and options to get
+    different lists of books for the homepage carousels.
+
+    For example, one carousel is for drama books,
+    another is for romance books and so on.
+    
+    Each carousel has different query options based on the genre or filter it represents.
+
+    Also this: https://chatgpt.com/share/69b468e4-f04c-8012-a98a-b564b2c13fb2
+
+*/
+
+const getHomepageBookLists = async (): Promise<HomepageBookListsResponse> => {
+    const homePageBookListsPromises = HOMEPAGE_BOOK_LISTS.map(
+        async (config) => {
+            const options: BooksQueryOptions = {
+                ...DEFAULT_BOOK_FILTER_OPTIONS,
+                ...config.queryOptions,
+                page: 1,
+                limit: HOMEPAGE_BOOK_LISTS_CAROUSEL_LIMIT,
+                includePagination: false,
+                randomOrder: true
+            };
+
+            const result = await getBooksInternal(
+                {
+                    baseWhereFragment: config.extraWhereFragment
+                        ? config.extraWhereFragment(sqlTag)
+                        : sqlTag.fragment``
+                },
+                options
+            );
+
+            return {
+                key: config.key,
+                title: config.title,
+                books: result.data
+            };
+        }
+    );
+    const lists = await Promise.all(homePageBookListsPromises);
+    return { bookLists: lists };
+};
+
 
 const getBook = async (bookId: number, includeDeleted: boolean = false) => {
     const dbPool = await getPGDBPool();
@@ -424,10 +609,103 @@ const restoreBook = async (bookId: number) => {
         WHERE book_id = ${bookId};
     `);
 };
+
+const addBookToWishlist = async (userId: number, bookId: number) => {
+    const dbPool = await getPGDBPool();
+
+    await dbPool.transaction(async (trx) => {
+        /* 
+            Note to future self:
+            We use soft deletion of users. So we need to check if the user is deleted.
+            If yes, throw an error.
+        */
+        const userResult = await trx.query(sqlTag.typeAlias('User')`
+            SELECT 1
+            FROM users
+            WHERE user_id = ${userId}
+            AND deleted_at IS NULL
+        `);
+
+        if (userResult.rows.length === 0) {
+            throw new UnauthorizedError('User not found');
+        }
+
+        /*
+            Note to future self:
+            We use soft deletion of books. So we need to check if the book is deleted.
+            If yes, throw an error.
+        */
+
+        const bookResult = await trx.query(sqlTag.typeAlias('Book')`
+            SELECT 1
+            FROM books
+            WHERE book_id = ${bookId}
+            AND deleted_at IS NULL
+        `);
+
+        if (bookResult.rows.length === 0) {
+            throw new NotFoundError('Book not found');
+        }
+
+        // At this point, it is guaranteed that, both the user and the book are not deleted.
+        await trx.query(sqlTag.typeAlias('UserBookWishlist')`
+            INSERT INTO user_book_wishlist (user_id, book_id)
+            VALUES (${userId}, ${bookId})
+            ON CONFLICT (user_id, book_id) DO NOTHING;
+        `);
+    });
+};
+
+
+const removeBookFromWishlist = async (userId: number, bookId: number) => {
+    const dbPool = await getPGDBPool();
+    
+    await dbPool.transaction(async (trx) => {
+        /* 
+            Note to future self:
+            We use soft deletion of users. So we need to check if the user is deleted.
+            If yes, throw an error.
+        */
+        const userResult = await trx.query(sqlTag.typeAlias('User')`
+            SELECT 1
+            FROM users
+            WHERE user_id = ${userId}
+            AND deleted_at IS NULL
+        `);
+
+        if (userResult.rows.length === 0) {
+            throw new UnauthorizedError('User not found');
+        }
+
+        /*
+            Note to future self:
+            We use soft deletion of books. So we need to check if the book is deleted.
+            If yes, throw an error.
+         */
+        const bookResult = await trx.query(sqlTag.typeAlias('Book')`
+            SELECT 1
+            FROM books
+            WHERE book_id = ${bookId}
+            AND deleted_at IS NULL
+        `);
+
+        if (bookResult.rows.length === 0) {
+            throw new NotFoundError('Book not found');
+        }
+
+        // At this point, it is guaranteed that, both the user and the book are not deleted.
+        await trx.query(sqlTag.typeAlias('UserBookWishlist')`
+            DELETE FROM user_book_wishlist
+            WHERE user_id = ${userId} AND book_id = ${bookId};
+        `);
+    });
+};
   
 
 export {
     getAllBooks,
+    getWishlistedBooks,
+    getHomepageBookLists,
     getBook,
     createBook,
     updateBook,
@@ -437,5 +715,7 @@ export {
     deleteBookCover,
     getTags,
     getBooksPriceRange,
-    restoreBook
+    restoreBook,
+    addBookToWishlist,
+    removeBookFromWishlist
 };

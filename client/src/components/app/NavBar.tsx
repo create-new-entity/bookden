@@ -1,16 +1,17 @@
 import {
     AppBar, Avatar, Box,
     IconButton, Menu, MenuItem,
-    Stack, Toolbar, useTheme, type Theme
+    Stack, Toolbar, Typography, useTheme, type Theme
 } from '@mui/material';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { useNavContext } from '../../contexts';
+import { useAuthContext, useNavContext } from '../../contexts';
 import { SearchInput } from '../custom';
 import { NAV_BAR_Z_INDEX } from '../../constants';
-import { useBookSearchVisibility } from '../../hooks';
+import { useBookSearchVisibility, useResponsive } from '../../hooks';
+import LoginActionIcon from './ActionIcons/LoginActionIcon';
 
 const getStyles = (_theme: Theme) => {
     return {
@@ -21,8 +22,7 @@ const getStyles = (_theme: Theme) => {
             width: '100%',
             height: '100%',
             justifyContent: {
-                xs: 'flex-start',
-                sm: 'space-between'
+                xs: 'space-between'
             },
             alignItems: 'center'
         },
@@ -57,40 +57,70 @@ const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
+    const { userType, isLoggedIn } = useAuthContext();
     const showBookSearch = useBookSearchVisibility();
     const theme = useTheme();
+    const navigate = useNavigate();
+    const { isXs } = useResponsive();
+
     const styles = getStyles(theme);
+    const handleSearchChange = (value: string) => {
+        navigate(`/books?search=${value}`);
+    };
+
+    const isAdminOrSuperAdmin = userType === 'admin' || userType === 'superadmin';
 
     return (
         <AppBar sx={styles.appBar} position='sticky'>
             <Toolbar>
                 <Stack direction={'row'} sx={styles.stack}>
-                    <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
-                        <MenuIcon/>
-                    </IconButton>
-                    <Link to='/'>
-                        <Box sx={{ height: '2.5rem' }}>
-                            <img
-                                src={`${import.meta.env.BASE_URL}assets/book-den-white.svg` }
-                                alt="Book Den Logo"
-                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            />
-                        </Box>
-                    </Link>
+                    <Stack
+                        direction={'row'}
+                        justifyContent={'flex-start'}
+                        alignItems={'flex-start'}
+                    >
+                        <Link to='/'>
+                            <Box sx={{ height: '2.5rem' }}>
+                                <img
+                                    src={`${import.meta.env.BASE_URL}assets/book-den-white.svg` }
+                                    alt="Book Den Logo"
+                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                />
+                            </Box>
+                        </Link>
+                        {
+                            isAdminOrSuperAdmin &&
+                            <Typography variant={'subtitle2'}>Admin</Typography>
+                        }
+                    </Stack>
                     {
                         showBookSearch && (
                             <SearchInput
                                 id='navSearchBox'
                                 sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
-                                handleChange={() => {}}
+                                handleChange={handleSearchChange}
                                 placeholder='Search books'
                             />
                         )
                     }
-                    <Avatar data-testid='user-avatar' sx={{ display: { xs: 'none', sm: 'flex' } }} onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                        setAnchorElement(e.currentTarget);
-                        setMenuOpen(true);
-                    }}/>
+                    {
+                        isLoggedIn &&
+                        <Avatar
+                            data-testid='user-avatar'
+                            sx={{ display: { xs: 'none', sm: 'flex' } }}
+                            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                                setAnchorElement(e.currentTarget);
+                                setMenuOpen(true);
+                            }}
+                        />
+                    }
+                    {
+                        !isLoggedIn && !isXs &&
+                        <LoginActionIcon
+                            onClick={() => navigate('/auth')}
+                            tooltipTitle='Login'
+                        />
+                    }
                     <Menu
                         anchorEl={anchorElement}
                         open={menuOpen}
@@ -114,6 +144,9 @@ const NavBar = () => {
                             })
                         }
                     </Menu>
+                    <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
+                        <MenuIcon/>
+                    </IconButton>
                 </Stack>
             </Toolbar>
         </AppBar>

@@ -22,9 +22,12 @@ type UseBooksListReturn = {
 };
 
 export const useBooksList = (): UseBooksListReturn => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const { params: originalParams, updateParams } = useBookManagementDeepLinking();
     const { data: priceRangeMeta } = useBooksFiltersMeta();
+
+    const existingLoggedInUser = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInUser.existingLoggedInData?.token;
 
     const params = {
         ...originalParams,
@@ -35,7 +38,7 @@ export const useBooksList = (): UseBooksListReturn => {
     const tagsString = tags.join(',');
     const booksList = useQuery({
         queryKey: ['booksList', search, page, sortBy, sortOrder, tagsString, priceMin, priceMax],
-        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, token)
+        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, resolvedToken)
     });
     
     return { booksList, params, updateParams, priceRangeMeta };

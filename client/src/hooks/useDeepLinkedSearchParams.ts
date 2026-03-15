@@ -23,18 +23,16 @@ export const useDeepLinkedSearchParams = <T extends Record<string, unknown>>(
 
     const updateParams = useCallback(
         (updates: Partial<T>, mode: UpdateMode = 'merge') => {
-            const next =
-        mode === 'replace'
-            ? updates
-            : { ...params, ...updates };
+            const next = mode === 'replace'
+                ? updates
+                : { ...params, ...updates };
 
             const validated = schema.parse(removeEmptyValues(next));
-
-            setSearchParams(
-                new URLSearchParams(
-                    Object.entries(validated).map(([k, v]) => [k, String(v)])
-                )
+            const newSearchParams = new URLSearchParams(
+                Object.entries(validated).map(([k, v]) => [k, String(v)])
             );
+
+            setSearchParams(newSearchParams);
         },
         [params, schema, setSearchParams]
     );

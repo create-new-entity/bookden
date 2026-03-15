@@ -18,6 +18,7 @@ export const BookTypeAlias = z.object({
         .lte(2025, { message: 'Year cannot exceed 2025' }),
     language: z.string(),
     pages: z.number(),
+    is_wishlisted: z.boolean().optional(),
 
     deleted_at: z.string().nullable(),
     updated_at: z.string().nullable(),
@@ -32,4 +33,11 @@ export const BookCoverTypeAlias = z.object({
     mime_type: z.enum(imageMimeTypes),
     created_at: z.string().nullable(),
     updated_at: z.string()
+});
+
+
+export const UserBookWishlistTypeAlias = z.object({
+    user_id: z.number(),
+    book_id: z.number(),
+    created_at: z.string()
 });
