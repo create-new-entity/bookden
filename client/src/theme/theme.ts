@@ -123,6 +123,9 @@ export const getTheme = (mode: ThemeMode) => {
             },
             body1: {
                 fontSize: '1.2rem'
+            },
+            subtitle2: {
+                fontSize: '0.7rem'
             }
         },
         shape: {

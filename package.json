@@ -22,7 +22,10 @@
 
     "test:ci": "docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm server-test && docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm client-test",
     "lint:ci": "docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm server-lint && docker compose -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm client-lint",
-    "ci": "npm run test:ci && npm run lint:ci"
+    "ci": "npm run test:ci && npm run lint:ci",
+
+    "start:dev": "docker compose -f docker-compose.dev.yml up --build --remove-orphans",
+    "stop:dev": "docker compose -f docker-compose.dev.yml down -v"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",

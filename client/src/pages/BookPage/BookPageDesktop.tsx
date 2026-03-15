@@ -25,7 +25,8 @@ type Styles = {
 const getStyles = (_theme: Theme): Styles => {
     return {
         rootStack: {
-            marginTop: MARGIN_TOP_TO_AVOID_NAV_BAR
+            marginTop: MARGIN_TOP_TO_AVOID_NAV_BAR,
+            paddingBottom: '1rem'
         },
         bookCoverContainer: {
             width: `${BOOK_COVER_WIDTH_DESKTOP}rem`,

@@ -7,7 +7,9 @@ export { default as UserPage } from './UserPage';
 export { default as CreateAdminOrUpdateAnyUserProfilePage } from './CreateAdminOrUpdateAnyUserProfilePage';
 export { AdminToolsPage } from './AdminToolsPage';
 export { BookPage } from './BookPage';
-export { default as BookManagementPage } from './BookManagementPage';
+export { default as AdminBookManagementPage } from './AdminBookManagementPage';
+export { default as BookCatalogPage } from './BookCatalogPage';
+export { default as WishListPage } from './WishListPage';
 export * from './CreateUpdateBook';
 export * from './ErrorPages';
 

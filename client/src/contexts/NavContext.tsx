@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeSwitch } from '../components';
 import type { UserType, NavContextValue, NavOption } from '../types';
 import useAuthContext from './AuthContext.tsx';
-import { ADMIN, ADMIN_TOOLS, ALL_TYPES_OF_USERS, SUPERADMIN, UPDATE_PROFILE } from '../constants';
+import { ADMIN, ADMIN_TOOLS, ALL_TYPES_OF_USERS, CUSTOMER, SUPERADMIN, UPDATE_PROFILE, WISHLIST } from '../constants';
 
 const defaultContextValue: NavContextValue = {
     options: [],
@@ -45,6 +45,15 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                     access: ALL_TYPES_OF_USERS
                 },
                 {
+                    name: 'wishlist',
+                    action: () => {
+                        navigate(WISHLIST);
+                        setShowNavDrawer(false);
+                    },
+                    component: <Typography variant='body1'>Wishlist</Typography>,
+                    access: [CUSTOMER]
+                },
+                {
                     name: 'adminTools',
                     action: () => {
                         navigate(ADMIN_TOOLS);
@@ -61,12 +70,37 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 },
                 {
                     name: 'logout',
-                    action: clearAuthentication,
+                    action: () => {
+                        clearAuthentication();
+                        setShowNavDrawer(false);
+                    },
                     component: <Typography>Logout</Typography>,
                     access: ALL_TYPES_OF_USERS
                 }
             ].filter(filterOutUnAuthorizedOptions(userType));
             setOptions(defaultOptions);
+        }
+        else {
+            setOptions([
+                {
+                    name: 'books',
+                    action: () => {
+                        navigate('/books');
+                        setShowNavDrawer(false);
+                    },
+                    component: <Typography>Books</Typography>,
+                    access: []
+                },
+                {
+                    name: 'login',
+                    action: () => {
+                        navigate('/auth');
+                        setShowNavDrawer(false);
+                    },
+                    component: <Typography>Login</Typography>,
+                    access: []
+                }
+            ]);
         }
     }, [userType, clearAuthentication, navigate, isUserLoggedIn]);
     

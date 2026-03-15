@@ -11,7 +11,7 @@ export const getBook = async (bookId: number, token?: string) => {
             Authorization: `Bearer ${token}`
         }
     };
-    const response = await axios.get(`${bookUrl}/${bookId}`, requestConfig);
+    const response = await axios.get(`${bookUrl}/${bookId}`, (token ? requestConfig : {}));
     return response.data;
 };
 
@@ -33,8 +33,43 @@ export const getBooksList = async (params: BookSearchParams, token?: string): Pr
         }
     };
     const cleanedParams = removeEmptyValues(params);
-    const response = await axios.get(bookUrl, { params: cleanedParams, ...requestConfig });
+    const response = await axios.get(bookUrl, { params: cleanedParams, ...(token ? requestConfig : {}) });
     return response.data;
+};
+
+export const getWishlistedBooks = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const cleanedParams = removeEmptyValues(params);
+    const response = await axios.get(`${bookUrl}/wishlist`, { params: cleanedParams, ...requestConfig });
+
+    return response.data;
+};
+
+export const getHomePageBookLists = async () => {
+    const response = await axios.get(`${bookUrl}/homepage-books`);
+    return response.data;
+};
+
+export const addBookToWishList = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.post(`${bookUrl}/${bookId}/wishlist`, null, requestConfig);
+};
+
+export const removeBookFromWishlist = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.delete(`${bookUrl}/${bookId}/wishlist`, requestConfig);
 };
 
 export const getBookCover = async (bookId: number) => {

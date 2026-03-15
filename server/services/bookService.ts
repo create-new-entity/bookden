@@ -5,11 +5,12 @@ import { sql } from 'slonik';
 import { getPGDBPool, getRedis, sqlTag } from '../configs';
 import {
     Book, BookDBRow, BooksQueryContext, BooksQueryOptions,
-    CreateBookPayload, PaginatedDataList, PriceRange, UpdateBookPayload
+    CreateBookPayload, HomepageBookListsResponse, PaginatedDataList, PriceRange, UpdateBookPayload
 } from '../types';
 import { convertStringToSnakeCase, convertToSnakeCaseDeep, mapNumericTimeStampsToDate } from '../utilities';
 import {
-    BOOKS_PAGINATION_LIMIT, DEFAULT_BOOK_FILTER_OPTIONS,
+    DEFAULT_BOOK_FILTER_OPTIONS, HOMEPAGE_BOOK_LISTS,
+    HOMEPAGE_BOOK_LISTS_CAROUSEL_LIMIT,
     PRICE_RANGE_CACHE_KEY, PRICE_RANGE_TTL_SECONDS
 } from '../constants';
 import {
@@ -36,7 +37,7 @@ const mapDate = (book: BookDBRow): Book => {
         yearPublished: book.year_published,
         language: book.language,
         pages: book.pages,
-        ...(book.wish_listed !== undefined ? { wishListed: book.wish_listed } : {}),
+        ...(book.is_wishlisted !== undefined ? { isWishlisted: book.is_wishlisted } : {}),
         ...dateStamps
     };
 };
@@ -103,6 +104,9 @@ const getBooksInternal = async (
     const snakeCasedSortBy = convertStringToSnakeCase(sortBy);
     const sortOrderFragment = sortOrder === 'asc' ? sqlTag.fragment`ASC` : sqlTag.fragment`DESC`;
     const sortByFragment = sqlTag.fragment`ORDER BY ${sqlTag.identifier([snakeCasedSortBy])} ${sortOrderFragment}`;
+    const randomOrderFragment = options.randomOrder ? sqlTag.fragment`ORDER BY RANDOM()` : sqlTag.fragment``;
+    const randomOrderOrSortByFragment = options.randomOrder ? randomOrderFragment : sortByFragment;
+
     const tagsFragment = tags.length > 0 ? sqlTag.fragment`
         AND EXISTS (
             SELECT 1
@@ -123,7 +127,7 @@ const getBooksInternal = async (
     const wishlistSelectFragment = requestingUserId
         ? sqlTag.fragment`
             ,
-            (uw.user_id IS NOT NULL) AS wish_listed    -- If user_id is not null, then the book is wishlisted by the user.
+            (uw.user_id IS NOT NULL) AS is_wishlisted    -- If user_id is not null, then the book is wishlisted by the user.
         `
         : sqlTag.fragment``;
     const wishlistJoinFragment = requestingUserId
@@ -160,9 +164,18 @@ const getBooksInternal = async (
         ${priceMinFragment}
         ${priceMaxFragment}
         GROUP BY books.book_id ${wishlistGroupByFragment}
-        ${sortByFragment}
-        LIMIT ${BOOKS_PAGINATION_LIMIT} OFFSET ${(page - 1) * BOOKS_PAGINATION_LIMIT};
+        ${randomOrderOrSortByFragment}
+        LIMIT ${options.limit}
+        OFFSET ${(page - 1) * options.limit};
     `);
+
+    const books = result.rows;
+
+    if(!options.includePagination) {
+        return {
+            data: books.map(mapDate)
+        };
+    }
 
     const totalResult = await dbPool.one(sqlTag.typeAlias('Total')`
         SELECT COUNT(book_id)::int AS total
@@ -177,17 +190,15 @@ const getBooksInternal = async (
     `);
     const totalBooks = totalResult.total;
 
-    const totalPages = Math.ceil(totalBooks / BOOKS_PAGINATION_LIMIT);
+    const totalPages = Math.ceil(totalBooks / options.limit);
     const hasNextPage = page < totalPages;
     const hasPreviousPage = page > 1;
     
-    const books = result.rows;
-
     return {
         data: books.map(mapDate),
         pagination: {
             page,
-            limit: BOOKS_PAGINATION_LIMIT,
+            limit: options.limit,
             total: totalBooks,
             totalPages,
             hasNextPage,
@@ -196,19 +207,7 @@ const getBooksInternal = async (
     };
 };
 
-const getAllBooks = async (options: Partial<BooksQueryOptions>): Promise<PaginatedDataList<Book>> => {
-    const resolvedOptions = R.mergeAll([DEFAULT_BOOK_FILTER_OPTIONS, options]);
-    return getBooksInternal(
-        { baseWhereFragment: sqlTag.fragment`` },
-        resolvedOptions
-    );
-};
-
-const getWishlistedBooks = async (
-    userId: number,
-    options: Partial<BooksQueryOptions>
-): Promise<PaginatedDataList<Book>> => {
-
+const checkIfUserIsDeleted = async (userId: number) => {
     const dbPool = await getPGDBPool();
 
     /* 
@@ -226,6 +225,35 @@ const getWishlistedBooks = async (
     if (result.rows.length === 0) {
         throw new UnauthorizedError('User not found');
     }
+};
+
+const getAllBooks = async (options: Partial<BooksQueryOptions>, userId?: number): Promise<PaginatedDataList<Book>> => {
+    const resolvedOptions = R.mergeAll([DEFAULT_BOOK_FILTER_OPTIONS, options]);
+    
+    if(userId !== undefined) {
+        await checkIfUserIsDeleted(userId);
+    }
+    return getBooksInternal(
+        {
+            baseWhereFragment: sqlTag.fragment``,
+            ...(
+                userId !== undefined
+                    ?
+                    { requestingUserId: userId }
+                    :
+                    {}
+            )
+        },
+        resolvedOptions
+    );
+};
+
+const getWishlistedBooks = async (
+    options: Partial<BooksQueryOptions>,
+    userId: number
+): Promise<PaginatedDataList<Book>> => {
+    
+    await checkIfUserIsDeleted(userId);
     
     /*
         Merge the default options with the provided options.
@@ -246,6 +274,57 @@ const getWishlistedBooks = async (
         },
         resolvedOptions
     );
+};
+
+
+/*
+    Note to future self:
+
+    getBooksInternal is basically a generic query that returns a bunch of
+    books based on how the query is constructed using the context and options.
+
+    getHomepageBookLists below calls getBooksInternal with different contexts and options to get
+    different lists of books for the homepage carousels.
+
+    For example, one carousel is for drama books,
+    another is for romance books and so on.
+    
+    Each carousel has different query options based on the genre or filter it represents.
+
+    Also this: https://chatgpt.com/share/69b468e4-f04c-8012-a98a-b564b2c13fb2
+
+*/
+
+const getHomepageBookLists = async (): Promise<HomepageBookListsResponse> => {
+    const homePageBookListsPromises = HOMEPAGE_BOOK_LISTS.map(
+        async (config) => {
+            const options: BooksQueryOptions = {
+                ...DEFAULT_BOOK_FILTER_OPTIONS,
+                ...config.queryOptions,
+                page: 1,
+                limit: HOMEPAGE_BOOK_LISTS_CAROUSEL_LIMIT,
+                includePagination: false,
+                randomOrder: true
+            };
+
+            const result = await getBooksInternal(
+                {
+                    baseWhereFragment: config.extraWhereFragment
+                        ? config.extraWhereFragment(sqlTag)
+                        : sqlTag.fragment``
+                },
+                options
+            );
+
+            return {
+                key: config.key,
+                title: config.title,
+                books: result.data
+            };
+        }
+    );
+    const lists = await Promise.all(homePageBookListsPromises);
+    return { bookLists: lists };
 };
 
 
@@ -626,6 +705,7 @@ const removeBookFromWishlist = async (userId: number, bookId: number) => {
 export {
     getAllBooks,
     getWishlistedBooks,
+    getHomepageBookLists,
     getBook,
     createBook,
     updateBook,

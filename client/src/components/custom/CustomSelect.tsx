@@ -1,5 +1,6 @@
 import { MenuItem, type SelectChangeEvent, type SxProps, type Theme } from '@mui/material';
 import { FormControl, InputLabel, Select } from '@mui/material';
+import type { UserType } from '../../types';
 
 
 // Note to future self: Need to extend from string or number, other wise MUI select will complain about the type.
@@ -11,6 +12,7 @@ import { FormControl, InputLabel, Select } from '@mui/material';
 export type SelectOption<V extends string | number> = {
     optionValue: V;
     optionLabel: string;
+    access?: UserType[] // If not provided, then it means it's accessible to all user types.
 };
 
 type CustomSelectProps<V extends string | number> = {
