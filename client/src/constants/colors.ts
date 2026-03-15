@@ -21,7 +21,7 @@ export const customColors = {
     lightWarningText: '#1B1B1B',
 
     lightInfoMain: '#5BAFCF',
-    lightInfoLight: '#A7E1F3',
+    lightInfoLight: '#D9D2F8',
     lightInfoDark: '#2F8EAD',
     lightInfoText: '#FFFFFF',
 
@@ -61,7 +61,7 @@ export const customColors = {
 
     darkInfoMain: '#7FD0E6',
     darkInfoLight: '#CFF0FA',
-    darkInfoDark: '#3EA0BD',
+    darkInfoDark: '#9D85D9',
     darkInfoText: '#0B0B0B',
 
     darkSuccessMain: '#93D7A8',

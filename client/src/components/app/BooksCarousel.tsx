@@ -15,6 +15,19 @@ type Styles = {
 };
 
 const getStyles = (theme: Theme): Styles => {
+    const mode = theme.palette.mode;
+
+    /*
+        Note to future self:
+
+        Don't use palette.info here. It is not meant to be used
+        as background color.
+        
+        Refactor and change to some other prop later.
+    */
+    const resolvedBackgroundColor = mode === 'light' ? theme.palette.info.light : theme.palette.info.dark;
+
+    
     return {
         rootPaper: {
             padding: '1rem',
@@ -23,8 +36,8 @@ const getStyles = (theme: Theme): Styles => {
         carouselTitle: {
             maxWidth: 'fit-content',
             padding: '0.5rem',
-            color: theme.palette.primary.dark,
-            backgroundColor: theme.palette.warning.light,
+            color: theme.palette.text.primary,
+            backgroundColor: resolvedBackgroundColor,
             borderRadius: '0.5rem',
             marginBottom: '1rem'
         }
