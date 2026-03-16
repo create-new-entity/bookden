@@ -2,7 +2,7 @@
 
 import { getPublicBookActions } from '../actions';
 import { BookListLayout } from '../components';
-import { useAuthContext } from '../contexts';
+import { useAuthContext, useCartContext } from '../contexts';
 import { useBooksList, useSetTabTitle, useBooksWishListMutation } from '../hooks';
 import type { Book } from '../types';
 
@@ -12,6 +12,7 @@ const BookCatalogPage = () => {
     const { addToWishList, removeFromWishList } = useBooksWishListMutation();
     useSetTabTitle('Books');
     const { userType } = useAuthContext();
+    const { isInCart, addToCart, removeFromCart } = useCartContext();
 
     const onAddToWishlist = (bookId: number) => {
         addToWishList.mutate(bookId);
@@ -21,13 +22,21 @@ const BookCatalogPage = () => {
         removeFromWishList.mutate(bookId);
     };
 
-    const handlers = { onAddToWishlist, onRemoveFromWishlist };
+    const onAddToCart = (bookId: number) => {
+        addToCart(bookId);
+    };
+
+    const onRemoveFromCart = (bookId: number) => {
+        removeFromCart(bookId);
+    };
+
+    const handlers = { onAddToWishlist, onRemoveFromWishlist, onAddToCart, onRemoveFromCart };
     const getActions = (book: Book) => {
         const isSuperAdminOrAdmin = userType === 'superadmin' || userType === 'admin';
         if(isSuperAdminOrAdmin) {
             return [];
         }
-        return getPublicBookActions(book, handlers);
+        return getPublicBookActions(book, handlers, isInCart(book.bookId));
     };
 
 
