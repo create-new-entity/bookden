@@ -200,7 +200,7 @@ export const getTheme = (mode: ThemeMode) => {
             },
             MuiPaper: {
                 defaultProps: {
-                    elevation: 0
+                    elevation: 3
                 },
                 styleOverrides: {
                     root: {

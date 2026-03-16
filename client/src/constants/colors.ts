@@ -21,7 +21,7 @@ export const customColors = {
     lightWarningText: '#1B1B1B',
 
     lightInfoMain: '#5BAFCF',
-    lightInfoLight: '#D9D2F8',
+    lightInfoLight: '#D3CAFF',
     lightInfoDark: '#2F8EAD',
     lightInfoText: '#FFFFFF',
 
@@ -33,7 +33,7 @@ export const customColors = {
     // Light mode background & text
     lightBackgroundDefault: '#D4CFEB',   // app background
     lightBackgroundPaper: '#FFFFFF',     // cards, modals
-    lightBackgroundSurface: '#E0DCEC',   // menus, TextField, dropdowns
+    lightBackgroundSurface: '#E1D9F6',   // menus, TextField, dropdowns
 
     lightTextPrimary: '#212121',
     lightTextSecondary: '#666666',
