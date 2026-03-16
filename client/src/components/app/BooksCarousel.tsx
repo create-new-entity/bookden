@@ -12,6 +12,7 @@ import { useResponsive } from '../../hooks';
 type Styles = {
     rootPaper: SxProps<Theme>;
     carouselTitle: SxProps<Theme>;
+    carouselTitlePaper: SxProps<Theme>;
 };
 
 const getStyles = (theme: Theme): Styles => {
@@ -32,6 +33,9 @@ const getStyles = (theme: Theme): Styles => {
         rootPaper: {
             padding: '1rem',
             width: '100%',
+        },
+        carouselTitlePaper: {
+            maxWidth: 'fit-content'
         },
         carouselTitle: {
             maxWidth: 'fit-content',
@@ -55,9 +59,11 @@ const BooksCarousal = (props: CarouselBookList) => {
 
     return (
         <Paper sx={styles.rootPaper}>
-            <Typography variant={resolvedVariant} sx={styles.carouselTitle}>
-                {title}
-            </Typography>
+            <Paper sx={styles.carouselTitlePaper} elevation={2}>
+                <Typography variant={resolvedVariant} sx={styles.carouselTitle}>
+                    {title}
+                </Typography>
+            </Paper>
             <Carousel
                 items={books}
                 SlideComponent={CarouselBookCard}

@@ -1,0 +1,20 @@
+POST http://localhost:3000/api/orders
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Inppb25fZ2xhZGUiLCJ1c2VySWQiOjEzMywidXNlclR5cGUiOiJjdXN0b21lciIsInRva2VuVmVyc2lvbiI6MCwiaWF0IjoxNzczNjE5MTIwLCJleHAiOjE3NzM2MjI3MjB9.j_VMq2RzniaconYJb4-fBSj1JpHTxmlM3a-EBg-cUxc
+
+{
+    "items": [
+        {
+            "bookId": 583,
+            "quantity": 1
+        },
+        {
+            "bookId": 798,
+            "quantity": 2
+        },
+        {
+            "bookId": 697,
+            "quantity": 3
+        }
+    ]
+}

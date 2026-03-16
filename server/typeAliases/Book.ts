@@ -1,7 +1,6 @@
 
-
-
 import { z } from 'zod';
+
 import { imageMimeTypes } from '../constants';
 
 export const BookTypeAlias = z.object({
