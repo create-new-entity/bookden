@@ -7,8 +7,8 @@ export const orderBaseUrl = '/api/orders';
 
 const orderRouter = Router();
 
-orderRouter.post('/', tokenExtractor, enforceAuthentication, asyncHandler(createOrderController));
 orderRouter.get('/:orderId', tokenExtractor, enforceAuthentication, asyncHandler(getOrderController));
 orderRouter.get('/', tokenExtractor, enforceAuthentication, asyncHandler(getOrdersController));
+orderRouter.post('/', tokenExtractor, enforceAuthentication, asyncHandler(createOrderController));
 
 export default orderRouter;

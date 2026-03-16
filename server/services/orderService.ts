@@ -1,11 +1,11 @@
-
+import camelcaseKeys from 'camelcase-keys';
 import { sql } from 'slonik';
 
 import { sqlTag, getPGDBPool } from '../configs';
-import { CreateOrderRequestBody, OrdersQueryOptions } from '../types/Order';
 import { errorMessages, errorNames, NotFoundError } from '../errors';
 import { convertStringToSnakeCase } from '../utilities';
-import { CUSTOMER, UserTypes } from '../types';
+import { CUSTOMER, CreateOrderRequestBody, OrdersQueryOptions, UserTypes } from '../types';
+
 
 
 const createOrder = async (userId: number, items: CreateOrderRequestBody['items']) => {
@@ -136,7 +136,7 @@ const getOrders = async (options: OrdersQueryOptions) => {
     const hasNextPage = page < totalPages;
     const hasPreviousPage = page > 1;
 
-    return {
+    const response = {
         data: result.rows,
         pagination: {
             page,
@@ -147,6 +147,8 @@ const getOrders = async (options: OrdersQueryOptions) => {
             hasPreviousPage
         }
     };
+
+    return camelcaseKeys(response, { deep: true });
 
 };
 

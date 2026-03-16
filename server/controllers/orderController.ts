@@ -3,7 +3,7 @@ import QueryString from 'qs';
 import { Response, NextFunction } from 'express';
 
 import { ADMIN, AuthenticatedRequest, SUPERADMIN } from '../types';
-import { CreateOrderRequestBody, OrdersQueryParams } from '../types/Order';
+import { CreateOrderRequestBody, OrdersQueryParams } from '../types';
 import { CreateOrderRequestSchema, GetOrderRequestSchema, GetOrdersQueryParamsSchema } from '../validation/order';
 import { createOrder, getOrder, getOrders } from '../services/orderService';
 import {

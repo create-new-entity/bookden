@@ -69,3 +69,11 @@ const allProcessedSeedBookData: Book[] = sortedSeedBookData.map(book => {
 
 export const booksSeedData = allProcessedSeedBookData.slice(0, 90) as Book[];
 
+export const createDummyCreateOrderRequestBody = (bookIds: number[]) => {
+    return {
+        items: bookIds.map((bookId, index) => ({
+            bookId,
+            quantity: index + 1
+        }))
+    };
+};
