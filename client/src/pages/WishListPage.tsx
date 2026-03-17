@@ -5,6 +5,7 @@ import { BookListLayout } from '../components';
 import { useAuthContext, useCartContext, type BookInCart } from '../contexts';
 import { useSetTabTitle, useBooksWishListMutation, useBooksWishList } from '../hooks';
 import type { Book } from '../types';
+import { Stack, Typography } from '@mui/material';
 
 
 const WishListPage = () => {
@@ -41,14 +42,26 @@ const WishListPage = () => {
 
 
     return (
-        <BookListLayout
-            mode='customer'
-            booksList={booksList}
-            getActions={getActions}
-            params={params}
-            updateParams={updateParams}
-            priceRangeMeta={priceRangeMeta}
-        />
+        <>
+            <Stack
+                direction={'row'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                sx={{ marginTop: '1rem' }}
+            >
+                <Typography variant='body1'>
+                    Your wishlisted books can be seen in this page.
+                </Typography>
+            </Stack>
+            <BookListLayout
+                mode='customer'
+                booksList={booksList}
+                getActions={getActions}
+                params={params}
+                updateParams={updateParams}
+                priceRangeMeta={priceRangeMeta}
+            />
+        </>
     );
 };
 

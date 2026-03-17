@@ -39,6 +39,7 @@ const CartPage = () => {
     const theme = useTheme();
     const styles = getStyles(theme);
     const { orderMutation } = useCheckout();
+    const { clearCart } = useCartContext();
 
     const handleCheckout = () => {
         const order = items.map((item) => ({
@@ -74,6 +75,9 @@ const CartPage = () => {
                         gap={`${DEFAULT_GAP}px`}
                         sx={styles.totalCostStack}
                     >
+                        <Button variant='contained' color='error' onClick={clearCart}>
+                            Clear Cart
+                        </Button>
                         <Button variant='contained' color='primary' onClick={handleCheckout}>
                             Checkout
                         </Button>
@@ -92,7 +96,7 @@ const CartPage = () => {
                     gap={`${DEFAULT_GAP}px`}
                 >
                     <Typography variant='h4' color='text.secondary'>
-                        Your cart is empty
+                        Your cart is empty 🙂
                     </Typography>
                     <Link to={BOOKS}>
                         <Typography variant='body1' color='info'>

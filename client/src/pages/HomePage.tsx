@@ -17,6 +17,8 @@ const getStyles = (_theme: Theme, { isXs }: { isXs: boolean }): Styles => {
     };
 };
 
+const GapBetWeenCarousels = '2.5rem';
+
 const HomePage = () => {
 
     useSetTabTitle('Home');
@@ -34,7 +36,7 @@ const HomePage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
                 sx={styles.rootStack}
-                gap={'4.5rem'}
+                gap={GapBetWeenCarousels}
             >
                 <HeroBannerCarousel/>
                 <Divider sx={{ width: '100%' }} />
