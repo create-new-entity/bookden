@@ -2,8 +2,18 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import ModeNightIcon from '@mui/icons-material/ModeNight';
+import HomeIcon from '@mui/icons-material/Home';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import HandymanIcon from '@mui/icons-material/Handyman';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-import { ThemeSwitch } from '../components';
+
 import type { UserType, NavContextValue, NavOption } from '../types';
 import useAuthContext from './AuthContext.tsx';
 import {
@@ -11,6 +21,26 @@ import {
     BOOKS, CART, CUSTOMER,
     HOME, SUPERADMIN, UPDATE_PROFILE, WISHLIST } from '../constants';
 import { useThemeModeContext } from './index.ts';
+
+type NavContextMenuComponentProps = {
+    icon: React.ReactNode;
+    title: string;
+};
+
+const NavContextMenuComponent = (props: NavContextMenuComponentProps) => {
+    const { icon, title } = props;
+    return (
+        <Stack
+            direction={'row'}
+            justifyContent={'space-evenly'}
+            alignItems={'center'}
+            gap={1}
+        >
+            {icon}
+            <Typography variant='body1'>{title}</Typography>
+        </Stack>
+    );
+};
 
 const defaultContextValue: NavContextValue = {
     options: [],
@@ -38,16 +68,11 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
     const userType = existingLoggedInData?.userType;
     
     useEffect(() => {
-        const switchModeComponent = (
-            <Stack direction={'row'} justifyContent={'space-evenly'} alignItems={'center'} gap={1}>
-                <Typography variant='body1'>
-                    {
-                        isLightMode ? 'Dark mode' : 'Light mode'
-                    }
-                </Typography>
-                <ThemeSwitch/>
-            </Stack>
-        );
+
+        const switchModeComponentDetails = {
+            icon: isLightMode ? <ModeNightIcon/> : <LightModeIcon/>,
+            title: isLightMode ? 'Dark mode' : 'Light mode'
+        };
 
         const homeOption = {
             name: 'home',
@@ -55,7 +80,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 navigate(HOME);
                 setShowNavDrawer(false);
             },
-            component: <Typography variant='body1'>Home</Typography>,
+            component: <NavContextMenuComponent icon={<HomeIcon/>} title='Home'/>,
             access: ALL_TYPES_OF_USERS
         };
     
@@ -65,7 +90,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 navigate(CART);
                 setShowNavDrawer(false);
             },
-            component: <Typography variant='body1'>Cart</Typography>,
+            component: <NavContextMenuComponent icon={<AddShoppingCartIcon/>} title='Cart'/>,
             access: [CUSTOMER]
         };
     
@@ -75,7 +100,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 handleThemeModeSwitch();
                 setShowNavDrawer(false);
             },
-            component: switchModeComponent,
+            component: <NavContextMenuComponent icon={switchModeComponentDetails.icon} title={switchModeComponentDetails.title}/>,
             access: ALL_TYPES_OF_USERS
         };
 
@@ -88,7 +113,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                         navigate(BOOKS);
                         setShowNavDrawer(false);
                     },
-                    component: <Typography variant='body1'>Books</Typography>,
+                    component: <NavContextMenuComponent icon={<MenuBookIcon/>} title='Books'/>,
                     access: ALL_TYPES_OF_USERS
                 },
                 {
@@ -97,7 +122,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                         navigate(UPDATE_PROFILE);
                         setShowNavDrawer(false);
                     },
-                    component: <Typography variant='body1'>Profile</Typography>,
+                    component: <NavContextMenuComponent icon={<AccountCircleIcon/>} title='Profile'/>,
                     access: ALL_TYPES_OF_USERS
                 },
                 {
@@ -106,7 +131,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                         navigate(WISHLIST);
                         setShowNavDrawer(false);
                     },
-                    component: <Typography variant='body1'>Wishlist</Typography>,
+                    component: <NavContextMenuComponent icon={<FavoriteIcon/>} title='Wishlist'/>,
                     access: [CUSTOMER]
                 },
                 cartOption,
@@ -116,7 +141,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                         navigate(ADMIN_TOOLS);
                         setShowNavDrawer(false);
                     },
-                    component: <Typography>Admin Tools</Typography>,
+                    component: <NavContextMenuComponent icon={<HandymanIcon/>} title='Admin Tools'/>,
                     access: [SUPERADMIN, ADMIN]
                 },
                 switchModeOption,
@@ -126,7 +151,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                         clearAuthentication();
                         setShowNavDrawer(false);
                     },
-                    component: <Typography>Logout</Typography>,
+                    component: <NavContextMenuComponent icon={<LogoutIcon/>} title='Logout'/>,
                     access: ALL_TYPES_OF_USERS
                 }
             ].filter(filterOutUnAuthorizedOptions(userType));
@@ -152,7 +177,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                         navigate('/auth');
                         setShowNavDrawer(false);
                     },
-                    component: <Typography>Login</Typography>,
+                    component: <NavContextMenuComponent icon={<LoginIcon/>} title='Login'/>,
                     access: []
                 }
             ]);
