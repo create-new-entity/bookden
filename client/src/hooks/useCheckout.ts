@@ -21,7 +21,6 @@ const useCheckout = () => {
         mutationFn: (order: Order) => {
             if(!resolvedToken) {
                 navigate(AUTH);
-                handleShowNotification('You need to be logged in to checkout. Session expired or user deleted. Please try again.');
                 return Promise.reject({ orderId: -1 });
             }
             console.log('resolvedToken', resolvedToken);
@@ -30,10 +29,10 @@ const useCheckout = () => {
         onSuccess: (_data) => {
             navigate(HOME);
             clearCart();
-            handleShowNotification('Puchase Successfully Completed. Thank you!');
+            handleShowNotification('Purchase Successful. Thank you!');
         },
-        onError: (_error) => {
-            handleShowNotification('Something went wrong. Please try again later.');
+        onError: () => {
+            handleShowNotification('Something went wrong. You need to be logged in to checkout (session expired or user deleted). Please try again.');
         }
     });
 
