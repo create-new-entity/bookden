@@ -8,14 +8,17 @@ import { AUTH } from '../constants';
 
 
 export const useBooksWishListMutation = () => {
-    const { token, isLoggedIn } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const { handleShowNotification } = useNotificationContext();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
     
     const addToWishList = useMutation<void, AxiosErrorResponse, number>({
         mutationFn: (bookId: number) => {
-            if(!isLoggedIn) {
+            if(!resolvedToken) {
                 handleShowNotification('You need to be logged in with customer account to add books to your wishlist.');
                 navigate(AUTH);
                 return Promise.reject(new Error('User not logged in'));

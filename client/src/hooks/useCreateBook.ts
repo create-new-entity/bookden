@@ -18,14 +18,22 @@ type CreateBookArgs = {
 };
 
 export const useCreateBook = () => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
     const navigate = useNavigate();
 
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const createBookMutation = useMutation<AxiosResponse, AxiosErrorResponse, CreateBookArgs>({
         mutationFn: (args: CreateBookArgs) => {
-            return addBook(args, token);
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in as an admin or superadmin to create a book. Session expired or user deleted. Please try again.');
+                return Promise.resolve({});
+            }
+            return addBook(args, resolvedToken);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['books'] });
