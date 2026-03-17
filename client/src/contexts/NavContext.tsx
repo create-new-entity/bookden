@@ -83,6 +83,16 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             component: <NavContextMenuComponent icon={<HomeIcon/>} title='Home'/>,
             access: ALL_TYPES_OF_USERS
         };
+
+        const bookOption = {
+            name: 'books',
+            action: () => {
+                navigate(BOOKS);
+                setShowNavDrawer(false);
+            },
+            component: <NavContextMenuComponent icon={<MenuBookIcon/>} title='Books'/>,
+            access: ALL_TYPES_OF_USERS
+        };
     
         const cartOption = {
             name: 'cart',
@@ -108,15 +118,6 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             const defaultOptions = [
                 homeOption,
                 {
-                    name: 'books',
-                    action: () => {
-                        navigate(BOOKS);
-                        setShowNavDrawer(false);
-                    },
-                    component: <NavContextMenuComponent icon={<MenuBookIcon/>} title='Books'/>,
-                    access: ALL_TYPES_OF_USERS
-                },
-                {
                     name: 'profile',
                     action: () => {
                         navigate(UPDATE_PROFILE);
@@ -125,6 +126,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                     component: <NavContextMenuComponent icon={<AccountCircleIcon/>} title='Profile'/>,
                     access: ALL_TYPES_OF_USERS
                 },
+                bookOption,
                 {
                     name: 'wishlist',
                     action: () => {
@@ -160,15 +162,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
         else {
             setOptions([
                 homeOption,
-                {
-                    name: 'books',
-                    action: () => {
-                        navigate('/books');
-                        setShowNavDrawer(false);
-                    },
-                    component: <Typography>Books</Typography>,
-                    access: []
-                },
+                bookOption,
                 cartOption,
                 switchModeOption,
                 {
