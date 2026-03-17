@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 
 
@@ -9,6 +9,10 @@ import { useEffect, useState } from 'react';
     useBlobImage loads image of user avatar, book cover and so on from the server.
     We pass the query key and query function to the hook.
     Hook returns the object url of the image.
+
+    We derive objectUrl from query data (useMemo) instead of setState in useEffect
+    to avoid "Maximum update depth exceeded" when many instances run simultaneously.
+    See: https://github.com/TanStack/query/issues/7264
 */
 
 type UseBlobImageOptions = {
@@ -25,28 +29,25 @@ export type UseBlobImageReturn = {
 };
 
 export const useBlobImage = ({ queryKey, queryFn, enabled = true }: UseBlobImageOptions): UseBlobImageReturn => {
-    const [objectUrl, setObjectUrl] = useState<string | undefined>(undefined);
     const blobResult = useQuery<Blob, AxiosError>({
         queryKey, queryFn, enabled, retry: false
     });
 
-    useEffect(() => {
+    const objectUrl = useMemo(() => {
         const noValidBlobImage = blobResult.isError || !blobResult.data;
         if (noValidBlobImage) {
-            setObjectUrl(undefined);
-            return;
+            return undefined;
         }
-        
-        const url = URL.createObjectURL(blobResult.data);
-        setObjectUrl(url);
-        
-        return () => {
-            if(url) {
-                URL.revokeObjectURL(url);
-            }
-        };
+        return URL.createObjectURL(blobResult.data);
     }, [blobResult.data, blobResult.isError]);
 
+    useEffect(() => {
+        return () => {
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
+        };
+    }, [objectUrl]);
 
     return {
         objectUrl,
