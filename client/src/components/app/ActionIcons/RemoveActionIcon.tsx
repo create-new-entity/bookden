@@ -1,23 +1,23 @@
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 import ActionIcon from './ActionIcon';
 
 
-type AddActionIconProps = {
+type RemoveActionIconProps = {
     onClick: () => void;
     tooltipTitle: string;
 };
 
-const AddActionIcon = (props: AddActionIconProps) => {
+const RemoveActionIcon = (props: RemoveActionIconProps) => {
     const { onClick, tooltipTitle } = props;
 
     return (
         <ActionIcon
-            icon={<AddCircleIcon />}
+            icon={<RemoveCircleIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
         />
     );
 };
 
-export default AddActionIcon;
+export default RemoveActionIcon;

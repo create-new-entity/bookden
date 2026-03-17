@@ -1,8 +1,8 @@
-
+import * as R from 'ramda';
 
 import { getPublicBookActions } from '../actions';
 import { BookListLayout } from '../components';
-import { useAuthContext, useCartContext } from '../contexts';
+import { useAuthContext, useCartContext, type BookInCart } from '../contexts';
 import { useBooksList, useSetTabTitle, useBooksWishListMutation } from '../hooks';
 import type { Book } from '../types';
 
@@ -22,12 +22,12 @@ const BookCatalogPage = () => {
         removeFromWishList.mutate(bookId);
     };
 
-    const onAddToCart = (bookId: number) => {
-        addToCart(bookId);
+    const onAddToCart = (book: BookInCart) => {
+        addToCart(R.pick(['bookId', 'title', 'price'], book));
     };
 
-    const onRemoveFromCart = (bookId: number) => {
-        removeFromCart(bookId);
+    const onRemoveFromCart = (book: BookInCart) => {
+        removeFromCart(R.pick(['bookId', 'title', 'price'], book));
     };
 
     const handlers = { onAddToWishlist, onRemoveFromWishlist, onAddToCart, onRemoveFromCart };

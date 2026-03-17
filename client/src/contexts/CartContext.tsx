@@ -1,68 +1,106 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
 
-type CartItem = {
-    bookId: number;
+import type { Book } from '../types';
+import { roundTo2 } from '../utility/utility';
+
+
+export type BookInCart = Pick<Book, 'bookId' | 'title' | 'price'>;
+
+export type CartItem = {
+    book: BookInCart;
     quantity: number;
 };
 
+const CART_STORAGE_KEY = 'bookden_cart';
+
 type CartContextValue = {
     items: CartItem[];
-    addToCart: (bookId: number) => void;
-    removeFromCart: (bookId: number) => void;
-    updateQuantity: (bookId: number, quantity: number) => void;
+    addToCart: (book: BookInCart) => void;
+    reduceFromCart: (book: BookInCart) => void;
+    removeFromCart: (book: BookInCart) => void;
+    updateQuantity: (book: BookInCart, quantity: number) => void;
     clearCart: () => void;
-    isInCart: (bookId: number) => boolean;
+    isInCart: (bookId: BookInCart['bookId']) => boolean;
+    totalCost: number;
+    totalNumberOfBooksInCart: number;
 };
 
 const defaultContextValue: CartContextValue = {
     items: [],
     addToCart: () => {},
+    reduceFromCart: () => {},
     removeFromCart: () => {},
     updateQuantity: () => {},
     clearCart: () => {},
-    isInCart: () => false
+    isInCart: (_bookId: BookInCart['bookId']) => false,
+    totalCost: 0,
+    totalNumberOfBooksInCart: 0
 };
 
 const CartContext = createContext(defaultContextValue);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-    const [items, setItems] = useState<CartItem[]>([]);
+    const [items, setItems, removeCartFromLocalStorage] = useLocalStorage<CartItem[]>(CART_STORAGE_KEY, []);
 
-    const addToCart = (bookId: number) => {
+    const unroundedTotalCost = items.reduce((acc, item) => acc + item.book.price * item.quantity, 0);
+    const totalCost = roundTo2(unroundedTotalCost);
+    const totalNumberOfBooksInCart = items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+
+    const addToCart = (book: BookInCart) => {
         setItems((prev) => {
-            const existing = prev.find((item) => item.bookId === bookId);
+            const existing = prev.find((item) => item.book.bookId === book.bookId);
             if (existing) {
                 return prev.map((item) =>
-                    item.bookId === bookId ? { ...item, quantity: item.quantity + 1 } : item
+                    item.book.bookId === book.bookId ? { ...item, quantity: item.quantity + 1 } : item
                 );
             }
-            return [...prev, { bookId, quantity: 1 }];
+            return [...prev, { book, quantity: 1 }];
         });
     };
 
-    const removeFromCart = (bookId: number) => {
-        setItems((prev) => prev.filter((item) => item.bookId !== bookId));
+    const reduceFromCart = (book: BookInCart) => {
+        setItems((prev) => {
+            const existing = prev.find((item) => item.book.bookId === book.bookId);
+            if (existing) {
+                return prev
+                    .map((item) => item.book.bookId === book.bookId ? { ...item, quantity: item.quantity - 1 } : item)
+                    .filter((item) => item.quantity > 0); // Remove items with quantity 0 or less
+            }
+            return prev;
+        });
     };
 
-    const updateQuantity = (bookId: number, quantity: number) => {
+    const removeFromCart = (book: BookInCart) => {
+        setItems((prev) => prev.filter((item) => item.book.bookId !== book.bookId));
+    };
+
+    const updateQuantity = (book: BookInCart, quantity: number) => {
         if (quantity <= 0) {
-            removeFromCart(bookId);
+            removeFromCart(book);
             return;
         }
         setItems((prev) =>
-            prev.map((item) => (item.bookId === bookId ? { ...item, quantity } : item))
+            prev.map((item) => (item.book.bookId === book.bookId ? { ...item, quantity } : item))
         );
     };
 
-    const clearCart = () => setItems([]);
+    const clearCart = () => {
+        setItems([]);
+        removeCartFromLocalStorage();
+    };
 
     const value: CartContextValue = {
         items,
         addToCart,
+        reduceFromCart,
         removeFromCart,
         updateQuantity,
         clearCart,
-        isInCart: (bookId: number) => items.some((item) => item.bookId === bookId)
+        isInCart: (bookId: BookInCart['bookId']) => items.some((item) => item.book.bookId === bookId),
+        totalCost,
+        totalNumberOfBooksInCart
     };
 
     return (

@@ -50,4 +50,5 @@ export const isTokenExpired = (token: string) => {
         return true;
     }
 };
-  
+
+export const roundTo2 = (value: number) => Math.round(value * 100) / 100;
