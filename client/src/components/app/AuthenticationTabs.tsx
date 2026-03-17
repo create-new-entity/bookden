@@ -4,10 +4,12 @@ import {
     useMediaQuery, useTheme, type SxProps, type Theme
 } from '@mui/material';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
 import { useThemeModeContext } from '../../contexts';
+import { HOME } from '../../constants';
 
 type Styles = {
     rootContainer: SxProps<Theme>;
@@ -27,8 +29,7 @@ const getStyles = (_theme: Theme): Styles => {
             justifyContent: 'center',
             alignItems: 'center',
     
-            padding: '0.5rem',
-            marginTop: '-5rem'
+            padding: '0.5rem'
         },
     
         tabPanelsContainer: {
@@ -87,6 +88,11 @@ const AuthenticationTabs = () => {
                     <TabPanel sx={styles.tabPanel} value={'logIn'}><LogInTab/></TabPanel>
                     <TabPanel sx={styles.tabPanel} value={'signUp'}><SignUpTab/></TabPanel>
                 </Box>
+                <Link to={HOME}>
+                    <Typography variant='body1' color='textSecondary' sx={{ marginTop: '1rem' }}>
+                        Back to Homepage
+                    </Typography>
+                </Link>
             </Box>
         </TabContext>
     );

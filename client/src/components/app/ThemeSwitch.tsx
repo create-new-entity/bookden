@@ -1,4 +1,7 @@
-import { Stack, Switch } from '@mui/material';
+
+
+
+import { IconButton, Tooltip } from '@mui/material';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeNightIcon from '@mui/icons-material/ModeNight';
 
@@ -13,12 +16,28 @@ const ThemeSwitch = () => {
         setShowNavDrawer(false);
     };
 
+    const lightModeIcon = (
+        <Tooltip title='Light mode'>
+            <IconButton onClick={handleSwitch}>
+                <LightModeIcon fontSize='medium'/>
+            </IconButton>
+        </Tooltip>
+    );
+
+    const darkModeIcon = (
+        <Tooltip title='Dark mode'>
+            <IconButton onClick={handleSwitch}>
+                <ModeNightIcon fontSize='medium'/>
+            </IconButton>
+        </Tooltip>
+    );
+
     return (
-        <Stack direction={'row'} alignItems={'center'}>
-            <LightModeIcon fontSize='medium'/>
-            <Switch checked={!isLightMode} onChange={handleSwitch}/>
-            <ModeNightIcon fontSize='medium'/>
-        </Stack>
+        <>
+            {
+                isLightMode ? darkModeIcon : lightModeIcon
+            }
+        </>
     );
 };
 

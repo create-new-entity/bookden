@@ -13,6 +13,7 @@ import { SearchInput } from '../custom';
 import { CART, NAV_BAR_Z_INDEX } from '../../constants';
 import { useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
+import ThemeSwitchIconOnly from './ThemeSwitch';
 
 const getStyles = (_theme: Theme) => {
     return {
@@ -21,11 +22,7 @@ const getStyles = (_theme: Theme) => {
         },
         stack: {
             width: '100%',
-            height: '100%',
-            justifyContent: {
-                xs: 'space-between'
-            },
-            alignItems: 'center'
+            height: '100%'
         },
         menuIcon: {
             display: { sm: 'none' }
@@ -75,7 +72,12 @@ const NavBar = () => {
     return (
         <AppBar sx={styles.appBar} position='sticky'>
             <Toolbar>
-                <Stack direction={'row'} sx={styles.stack}>
+                <Stack
+                    direction={'row'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    sx={styles.stack}
+                >
                     <Stack
                         direction={'row'}
                         justifyContent={'flex-start'}
@@ -122,6 +124,17 @@ const NavBar = () => {
                             </Badge>
                         </Tooltip>
                         {
+                            !isLoggedIn && !isXs &&
+                            <ThemeSwitchIconOnly/>
+                        }
+                        {
+                            !isLoggedIn && !isXs &&
+                            <LoginActionIcon
+                                onClick={() => navigate('/auth')}
+                                tooltipTitle='Login'
+                            />
+                        }
+                        {
                             isLoggedIn &&
                             <Avatar
                                 data-testid='user-avatar'
@@ -132,14 +145,10 @@ const NavBar = () => {
                                 }}
                             />
                         }
+                        <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
+                            <MenuIcon/>
+                        </IconButton>
                     </Stack>
-                    {
-                        !isLoggedIn && !isXs &&
-                        <LoginActionIcon
-                            onClick={() => navigate('/auth')}
-                            tooltipTitle='Login'
-                        />
-                    }
                     <Menu
                         anchorEl={anchorElement}
                         open={menuOpen}
@@ -163,9 +172,6 @@ const NavBar = () => {
                             })
                         }
                     </Menu>
-                    <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
-                        <MenuIcon/>
-                    </IconButton>
                 </Stack>
             </Toolbar>
         </AppBar>

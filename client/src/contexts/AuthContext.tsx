@@ -14,6 +14,9 @@ import { useMe } from '../hooks';
     Because of that logged in user may get pushed to auth page,
     if a user directly pastes the link in browser of a page that requires authentication.
     Example: Someone instead of logging in and navigating to the profile page directly pastes profile page url in the browser.
+
+    Note to future self:
+    Try to get rid of hasExistingLoggedInUser altogether.
 */
 
 const hasExistingLoggedInUser = () => {

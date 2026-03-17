@@ -1,12 +1,16 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { ThemeSwitch } from '../components';
 import type { UserType, NavContextValue, NavOption } from '../types';
 import useAuthContext from './AuthContext.tsx';
-import { ADMIN, ADMIN_TOOLS, ALL_TYPES_OF_USERS, CUSTOMER, SUPERADMIN, UPDATE_PROFILE, WISHLIST } from '../constants';
+import {
+    ADMIN, ADMIN_TOOLS, ALL_TYPES_OF_USERS,
+    BOOKS, CART, CUSTOMER,
+    HOME, SUPERADMIN, UPDATE_PROFILE, WISHLIST } from '../constants';
+import { useThemeModeContext } from './index.ts';
 
 const defaultContextValue: NavContextValue = {
     options: [],
@@ -27,14 +31,66 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
     const [showNavDrawer, setShowNavDrawer] = useState(false);
     const navigate = useNavigate();
     const { clearAuthentication, hasExistingLoggedInUser } = useAuthContext();
+    const [options, setOptions] = useState<NavOption[]>([]);
+    const { isLightMode, handleThemeModeSwitch } = useThemeModeContext();
+
     const { isUserLoggedIn, existingLoggedInData } = hasExistingLoggedInUser();
     const userType = existingLoggedInData?.userType;
     
-    const [options, setOptions] = useState<NavOption[]>([]);
-
     useEffect(() => {
+        const switchModeComponent = (
+            <Stack direction={'row'} justifyContent={'space-evenly'} alignItems={'center'} gap={1}>
+                <Typography variant='body1'>
+                    {
+                        isLightMode ? 'Dark mode' : 'Light mode'
+                    }
+                </Typography>
+                <ThemeSwitch/>
+            </Stack>
+        );
+
+        const homeOption = {
+            name: 'home',
+            action: () => {
+                navigate(HOME);
+                setShowNavDrawer(false);
+            },
+            component: <Typography variant='body1'>Home</Typography>,
+            access: ALL_TYPES_OF_USERS
+        };
+    
+        const cartOption = {
+            name: 'cart',
+            action: () => {
+                navigate(CART);
+                setShowNavDrawer(false);
+            },
+            component: <Typography variant='body1'>Cart</Typography>,
+            access: [CUSTOMER]
+        };
+    
+        const switchModeOption = {
+            name: 'switchMode',
+            action: () => {
+                handleThemeModeSwitch();
+                setShowNavDrawer(false);
+            },
+            component: switchModeComponent,
+            access: ALL_TYPES_OF_USERS
+        };
+
         if(userType && isUserLoggedIn) {
             const defaultOptions = [
+                homeOption,
+                {
+                    name: 'books',
+                    action: () => {
+                        navigate(BOOKS);
+                        setShowNavDrawer(false);
+                    },
+                    component: <Typography variant='body1'>Books</Typography>,
+                    access: ALL_TYPES_OF_USERS
+                },
                 {
                     name: 'profile',
                     action: () => {
@@ -53,6 +109,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                     component: <Typography variant='body1'>Wishlist</Typography>,
                     access: [CUSTOMER]
                 },
+                cartOption,
                 {
                     name: 'adminTools',
                     action: () => {
@@ -62,12 +119,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                     component: <Typography>Admin Tools</Typography>,
                     access: [SUPERADMIN, ADMIN]
                 },
-                {
-                    name: 'switchMode',
-                    action: () => {},
-                    component: <ThemeSwitch/>,
-                    access: ALL_TYPES_OF_USERS
-                },
+                switchModeOption,
                 {
                     name: 'logout',
                     action: () => {
@@ -82,6 +134,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
         }
         else {
             setOptions([
+                homeOption,
                 {
                     name: 'books',
                     action: () => {
@@ -91,6 +144,8 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                     component: <Typography>Books</Typography>,
                     access: []
                 },
+                cartOption,
+                switchModeOption,
                 {
                     name: 'login',
                     action: () => {
@@ -102,7 +157,10 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 }
             ]);
         }
-    }, [userType, clearAuthentication, navigate, isUserLoggedIn]);
+    }, [
+        userType, clearAuthentication, navigate,
+        isUserLoggedIn, handleThemeModeSwitch, setShowNavDrawer, isLightMode
+    ]);
     
     const value: NavContextValue = {
         options,
