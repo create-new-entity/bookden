@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
-import { useBook, useBookCover, useImagePreview, useSetTabTitle } from '../../hooks';
+import { useAdminBook, useAdminBookCover, useImagePreview, useSetTabTitle } from '../../hooks';
 import BookEditorLayout from './BookEditorLayout';
 import { UpdateBookForm } from '../../components';
 import type { CreateUpdateBookData } from '../../validations';
@@ -18,8 +18,8 @@ const UpdateBookPage = () => {
     const { bookId } = useParams();
     const parsedBookId = parseInt(bookId || '-1', 10);
 
-    const bookQuery = useBook(parsedBookId);
-    const bookCover = useBookCover(parsedBookId);
+    const bookQuery = useAdminBook(parsedBookId);
+    const bookCover = useAdminBookCover(parsedBookId);
     const { updateBookMutation } = useUpdateBook(parsedBookId);
     const image = useImagePreview({ initialImageUrl: bookCover.bookCoverBlob.objectUrl, placeholderImageUrl: PLACE_HOLDER_BOOK_COVER });
 

@@ -35,6 +35,7 @@ export const tokenExtractor = async (req: AuthenticatedRequest, res: Response, n
                 }
             }
             catch(error) {
+                console.log('here6', error);
                 if(error instanceof jwt.TokenExpiredError) {
                     const authenticationError = new AuthenticationError(errorMessages[errorNames.tokenExpired]);
                     next(authenticationError);

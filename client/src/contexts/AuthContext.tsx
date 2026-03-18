@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -63,8 +63,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
-    useEffect(() => {
-        if(me.isSuccess && !me.isLoading && token) {
+    useMemo(() => {
+        const notLoadingOrPending = !me.isLoading && !me.isPending;
+        const isValid = notLoadingOrPending && !me.isError && me.isSuccess;
+        const isInvalid = notLoadingOrPending && me.isError && !me.isSuccess;
+        if(isValid && token) {
             localStorage.setItem(LOGGED_IN_USER_DATA, JSON.stringify({
                 username: me.data?.username || '',
                 email: me.data?.email,
@@ -72,8 +75,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 token
             }));
         }
-    }, [me.isSuccess, me.isLoading, token, me.data?.username, me.data?.email, me.data?.userType]);
-    
+        else if(isInvalid) {
+            localStorage.removeItem(LOGGED_IN_USER_DATA);
+            setToken('');
+        }
+    }, [
+        me.isLoading, me.isPending, me.isError,
+        me.isSuccess, token, me.data?.username,
+        me.data?.email, me.data?.userType
+    ]);
 
     const saveToken = (token: string) => {
         setToken(token);

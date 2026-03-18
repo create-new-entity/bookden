@@ -32,7 +32,8 @@ export const useCheckout = () => {
             handleShowNotification('Purchase Successful. Thank you!');
         },
         onError: () => {
-            handleShowNotification('Something went wrong. You need to be logged in to checkout (session expired or user deleted). Please try again.');
+            navigate(AUTH);
+            handleShowNotification('Something went wrong, login required. Possibly session expired or user deleted. Please log in and try again.');
         }
     });
 

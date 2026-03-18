@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 
 import type { CartItem } from '../../contexts';
-import { useBookCover } from '../../hooks';
+import { usePublicBookCover } from '../../hooks';
 import { DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from '../BookPage/constants';
 import CartItemControl from './CartItemControl';
@@ -51,7 +51,7 @@ const CartItemMobile = (props: CartItem) => {
     const { book, quantity } = props;
     const theme = useTheme();
     const styles = getStyles(theme);
-    const { bookCoverBlob } = useBookCover(book.bookId);
+    const { bookCoverBlob } = usePublicBookCover(book.bookId);
     const totalCost = roundTo2(book.price * quantity);
 
     return (

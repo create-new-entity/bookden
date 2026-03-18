@@ -29,4 +29,6 @@ export * from './useHomePageBooksLists';
 export * from './useCheckout';
 export * from './usePublicBooksList';
 export * from './useAdminBooksList';
+export * from './useBook';
+export * from './useBookCover';
 

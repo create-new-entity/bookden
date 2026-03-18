@@ -6,7 +6,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import * as R from 'ramda';
 
-import { useBook, useBookCover } from '../../hooks';
+import {
+    type UseAdminBookCoverHook, type UseAdminBookHook,
+    type UsePublicBookCoverHook, type UsePublicBookHook
+} from '../../hooks';
 import {
     DEFAULT_BORDER_RADIUS, DEFAULT_GAP,
     LANGUAGE_LABEL_MAP,
@@ -55,9 +58,11 @@ const getStyles = (_theme: Theme): Styles => {
 
 type BookPageMobileProps = {
     bookId: number;
+    useBook: UsePublicBookHook | UseAdminBookHook;
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 const BookPageMobile = (props: BookPageMobileProps) => {
-    const { bookId } = props;
+    const { bookId, useBook, useBookCover } = props;
     
     const { userType } = useAuthContext();
     const navigate = useNavigate();
