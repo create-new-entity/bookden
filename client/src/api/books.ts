@@ -26,14 +26,20 @@ export async function getBooksFiltersMeta(): Promise<BooksPriceRangeMeta> {
 };
 
 
-export const getBooksList = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
+export const getPublicBooksList = async (params: BookSearchParams): Promise<PaginatedDataList<Book>> => {
+    const cleanedParams = removeEmptyValues(params);
+    const response = await axios.get(`${bookUrl}/public`, { params: cleanedParams });
+    return response.data;
+};
+
+export const getAdminBooksList = async (params: BookSearchParams, token: string): Promise<PaginatedDataList<Book>> => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
     const cleanedParams = removeEmptyValues(params);
-    const response = await axios.get(bookUrl, { params: cleanedParams, ...(token ? requestConfig : {}) });
+    const response = await axios.get(`${bookUrl}/admin`, { params: cleanedParams, ...requestConfig });
     return response.data;
 };
 

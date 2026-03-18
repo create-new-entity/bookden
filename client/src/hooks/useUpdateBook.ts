@@ -10,14 +10,22 @@ import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 
 const useUpdateBook = (bookId: number) => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
     const navigate = useNavigate();
 
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const updateBookMutation = useMutation<AxiosResponse, AxiosErrorResponse, CreateUpdateBookData>({
         mutationFn: (data: CreateUpdateBookData) => {
-            return updateBook(bookId, data, token);
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in as an admin or superadmin to update a book. Session expired or user deleted. Please try again.');
+                return Promise.resolve({});
+            }
+            return updateBook(bookId, data, resolvedToken);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({

@@ -1,4 +1,5 @@
 
+import { useMemo } from 'react';
 import {
     Box, useTheme,
     type SxProps, type Theme
@@ -45,11 +46,11 @@ type CarouselBookCardProps = {
 const CarouselBookCard = (props: CarouselBookCardProps) => {
     const { item: book } = props;
 
-    const blobOptions = {
-        queryKey: ['bookCover', book.bookId],
+    const blobOptions = useMemo(() => ({
+        queryKey: ['bookCover', book.bookId] as const,
         queryFn: () => getBookCover(book.bookId),
         enabled: !!book.bookId,
-    };
+    }), [book.bookId]);
     const { objectUrl } = useBlobImage(blobOptions);
     const theme = useTheme();
     const { isSm, isXs} = useResponsive();

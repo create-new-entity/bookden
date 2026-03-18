@@ -11,20 +11,23 @@ import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 export const useAvatar = () => {
 
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const { avatarUrl, setAvatarUrl } = useAvatarContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
     const navigate = useNavigate();
 
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const getAvatarResult = useQuery<Blob, AxiosError>({
-        queryKey: ['avatar', token],
+        queryKey: ['avatar', resolvedToken],
         queryFn: async () => {
-            const avatarBlobData = await getAvatar(token);
+            const avatarBlobData = await getAvatar(resolvedToken || '');
             return avatarBlobData;
         },
         retry: false,
-        enabled: !!token, // Don't run without token.
+        enabled: !!resolvedToken, // Don't run without token.
     });
 
     const deleteAvatarMutation = useMutation<void, AxiosErrorResponse>({

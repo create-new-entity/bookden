@@ -89,7 +89,7 @@ const getStyles = (theme: Theme): Styles => {
         },
         synopsis: {
             overflow: 'auto',
-            height: '4rem'
+            height: '5rem'
         }
     };
 };
@@ -179,18 +179,25 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                                         <Chip label='Deleted' color='error' size='small' />
                                     }
                                     <Box className='book-card-actions'>
-                                        {
-                                            actions.map((action) => {
-                                                const { id, onClick, toolTipTitle, IconComponent } = action;
-                                                return (
-                                                    <IconComponent
-                                                        key={id}
-                                                        onClick={onClick}
-                                                        tooltipTitle={toolTipTitle}
-                                                    />
-                                                );
-                                            })
-                                        }
+                                        <Stack
+                                            direction={'row'}
+                                            justifyContent={'flex-start'}
+                                            alignItems={'center'}
+                                            gap={`${DEFAULT_GAP / 4}px`}
+                                        >
+                                            {
+                                                actions.map((action) => {
+                                                    const { id, onClick, toolTipTitle, IconComponent } = action;
+                                                    return (
+                                                        <IconComponent
+                                                            key={id}
+                                                            onClick={onClick}
+                                                            tooltipTitle={toolTipTitle}
+                                                        />
+                                                    );
+                                                })
+                                            }
+                                        </Stack>
                                     </Box>
                                 </Stack>
                             }

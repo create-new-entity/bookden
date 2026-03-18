@@ -3,6 +3,7 @@ import {
     Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import * as R from 'ramda';
 
 import { useBook, useBookCover } from '../../hooks';
 import {
@@ -10,7 +11,7 @@ import {
     MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER
 } from '../../constants';
 import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants';
-import { useAuthContext } from '../../contexts';
+import { useAuthContext, useCartContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
 
@@ -60,13 +61,26 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
     const theme = useTheme();
     const bookQuery = useBook(bookId);
     const { bookCoverBlob } = useBookCover(bookId);
+    const { isInCart, addToCart, removeFromCart } = useCartContext();
 
     const showEditBookButton = canEditBook(userType);
-    const showAddToCartButton = canBuyBook(userType);
+    const showAddToCartButton = canBuyBook(userType) && !isInCart(bookId);
+    const showRemoveFromCartButton = canBuyBook(userType) && isInCart(bookId);
+
     const styles = getStyles(theme);
 
     const handleEditBook = () => {
         navigate(`/books/${bookId}/update`);
+    };
+
+    const handleAddToCart = () => {
+        if(!bookQuery.data) return;
+        addToCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
+    };
+
+    const handleRemoveFromCart = () => {
+        if(!bookQuery.data) return;
+        removeFromCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
     };
 
     return (
@@ -142,8 +156,15 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                     </Typography>
                                     {
                                         showAddToCartButton && (
-                                            <Button variant='contained' color='primary'>
+                                            <Button variant='contained' color='primary' onClick={handleAddToCart}>
                                                 Add to cart
+                                            </Button>
+                                        )
+                                    }
+                                    {
+                                        showRemoveFromCartButton && (
+                                            <Button variant='contained' color='primary' onClick={handleRemoveFromCart}>
+                                                Remove from cart
                                             </Button>
                                         )
                                     }

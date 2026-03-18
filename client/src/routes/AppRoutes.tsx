@@ -8,7 +8,7 @@ import {
     UPDATE_PROFILE, USER, USER_MANAGEMENT, BOOK_MANAGEMENT,
     BOOK, CREATE_BOOK, SUPERADMIN,
     ADMIN, UPDATE_BOOK, BOOKS,
-    UNAUTHORIZED, NOT_FOUND, WISHLIST,
+    UNAUTHORIZED, NOT_FOUND, WISHLIST, CART,
     CUSTOMER
 } from '../constants';
 import {
@@ -20,7 +20,8 @@ import {
     AdminToolsPage, UserManagementPage, HomePage,
     UnauthorizedPage, NotFoundPage, BookCatalogPage,
     AdminBookManagementPage,
-    WishListPage
+    WishListPage,
+    CartPage
 } from '../pages';
 
 const AppRoutes = () => {
@@ -58,6 +59,7 @@ const AppRoutes = () => {
             <Route path={USER} element={<UserPage/>}/>
             <Route path={BOOK} element={<BookPage/>}/>
             <Route path={BOOKS} element={<BookCatalogPage/>}/>
+            <Route path={CART} element={<CartPage/>}/>
             <Route path={UNAUTHORIZED} element={<UnauthorizedPage/>} />
             <Route path={NOT_FOUND} element={<NotFoundPage/>} />
             <Route path={HOME} element={<HomePage/>} />

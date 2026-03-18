@@ -106,6 +106,9 @@ const BookListLayout = (props: BookListLayoutProps) => {
         modalRef.current?.openModal();
     };
 
+    const showFirstPagination = booksList.data && booksList.data.pagination.totalPages > 0;
+    const showSecondPagination = booksList.data && booksList.data.pagination.totalPages > 1;
+
     return (
         <>
             <Stack
@@ -156,7 +159,7 @@ const BookListLayout = (props: BookListLayoutProps) => {
                     </Typography>
                 }
                 {
-                    booksList.data && booksList.data.pagination.totalPages > 0 &&
+                    showSecondPagination &&
                     <CustomPagination<Book>
                         sx={styles.topPagination}
                         paginatedDataList={booksList.data}
@@ -172,7 +175,7 @@ const BookListLayout = (props: BookListLayoutProps) => {
                     viewOption={selectedView}
                 />
                 {
-                    booksList.data && booksList.data.pagination.totalPages > 1 &&
+                    showFirstPagination &&
                     <CustomPagination<Book>
                         paginatedDataList={booksList.data}
                         onPageChange={onPageChange}

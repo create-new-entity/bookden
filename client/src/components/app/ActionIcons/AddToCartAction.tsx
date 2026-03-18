@@ -1,23 +1,22 @@
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 import ActionIcon from './ActionIcon';
 
-
-type AddActionIconProps = {
+type AddToCartActionProps = {
     onClick: () => void;
     tooltipTitle: string;
 };
 
-const AddActionIcon = (props: AddActionIconProps) => {
+const AddToCartAction = (props: AddToCartActionProps) => {
     const { onClick, tooltipTitle } = props;
 
     return (
         <ActionIcon
-            icon={<AddCircleIcon />}
+            icon={<AddShoppingCartIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
         />
     );
 };
 
-export default AddActionIcon;
+export default AddToCartAction;

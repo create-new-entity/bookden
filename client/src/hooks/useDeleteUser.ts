@@ -9,13 +9,23 @@ import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 
 export const useDeleteUser = (userId: number) => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
     const navigate = useNavigate();
 
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const deleteUserMutation = useMutation<void, AxiosErrorResponse>({
-        mutationFn: () => deleteUser(token, userId),
+        mutationFn: () => {
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in as a superadmin to delete a user. Session expired or user deleted. Please try again.');
+                return Promise.resolve();
+            }
+            return deleteUser(resolvedToken, userId);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['usersList'] });
             queryClient.invalidateQueries({ queryKey: ['user', userId] });
