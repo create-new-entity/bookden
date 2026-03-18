@@ -31,8 +31,14 @@ export const useCheckout = () => {
             clearCart();
             handleShowNotification('Purchase Successful. Thank you!');
         },
-        onError: () => {
-            handleShowNotification('Something went wrong. You need to be logged in to checkout (session expired or user deleted). Please try again.');
+        onError: (error: AxiosErrorResponse) => {
+            if(error.response?.status === 401) {
+                navigate(AUTH);
+                handleShowNotification('Session expired or user deleted. You need to be logged in to checkout. Please try again.');
+            }
+            else {
+                handleShowNotification('Something went wrong. Please try again.');
+            }
         }
     });
 
