@@ -1,5 +1,8 @@
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import {
+    createContext, useCallback, useContext,
+    useEffect, useMemo, useState, type ReactNode
+} from 'react';
 import { Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -46,7 +49,9 @@ const defaultContextValue: NavContextValue = {
     options: [],
     setOptions: () => {},
     showNavDrawer: false,
-    setShowNavDrawer: () => {}
+    setShowNavDrawer: () => {},
+    populateLoggedInOptions: () => {},
+    populatePublicOptions: () => {}
 };
 
 const filterOutUnAuthorizedOptions = (userType: UserType) => {
@@ -60,21 +65,24 @@ const NavContext = createContext(defaultContextValue);
 export const NavProvider = ({ children }: { children: ReactNode }) => {
     const [showNavDrawer, setShowNavDrawer] = useState(false);
     const navigate = useNavigate();
-    const { clearAuthentication, hasExistingLoggedInUser } = useAuthContext();
+    const { clearAuthentication, hasExistingLoggedInUser, userType } = useAuthContext();
     const [options, setOptions] = useState<NavOption[]>([]);
     const { isLightMode, handleThemeModeSwitch } = useThemeModeContext();
 
-    const { isUserLoggedIn, existingLoggedInData } = hasExistingLoggedInUser();
-    const userType = existingLoggedInData?.userType;
-    
-    useEffect(() => {
+    const { existingLoggedInData, isUserLoggedIn } = hasExistingLoggedInUser();
+    const resolvedUserType = useMemo(() => {
+        return userType || existingLoggedInData?.userType;
+    }, [userType, existingLoggedInData?.userType]);
 
-        const switchModeComponentDetails = {
+    const switchModeComponentDetails = useMemo(() => {
+        return {
             icon: isLightMode ? <ModeNightIcon/> : <LightModeIcon/>,
             title: isLightMode ? 'Dark mode' : 'Light mode'
         };
+    }, [isLightMode]);
 
-        const homeOption = {
+    const homeOption = useMemo(() => {
+        return {
             name: 'home',
             action: () => {
                 navigate(HOME);
@@ -83,8 +91,10 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             component: <NavContextMenuComponent icon={<HomeIcon/>} title='Home'/>,
             access: ALL_TYPES_OF_USERS
         };
+    }, [navigate, setShowNavDrawer]);
 
-        const bookOption = {
+    const bookOption = useMemo(() => {
+        return {
             name: 'books',
             action: () => {
                 navigate(BOOKS);
@@ -93,8 +103,10 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             component: <NavContextMenuComponent icon={<MenuBookIcon/>} title='Books'/>,
             access: ALL_TYPES_OF_USERS
         };
-    
-        const cartOption = {
+    }, [navigate, setShowNavDrawer]);
+
+    const cartOption = useMemo(() => {
+        return {
             name: 'cart',
             action: () => {
                 navigate(CART);
@@ -103,8 +115,10 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             component: <NavContextMenuComponent icon={<ShoppingCartIcon/>} title='Cart'/>,
             access: [CUSTOMER]
         };
-    
-        const switchModeOption = {
+    }, [navigate, setShowNavDrawer]);
+
+    const switchModeOption = useMemo(() => {
+        return {
             name: 'switchMode',
             action: () => {
                 handleThemeModeSwitch();
@@ -113,79 +127,105 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
             component: <NavContextMenuComponent icon={switchModeComponentDetails.icon} title={switchModeComponentDetails.title}/>,
             access: ALL_TYPES_OF_USERS
         };
+    }, [handleThemeModeSwitch, setShowNavDrawer, switchModeComponentDetails.icon, switchModeComponentDetails.title]);
 
-        if(userType && isUserLoggedIn) {
-            const defaultOptions = [
-                homeOption,
-                {
-                    name: 'profile',
-                    action: () => {
-                        navigate(UPDATE_PROFILE);
-                        setShowNavDrawer(false);
-                    },
-                    component: <NavContextMenuComponent icon={<AccountCircleIcon/>} title='Profile'/>,
-                    access: ALL_TYPES_OF_USERS
-                },
-                bookOption,
-                {
-                    name: 'wishlist',
-                    action: () => {
-                        navigate(WISHLIST);
-                        setShowNavDrawer(false);
-                    },
-                    component: <NavContextMenuComponent icon={<FavoriteIcon/>} title='Wishlist'/>,
-                    access: [CUSTOMER]
-                },
-                cartOption,
-                {
-                    name: 'adminTools',
-                    action: () => {
-                        navigate(ADMIN_TOOLS);
-                        setShowNavDrawer(false);
-                    },
-                    component: <NavContextMenuComponent icon={<HandymanIcon/>} title='Admin Tools'/>,
-                    access: [SUPERADMIN, ADMIN]
-                },
-                switchModeOption,
-                {
-                    name: 'logout',
-                    action: () => {
-                        clearAuthentication();
-                        setShowNavDrawer(false);
-                    },
-                    component: <NavContextMenuComponent icon={<LogoutIcon/>} title='Logout'/>,
-                    access: ALL_TYPES_OF_USERS
-                }
-            ].filter(filterOutUnAuthorizedOptions(userType));
-            setOptions(defaultOptions);
+    const profileOption = useMemo(() => {
+        return {
+            name: 'profile',
+            action: () => {
+                navigate(UPDATE_PROFILE);
+                setShowNavDrawer(false);
+            },
+            component: <NavContextMenuComponent icon={<AccountCircleIcon/>} title='Profile'/>,
+            access: ALL_TYPES_OF_USERS
+        };
+    }, [navigate, setShowNavDrawer]);
+
+    const wishListOption = useMemo(() => {
+        return {
+            name: 'wishlist',
+            action: () => {
+                navigate(WISHLIST);
+                setShowNavDrawer(false);
+            },
+            component: <NavContextMenuComponent icon={<FavoriteIcon/>} title='Wishlist'/>,
+            access: [CUSTOMER]
+        };
+    }, [navigate, setShowNavDrawer]);
+
+    const adminToolsOption = useMemo(() => {
+        return {
+            name: 'adminTools',
+            action: () => {
+                navigate(ADMIN_TOOLS);
+                setShowNavDrawer(false);
+            },
+            component: <NavContextMenuComponent icon={<HandymanIcon/>} title='Admin Tools'/>,
+            access: [SUPERADMIN, ADMIN]
+        };
+    }, [navigate, setShowNavDrawer]);
+
+    const logoutOption = useMemo(() => {
+        return {
+            name: 'logout',
+            action: () => {
+                clearAuthentication();
+                setShowNavDrawer(false);
+            },
+            component: <NavContextMenuComponent icon={<LogoutIcon/>} title='Logout'/>,
+            access: ALL_TYPES_OF_USERS
+        };
+    }, [clearAuthentication, setShowNavDrawer]);
+
+    const loginOption = useMemo(() => {
+        return {
+            name: 'login',
+            action: () => {
+                navigate('/auth');
+                setShowNavDrawer(false);
+            },
+            component: <NavContextMenuComponent icon={<LoginIcon/>} title='Login'/>,
+            access: []
+        };
+    }, [navigate, setShowNavDrawer]);
+
+    const populateLoggedInOptions = useCallback(() => {
+        if(!resolvedUserType) {
+            setOptions([]);
+            return;
+        }
+        const defaultOptions = [
+            homeOption, profileOption, bookOption,
+            wishListOption, cartOption, adminToolsOption,
+            switchModeOption, logoutOption
+        ].filter(filterOutUnAuthorizedOptions(resolvedUserType));
+        setOptions(defaultOptions);
+    }, [
+        resolvedUserType, bookOption, cartOption,
+        switchModeOption, homeOption, profileOption,
+        wishListOption, adminToolsOption, logoutOption
+    ]);
+
+    const populatePublicOptions = useCallback(() => {
+        setOptions([ homeOption, bookOption, cartOption, switchModeOption, loginOption ]);
+    }, [homeOption, bookOption, cartOption, switchModeOption, loginOption]);
+    
+    useEffect(() => {
+        if(resolvedUserType && isUserLoggedIn) {
+            populateLoggedInOptions();
         }
         else {
-            setOptions([
-                homeOption,
-                bookOption,
-                cartOption,
-                switchModeOption,
-                {
-                    name: 'login',
-                    action: () => {
-                        navigate('/auth');
-                        setShowNavDrawer(false);
-                    },
-                    component: <NavContextMenuComponent icon={<LoginIcon/>} title='Login'/>,
-                    access: []
-                }
-            ]);
+            populatePublicOptions();
         }
-    }, [
-        userType, clearAuthentication, navigate,
-        isUserLoggedIn, handleThemeModeSwitch, setShowNavDrawer, isLightMode
-    ]);
+    }, [ resolvedUserType, isUserLoggedIn, populateLoggedInOptions, populatePublicOptions ]);
     
     const value: NavContextValue = {
         options,
         setOptions,
         showNavDrawer,
-        setShowNavDrawer
+        setShowNavDrawer,
+        populateLoggedInOptions,
+        populatePublicOptions
     };
 
     return (
