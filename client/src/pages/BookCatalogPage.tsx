@@ -3,12 +3,12 @@ import * as R from 'ramda';
 import { getPublicBookActions } from '../actions';
 import { BookListLayout } from '../components';
 import { useAuthContext, useCartContext, type BookInCart } from '../contexts';
-import { useBooksList, useSetTabTitle, useBooksWishListMutation } from '../hooks';
+import { usePublicBooksList, useSetTabTitle, useBooksWishListMutation } from '../hooks';
 import type { Book } from '../types';
 
 
 const BookCatalogPage = () => {
-    const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
+    const { booksList, params, updateParams, priceRangeMeta } = usePublicBooksList();
     const { addToWishList, removeFromWishList } = useBooksWishListMutation();
     useSetTabTitle('Books');
     const { userType } = useAuthContext();

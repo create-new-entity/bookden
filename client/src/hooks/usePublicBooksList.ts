@@ -9,8 +9,7 @@ import type {
     Book, BooksPriceRangeMeta, PaginatedDataList
 } from '../types';
 import { useBookManagementDeepLinking } from './useBookManagementDeepLinking';
-import { useAuthContext } from '../contexts';
-import { getBooksList } from '../api';
+import { getPublicBooksList } from '../api';
 import { useBooksFiltersMeta } from './useBooksFilterMeta';
 
 
@@ -21,13 +20,10 @@ type UseBooksListReturn = {
     priceRangeMeta: BooksPriceRangeMeta | undefined;
 };
 
-export const useBooksList = (): UseBooksListReturn => {
-    const { token, hasExistingLoggedInUser } = useAuthContext();
+export const usePublicBooksList = (): UseBooksListReturn => {
     const { params: originalParams, updateParams } = useBookManagementDeepLinking();
     const { data: priceRangeMeta } = useBooksFiltersMeta();
 
-    const existingLoggedInUser = hasExistingLoggedInUser();
-    const resolvedToken = token || existingLoggedInUser.existingLoggedInData?.token;
 
     const params = {
         ...originalParams,
@@ -38,7 +34,7 @@ export const useBooksList = (): UseBooksListReturn => {
     const tagsString = tags.join(',');
     const booksList = useQuery({
         queryKey: ['booksList', search, page, sortBy, sortOrder, tagsString, priceMin, priceMax],
-        queryFn: () => getBooksList({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, resolvedToken)
+        queryFn: () => getPublicBooksList({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax })
     });
     
     return { booksList, params, updateParams, priceRangeMeta };

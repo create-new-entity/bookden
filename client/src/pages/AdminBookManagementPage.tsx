@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router-dom';
+
 import { BookListLayout } from '../components';
-import { useBooksList, useDeleteBook, useRestoreBook } from '../hooks';
+import { useAdminBooksList, useDeleteBook, useRestoreBook } from '../hooks';
 import { getAdminBookActions } from '../actions';
 import type { Book } from '../types';
 
 
 const AdminBookManagementPage = () => {
-    const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
+    const { booksList, params, updateParams, priceRangeMeta } = useAdminBooksList();
     const { deleteBookCoverAndBookData } = useDeleteBook();
     const { restoreBookMutation } = useRestoreBook();
     const navigate = useNavigate();
