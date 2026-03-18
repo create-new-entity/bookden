@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeNightIcon from '@mui/icons-material/ModeNight';
 import HomeIcon from '@mui/icons-material/Home';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -100,7 +100,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 navigate(CART);
                 setShowNavDrawer(false);
             },
-            component: <NavContextMenuComponent icon={<AddShoppingCartIcon/>} title='Cart'/>,
+            component: <NavContextMenuComponent icon={<ShoppingCartIcon/>} title='Cart'/>,
             access: [CUSTOMER]
         };
     
