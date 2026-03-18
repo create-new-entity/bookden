@@ -10,7 +10,7 @@ import type { Book, BookAction } from '../../../types';
 import {
     BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER
 } from '../../../constants';
-import { useBlobImage, type UseAdminBookCoverHook, type UsePublicBookCoverHook } from '../../../hooks';
+import { type UseAdminBookCoverHook, type UsePublicBookCoverHook } from '../../../hooks';
 
 
 
