@@ -57,7 +57,7 @@ const getStyles = (_theme: Theme): Styles => {
 };
 
 
-const CartItemComponent = (props: CartItem) => {
+const CartItemDesktop = (props: CartItem) => {
     const { book, quantity } = props;
     const theme = useTheme();
     const styles = getStyles(theme);
@@ -124,4 +124,4 @@ const CartItemComponent = (props: CartItem) => {
     );
 };
 
-export default CartItemComponent;
+export default CartItemDesktop;

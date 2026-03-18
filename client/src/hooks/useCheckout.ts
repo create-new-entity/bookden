@@ -8,7 +8,7 @@ import type { AxiosErrorResponse, Order } from '../types';
 import { AUTH, HOME } from '../constants';
 
 
-const useCheckout = () => {
+export const useCheckout = () => {
     const { token, hasExistingLoggedInUser } = useAuthContext();
     const navigate = useNavigate();
     const { handleShowNotification } = useNotificationContext(); 
@@ -38,5 +38,3 @@ const useCheckout = () => {
 
     return { orderMutation };
 };
-
-export default useCheckout;

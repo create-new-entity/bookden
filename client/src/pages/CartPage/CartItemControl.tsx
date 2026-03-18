@@ -5,6 +5,7 @@ import AddActionIcon from '../../components/app/ActionIcons/AddActionIcon';
 import useCartContext, { type BookInCart } from '../../contexts/CartContext';
 import { CustomTextField } from '../../components';
 import DeleteActionIcon from '../../components/app/ActionIcons/DeleteActionIcon';
+import { useResponsive } from '../../hooks';
 
 
 type Styles = {
@@ -30,6 +31,8 @@ const CartItemControl = (props: CartItemControlProps) => {
     const theme = useTheme();
     const styles = getStyles(theme);
     const { addToCart, reduceFromCart, removeFromCart, updateQuantity } = useCartContext();
+    const { isMobile } = useResponsive();
+
     return (
         <Stack
             direction={'row'}
@@ -40,16 +43,19 @@ const CartItemControl = (props: CartItemControlProps) => {
                 onClick={() => reduceFromCart(book)}
                 tooltipTitle='Remove from cart'
             />
-            <CustomTextField
-                sx={styles.quantityTestField}
-                onChange={(event) => {
-                    const numberQuantity = parseInt(event.target.value, 10);
-                    const isValidQuantity = !(isNaN(numberQuantity) || numberQuantity < 1);
-                    if(isValidQuantity) {
-                        updateQuantity(book, numberQuantity);
-                    }
-                }}
-            />
+            {
+                !isMobile &&
+                <CustomTextField
+                    sx={styles.quantityTestField}
+                    onChange={(event) => {
+                        const numberQuantity = parseInt(event.target.value, 10);
+                        const isValidQuantity = !(isNaN(numberQuantity) || numberQuantity < 1);
+                        if(isValidQuantity) {
+                            updateQuantity(book, numberQuantity);
+                        }
+                    }}
+                />
+            }
             <AddActionIcon
                 onClick={() => addToCart(book)}
                 tooltipTitle='Add to cart'
