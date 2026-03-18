@@ -5,7 +5,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import * as R from 'ramda';
 
-import { useBook, useBookCover } from '../../hooks';
+import {
+    type UseAdminBookCoverHook, type UseAdminBookHook,
+    type UsePublicBookCoverHook, type UsePublicBookHook
+} from '../../hooks';
 import {
     DEFAULT_BORDER_RADIUS, DEFAULT_GAP, LANGUAGE_LABEL_MAP,
     MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER
@@ -14,6 +17,7 @@ import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants
 import { useAuthContext, useCartContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
+
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -51,10 +55,12 @@ const getStyles = (_theme: Theme): Styles => {
 
 type BookPageDesktopProps = {
     bookId: number;
+    useBook: UsePublicBookHook | UseAdminBookHook;
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 
 const BookPageDesktop = (props: BookPageDesktopProps) => {
-    const { bookId } = props;
+    const { bookId, useBook, useBookCover } = props;
 
     const { userType } = useAuthContext();
     const navigate = useNavigate();

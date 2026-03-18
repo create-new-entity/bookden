@@ -6,7 +6,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import { useCartContext } from '../../contexts';
-import CartItemMobile from './CardItemMobile';
+import CartItemMobile from './CartItemMobile';
 import { BOOKS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
 import { useSetTabTitle, useCheckout } from '../../hooks';
 

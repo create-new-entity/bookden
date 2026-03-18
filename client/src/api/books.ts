@@ -5,13 +5,34 @@ import type { PaginatedDataList, Book, BooksPriceRangeMeta } from '../types';
 import { type BookSearchParams, type CreateUpdateBookData } from '../validations';
 import { removeEmptyValues } from '../utility';
 
-export const getBook = async (bookId: number, token?: string) => {
+
+/*
+    Note to future self:
+
+    "getPublicBook":
+    means get the book that is publicly available to all users.
+    Not deleted. So no authentication is required.
+*/
+
+export const getPublicBook = async (bookId: number) => {
+    const response = await axios.get(`${bookUrl}/${bookId}/public`);
+    return response.data;
+};
+
+
+/*
+    "getAdminBook":
+    means get the book that may or may not be deleted.
+    Even if it was deleted, it will be returned, if the token
+    represents an admin or superadmin.
+*/
+export const getAdminBook = async (bookId: number, token: string) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
-    const response = await axios.get(`${bookUrl}/${bookId}`, (token ? requestConfig : {}));
+    const response = await axios.get(`${bookUrl}/${bookId}/admin`, requestConfig);
     return response.data;
 };
 
@@ -78,11 +99,27 @@ export const removeBookFromWishlist = async (bookId: number, token: string) => {
     await axios.delete(`${bookUrl}/${bookId}/wishlist`, requestConfig);
 };
 
-export const getBookCover = async (bookId: number) => {
+/*
+    Note to future self:
+    Similar reasoning as "getPublicBook" and "getAdminBook" mentioned above.
+*/
+
+export const getPublicBookCover = async (bookId: number) => {
     const requestConfig: AxiosRequestConfig = {
         responseType: 'blob'
     };
-    const response = await axios.get(`${bookUrl}/${bookId}/cover`, requestConfig);
+    const response = await axios.get(`${bookUrl}/${bookId}/cover/public`, requestConfig);
+    return response.data;
+};
+
+export const getAdminBookCover = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        responseType: 'blob'
+    };
+    const response = await axios.get(`${bookUrl}/${bookId}/cover/admin`, requestConfig);
     return response.data;
 };
 

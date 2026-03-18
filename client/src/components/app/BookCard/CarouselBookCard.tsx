@@ -5,7 +5,7 @@ import {
     type SxProps, type Theme
 } from '@mui/material';
 
-import { getBookCover } from '../../../api';
+import { getPublicBookCover } from '../../../api';
 import { useBlobImage, useResponsive } from '../../../hooks';
 import type { Book } from '../../../types';
 import { BORDER_RADIUS, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
@@ -48,7 +48,7 @@ const CarouselBookCard = (props: CarouselBookCardProps) => {
 
     const blobOptions = useMemo(() => ({
         queryKey: ['bookCover', book.bookId] as const,
-        queryFn: () => getBookCover(book.bookId),
+        queryFn: () => getPublicBookCover(book.bookId),
         enabled: !!book.bookId,
     }), [book.bookId]);
     const { objectUrl } = useBlobImage(blobOptions);

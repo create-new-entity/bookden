@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 
 import useCartContext from '../../contexts/CartContext';
 import { BOOKS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
-import CartItemDesktop from './CardItemDesktop';
+import CartItemDesktop from './CartItemDesktop';
 import { useCheckout } from '../../hooks';
 
 

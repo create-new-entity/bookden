@@ -10,7 +10,7 @@ import {
     DEFAULT_BORDER_RADIUS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR,
     PLACE_HOLDER_BOOK_COVER
 } from '../../constants';
-import { useBookCover } from '../../hooks';
+import { usePublicBookCover } from '../../hooks';
 import CartItemControl from './CartItemControl';
 import type { CartItem } from '../../contexts';
 import { roundTo2 } from '../../utility';
@@ -61,7 +61,7 @@ const CartItemDesktop = (props: CartItem) => {
     const { book, quantity } = props;
     const theme = useTheme();
     const styles = getStyles(theme);
-    const { bookCoverBlob } = useBookCover(book.bookId);
+    const { bookCoverBlob } = usePublicBookCover(book.bookId);
 
     return (
         <Stack

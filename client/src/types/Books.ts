@@ -36,7 +36,15 @@ export type BooksPriceRangeMeta = {
 
 export type LanguageCode = typeof LANGUAGE_CODES[number];
 
-export type BooksPageMode = 'admin' | 'customer'
+
+/*
+    Depending on which mode the page is in,
+    some actions will be shown or hidden.
+    
+    For example, in the admin mode, the user can edit the book,
+    but in the customer mode, the user can only view the book and so on.
+*/
+export type PageMode = 'admin' | 'customer'
 
 
 

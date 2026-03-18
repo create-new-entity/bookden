@@ -10,8 +10,7 @@ import type { Book, BookAction } from '../../../types';
 import {
     BOOK_CARD_PADDING, DEFAULT_GAP, ONE_TENTH_OF_DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER
 } from '../../../constants';
-import { getBookCover } from '../../../api';
-import { useBlobImage } from '../../../hooks';
+import { useBlobImage, type UseAdminBookCoverHook, type UsePublicBookCoverHook } from '../../../hooks';
 
 
 
@@ -84,16 +83,12 @@ const getStyles = (_theme: Theme): Styles => {
 type BookCardDesktopProps = {
     item: Book;
     getActions: (book: Book) => BookAction[];
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 
-const BookCardDesktop = ({ item, getActions }: BookCardDesktopProps) => {
+const BookCardDesktop = ({ item, getActions, useBookCover }: BookCardDesktopProps) => {
     const book = item;
-    const blobOptions = {
-        queryKey: ['bookCover', book.bookId],
-        queryFn: () => getBookCover(book.bookId),
-        enabled: !!book.bookId,
-    };
-    const { objectUrl } = useBlobImage(blobOptions);
+    const { bookCoverBlob } = useBookCover(book.bookId);
     const theme = useTheme();
     const actions = getActions(book);
 
@@ -141,10 +136,10 @@ const BookCardDesktop = ({ item, getActions }: BookCardDesktopProps) => {
                 >
                     <Box sx={styles.cardMedia}>
                         {
-                            objectUrl ? 
+                            bookCoverBlob.objectUrl ? 
                                 <CardMedia
                                     component='img'
-                                    image={objectUrl}
+                                    image={bookCoverBlob.objectUrl}
                                 />
                                 :
                                 <CardMedia
