@@ -113,16 +113,19 @@ const NavBar = () => {
                         alignItems={'center'}
                         gap={1}
                     >
-                        <Tooltip title='Cart'>
-                            <Badge badgeContent={totalNumberOfBooksInCart} color='primary'>
-                                <IconButton
-                                    component={Link}
-                                    to={CART}
-                                >
-                                    <ShoppingCartIcon />
-                                </IconButton>
-                            </Badge>
-                        </Tooltip>
+                        {
+                            !isAdminOrSuperAdmin &&
+                            <Tooltip title='Cart'>
+                                <Badge badgeContent={totalNumberOfBooksInCart} color='primary'>
+                                    <IconButton
+                                        component={Link}
+                                        to={CART}
+                                    >
+                                        <ShoppingCartIcon />
+                                    </IconButton>
+                                </Badge>
+                            </Tooltip>
+                        }
                         {
                             !isLoggedIn && !isXs &&
                             <ThemeSwitchIconOnly/>
