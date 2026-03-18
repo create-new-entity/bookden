@@ -38,7 +38,8 @@ const getStyles = (_theme: Theme): Styles => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            width: '100%'
+            width: '100%',
+            textAlign: 'center'
         }
     };
 };
