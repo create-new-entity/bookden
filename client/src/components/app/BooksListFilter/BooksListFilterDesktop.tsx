@@ -90,14 +90,14 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
     const resolvedBookListOptions = useMemo(() => {
-        if(!userType) {
-            return [];
-        }
         return BOOKS_LIST_SORT_BY_OPTIONS.filter((option) => {
             const { access } = option;
             if(!access) {
                 // If access is not defined, it means the option is accessible to all user types.
                 return true;
+            }
+            if(!userType) {
+                return false;
             }
             return access.includes(userType);
         });
