@@ -1,13 +1,17 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import {
-    Box, Tab, Typography,
+    Box, IconButton, Stack, Tab, Typography,
     useMediaQuery, useTheme, type SxProps, type Theme
 } from '@mui/material';
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Home } from '@mui/icons-material';
 
 import LogInTab from './LogInTab';
 import SignUpTab from './SignUpTab';
 import { useThemeModeContext } from '../../contexts';
+import { HOME } from '../../constants';
+
 
 type Styles = {
     rootContainer: SxProps<Theme>;
@@ -27,8 +31,7 @@ const getStyles = (_theme: Theme): Styles => {
             justifyContent: 'center',
             alignItems: 'center',
     
-            padding: '0.5rem',
-            marginTop: '-5rem'
+            padding: '0.5rem'
         },
     
         tabPanelsContainer: {
@@ -55,6 +58,7 @@ const AuthenticationTabs = () => {
     const styles = getStyles(theme);
     const { isLightMode } = useThemeModeContext();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const navigate = useNavigate();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
@@ -87,6 +91,23 @@ const AuthenticationTabs = () => {
                     <TabPanel sx={styles.tabPanel} value={'logIn'}><LogInTab/></TabPanel>
                     <TabPanel sx={styles.tabPanel} value={'signUp'}><SignUpTab/></TabPanel>
                 </Box>
+                <Stack
+                    sx={{ marginTop: '1rem' }}
+                    direction={'row'}
+                    justifyContent={'flex-start'}
+                    alignItems={'center'}
+                >
+                    <Link to={HOME}>
+                        <Typography variant='body1' color='textSecondary'>
+                            Back to Homepage
+                        </Typography>
+                    </Link>
+                    <IconButton
+                        onClick={() => navigate(HOME)}
+                    >
+                        <Home />
+                    </IconButton>
+                </Stack>
             </Box>
         </TabContext>
     );

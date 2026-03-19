@@ -7,8 +7,9 @@ import {
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
+
 import type { BookSearchParams, BookSearchParamsWithTagsArray } from '../../../validations';
-import type { BooksPageMode, BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
+import type { PageMode, BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import {
     ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, CREATE_BOOK, MARGIN_TOP_TO_AVOID_NAV_BAR,
     MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
@@ -17,7 +18,7 @@ import {
 import { SearchInput } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
-import { useAuthContext } from '../../../contexts';
+import { useAuthContext } from '../../../contexts'; 
 import BookTagsSelect from './BookTagsSelect';
 import BooksPriceFilter from './BooksPriceFilter';
 import { type UpdateMode } from '../../../hooks';
@@ -67,7 +68,7 @@ const getStyles = (theme: Theme): Styles => {
 
 
 type BooksListFilterDesktopProps = {
-    mode: BooksPageMode;
+    mode: PageMode;
     tags: string[];
     updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
     priceRangeMeta: BooksPriceRangeMeta;
@@ -89,14 +90,14 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
 
     const resolvedBookListOptions = useMemo(() => {
-        if(!userType) {
-            return [];
-        }
         return BOOKS_LIST_SORT_BY_OPTIONS.filter((option) => {
             const { access } = option;
             if(!access) {
                 // If access is not defined, it means the option is accessible to all user types.
                 return true;
+            }
+            if(!userType) {
+                return false;
             }
             return access.includes(userType);
         });

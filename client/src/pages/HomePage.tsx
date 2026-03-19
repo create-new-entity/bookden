@@ -1,5 +1,8 @@
 
-import { Divider, Stack, useTheme, type SxProps, type Theme } from '@mui/material';
+import {
+    Divider, Stack, Typography,
+    useTheme, type SxProps, type Theme
+} from '@mui/material';
 
 import { BooksCarousel, HeroBannerCarousel } from '../components';
 import { useHomePageBookLists, useResponsive, useSetTabTitle } from '../hooks';
@@ -16,6 +19,8 @@ const getStyles = (_theme: Theme, { isXs }: { isXs: boolean }): Styles => {
         }
     };
 };
+
+const GapBetWeenCarousels = '2.5rem';
 
 const HomePage = () => {
 
@@ -34,8 +39,11 @@ const HomePage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
                 sx={styles.rootStack}
-                gap={'4.5rem'}
+                gap={GapBetWeenCarousels}
             >
+                <Typography variant='h4'>
+                    Welcome to BookDen 📚
+                </Typography>
                 <HeroBannerCarousel/>
                 <Divider sx={{ width: '100%' }} />
                 {

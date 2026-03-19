@@ -11,17 +11,25 @@ import type { UpdateUserFormData } from '../validations';
 import { AUTH, HOME, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 export type UseUpdateProfileReturn = {
-    mutation: UseMutationResult<AxiosResponse, AxiosErrorResponse, UpdateUserFormData>;
+    mutation: UseMutationResult<AxiosResponse | null, AxiosErrorResponse, UpdateUserFormData>;
 };
 
 export const useUpdateProfile = (): UseUpdateProfileReturn => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { handleShowNotification } = useNotificationContext();
-    const updateProfileMutation = useMutation<AxiosResponse, AxiosErrorResponse, UpdateUserFormData>({
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
+    const updateProfileMutation = useMutation<AxiosResponse | null, AxiosErrorResponse, UpdateUserFormData>({
         mutationFn: (updateUserPayload: UpdateUserFormData) => {
-            return updateProfile(updateUserPayload, token);
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in to update your profile. Session expired or user deleted. Please try again.');
+                return Promise.resolve(null);
+            }
+            return updateProfile(updateUserPayload, resolvedToken);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({

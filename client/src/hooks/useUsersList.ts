@@ -17,16 +17,23 @@ type UseUsersListReturn = {
 };
 
 export const useUsersList = (): UseUsersListReturn => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const { params, updateParams } = useUserManagementDeepLinking();
     const navigate = useNavigate();
     const { handleShowNotification } = useNotificationContext();
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
 
     const { search, page, sortBy, sortOrder, userType } = params;
 
     const queryFn = () => {
         const userTypeQuery = userType === 'all' ? '' : userType;
-        return getUsersList({ search, page, sortBy, sortOrder, userType: userTypeQuery }, token);
+        if(!resolvedToken) {
+            navigate(AUTH);
+            handleShowNotification('You need to be logged in as a superadmin to get users list. Session expired or user deleted. Please try again.');
+            return Promise.resolve({ data: [], pagination: { page: 1, limit: 10, total: 0, totalPages: 0, hasNextPage: false, hasPreviousPage: false } });
+        }
+        return getUsersList({ search, page, sortBy, sortOrder, userType: userTypeQuery }, resolvedToken);
     };
 
     const usersList = useQuery<PaginatedDataList<User>, AxiosErrorResponse>({

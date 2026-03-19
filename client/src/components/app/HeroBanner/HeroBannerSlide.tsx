@@ -1,7 +1,7 @@
 
 
 import {
-    Box, useTheme,
+    Box, Paper, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
 
@@ -46,14 +46,16 @@ const HeroBannerSlide = ({ item }: Props) => {
 
     const styles = getStyles(theme, isSm, isXs);
     return (
-        <Box sx={styles.bannerWrapper}>
-            <Box
-                component="img"
-                src={item.image}
-                alt=""
-                sx={styles.bannerImage}
-            />
-        </Box>
+        <Paper>
+            <Box sx={styles.bannerWrapper}>
+                <Box
+                    component="img"
+                    src={item.image}
+                    alt=""
+                    sx={styles.bannerImage}
+                />
+            </Box>
+        </Paper>
     );
 };
 

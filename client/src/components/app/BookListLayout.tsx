@@ -4,7 +4,7 @@ import { Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/mate
 import { useRef, useState } from 'react';
 
 import type {
-    Book, BookAction, BooksPageMode,
+    Book, BookAction, PageMode,
     BooksPriceRangeMeta, PaginatedDataList
 } from '../../types';
 import type {
@@ -18,7 +18,10 @@ import {
     SUPERADMIN, CONTENT_MARGIN, DEFAULT_GAP
 } from '../../constants';
 import AddActionIcon from './ActionIcons/AddActionIcon';
-import { useResponsive } from '../../hooks';
+import {
+    useResponsive, type UseAdminBookCoverHook, type UsePublicBookCoverHook,
+    usePublicBookCover, useAdminBookCover
+} from '../../hooks';
 import { BooksListFilterDesktop, BooksListFilterMobile } from './BooksListFilter';
 import type { ViewSelectorProps } from './ViewSelector';
 import { CustomModal, CustomPagination, type CustomModalRef } from '../custom';
@@ -72,7 +75,7 @@ const getStyles = (theme: Theme): Styles => {
 
 
 type BookListLayoutProps = {
-    mode: BooksPageMode;
+    mode: PageMode;
     getActions: (book: Book) => BookAction[];
     booksList: UseQueryResult<PaginatedDataList<Book>, Error>;
     params: BookSearchParamsWithTagsArray;
@@ -91,6 +94,8 @@ const BookListLayout = (props: BookListLayoutProps) => {
     const { isDesktop, isMobile } = useResponsive();
     const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
 
+    const useBookCover = mode === 'admin' ? useAdminBookCover : usePublicBookCover;
+
     const styles = getStyles(theme);
     const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
     
@@ -105,6 +110,9 @@ const BookListLayout = (props: BookListLayoutProps) => {
     const openFilterModal = () => {
         modalRef.current?.openModal();
     };
+
+    const showFirstPagination = booksList.data && booksList.data.pagination.totalPages > 0;
+    const showSecondPagination = booksList.data && booksList.data.pagination.totalPages > 1;
 
     return (
         <>
@@ -156,23 +164,23 @@ const BookListLayout = (props: BookListLayoutProps) => {
                     </Typography>
                 }
                 {
-                    booksList.data && booksList.data.pagination.totalPages > 0 &&
+                    showSecondPagination &&
                     <CustomPagination<Book>
                         sx={styles.topPagination}
                         paginatedDataList={booksList.data}
                         onPageChange={onPageChange}
                     />
                 }
-                <Items<Book, { getActions: (book: Book) => BookAction[] }>
+                <Items<Book, { getActions: (book: Book) => BookAction[], useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook }>
                     sx={styles.items}
                     items={booksList.data?.data || []}
-                    itemProps={{ getActions }}
+                    itemProps={{ getActions, useBookCover }}
                     ItemComponent={(!isMobile && selectedView === GRID_VIEW) ? BookCardDesktop : BookCardMobile}
                     getKey={(book) => book.bookId}
                     viewOption={selectedView}
                 />
                 {
-                    booksList.data && booksList.data.pagination.totalPages > 1 &&
+                    showFirstPagination &&
                     <CustomPagination<Book>
                         paginatedDataList={booksList.data}
                         onPageChange={onPageChange}

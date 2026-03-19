@@ -33,7 +33,10 @@ export const canEditBook = (userType?: UserType) => {
 };
 
 export const canBuyBook = (userType?: UserType) => {
-    return userType === CUSTOMER;
+    if(userType) {
+        return userType === CUSTOMER;
+    }
+    return true; // We want to show add to cart button to all users, even if they are not logged in
 };
 
 
@@ -50,4 +53,5 @@ export const isTokenExpired = (token: string) => {
         return true;
     }
 };
-  
+
+export const roundTo2 = (value: number) => Math.round(value * 100) / 100;

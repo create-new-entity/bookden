@@ -8,3 +8,4 @@ export * from './Pagination';
 export * from './Users';
 export * from './Books';
 export * from './UtilTypes';
+export * from './Orders';

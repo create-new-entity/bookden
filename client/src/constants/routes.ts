@@ -13,6 +13,7 @@ export const CREATE_BOOK = '/create-book' as const;
 export const UPDATE_BOOK = '/books/:bookId/update' as const;
 export const BOOKS = '/books' as const;
 export const WISHLIST = '/wishlist' as const;
+export const CART = '/cart' as const;
 export const UNAUTHORIZED = '/unauthorized' as const;
 export const NOT_FOUND = '/not-found' as const;
 

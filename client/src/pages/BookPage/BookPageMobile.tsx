@@ -1,18 +1,22 @@
 import {
     Button, Chip, Container, Paper,
-    Stack, Typography, useTheme,
+    Stack, Tooltip, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import * as R from 'ramda';
 
-import { useBook, useBookCover } from '../../hooks';
+import {
+    type UseAdminBookCoverHook, type UseAdminBookHook,
+    type UsePublicBookCoverHook, type UsePublicBookHook
+} from '../../hooks';
 import {
     DEFAULT_BORDER_RADIUS, DEFAULT_GAP,
     LANGUAGE_LABEL_MAP,
     MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER
 } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
-import { useAuthContext } from '../../contexts';
+import { useAuthContext, useCartContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
 
@@ -27,13 +31,16 @@ type Styles = {
 const getStyles = (_theme: Theme): Styles => {
     return {
         rootStack: {
-            marginTop: `calc(${MARGIN_TOP_TO_AVOID_NAV_BAR} / 2)`
+            marginTop: `calc(${MARGIN_TOP_TO_AVOID_NAV_BAR} / 2)`,
+            marginBottom: '1rem'
         },
         bookTitle: {
+            width: '100%',
             overflow: 'hidden',
-            whiteSpace: 'wrap',
             marginLeft: '1rem',
-            marginRight: '1rem'
+            marginRight: '1rem',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
         },
         bookCoverContainer: {
             width: `${BOOK_COVER_WIDTH_MOBILE}rem`,
@@ -51,22 +58,36 @@ const getStyles = (_theme: Theme): Styles => {
 
 type BookPageMobileProps = {
     bookId: number;
+    useBook: UsePublicBookHook | UseAdminBookHook;
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 const BookPageMobile = (props: BookPageMobileProps) => {
-    const { bookId } = props;
+    const { bookId, useBook, useBookCover } = props;
     
     const { userType } = useAuthContext();
     const navigate = useNavigate();
     const theme = useTheme();
     const bookQuery = useBook(bookId);
     const { bookCoverBlob } = useBookCover(bookId);
+    const { isInCart, addToCart, removeFromCart } = useCartContext();
 
     const showEditBookButton = canEditBook(userType);
-    const showAddToCartButton = canBuyBook(userType);
+    const showAddToCartButton = canBuyBook(userType) && !isInCart(bookId);
+    const showRemoveFromCartButton = canBuyBook(userType) && isInCart(bookId);
     const styles = getStyles(theme);
 
     const handleEditBook = () => {
         navigate(`/books/${bookId}/update`);
+    };
+
+    const handleAddToCart = () => {
+        if(!bookQuery.data) return;
+        addToCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
+    };
+
+    const handleRemoveFromCart = () => {
+        if(!bookQuery.data) return;
+        removeFromCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
     };
 
     return (
@@ -84,9 +105,11 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                 >
                     <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                 </Paper>
-                <Typography variant='body1' sx={styles.bookTitle}>
-                    {bookQuery.data?.title} by {bookQuery.data?.authors?.join(', ')}
-                </Typography>
+                <Tooltip title={bookQuery.data?.title}>
+                    <Typography variant='body1' sx={styles.bookTitle}>
+                        {bookQuery.data?.title} by {bookQuery.data?.authors?.join(', ')}
+                    </Typography>
+                </Tooltip>
                 <Stack
                     direction={'row'}
                     justifyContent={'flex-start'}
@@ -98,8 +121,15 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                     </Typography>
                     {
                         showAddToCartButton && (
-                            <Button variant='contained' color='primary'>
+                            <Button variant='contained' color='primary' onClick={handleAddToCart}>
                                 Add to cart
+                            </Button>
+                        )
+                    }
+                    {
+                        showRemoveFromCartButton && (
+                            <Button variant='contained' color='primary' onClick={handleRemoveFromCart}>
+                                Remove from cart
                             </Button>
                         )
                     }

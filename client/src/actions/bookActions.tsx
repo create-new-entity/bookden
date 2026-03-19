@@ -1,9 +1,14 @@
+import * as R from 'ramda';
+
 import DeleteActionIcon from '../components/app/ActionIcons/DeleteActionIcon';
 import EditActionIcon from '../components/app/ActionIcons/EditActionIcon';
 import RestoreActionButton from '../components/app/ActionIcons/RestoreActionButton';
 import AddToWishlistAction from '../components/app/ActionIcons/AddToWishlistAction';
 import RemoveFromWishlistAction from '../components/app/ActionIcons/RemoveFromWishlistAction';
+import AddToCartAction from '../components/app/ActionIcons/AddToCartAction';
+import RemoveFromCartAction from '../components/app/ActionIcons/RemoveFromCartAction';
 import type { Book, BookAction } from '../types';
+import type { BookInCart } from '../contexts';
 
 type BookActions = {
     onEdit: (bookId: number) => void;
@@ -12,6 +17,9 @@ type BookActions = {
 
     onAddToWishlist: (bookId: number) => void;
     onRemoveFromWishlist: (bookId: number) => void;
+
+    onAddToCart: (book: BookInCart) => void;
+    onRemoveFromCart: (book: BookInCart) => void;
 };
 
 export type AdminBookActionHandlers = Pick<BookActions, 'onEdit' | 'onDelete' | 'onRestore'>;
@@ -54,6 +62,8 @@ const createRestoreBookAction = (
         IconComponent: RestoreActionButton
     };
 };
+
+
 
 
 export const getAdminBookActions = (
@@ -100,15 +110,43 @@ const createRemoveFromWishlistAction = (
     };
 };
 
+const createAddToCartAction = (
+    book: Book,
+    onAddToCart: BookActions['onAddToCart']
+): BookAction => {
+    return {
+        id: `add-to-cart-${book.bookId}`,
+        onClick: () => onAddToCart(R.pick(['bookId', 'title', 'price'], book)),
+        toolTipTitle: 'Add to Cart',
+        IconComponent: AddToCartAction
+    };
+};
+
+const createRemoveFromCartAction = (
+    book: Book,
+    onRemoveFromCart: BookActions['onRemoveFromCart']
+): BookAction => {
+    return {
+        id: `remove-from-cart-${book.bookId}`,
+        onClick: () => onRemoveFromCart(R.pick(['bookId', 'title', 'price'], book)),
+        toolTipTitle: 'Remove from Cart',
+        IconComponent: RemoveFromCartAction
+    };
+};
+
 export const getPublicBookActions = (
     book: Book,
     handlers: {
         onAddToWishlist: BookActions['onAddToWishlist'];
         onRemoveFromWishlist: BookActions['onRemoveFromWishlist'];
-    }
+        onAddToCart: BookActions['onAddToCart'];
+        onRemoveFromCart: BookActions['onRemoveFromCart'];
+    },
+    isInCart: boolean
 ): BookAction[] => {
     return [
-        ...(book.isWishlisted ? [ createRemoveFromWishlistAction(book, handlers.onRemoveFromWishlist) ] : [ createAddToWishlistAction(book, handlers.onAddToWishlist) ])
+        ...(book.isWishlisted ? [ createRemoveFromWishlistAction(book, handlers.onRemoveFromWishlist) ] : [ createAddToWishlistAction(book, handlers.onAddToWishlist) ]),
+        ...(isInCart ? [ createRemoveFromCartAction(book, handlers.onRemoveFromCart) ] : [ createAddToCartAction(book, handlers.onAddToCart) ])
     ];
 };
 

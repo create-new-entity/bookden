@@ -3,7 +3,7 @@ import {
     addBookToWishlist, adminUsersSeedData, clearDB,
     createSomeSeedBooks, createSomeSeedUsers,
     customerUsersSeedData, deleteBook, EXPECT_200,
-    EXPECT_403, EXPECT_404, getBooks, getWishList, login,
+    EXPECT_403, EXPECT_404, getBooksAdmin, getBooksPublic, getWishList, login,
     removeBookFromWishlist,
     seedSuperAdminUser
 } from '../testUtils';
@@ -36,7 +36,7 @@ describe('Books Wish List tests', () => {
         const customerUser = customerUsersSeedData[0];
         const token = await login({ username: customerUser.username, password: customerUser.password });
         
-        response = await getBooks(EXPECT_200, token, 'page=1&limit=10');
+        response = await getBooksPublic(EXPECT_200, 'page=1&limit=10');
         expect(response.status).toBe(EXPECT_200);
         const books = response.body.data;
         const book = books[0];
@@ -54,7 +54,7 @@ describe('Books Wish List tests', () => {
         const customerUser = customerUsersSeedData[0];
         const token = await login({ username: customerUser.username, password: customerUser.password });
 
-        response = await getBooks(EXPECT_200, token, 'page=1&limit=10');
+        response = await getBooksPublic(EXPECT_200, 'page=1&limit=10');
         expect(response.status).toBe(EXPECT_200);
         const books = response.body.data;
         const book = books[0];
@@ -115,7 +115,7 @@ describe('Books Wish List tests', () => {
         const superAdminUser = seedSuperAdminUser;
         const superAdminToken = await login({ username: superAdminUser.username, password: superAdminUser.password });
 
-        const books = await getBooks(EXPECT_200, superAdminToken, 'page=1&limit=10');
+        const books = await getBooksAdmin(EXPECT_200, superAdminToken, 'page=1&limit=10');
         expect(books.status).toBe(EXPECT_200);
         const booksData = books.body.data;
         const book = booksData[0];
@@ -136,7 +136,7 @@ describe('Books Wish List tests', () => {
         const customerUser = customerUsersSeedData[0];
         const customerToken = await login({ username: customerUser.username, password: customerUser.password });
 
-        const books = await getBooks(EXPECT_200, superAdminToken, 'page=1&limit=10');
+        const books = await getBooksAdmin(EXPECT_200, superAdminToken, 'page=1&limit=10');
         expect(books.status).toBe(EXPECT_200);
         const booksData = books.body.data;
         const book = booksData[0];

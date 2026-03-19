@@ -5,8 +5,7 @@ import {
     type Theme, type SxProps, Chip
 } from '@mui/material';
 
-import { getBookCover } from '../../../api';
-import { useBlobImage, useResponsive } from '../../../hooks';
+import { useResponsive, type UseAdminBookCoverHook, type UsePublicBookCoverHook } from '../../../hooks';
 import type { Book, BookAction } from '../../../types';
 import { DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
 import { useAuthContext } from '../../../contexts';
@@ -89,7 +88,7 @@ const getStyles = (theme: Theme): Styles => {
         },
         synopsis: {
             overflow: 'auto',
-            height: '4rem'
+            height: '5rem'
         }
     };
 };
@@ -97,17 +96,13 @@ const getStyles = (theme: Theme): Styles => {
 type BookCardMobileProps = {
     item: Book;
     getActions: (book: Book) => BookAction[];
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 
 const BookCardMobile = (props: BookCardMobileProps) => {
-    const { item, getActions } = props;
+    const { item, getActions, useBookCover } = props;
     const book = item;
-    const blobOptions = {
-        queryKey: ['bookCover', book.bookId],
-        queryFn: () => getBookCover(book.bookId),
-        enabled: !!book.bookId,
-    };
-    const { objectUrl } = useBlobImage(blobOptions);
+    const { bookCoverBlob } = useBookCover(book.bookId);
     const theme = useTheme();
     const { isXs } = useResponsive();
 
@@ -137,10 +132,10 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                 >
                     <Box sx={styles.cardMedia}>
                         {
-                            objectUrl ? 
+                            bookCoverBlob.objectUrl ? 
                                 <CardMedia
                                     component='img'
-                                    image={objectUrl}
+                                    image={bookCoverBlob.objectUrl}
                                 />
                                 :
                                 <CardMedia
@@ -179,18 +174,25 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                                         <Chip label='Deleted' color='error' size='small' />
                                     }
                                     <Box className='book-card-actions'>
-                                        {
-                                            actions.map((action) => {
-                                                const { id, onClick, toolTipTitle, IconComponent } = action;
-                                                return (
-                                                    <IconComponent
-                                                        key={id}
-                                                        onClick={onClick}
-                                                        tooltipTitle={toolTipTitle}
-                                                    />
-                                                );
-                                            })
-                                        }
+                                        <Stack
+                                            direction={'row'}
+                                            justifyContent={'flex-start'}
+                                            alignItems={'center'}
+                                            gap={`${DEFAULT_GAP / 4}px`}
+                                        >
+                                            {
+                                                actions.map((action) => {
+                                                    const { id, onClick, toolTipTitle, IconComponent } = action;
+                                                    return (
+                                                        <IconComponent
+                                                            key={id}
+                                                            onClick={onClick}
+                                                            tooltipTitle={toolTipTitle}
+                                                        />
+                                                    );
+                                                })
+                                            }
+                                        </Stack>
                                     </Box>
                                 </Stack>
                             }

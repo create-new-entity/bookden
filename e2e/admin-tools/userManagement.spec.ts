@@ -5,11 +5,23 @@
 import { test, expect } from '@playwright/test';
 import { ADMIN_TOOLS_PAGE_URL, AUTH_PAGE_URL, HOME_PAGE_URL, USER_MANAGEMENT_PAGE_URL } from '../constants';
 
+
 test.describe('Filtering in user management page', () => {
-  test('User can log in successfully', async ({ page }) => {
+  test('User can filter users by sort order', async ({ page }) => {
 
     // Login as superadmin
     await page.goto(AUTH_PAGE_URL);
+
+    // If already logged in, log out first
+    if (!(await page.getByTestId('login-username').isVisible().catch(() => false))) {
+      await page.goto(HOME_PAGE_URL);
+
+      await page.getByTestId('user-avatar').click();
+      await page.getByTestId('logout-button').click();
+
+      await page.goto(AUTH_PAGE_URL);
+    }
+
     await expect(page.getByTestId('login-username')).toBeVisible();
     await expect(page.getByTestId('login-password')).toBeVisible();
     await expect(page.getByTestId('login-submit')).toBeVisible();

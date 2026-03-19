@@ -15,3 +15,4 @@ export * from './FilterActionIcon';
 export * from './AddActionIcon';
 export * from './AddToWishlistAction';
 export * from './RemoveFromWishlistAction';
+export * from './RemoveActionIcon';

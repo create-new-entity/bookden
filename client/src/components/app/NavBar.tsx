@@ -1,17 +1,19 @@
 import {
-    AppBar, Avatar, Box,
+    AppBar, Avatar, Badge, Box,
     IconButton, Menu, MenuItem,
-    Stack, Toolbar, Typography, useTheme, type Theme
+    Stack, Toolbar, Tooltip, Typography, useTheme, type Theme
 } from '@mui/material';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-import { useAuthContext, useNavContext } from '../../contexts';
+import { useAuthContext, useCartContext, useNavContext } from '../../contexts';
 import { SearchInput } from '../custom';
-import { NAV_BAR_Z_INDEX } from '../../constants';
+import { CART, NAV_BAR_Z_INDEX } from '../../constants';
 import { useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
+import ThemeSwitchIconOnly from './ThemeSwitch';
 
 const getStyles = (_theme: Theme) => {
     return {
@@ -20,11 +22,7 @@ const getStyles = (_theme: Theme) => {
         },
         stack: {
             width: '100%',
-            height: '100%',
-            justifyContent: {
-                xs: 'space-between'
-            },
-            alignItems: 'center'
+            height: '100%'
         },
         menuIcon: {
             display: { sm: 'none' }
@@ -62,6 +60,7 @@ const NavBar = () => {
     const theme = useTheme();
     const navigate = useNavigate();
     const { isXs } = useResponsive();
+    const { totalNumberOfBooksInCart } = useCartContext();
 
     const styles = getStyles(theme);
     const handleSearchChange = (value: string) => {
@@ -69,11 +68,16 @@ const NavBar = () => {
     };
 
     const isAdminOrSuperAdmin = userType === 'admin' || userType === 'superadmin';
-
+    
     return (
         <AppBar sx={styles.appBar} position='sticky'>
             <Toolbar>
-                <Stack direction={'row'} sx={styles.stack}>
+                <Stack
+                    direction={'row'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    sx={styles.stack}
+                >
                     <Stack
                         direction={'row'}
                         justifyContent={'flex-start'}
@@ -103,24 +107,51 @@ const NavBar = () => {
                             />
                         )
                     }
-                    {
-                        isLoggedIn &&
-                        <Avatar
-                            data-testid='user-avatar'
-                            sx={{ display: { xs: 'none', sm: 'flex' } }}
-                            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                                setAnchorElement(e.currentTarget);
-                                setMenuOpen(true);
-                            }}
-                        />
-                    }
-                    {
-                        !isLoggedIn && !isXs &&
-                        <LoginActionIcon
-                            onClick={() => navigate('/auth')}
-                            tooltipTitle='Login'
-                        />
-                    }
+                    <Stack
+                        direction={'row'}
+                        justifyContent={'flex-end'}
+                        alignItems={'center'}
+                        gap={1}
+                    >
+                        {
+                            !isAdminOrSuperAdmin &&
+                            <Tooltip title='Cart'>
+                                <Badge badgeContent={totalNumberOfBooksInCart} color='primary'>
+                                    <IconButton
+                                        component={Link}
+                                        to={CART}
+                                    >
+                                        <ShoppingCartIcon />
+                                    </IconButton>
+                                </Badge>
+                            </Tooltip>
+                        }
+                        {
+                            !isLoggedIn && !isXs &&
+                            <ThemeSwitchIconOnly/>
+                        }
+                        {
+                            !isLoggedIn && !isXs &&
+                            <LoginActionIcon
+                                onClick={() => navigate('/auth')}
+                                tooltipTitle='Login'
+                            />
+                        }
+                        {
+                            isLoggedIn &&
+                            <Avatar
+                                data-testid='user-avatar'
+                                sx={{ display: { xs: 'none', sm: 'flex' } }}
+                                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                                    setAnchorElement(e.currentTarget);
+                                    setMenuOpen(true);
+                                }}
+                            />
+                        }
+                        <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
+                            <MenuIcon/>
+                        </IconButton>
+                    </Stack>
                     <Menu
                         anchorEl={anchorElement}
                         open={menuOpen}
@@ -144,9 +175,6 @@ const NavBar = () => {
                             })
                         }
                     </Menu>
-                    <IconButton sx={styles.menuIcon} onClick={() => setShowNavDrawer(true)}>
-                        <MenuIcon/>
-                    </IconButton>
                 </Stack>
             </Toolbar>
         </AppBar>

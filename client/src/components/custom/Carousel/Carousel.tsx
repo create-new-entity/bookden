@@ -1,6 +1,6 @@
 
 import { Box, useTheme, type SxProps, type Theme } from '@mui/material';
-import { type EmblaOptionsType } from 'embla-carousel';
+import type { EmblaOptionsType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
 
 import { useDotButton } from './useDotButton';

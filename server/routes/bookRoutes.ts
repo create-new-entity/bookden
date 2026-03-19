@@ -23,7 +23,8 @@ bookRouter.get('/filters/meta', asyncHandler(getBooksPriceRangeController));
 
 bookRouter.get('/homepage-books', asyncHandler(getHomePageBooksController));
 
-bookRouter.get('/:id/cover', tokenExtractor, asyncHandler(getBookCoverController));
+bookRouter.get('/:id/cover/public', asyncHandler(getBookCoverController));
+bookRouter.get('/:id/cover/admin', tokenExtractor, enforceAuthentication, asyncHandler(getBookCoverController));
 bookRouter.put('/:id/cover', tokenExtractor, enforceAuthentication, uploadImage.single('coverImage'), asyncHandler(updateBookCoverController));
 bookRouter.delete('/:id/cover', tokenExtractor, enforceAuthentication, asyncHandler(deleteBookCoverController));
 
@@ -31,13 +32,22 @@ bookRouter.post('/:id/wishlist', tokenExtractor, enforceAuthentication, asyncHan
 bookRouter.delete('/:id/wishlist', tokenExtractor, enforceAuthentication, asyncHandler(removeBookFromWishlistController));
 bookRouter.get('/wishlist', tokenExtractor, enforceAuthentication, asyncHandler(getWishlistedBooksController));
 
-bookRouter.get('/:id', tokenExtractor, asyncHandler(getBookController));
+
+bookRouter.get('/admin', tokenExtractor, enforceAuthentication, asyncHandler(getAllBooksController));
+bookRouter.get('/public', asyncHandler(getAllBooksController));
+
+
+bookRouter.get('/:id/public' , asyncHandler(getBookController));
+bookRouter.get('/:id/admin', tokenExtractor, asyncHandler(getBookController));
 bookRouter.patch('/:id', tokenExtractor, enforceAuthentication, asyncHandler(updateBookController));
 bookRouter.delete('/:id', tokenExtractor, enforceAuthentication, asyncHandler(deleteBookController));
 bookRouter.put('/:id/restore', tokenExtractor, enforceAuthentication, asyncHandler(restoreBookController));
 
 bookRouter.post('/', tokenExtractor, enforceAuthentication, uploadImage.single('coverImage'), asyncHandler(createBookController));
-bookRouter.get('/', tokenExtractor, asyncHandler(getAllBooksController));
+
+
+
+
 
 
 export default bookRouter;
