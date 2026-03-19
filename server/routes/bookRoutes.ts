@@ -37,7 +37,7 @@ bookRouter.get('/admin', tokenExtractor, enforceAuthentication, asyncHandler(get
 bookRouter.get('/public', asyncHandler(getAllBooksController));
 
 
-bookRouter.get('/:id/public', asyncHandler(getBookController));
+bookRouter.get('/:id/public' , asyncHandler(getBookController));
 bookRouter.get('/:id/admin', tokenExtractor, asyncHandler(getBookController));
 bookRouter.patch('/:id', tokenExtractor, enforceAuthentication, asyncHandler(updateBookController));
 bookRouter.delete('/:id', tokenExtractor, enforceAuthentication, asyncHandler(deleteBookController));

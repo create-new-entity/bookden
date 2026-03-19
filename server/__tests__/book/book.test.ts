@@ -6,13 +6,10 @@ import { BOOKS_PAGINATION_LIMIT } from '../../constants';
 import { PaginatedDataList, Book, CreateBookPayload } from '../../types';
 import {
     clearDB, createSomeSeedBooks, createSomeSeedUsers,
-    getBooks, EXPECT_200, getBook,
+    EXPECT_200, getBookPublic, getBookAdmin,
     customerUsersSeedData, EXPECT_403, login,
     deleteBook, seedSuperAdminUser, adminUsersSeedData,
-    updateBook,
-    createBook,
-    EXPECT_201,
-    restoreBook
+    updateBook, createBook, EXPECT_201, restoreBook, getBooksPublic
 } from '../testUtils';
 
 const TWENTY_SECONDS = 20000;
@@ -35,12 +32,12 @@ describe('Books CRUD tests', () => {
 
     describe('GET books related tests', () => {
         test('GET books without authentication', async () => {
-            response = await getBooks(EXPECT_200);
+            response = await getBooksPublic(EXPECT_200);
             const { data: books } = response.body as PaginatedDataList<Book>;
 
             expect(books.length).toBeLessThanOrEqual(BOOKS_PAGINATION_LIMIT);
             
-            response = await getBook(books[0].bookId, EXPECT_200);
+            response = await getBookPublic(books[0].bookId, EXPECT_200);
             const book = response.body as Book;
 
             expect(book.bookId).toBe(books[0].bookId);
@@ -65,7 +62,7 @@ describe('Books CRUD tests', () => {
                 'A Man Called Ove A Novel',
                 'A Gentleman in Moscow A Novel'
             ];
-            response = await getBooks(EXPECT_200, undefined, 'search=man');
+            response = await getBooksPublic(EXPECT_200, 'search=man');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -85,7 +82,7 @@ describe('Books CRUD tests', () => {
                 'A Man Called Ove A Novel',
                 'A Gentleman in Moscow A Novel'
             ].reverse(); // reverse the list to test the sort order
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortOrder=asc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortOrder=asc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -106,7 +103,7 @@ describe('Books CRUD tests', () => {
                 'An Island Summer A standalone small-town romance with gripping twists and turns'
             ];
 
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=yearPublished&sortOrder=desc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortBy=yearPublished&sortOrder=desc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -127,7 +124,7 @@ describe('Books CRUD tests', () => {
                 'An Island Summer A standalone small-town romance with gripping twists and turns'
             ].reverse();
 
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=yearPublished&sortOrder=asc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortBy=yearPublished&sortOrder=asc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -148,7 +145,7 @@ describe('Books CRUD tests', () => {
                 'A Gentleman in Moscow A Novel'
             ];
 
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=price&sortOrder=asc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortBy=price&sortOrder=asc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -169,7 +166,7 @@ describe('Books CRUD tests', () => {
                 'A Gentleman in Moscow A Novel'
             ].reverse();
 
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=price&sortOrder=desc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortBy=price&sortOrder=desc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -190,7 +187,7 @@ describe('Books CRUD tests', () => {
                 'A Gentleman in Moscow A Novel',
             ];
 
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=createdAt&sortOrder=desc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortBy=createdAt&sortOrder=desc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -211,7 +208,7 @@ describe('Books CRUD tests', () => {
                 'Blind Willow, Sleeping Woman Stories',
             ];
 
-            response = await getBooks(EXPECT_200, undefined, 'search=man&sortBy=createdAt&sortOrder=asc');
+            response = await getBooksPublic(EXPECT_200, 'search=man&sortBy=createdAt&sortOrder=asc');
             const { data: books } = response.body as PaginatedDataList<Book>;
             const receivedListOfTitles = books.map(b => b.title);
 
@@ -220,11 +217,11 @@ describe('Books CRUD tests', () => {
 
         test('GET book endpoint', async () => {
             const bookTitle = 'Bleak House';
-            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            response = await getBooksPublic(EXPECT_200, `search=${bookTitle}`);
             const { data: books } = response.body as PaginatedDataList<Book>;
 
             const book = books[0];
-            response = await getBook(book.bookId, EXPECT_200);
+            response = await getBookPublic(book.bookId, EXPECT_200);
             const bookData = response.body as Book;
             expect(bookData.title).toBe(bookTitle);
         });
@@ -233,7 +230,7 @@ describe('Books CRUD tests', () => {
     describe('PATCH book related tests', () => {
         test('customer user cannot patch book', async () => {
             const bookTitle = 'Bleak House';
-            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            response = await getBooksPublic(EXPECT_200, `search=${bookTitle}`);
             const { data: books } = response.body as PaginatedDataList<Book>;
             const book = books[0];
 
@@ -245,7 +242,7 @@ describe('Books CRUD tests', () => {
 
         test('superadmin or admin user can patch book', async () => {
             const bookTitle = 'Bleak House';
-            response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+            response = await getBooksPublic(EXPECT_200, `search=${bookTitle}`);
             const { data: books } = response.body as PaginatedDataList<Book>;
             const book = books[0];
 
@@ -253,14 +250,14 @@ describe('Books CRUD tests', () => {
             let token = await login({ username: superAdminUser.username, password: superAdminUser.password });
             response = await updateBook(book.bookId, EXPECT_200, token, { title: 'New Title', synopsis: 'New Synopsis' });
             expect(response.status).toBe(EXPECT_200);
-            response = await getBook(book.bookId, EXPECT_200, token);
+            response = await getBookAdmin(book.bookId, EXPECT_200, token);
             expect(response.body.title).toBe('New Title');
             expect(response.body.synopsis).toBe('New Synopsis');
 
             token = await login({ username: adminUsersSeedData[0].username, password: adminUsersSeedData[0].password });
             response = await updateBook(book.bookId, EXPECT_200, token, { title: 'New Title 2', synopsis: 'New Synopsis 2' });
             expect(response.status).toBe(EXPECT_200);
-            response = await getBook(book.bookId, EXPECT_200, token);
+            response = await getBookAdmin(book.bookId, EXPECT_200, token);
             expect(response.body.title).toBe('New Title 2');
             expect(response.body.synopsis).toBe('New Synopsis 2');
         });
@@ -268,7 +265,7 @@ describe('Books CRUD tests', () => {
 
     describe('DELETE book related tests', () => {
         test('DELETE book: Customer user cannot delete book', async () => {
-            response = await getBooks(EXPECT_200);
+            response = await getBooksPublic(EXPECT_200);
             const { data: books } = response.body as PaginatedDataList<Book>;
             const book = books[0];
 
@@ -280,7 +277,7 @@ describe('Books CRUD tests', () => {
         });
 
         test('DELETE book: Super admin or admin user can delete book', async () => {
-            response = await getBooks(EXPECT_200);
+            response = await getBooksPublic(EXPECT_200);
             const { data: books } = response.body as PaginatedDataList<Book>;
 
             const book1 = books[0];
@@ -296,7 +293,7 @@ describe('Books CRUD tests', () => {
             response = await deleteBook(book2.bookId, EXPECT_200, token2);
             expect(response.status).toBe(EXPECT_200);
 
-            response = await getBook(book2.bookId, EXPECT_200, token2);
+            response = await getBookAdmin(book2.bookId, EXPECT_200, token2);
             expect(response.body.deletedAt).not.toBeNull();
         });
     });
@@ -341,7 +338,7 @@ describe('Books CRUD tests', () => {
             let token = await login({ username: superAdminUser.username, password: superAdminUser.password });
             response = await createBook(EXPECT_201, token, { ...newBook, synopsis: longSynopsis1 }, imagePath);
             expect(response.status).toBe(EXPECT_201);
-            response = await getBook(response.body.bookId, EXPECT_200, token);
+            response = await getBookAdmin(response.body.bookId, EXPECT_200, token);
             expect(response.body.title).toBe('New Title');
             expect(response.body.synopsis).toBe(longSynopsis1);
             expect(response.body.authors).toStrictEqual(['New Author']);
@@ -355,7 +352,7 @@ describe('Books CRUD tests', () => {
             token = await login({ username: adminUsersSeedData[0].username, password: adminUsersSeedData[0].password });
             response = await createBook(EXPECT_201, token, { ...newBook, title: 'New Title 2', synopsis: longSynopsis2, authors: ['New Author 2'], isbn: '1234567892' }, imagePath);
             expect(response.status).toBe(EXPECT_201);
-            response = await getBook(response.body.bookId, EXPECT_200, token);
+            response = await getBookAdmin(response.body.bookId, EXPECT_200, token);
             expect(response.body.title).toBe('New Title 2');
             expect(response.body.synopsis).toBe(longSynopsis2);
             expect(response.body.authors).toStrictEqual(['New Author 2']);
@@ -369,7 +366,7 @@ describe('Books CRUD tests', () => {
 
     test('An admin or superadmin can restore a deleted book', async () => {
         const bookTitle = 'Bleak House';
-        response = await getBooks(EXPECT_200, undefined, `search=${bookTitle}`);
+        response = await getBooksPublic(EXPECT_200, `search=${bookTitle}`);
         const { data: books } = response.body as PaginatedDataList<Book>;
 
         const book = books[0];
@@ -378,11 +375,11 @@ describe('Books CRUD tests', () => {
         const deleteAndRestoreBook = async (token: string) => {
             response = await deleteBook(bookId, EXPECT_200, token);
             expect(response.status).toBe(EXPECT_200);
-            response = await getBook(bookId, EXPECT_200, token);
+            response = await getBookAdmin(bookId, EXPECT_200, token);
             expect(response.body.deletedAt).not.toBeNull();
             response = await restoreBook(bookId, EXPECT_200, token);
             expect(response.status).toBe(EXPECT_200);
-            response = await getBook(bookId, EXPECT_200, token);
+            response = await getBookAdmin(bookId, EXPECT_200, token);
             expect(response.body.deletedAt).toBeNull();
         };
 

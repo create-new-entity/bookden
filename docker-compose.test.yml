@@ -46,9 +46,6 @@ services:
     env_file:
       - ./env/test/client.env
     command: npm run test
-    volumes:
-      - ./client:/usr/src/app
-      - /usr/src/app/node_modules
     restart: 'no'
 
   server-lint:

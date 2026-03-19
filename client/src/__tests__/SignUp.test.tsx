@@ -20,6 +20,10 @@ vi.mock('../api', () => ({
     login: (payload: unknown) => mockLogin(payload),
 }));
 
+vi.mock('embla-carousel-react', () => ({
+    default: () => [() => {}, null],
+}));
+
 import LogInPage from '../pages/LogInPage';
 
 const renderPage = () => {

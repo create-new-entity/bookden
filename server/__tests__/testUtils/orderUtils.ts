@@ -6,14 +6,14 @@ import { CreateOrderRequestBody } from '../../types';
 import { seedSuperAdminUser } from './seeds';
 import { getUsers, login } from './userUtils';
 import { EXPECT_200 } from './constants';
-import { getBooks } from './bookUtils';
+import { getBooksAdmin } from './bookUtils';
 
 
 export const getExistingBookIds = async () => {
     const superAdminUser = seedSuperAdminUser;
     const superAdminToken = await login({ username: superAdminUser.username, password: superAdminUser.password });
 
-    const { body } = await getBooks(EXPECT_200, superAdminToken);
+    const { body } = await getBooksAdmin(EXPECT_200, superAdminToken);
     return [body.data[0].bookId, body.data[1].bookId, body.data[2].bookId];
 };
 
