@@ -65,6 +65,10 @@ const BooksCarousal = (props: CarouselBookList) => {
                 emblaOptions={{
                     loop: true
                 }}
+                slideSx={{
+                    padding: '0.5rem'
+                }}
+                navigationMode={'both'}
             />
         </Paper>
     );
