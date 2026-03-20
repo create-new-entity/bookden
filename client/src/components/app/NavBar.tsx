@@ -8,10 +8,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-import { useAuthContext, useCartContext, useNavContext } from '../../contexts';
+import { useAuthContext, useAvatarContext, useCartContext, useNavContext } from '../../contexts';
 import { SearchInput } from '../custom';
 import { CART, NAV_BAR_Z_INDEX } from '../../constants';
-import { useBookSearchVisibility, useResponsive } from '../../hooks';
+import { useAvatar, useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
 import ThemeSwitchIconOnly from './ThemeSwitch';
 
@@ -61,6 +61,9 @@ const NavBar = () => {
     const navigate = useNavigate();
     const { isXs } = useResponsive();
     const { totalNumberOfBooksInCart } = useCartContext();
+    const { avatarUrl } = useAvatarContext();
+
+    useAvatar();
 
     const styles = getStyles(theme);
     const handleSearchChange = (value: string) => {
@@ -140,6 +143,7 @@ const NavBar = () => {
                         {
                             isLoggedIn &&
                             <Avatar
+                                src={avatarUrl || undefined}
                                 data-testid='user-avatar'
                                 sx={{ display: { xs: 'none', sm: 'flex' } }}
                                 onClick={(e: React.MouseEvent<HTMLDivElement>) => {
