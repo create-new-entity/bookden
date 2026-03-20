@@ -3,10 +3,11 @@ import {
     Stack, Tooltip, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
 import type { CartItem } from '../../contexts';
 import { usePublicBookCover } from '../../hooks';
-import { DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../constants';
+import { BOOK, DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from '../BookPage/constants';
 import CartItemControl from './CartItemControl';
 import { roundTo2 } from '../../utility';
@@ -52,6 +53,8 @@ const CartItemMobile = (props: CartItem) => {
     const theme = useTheme();
     const styles = getStyles(theme);
     const { bookCoverBlob } = usePublicBookCover(book.bookId);
+    const navigate = useNavigate();
+
     const totalCost = roundTo2(book.price * quantity);
 
     return (
@@ -64,11 +67,18 @@ const CartItemMobile = (props: CartItem) => {
                 width: '100%'
             }}
         >
-            <Paper>
-                <Box sx={styles.bookCover}>
-                    <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' />
-                </Box>
-            </Paper>
+            <Link
+                to={`${BOOK.replace(':bookId', book.bookId.toString())}`}
+                state={{ bookId: book.bookId }}
+            >
+                <Paper>
+                    <Box sx={styles.bookCover}>
+                        <Link to={`/books/${book.bookId}`}>
+                            <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' />
+                        </Link>
+                    </Box>
+                </Paper>
+            </Link>
             <Stack
                 direction={'column'}
                 justifyContent={'space-evenly'}
@@ -77,7 +87,7 @@ const CartItemMobile = (props: CartItem) => {
                 alignSelf={'stretch'}
             >
                 <Tooltip title={book.title}>
-                    <Typography sx={styles.title} variant='body1'>
+                    <Typography variant='body1' sx={styles.title} onClick={() => navigate(`${BOOK.replace(':bookId', book.bookId.toString())}`)}>
                         {book.title}
                     </Typography>
                 </Tooltip>

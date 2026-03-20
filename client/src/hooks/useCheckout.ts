@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { createOrder } from '../api';
 import { useAuthContext, useCartContext, useNotificationContext } from '../contexts';
-import type { AxiosErrorResponse, Order } from '../types';
+import type { AxiosErrorResponse, CreateOrderPayload } from '../types';
 import { AUTH, HOME } from '../constants';
 
 
@@ -17,8 +17,8 @@ export const useCheckout = () => {
     const { existingLoggedInData } = hasExistingLoggedInUser();
     const resolvedToken = token || existingLoggedInData?.token;
 
-    const orderMutation = useMutation<{ orderId: number}, AxiosErrorResponse, Order>({
-        mutationFn: (order: Order) => {
+    const orderMutation = useMutation<{ orderId: number}, AxiosErrorResponse, CreateOrderPayload>({
+        mutationFn: (order: CreateOrderPayload) => {
             if(!resolvedToken) {
                 navigate(AUTH);
                 return Promise.reject({ orderId: -1 });

@@ -73,11 +73,16 @@ const CartItemDesktop = (props: CartItem) => {
                 width: '100%'
             }}
         >
-            <Paper>
-                <Box sx={styles.bookCover}>
-                    <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' />
-                </Box>
-            </Paper>
+            <Link
+                to={`${BOOK.replace(':bookId', book.bookId.toString())}`}
+                state={{ bookId: book.bookId }}
+            >
+                <Paper>
+                    <Box sx={styles.bookCover}>
+                        <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' />
+                    </Box>
+                </Paper>
+            </Link>
             <Stack
                 direction={'row'}
                 justifyContent={'space-between'}

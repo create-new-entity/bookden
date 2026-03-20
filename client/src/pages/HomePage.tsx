@@ -3,9 +3,11 @@ import {
     Divider, Stack, Typography,
     useTheme, type SxProps, type Theme
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 import { BooksCarousel, HeroBannerCarousel } from '../components';
 import { useHomePageBookLists, useResponsive, useSetTabTitle } from '../hooks';
+import { BOOKS } from '../constants';
 
 type Styles = {
     rootStack: SxProps<Theme>;
@@ -41,9 +43,31 @@ const HomePage = () => {
                 sx={styles.rootStack}
                 gap={GapBetWeenCarousels}
             >
-                <Typography variant='h4'>
-                    Welcome to BookDen 📚
-                </Typography>
+                <Stack
+                    direction={'column'}
+                    justifyContent={'flex-start'}
+                    alignItems={'center'}
+                    gap={'0.5rem'}
+                >
+                    <Typography variant='h4'>
+                        Welcome to BookDen 📚
+                    </Typography>
+                    <Stack
+                        direction={'row'}
+                        justifyContent={'flex-start'}
+                        alignItems={'center'}
+                        gap={'0.2rem'}
+                    >
+                        <Typography>
+                            You can browse our full catalog
+                        </Typography>
+                        <Link to={BOOKS}>
+                            <Typography color='info'>
+                                here.
+                            </Typography>
+                        </Link>
+                    </Stack>
+                </Stack>
                 <HeroBannerCarousel/>
                 <Divider sx={{ width: '100%' }} />
                 {
