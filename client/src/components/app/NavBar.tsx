@@ -5,12 +5,12 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 import { useAuthContext, useAvatarContext, useCartContext, useNavContext } from '../../contexts';
 import { SearchInput } from '../custom';
-import { ADMIN, CART, HOME, NAV_BAR_Z_INDEX, SUPERADMIN, WISHLIST } from '../../constants';
+import { ADMIN, CART, NAV_BAR_Z_INDEX, SUPERADMIN } from '../../constants';
 import { useAvatar, useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
 import ThemeSwitchIconOnly from './ThemeSwitch';
@@ -71,7 +71,7 @@ const NavBar = () => {
         navigate(`/books?search=${value}`);
     };
 
-    const isAdminOrSuperAdmin = userType === 'admin' || userType === 'superadmin';
+    const isAdminOrSuperAdmin = userType === ADMIN || userType === SUPERADMIN;
     
     return (
         <AppBar sx={styles.appBar} position='sticky'>
