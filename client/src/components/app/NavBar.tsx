@@ -5,15 +5,16 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 import { useAuthContext, useAvatarContext, useCartContext, useNavContext } from '../../contexts';
 import { SearchInput } from '../custom';
-import { CART, NAV_BAR_Z_INDEX } from '../../constants';
+import { ADMIN, CART, HOME, NAV_BAR_Z_INDEX, SUPERADMIN, WISHLIST } from '../../constants';
 import { useAvatar, useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
 import ThemeSwitchIconOnly from './ThemeSwitch';
+import type { UserType } from '../../types';
 
 const getStyles = (_theme: Theme) => {
     return {
@@ -56,7 +57,7 @@ const NavBar = () => {
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
     const { userType, isLoggedIn } = useAuthContext();
-    const showBookSearch = useBookSearchVisibility();
+    const isBookSearchVisible = useBookSearchVisibility(userType as UserType);
     const theme = useTheme();
     const navigate = useNavigate();
     const { isXs } = useResponsive();
@@ -101,7 +102,7 @@ const NavBar = () => {
                         }
                     </Stack>
                     {
-                        showBookSearch && (
+                        isBookSearchVisible && (
                             <SearchInput
                                 id='navSearchBox'
                                 sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
