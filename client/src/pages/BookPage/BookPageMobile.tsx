@@ -180,9 +180,22 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                                 </Typography>
                             )
                         }
-                        <Typography>
-                            Tags: {bookQuery.data?.tags?.join(', ')}
-                        </Typography>
+                        <Stack
+                            direction={'row'}
+                            justifyContent={'flex-start'}
+                            alignItems={'center'}
+                            sx={{ flexWrap: 'wrap', gap: `${DEFAULT_GAP / 2}px`}}
+                        >
+                            Tags:
+                            {
+                                bookQuery.data?.tags?.map((tag) => {
+                                    const encodedTag = encodeURIComponent(tag);
+                                    return (
+                                        <Chip label={tag} size='medium' onClick={() => navigate(`/books?tags=${encodedTag}`)} />
+                                    );
+                                })
+                            }
+                        </Stack>
                         <Typography variant='h5' fontWeight={'bold'}>
                             Synopsis:
                         </Typography>
