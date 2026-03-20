@@ -14,6 +14,10 @@ const HeroBannerCarousel = () => {
             emblaOptions={{
                 loop: true
             }}
+            slideSx={{
+                padding: '0.5rem'
+            }}
+            navigationMode={'both'}
         />
     );
 };

@@ -3,17 +3,21 @@ import { Box, useTheme, type SxProps, type Theme } from '@mui/material';
 import type { EmblaOptionsType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
 
-import { useDotButton } from './useDotButton';
-import CarouselDotButton from './CarouselDotButton';
+import { useCarouselControls } from './useCarouselControls';
+import { sxJoin } from '../../../utility/utility';
+import { Arrows } from './CarouselControls';
+import DotButtons from './CarouselControls/DotButtons';
 
 
+
+
+type CarouselNavigationMode = 'dots' | 'arrows' | 'both' | 'none';
 
 type Styles = {
     emblaRoot: SxProps<Theme>;
     emblaViewport: SxProps<Theme>;
     emblaContainer: SxProps<Theme>;
     emblaSlide: SxProps<Theme>;
-    dotsContainer: SxProps<Theme>;
 };
 
 const getStyles = (_theme: Theme): Styles => {
@@ -60,13 +64,7 @@ const getStyles = (_theme: Theme): Styles => {
 
                 ** WIP: Slide component will control width. Idea is to fix the dimension via props or something. **
             */
-            flex: '0 0 auto',
-            padding: '0.5rem'
-        },
-        dotsContainer: {
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '0.5rem'
+            flex: '0 0 auto'
         }
     };
 };
@@ -78,42 +76,85 @@ type CarouselProps<T, P extends object = Record<string, unknown>> = {
     slideProps?: P;
     getKey: (item: T) => React.Key;
     emblaOptions?: EmblaOptionsType;
+    navigationMode?: CarouselNavigationMode;
+
+    // Style override entry points: rootSx, viewportSx, containerSx, slideSx, dotsContainerSx
+    rootSx?: SxProps<Theme>;
+    viewportSx?: SxProps<Theme>;
+    containerSx?: SxProps<Theme>;
+    slideSx?: SxProps<Theme>;
+    dotsContainerSx?: SxProps<Theme>;
 };
 
 const Carousel = <T, P extends object = Record<string, unknown>>(
     props: CarouselProps<T, P>
 ) => {
     const {
-        items, SlideComponent, slideProps, getKey, emblaOptions
+        items, SlideComponent, slideProps,
+        getKey, emblaOptions, navigationMode = 'arrows',
+        rootSx = {}, viewportSx = {}, containerSx = {}, slideSx = {}, dotsContainerSx = {}
     } = props;
 
     const theme = useTheme();
     const styles = getStyles(theme);
     const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions);
-    const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi);
+    const {
+        scrollPrev, scrollNext,
+        canScrollPrev,canScrollNext,
+        scrollSnaps, scrollTo, selectedIndex,
+    } = useCarouselControls(emblaApi);
+
+    const showArrows = navigationMode === 'arrows' || navigationMode === 'both';
+    const showDots = navigationMode === 'dots' || navigationMode === 'both';
 
     return (
-        <Box sx={styles.emblaRoot} className="embla">
-            <Box sx={styles.emblaViewport} className="embla__viewport" ref={emblaRef}>
-                <Box sx={styles.emblaContainer} className="embla__container">
+        <Box sx={sxJoin(styles.emblaRoot, rootSx)} className="embla">
+            {
+                showArrows &&
+                <Arrows
+                    scrollPrev={scrollPrev}
+                    scrollNext={scrollNext}
+                    canScrollPrev={canScrollPrev}
+                    canScrollNext={canScrollNext}
+                />
+            }
+            {
+                /*
+                    Note to future self:
+
+                    "Your markup must follow this pattern:
+
+                    An overflow wrapper (embla__viewport below) that hides overflowing content.
+                    A scroll container (embla__container) that holds and scrolls the slides.
+                    One or more slides (embla__slide). Embla also supports an empty state with no slides."
+
+                    "The outer .embla wrapper shown in the examples is optional.
+                    You can use it as a convenient container for navigation controls or styling,
+                    but Embla only requires the viewport → container → slides hierarchy."
+
+                    ---> https://www.embla-carousel.com/docs/guides/required-setup
+                */
+            }
+            <Box sx={sxJoin(styles.emblaViewport, viewportSx)} className="embla__viewport" ref={emblaRef}>
+                <Box sx={sxJoin(styles.emblaContainer, containerSx)} className="embla__container">
                     {
                         items.map((item) => (
-                            <Box sx={styles.emblaSlide} className="embla__slide" key={getKey(item)}>
+                            <Box sx={sxJoin(styles.emblaSlide, slideSx)} className="embla__slide" key={getKey(item)}>
                                 <SlideComponent item={item} {...(slideProps ?? ({} as P))} />
                             </Box>
                         ))
                     }
                 </Box>
             </Box>
-            <Box sx={styles.dotsContainer}>
-                {scrollSnaps.map((_, index) => (
-                    <CarouselDotButton
-                        key={index}
-                        isSelected={index === selectedIndex}
-                        onClick={() => onDotButtonClick(index)}
-                    />
-                ))}
-            </Box>
+            {
+                showDots &&
+                <DotButtons
+                    scrollSnaps={scrollSnaps}
+                    selectedIndex={selectedIndex}
+                    scrollTo={scrollTo}
+                    dotsContainerSx={dotsContainerSx}
+                />
+            }
         </Box>
     );
 };

@@ -1,5 +1,5 @@
 import {
-    Button, Chip, Container, Paper,
+    Chip, Container, Paper,
     Stack, Tooltip, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
@@ -19,6 +19,8 @@ import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
 import { useAuthContext, useCartContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
+import AddToCartAction from '../../components/app/ActionIcons/AddToCartAction';
+import RemoveFromCartAction from '../../components/app/ActionIcons/RemoveFromCartAction';
 
 
 type Styles = {
@@ -40,7 +42,8 @@ const getStyles = (_theme: Theme): Styles => {
             marginLeft: '1rem',
             marginRight: '1rem',
             textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            textAlign: 'center'
         },
         bookCoverContainer: {
             width: `${BOOK_COVER_WIDTH_MOBILE}rem`,
@@ -121,16 +124,18 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                     </Typography>
                     {
                         showAddToCartButton && (
-                            <Button variant='contained' color='primary' onClick={handleAddToCart}>
-                                Add to cart
-                            </Button>
+                            <AddToCartAction
+                                onClick={handleAddToCart}
+                                tooltipTitle='Add to cart'
+                            />
                         )
                     }
                     {
                         showRemoveFromCartButton && (
-                            <Button variant='contained' color='primary' onClick={handleRemoveFromCart}>
-                                Remove from cart
-                            </Button>
+                            <RemoveFromCartAction
+                                onClick={handleRemoveFromCart}
+                                tooltipTitle='Remove from cart'
+                            />
                         )
                     }
                     {

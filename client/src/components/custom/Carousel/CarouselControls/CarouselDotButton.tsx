@@ -4,7 +4,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import IconButton from '@mui/material/IconButton';
 
-import { useResponsive } from '../../../hooks';
+import { useResponsive } from '../../../../hooks';
 
 
 type CarouselDotButtonProps = {

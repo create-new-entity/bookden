@@ -56,7 +56,7 @@ const Items = <T, P extends object = Record<string, unknown>>(props: ItemsProps<
     const isListView = viewOption === LIST_VIEW;
     const gridSizes = isListView ? LIST_VIEW_GRID_SIZES : ITEMS_GRID_SIZES;
     return (
-        <Grid container spacing={4} sx={{ width: '100%', ...sx }}>
+        <Grid container spacing={4} sx={{ width: '100%', ...sx }} justifyContent={'center'}>
             {
                 items.map((item) => (
                     <Grid size={gridSizes} key={getKey(item)}>

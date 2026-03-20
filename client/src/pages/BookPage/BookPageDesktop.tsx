@@ -1,5 +1,5 @@
 import {
-    Button, Chip, Container, Divider, Paper,
+    Chip, Container, Divider, Paper,
     Stack, Typography, useTheme, type SxProps, type Theme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,8 @@ import { BOOK_COVER_HEIGHT_DESKTOP, BOOK_COVER_WIDTH_DESKTOP } from './constants
 import { useAuthContext, useCartContext } from '../../contexts';
 import { canBuyBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
+import AddToCartAction from '../../components/app/ActionIcons/AddToCartAction';
+import RemoveFromCartAction from '../../components/app/ActionIcons/RemoveFromCartAction';
 
 
 type Styles = {
@@ -43,6 +45,7 @@ const getStyles = (_theme: Theme): Styles => {
             width: '100%',
             height: '26rem',
             overflowY: 'auto'
+
         },
         synopsisContainer: {
             padding: `${DEFAULT_GAP}px`
@@ -162,16 +165,18 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                     </Typography>
                                     {
                                         showAddToCartButton && (
-                                            <Button variant='contained' color='primary' onClick={handleAddToCart}>
-                                                Add to cart
-                                            </Button>
+                                            <AddToCartAction
+                                                onClick={handleAddToCart}
+                                                tooltipTitle='Add to cart'
+                                            />
                                         )
                                     }
                                     {
                                         showRemoveFromCartButton && (
-                                            <Button variant='contained' color='primary' onClick={handleRemoveFromCart}>
-                                                Remove from cart
-                                            </Button>
+                                            <RemoveFromCartAction
+                                                onClick={handleRemoveFromCart}
+                                                tooltipTitle='Remove from cart'
+                                            />
                                         )
                                     }
                                 </Stack>
