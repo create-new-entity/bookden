@@ -9,6 +9,27 @@ import { BooksCarousel, HeroBannerCarousel } from '../components';
 import { useHomePageBookLists, useResponsive, useSetTabTitle } from '../hooks';
 import { BOOKS } from '../constants';
 
+
+export const LeadToAllBooksText = () => {
+    return (
+        <Stack
+            direction={'row'}
+            justifyContent={'flex-start'}
+            alignItems={'center'}
+            gap={'0.3rem'}
+        >
+            <Typography variant='body1'>
+                You can browse our catalog
+            </Typography>
+            <Link to={BOOKS}>
+                <Typography variant='body1' color='info'>
+                    here.
+                </Typography>
+            </Link>
+        </Stack>
+    );
+};
+
 type Styles = {
     rootStack: SxProps<Theme>;
 };
@@ -52,21 +73,7 @@ const HomePage = () => {
                     <Typography variant='h4'>
                         Welcome to BookDen 📚
                     </Typography>
-                    <Stack
-                        direction={'row'}
-                        justifyContent={'flex-start'}
-                        alignItems={'center'}
-                        gap={'0.2rem'}
-                    >
-                        <Typography>
-                            You can browse our full catalog
-                        </Typography>
-                        <Link to={BOOKS}>
-                            <Typography color='info'>
-                                here.
-                            </Typography>
-                        </Link>
-                    </Stack>
+                    <LeadToAllBooksText />
                 </Stack>
                 <HeroBannerCarousel/>
                 <Divider sx={{ width: '100%' }} />
