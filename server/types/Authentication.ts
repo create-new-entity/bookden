@@ -9,6 +9,7 @@ export interface AuthenticatedRequest<
   ReqBody = Request['body']
 > extends Request<ParamsDictionary, unknown, ReqBody, ReqQuery> {  // Express's request type is this: Request<Params, ResBody, ReqBody, ReqQuery>. ResBody is "any" by Express itself. unknown is assignable to any.
   user?: JWTSignPayload;
+  isValidTokenRequired?: boolean;
 }
 
 
