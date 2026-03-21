@@ -35,6 +35,15 @@ function extractUniqueTags() {
   return Array.from(uniqueTags);
 }
 
+function stripHtmlTags(input) {
+  if (!input || typeof input !== 'string') return input;
+
+  return input
+    .replace(/<[^>]*>/g, ' ')   // remove all tags like <br>, <br/>, </p>, etc.
+    .replace(/\s+/g, ' ')       // collapse multiple spaces
+    .trim();
+}
+
 
 /**
   * We receive the dbmigrate dependency from dbmigrate initially.
@@ -72,6 +81,9 @@ exports.up = async function(db) {
       if (!isbn) {
         continue
       };
+
+      const cleanTitle = stripHtmlTags(title);
+      const cleanSynopsis = stripHtmlTags(synopsis);
   
       // Add 1 second for each book to avoid having the same created_at for the same book
       const createdAt = new Date(baseTime.getTime() + i * 1000);
@@ -92,7 +104,7 @@ exports.up = async function(db) {
         )
         VALUES ($1, $2, $3::jsonb, $4, $5, $6, $7, $8, $9)
         RETURNING book_id, isbn;`,
-        [title, synopsis, JSON.stringify(authors ?? []), isbn, Number(price ?? 20.00), datePublishedYear, language ?? 'en', pages ?? 100, createdAt]
+        [cleanTitle, cleanSynopsis, JSON.stringify(authors ?? []), isbn, Number(price ?? 20.00), datePublishedYear, language ?? 'en', pages ?? 100, createdAt]
       );
   
       const bookId = result.rows[0].book_id;
