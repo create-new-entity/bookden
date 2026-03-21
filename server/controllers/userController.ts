@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import { ADMIN, AuthenticatedRequest, CUSTOMER, GetUsersQueryParams } from '../types';
+import { ADMIN, AuthenticatedRequest, CUSTOMER, GetUsersQueryParams, SUPERADMIN } from '../types';
 import { AuthenticationError, UnauthorizedError } from '../errors';
 import { canCreateUser, createUser, deleteUser, getAllUsers, getMyself, getUser, restoreUser, updateUser } from '../services';
 import { GetUsersQueryParamsSchema, UpdateUser, User } from '../validation';
@@ -68,6 +68,24 @@ const patchUserController = async (req: AuthenticatedRequest, res: Response, nex
         return;
     }
     const validated = UpdateUser.parse(req.body);
+
+    const isDevelopmentEnvironment = process.env.NODE_ENV === 'development';
+    const isSuperAdmin = req.user.userType === SUPERADMIN;
+
+    if(isSuperAdmin &&!isDevelopmentEnvironment) {
+        /*
+            Note to future self:
+
+            If the user is a superadmin and the environment is not development, do not update the password.
+            Why?
+            Because it is a portfolio project and I want any potential employer browsing the app
+            be able to access the features. No one should be able to change the superadmin password. In that case,
+            some other person browsing the app won't be able to access the features.
+         */
+        validated.username = undefined;
+        validated.password = undefined;
+    }
+
     await updateUser(req.user.userId, validated);
     res.status(200).end();
 };

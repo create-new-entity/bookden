@@ -158,6 +158,9 @@ const UserFormFields = <FormType extends FieldValues>( props: UserFormFieldsProp
                         {getButtonText()}
                     </Button>
                 </Stack>
+                <Typography sx={{ marginTop: '1rem' }} variant='h5' color='info'>
+                    Note: superadmin's username or password will intentionally not be updated in production/online environment.
+                </Typography>
             </Stack>
         </Stack>
     );
