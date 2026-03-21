@@ -5,8 +5,11 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as R from 'ramda';
+import { useMemo } from 'react';
 
 import {
+    useBooksWishList,
+    useBooksWishListMutation,
     type UseAdminBookCoverHook, type UseAdminBookHook,
     type UsePublicBookCoverHook, type UsePublicBookHook
 } from '../../hooks';
@@ -17,10 +20,12 @@ import {
 } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
 import { useAuthContext, useCartContext } from '../../contexts';
-import { canBuyBook, canEditBook } from '../../utility';
+import { canBuyOrWishlistBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
 import AddToCartAction from '../../components/app/ActionIcons/AddToCartAction';
 import RemoveFromCartAction from '../../components/app/ActionIcons/RemoveFromCartAction';
+import AddToWishlistActionIcon from '../../components/app/ActionIcons/AddToWishlistAction';
+import RemoveFromWishlistActionIcon from '../../components/app/ActionIcons/RemoveFromWishlistAction';
 
 
 type Styles = {
@@ -73,10 +78,15 @@ const BookPageMobile = (props: BookPageMobileProps) => {
     const bookQuery = useBook(bookId);
     const { bookCoverBlob } = useBookCover(bookId);
     const { isInCart, addToCart, removeFromCart } = useCartContext();
+    const { isWishlisted } = useBooksWishList();
+    const { addToWishList, removeFromWishList } = useBooksWishListMutation();
 
-    const showEditBookButton = canEditBook(userType);
-    const showAddToCartButton = canBuyBook(userType) && !isInCart(bookId);
-    const showRemoveFromCartButton = canBuyBook(userType) && isInCart(bookId);
+    const showEditBookButton = useMemo(() => canEditBook(userType), [userType]);
+    const canBuyOrWishlist = useMemo(() => canBuyOrWishlistBook(userType), [userType]);
+    const showAddToCartButton = useMemo(() => canBuyOrWishlist && !isInCart(bookId), [canBuyOrWishlist, isInCart, bookId]);
+    const showRemoveFromCartButton = useMemo(() => canBuyOrWishlist && isInCart(bookId), [canBuyOrWishlist, isInCart, bookId]);
+    const showAddToWishListButton = useMemo(() => canBuyOrWishlist && !isWishlisted(bookId), [canBuyOrWishlist, isWishlisted, bookId]);
+    const showRemoveFromWishListButton = useMemo(() => canBuyOrWishlist && isWishlisted(bookId), [canBuyOrWishlist, isWishlisted, bookId]);
     const styles = getStyles(theme);
 
     const handleEditBook = () => {
@@ -91,6 +101,16 @@ const BookPageMobile = (props: BookPageMobileProps) => {
     const handleRemoveFromCart = () => {
         if(!bookQuery.data) return;
         removeFromCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
+    };
+
+    const handleAddToWishList = () => {
+        if(!bookQuery.data) return;
+        addToWishList.mutate(bookId);
+    };
+
+    const handleRemoveFromWishList = () => {
+        if(!bookQuery.data) return;
+        removeFromWishList.mutate(bookId);
     };
 
     return (
@@ -115,41 +135,63 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                 </Tooltip>
                 <Stack
                     direction={'row'}
-                    justifyContent={'flex-start'}
+                    justifyContent={'space-between'}
                     alignItems={'center'}
                     gap={`${DEFAULT_GAP}px`}
                 >
                     <Typography variant='h4' color='info'>
                         €{bookQuery.data?.price}
                     </Typography>
-                    {
-                        showAddToCartButton && (
-                            <AddToCartAction
-                                onClick={handleAddToCart}
-                                tooltipTitle='Add to cart'
-                            />
-                        )
-                    }
-                    {
-                        showRemoveFromCartButton && (
-                            <RemoveFromCartAction
-                                onClick={handleRemoveFromCart}
-                                tooltipTitle='Remove from cart'
-                            />
-                        )
-                    }
-                    {
-                        showEditBookButton && (
-                            <EditActionIcon
-                                onClick={handleEditBook}
-                                tooltipTitle='Edit Book'
-                            />
-                        )
-                    }
-                    {
-                        bookQuery.data?.deletedAt &&
-                        <Chip label='Deleted' color='error' size='small' />
-                    }
+                    <Stack
+                        direction={'row'}
+                        justifyContent={'flex-start'}
+                        alignItems={'center'}
+                    >
+                        {
+                            showAddToCartButton && (
+                                <AddToCartAction
+                                    onClick={handleAddToCart}
+                                    tooltipTitle='Add to cart'
+                                />
+                            )
+                        }
+                        {
+                            showRemoveFromCartButton && (
+                                <RemoveFromCartAction
+                                    onClick={handleRemoveFromCart}
+                                    tooltipTitle='Remove from cart'
+                                />
+                            )
+                        }
+                        {
+                            showAddToWishListButton && (
+                                <AddToWishlistActionIcon
+                                    onClick={handleAddToWishList}
+                                    tooltipTitle='Add to wishlist'
+                                />
+                            )
+                        }
+                        {
+                            showRemoveFromWishListButton && (
+                                <RemoveFromWishlistActionIcon
+                                    onClick={handleRemoveFromWishList}
+                                    tooltipTitle='Remove from wishlist'
+                                />
+                            )
+                        }
+                        {
+                            showEditBookButton && (
+                                <EditActionIcon
+                                    onClick={handleEditBook}
+                                    tooltipTitle='Edit Book'
+                                />
+                            )
+                        }
+                        {
+                            bookQuery.data?.deletedAt &&
+                            <Chip label='Deleted' color='error' size='small' />
+                        }
+                    </Stack>
                 </Stack>
                 <Paper
                     elevation={5}
