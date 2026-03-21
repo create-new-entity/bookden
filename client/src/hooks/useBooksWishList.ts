@@ -19,6 +19,7 @@ type UseBooksWishListReturn = {
     params: BookSearchParamsWithTagsArray;
     updateParams: (params: Partial<BookSearchParams>) => void;
     priceRangeMeta: BooksPriceRangeMeta | undefined;
+    isWishlisted: (bookId: number) => boolean;
 };
 
 export const useBooksWishList = (): UseBooksWishListReturn => {
@@ -37,8 +38,12 @@ export const useBooksWishList = (): UseBooksWishListReturn => {
     const tagsString = tags.join(',');
     const booksList = useQuery({
         queryKey: ['wishlistedBooks', search, page, sortBy, sortOrder, tagsString, priceMin, priceMax],
-        queryFn: () => getWishlistedBooks({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, resolvedToken)
+        queryFn: () => getWishlistedBooks({ search, page, sortBy, sortOrder, tags: tagsString, priceMin, priceMax }, resolvedToken || '')
     });
+
+    const isWishlisted = (bookId: number) => {
+        return booksList.data?.data.some((book) => book.bookId === bookId) || false;
+    };
     
-    return { booksList, params, updateParams, priceRangeMeta };
+    return { booksList, params, updateParams, priceRangeMeta, isWishlisted };
 };

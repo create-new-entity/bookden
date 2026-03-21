@@ -33,7 +33,7 @@ export const canEditBook = (userType?: UserType) => {
     return userType === ADMIN || userType === SUPERADMIN;
 };
 
-export const canBuyBook = (userType?: UserType) => {
+export const canBuyOrWishlistBook = (userType?: UserType) => {
     if(userType) {
         return userType === CUSTOMER;
     }

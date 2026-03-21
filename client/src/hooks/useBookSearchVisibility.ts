@@ -1,9 +1,15 @@
 import { useLocation } from 'react-router-dom';
-import { HOME } from '../constants/routes';
 
-const allowedRoutes = [HOME];
+import { CART, HOME, WISHLIST } from '../constants';
 
 export const useBookSearchVisibility = () => {
     const location = useLocation();
-    return allowedRoutes.some(route => location.pathname === route);
+
+    const isHome = location.pathname === HOME;
+    const isCart = location.pathname === CART;
+    const isWishlist = location.pathname === WISHLIST;
+
+    const isBookDetail = /^\/books\/\d+$/.test(location.pathname);
+
+    return isHome || isCart || isWishlist || isBookDetail;
 };

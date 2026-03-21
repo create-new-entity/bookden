@@ -5,6 +5,18 @@ import { AuthenticatedRequest, JWTSignPayload } from '../types';
 import { AuthenticationError, errorMessages, errorNames } from '../errors';
 import { getPGDBPool, sqlTag } from '../configs';
 
+export const validTokenIsNotRequired = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
+    /*
+        This is related to how we decide whether "includeDeleted" should be taken into account or not,
+        later in the controller / service fns.
+
+        Also in some cases, even if the token has expired we don't necessarily need to throw an error. ( public endpoints )
+        This middleware "relaxes" the authentication requirement.
+    */
+    req.isValidTokenRequired = false;
+    next();
+};
+
 export const tokenExtractor = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const authHeader = req.headers.authorization;
     if(authHeader) {
@@ -35,7 +47,10 @@ export const tokenExtractor = async (req: AuthenticatedRequest, res: Response, n
                 }
             }
             catch(error) {
-                console.log('here6', error);
+                if(!req.isValidTokenRequired) {
+                    next();
+                    return;
+                }
                 if(error instanceof jwt.TokenExpiredError) {
                     const authenticationError = new AuthenticationError(errorMessages[errorNames.tokenExpired]);
                     next(authenticationError);

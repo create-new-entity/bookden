@@ -6,16 +6,13 @@ import { type BookSearchParams, type CreateUpdateBookData } from '../validations
 import { removeEmptyValues } from '../utility';
 
 
-/*
-    Note to future self:
-
-    "getPublicBook":
-    means get the book that is publicly available to all users.
-    Not deleted. So no authentication is required.
-*/
-
-export const getPublicBook = async (bookId: number) => {
-    const response = await axios.get(`${bookUrl}/${bookId}/public`);
+export const getPublicBook = async (bookId: number, token?: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const response = await axios.get(`${bookUrl}/${bookId}/public`, (token ? requestConfig : {}));
     return response.data;
 };
 
@@ -47,9 +44,14 @@ export async function getBooksFiltersMeta(): Promise<BooksPriceRangeMeta> {
 };
 
 
-export const getPublicBooksList = async (params: BookSearchParams): Promise<PaginatedDataList<Book>> => {
+export const getPublicBooksList = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
     const cleanedParams = removeEmptyValues(params);
-    const response = await axios.get(`${bookUrl}/public`, { params: cleanedParams });
+    const response = await axios.get(`${bookUrl}/public`, { params: cleanedParams, ...(token ? requestConfig : {}) });
     return response.data;
 };
 
@@ -64,7 +66,7 @@ export const getAdminBooksList = async (params: BookSearchParams, token: string)
     return response.data;
 };
 
-export const getWishlistedBooks = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
+export const getWishlistedBooks = async (params: BookSearchParams, token: string): Promise<PaginatedDataList<Book>> => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
@@ -99,14 +101,11 @@ export const removeBookFromWishlist = async (bookId: number, token: string) => {
     await axios.delete(`${bookUrl}/${bookId}/wishlist`, requestConfig);
 };
 
-/*
-    Note to future self:
-    Similar reasoning as "getPublicBook" and "getAdminBook" mentioned above.
-*/
 
-export const getPublicBookCover = async (bookId: number) => {
+export const getPublicBookCover = async (bookId: number, token?: string) => {
     const requestConfig: AxiosRequestConfig = {
-        responseType: 'blob'
+        responseType: 'blob',
+        headers: (token ? { Authorization: `Bearer ${token}` } : {})
     };
     const response = await axios.get(`${bookUrl}/${bookId}/cover/public`, requestConfig);
     return response.data;

@@ -3,12 +3,12 @@ import {
     Stack, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 
 import { useCartContext } from '../../contexts';
 import CartItemMobile from './CartItemMobile';
-import { BOOKS, DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
+import { DEFAULT_GAP, MARGIN_TOP_TO_AVOID_NAV_BAR } from '../../constants';
 import { useSetTabTitle, useCheckout } from '../../hooks';
+import { LeadToAllBooksText } from '../HomePage';
 
 
 type Styles = {
@@ -96,11 +96,7 @@ const CartPageMobile = () => {
                     <Typography variant='h4' color='text.secondary'>
                         Your cart is empty 🙂
                     </Typography>
-                    <Link to={BOOKS}>
-                        <Typography variant='body1' color='info'>
-                            You can browse books here.
-                        </Typography>
-                    </Link>
+                    <LeadToAllBooksText />
                 </Stack>
             }
         </Container>

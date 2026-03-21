@@ -8,12 +8,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-import { useAuthContext, useCartContext, useNavContext } from '../../contexts';
+import { useAuthContext, useAvatarContext, useCartContext, useNavContext } from '../../contexts';
 import { SearchInput } from '../custom';
-import { CART, NAV_BAR_Z_INDEX } from '../../constants';
-import { useBookSearchVisibility, useResponsive } from '../../hooks';
+import { ADMIN, CART, NAV_BAR_Z_INDEX, SUPERADMIN } from '../../constants';
+import { useAvatar, useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
 import ThemeSwitchIconOnly from './ThemeSwitch';
+import type { UserType } from '../../types';
 
 const getStyles = (_theme: Theme) => {
     return {
@@ -56,18 +57,21 @@ const NavBar = () => {
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
     const { userType, isLoggedIn } = useAuthContext();
-    const showBookSearch = useBookSearchVisibility();
+    const isBookSearchVisible = useBookSearchVisibility();
     const theme = useTheme();
     const navigate = useNavigate();
     const { isXs } = useResponsive();
     const { totalNumberOfBooksInCart } = useCartContext();
+    const { avatarUrl } = useAvatarContext();
+
+    useAvatar();
 
     const styles = getStyles(theme);
     const handleSearchChange = (value: string) => {
         navigate(`/books?search=${value}`);
     };
 
-    const isAdminOrSuperAdmin = userType === 'admin' || userType === 'superadmin';
+    const isAdminOrSuperAdmin = userType === ADMIN || userType === SUPERADMIN;
     
     return (
         <AppBar sx={styles.appBar} position='sticky'>
@@ -98,7 +102,7 @@ const NavBar = () => {
                         }
                     </Stack>
                     {
-                        showBookSearch && (
+                        isBookSearchVisible && (
                             <SearchInput
                                 id='navSearchBox'
                                 sx={{ ...styles.searchBox, ...{ display: { xs: 'none', sm: 'block' } } }}
@@ -140,6 +144,7 @@ const NavBar = () => {
                         {
                             isLoggedIn &&
                             <Avatar
+                                src={avatarUrl || undefined}
                                 data-testid='user-avatar'
                                 sx={{ display: { xs: 'none', sm: 'flex' } }}
                                 onClick={(e: React.MouseEvent<HTMLDivElement>) => {

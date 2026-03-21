@@ -50,7 +50,7 @@ const WishListPage = () => {
                 sx={{ marginTop: '1rem' }}
             >
                 <Typography variant='body1'>
-                    Only wishlisted books are in this page.
+                    Only wishlisted books will be shown in this page.
                 </Typography>
             </Stack>
             <BookListLayout
