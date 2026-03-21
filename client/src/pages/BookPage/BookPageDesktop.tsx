@@ -224,7 +224,7 @@ const BookPageDesktop = (props: BookPageDesktopProps) => {
                                             bookQuery.data?.tags?.map((tag) => {
                                                 const encodedTag = encodeURIComponent(tag);
                                                 return (
-                                                    <Chip label={tag} size='medium' onClick={() => navigate(`/books?tags=${encodedTag}`)} />
+                                                    <Chip key={tag} label={tag} size='medium' onClick={() => navigate(`/books?tags=${encodedTag}`)} />
                                                 );
                                             })
                                         }
