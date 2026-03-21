@@ -4,12 +4,9 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter } from 'react-router-dom';
 
 import {
-    NavProvider,
-    AvatarProvider,
-    AuthProvider,
-    ThemeModeProvider,
-    useThemeModeContext,
-    NotificationProvider
+    NavProvider, AvatarProvider,
+    AuthProvider, ThemeModeProvider,
+    useThemeModeContext, NotificationProvider, CartProvider
 } from '../../contexts';
 
 const queryClient = new QueryClient();
@@ -20,7 +17,12 @@ const WrapperComponent = ({ children }: Props) => {
     const { theme } = useThemeModeContext();
     return (
         /*
+        
             Welcome to "Provider Hell" 😎.
+
+            Note to future self to refactor later:
+            https://medium.com/@d3d.me/react-provider-composition-exorcising-provider-hell-d98cd3a78b29
+
         */
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -28,9 +30,11 @@ const WrapperComponent = ({ children }: Props) => {
                 <NotificationProvider>
                     <AuthProvider>
                         <AvatarProvider>
-                            <NavProvider>
-                                {children}
-                            </NavProvider>
+                            <CartProvider>
+                                <NavProvider>
+                                    {children}
+                                </NavProvider>
+                            </CartProvider>
                         </AvatarProvider>
                     </AuthProvider>
                 </NotificationProvider>

@@ -1,3 +1,5 @@
+import { BooksQueryOptions, HomepageBookListConfig } from './types';
+
 export const TOKEN_VALIDITY_SECONDS = 60 * 60; // 1 hour in seconds
 
 
@@ -30,3 +32,46 @@ export const PRICE_RANGE_CACHE_KEY = 'books:price-range';
 export const PRICE_RANGE_TTL_SECONDS = 60 * 10; // 10 minutes. Redis EX = seconds. No need to multiply by 1000.
 export const DEFAULT_PRICE_MIN = 0;
 export const DEFAULT_PRICE_MAX = 100000;
+
+
+export const DEFAULT_BOOK_FILTER_OPTIONS: BooksQueryOptions = {
+    includeDeleted: false,
+    page: 1,
+    search: '',
+    sortBy: 'title',
+    sortOrder: 'desc',
+    tags: [],
+    priceRanges: {
+        priceMin: DEFAULT_PRICE_MIN,
+        priceMax: DEFAULT_PRICE_MAX
+    },
+    limit: BOOKS_PAGINATION_LIMIT,
+    includePagination: true,
+    randomOrder: false
+};
+
+export const HOMEPAGE_BOOK_LISTS_CAROUSEL_LIMIT = 12;
+
+const MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL = 30;
+const MAX_BOOK_PAGES_FOR_HOMEPAGE_CAROUSEL = 50;
+
+export const HOMEPAGE_BOOK_LISTS: HomepageBookListConfig[] = [
+    {
+        key: 'cheap', title: `Under €${MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL}`,
+        queryOptions: { priceRanges: { priceMin: 0, priceMax: MAX_BOOK_PRICE_FOR_HOMEPAGE_CAROUSEL } }
+    },
+    {
+        key: 'shortReads', title: 'Short Reads', extraWhereFragment: (sqlTag) => {
+            return sqlTag.fragment`
+                AND books.pages <= ${MAX_BOOK_PAGES_FOR_HOMEPAGE_CAROUSEL}
+            `;
+        }
+    },
+    { key: 'classics', title: 'Classics', queryOptions: { tags: ['classics'] } },
+    { key: 'actionAdventure', title: 'Action & Adventure', queryOptions: { tags: ['action & adventure'] } },
+    { key: 'scifi', title: 'Science Fiction', queryOptions: { tags: ['science fiction'] } },
+    { key: 'horror', title: 'Horror', queryOptions: { tags: ['horror'] } },
+    { key: 'drama', title: 'Drama', queryOptions: { tags: ['drama'] } },
+    { key: 'romance', title: 'Romance', queryOptions: { tags: ['romance'] } },
+    { key: 'satire', title: 'Satire', queryOptions: { tags: ['satire'] } }
+];

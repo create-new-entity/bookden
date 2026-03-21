@@ -13,3 +13,6 @@ export * from './DeleteActionIcon';
 export * from './RestoreActionButton';
 export * from './FilterActionIcon';
 export * from './AddActionIcon';
+export * from './AddToWishlistAction';
+export * from './RemoveFromWishlistAction';
+export * from './RemoveActionIcon';

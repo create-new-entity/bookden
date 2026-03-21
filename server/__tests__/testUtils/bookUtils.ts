@@ -6,30 +6,63 @@ import { requestAsBuffer } from './miscellaneous';
 import { CreateBookPayload, UpdateBookPayload } from '../../types';
 
 
-export const getBooks = async (expectedCode: number, token?: string, queryParams?: string) => {
+export const getBooksAdmin = async (expectedCode: number, token: string, queryParams?: string) => {
     return await apiSupertest(app)
-        .get(queryParams ? `${bookBaseUrl}?${queryParams}` : bookBaseUrl)
+        .get(queryParams ? `${bookBaseUrl}/admin?${queryParams}` : `${bookBaseUrl}/admin`)
         .set({
             'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            'Authorization': `Bearer ${token}`
         })
         .expect(expectedCode);
 };
 
-export const getBook = async (bookId: number, expectedCode: number, token?: string) => {
+export const getBooksPublic = async (expectedCode: number, queryParams?: string) => {
     return await apiSupertest(app)
-        .get(`${bookBaseUrl}/${bookId}`)
+        .get(queryParams ? `${bookBaseUrl}/public?${queryParams}` : `${bookBaseUrl}/public`)
         .set({
             'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         })
         .expect(expectedCode);
 };
 
-export const getBookCover = async (bookId: number, expectedCode: number) => {
+export const getBookPublic = async (bookId: number, expectedCode: number) => {
+    return await apiSupertest(app)
+        .get(`${bookBaseUrl}/${bookId}/public`)
+        .set({
+            'Content-Type': 'application/json'
+        })
+        .expect(expectedCode);
+};
+
+export const getBookAdmin = async (bookId: number, expectedCode: number, token: string) => {
+    return await apiSupertest(app)
+        .get(`${bookBaseUrl}/${bookId}/admin`)
+        .set({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        })
+        .expect(expectedCode);
+};
+
+export const getBookCoverPublic = async (bookId: number, expectedCode: number) => {
     return await requestAsBuffer(
         apiSupertest(app)
-            .get(`/api/books/${bookId}/cover`)
+            .get(`${bookBaseUrl}/${bookId}/cover/public`)
+            .set({
+                'Content-Type': 'application/json'
+            })
+            .expect(expectedCode)
+    );
+};
+
+export const getBookCoverAdmin = async (bookId: number, expectedCode: number, token: string) => {
+    return await requestAsBuffer(
+        apiSupertest(app)
+            .get(`${bookBaseUrl}/${bookId}/cover/admin`)
+            .set({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
             .expect(expectedCode)
     );
 };
@@ -91,6 +124,36 @@ export const restoreBook = async (bookId: number, expectedCode: number, token: s
 export const deleteBookCover = async (bookId: number, expectedCode: number, token: string) => {
     return await apiSupertest(app)
         .delete(`${bookBaseUrl}/${bookId}/cover`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};
+
+export const getWishList = async (expectedCode: number, token: string) => {
+    return await apiSupertest(app)
+        .get(`${bookBaseUrl}/wishlist`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};
+
+export const addBookToWishlist = async (expectedCode: number, token: string, bookId: number) => {
+    return await apiSupertest(app)
+        .post(`${bookBaseUrl}/${bookId}/wishlist`)
+        .set({
+            'Content-Type': 'application/json',
+            ...{ 'Authorization': `Bearer ${token}` }
+        })
+        .expect(expectedCode);
+};
+
+export const removeBookFromWishlist = async (expectedCode: number, token: string, bookId: number) => {
+    return await apiSupertest(app)
+        .delete(`${bookBaseUrl}/${bookId}/wishlist`)
         .set({
             'Content-Type': 'application/json',
             ...{ 'Authorization': `Bearer ${token}` }

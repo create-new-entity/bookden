@@ -1,17 +1,14 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
     Box, Card, CardMedia,
     Stack, Typography, useTheme,
-    type Theme, type SxProps,
-    Chip
+    type Theme, type SxProps, Chip
 } from '@mui/material';
 
-import { getBookCover } from '../../../api';
-import { useBlobImage, useDeleteBook, useRestoreBook } from '../../../hooks';
-import type { Book } from '../../../types';
+import { useResponsive, type UseAdminBookCoverHook, type UsePublicBookCoverHook } from '../../../hooks';
+import type { Book, BookAction } from '../../../types';
 import { DEFAULT_GAP, PLACE_HOLDER_BOOK_COVER } from '../../../constants';
 import { useAuthContext } from '../../../contexts';
-import BookCardActions from './BookCardActions';
 
 type Styles = {
     card: SxProps<Theme>;
@@ -91,28 +88,23 @@ const getStyles = (theme: Theme): Styles => {
         },
         synopsis: {
             overflow: 'auto',
-            height: '4rem'
+            height: '5rem'
         }
     };
 };
 
 type BookCardMobileProps = {
     item: Book;
+    getActions: (book: Book) => BookAction[];
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 
 const BookCardMobile = (props: BookCardMobileProps) => {
-    const { item } = props;
+    const { item, getActions, useBookCover } = props;
     const book = item;
-    const blobOptions = {
-        queryKey: ['bookCover', book.bookId],
-        queryFn: () => getBookCover(book.bookId),
-        enabled: !!book.bookId,
-    };
-    const { objectUrl } = useBlobImage(blobOptions);
+    const { bookCoverBlob } = useBookCover(book.bookId);
     const theme = useTheme();
-    const { deleteBookCoverAndBookData } = useDeleteBook();
-    const { restoreBookMutation } = useRestoreBook();
-    const navigate = useNavigate();
+    const { isXs } = useResponsive();
 
     const { userType, hasExistingLoggedInUser } = useAuthContext();
     const { existingLoggedInData } = hasExistingLoggedInUser();
@@ -123,21 +115,8 @@ const BookCardMobile = (props: BookCardMobileProps) => {
     const styles = getStyles(theme);
     const isDeleted = book.deletedAt !== null;
 
-    const handleDeleteBook = async () => {
-        deleteBookCoverAndBookData(book.bookId);
-    };
-    
-    const onEdit = () => {
-        navigate(`/books/${book.bookId}/update`);
-    };
-
-    const onDelete = () => {
-        handleDeleteBook();
-    };
-
-    const onRestore = () => {
-        restoreBookMutation.mutate(book.bookId);
-    };
+    const actions = getActions(book);
+    const resolvedTitleVariant = isXs ? 'body2' : 'body1';
 
     return (
         <Link to={`/books/${book.bookId}`}>
@@ -153,10 +132,10 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                 >
                     <Box sx={styles.cardMedia}>
                         {
-                            objectUrl ? 
+                            bookCoverBlob.objectUrl ? 
                                 <CardMedia
                                     component='img'
-                                    image={objectUrl}
+                                    image={bookCoverBlob.objectUrl}
                                 />
                                 :
                                 <CardMedia
@@ -180,11 +159,10 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                             gap={`${DEFAULT_GAP / 4}px`}
                             alignSelf={'stretch'}
                         >
-                            <Typography sx={styles.title} variant='h6'>
+                            <Typography sx={styles.title} variant={resolvedTitleVariant}>
                                 {book.title}
                             </Typography>
                             {
-                                isAdminOrSuperAdmin &&
                                 <Stack
                                     direction={'row'}
                                     justifyContent={'flex-start'}
@@ -192,18 +170,29 @@ const BookCardMobile = (props: BookCardMobileProps) => {
                                     gap={`${DEFAULT_GAP / 4}px`}
                                 >
                                     {
-                                        isDeleted &&
+                                        isDeleted && isAdminOrSuperAdmin &&
                                         <Chip label='Deleted' color='error' size='small' />
                                     }
                                     <Box className='book-card-actions'>
-                                        <BookCardActions
-                                            bookId={book.bookId}
-                                            isDeleted={isDeleted}
-                                            allowedActions={['edit', 'delete', 'restore']}
-                                            onEdit={onEdit}
-                                            onDelete={onDelete}
-                                            onRestore={onRestore}
-                                        />
+                                        <Stack
+                                            direction={'row'}
+                                            justifyContent={'flex-start'}
+                                            alignItems={'center'}
+                                            gap={`${DEFAULT_GAP / 4}px`}
+                                        >
+                                            {
+                                                actions.map((action) => {
+                                                    const { id, onClick, toolTipTitle, IconComponent } = action;
+                                                    return (
+                                                        <IconComponent
+                                                            key={id}
+                                                            onClick={onClick}
+                                                            tooltipTitle={toolTipTitle}
+                                                        />
+                                                    );
+                                                })
+                                            }
+                                        </Stack>
                                     </Box>
                                 </Stack>
                             }

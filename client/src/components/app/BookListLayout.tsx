@@ -1,29 +1,32 @@
-import { useRef, useState } from 'react';
-import {
-    Stack, Typography, useTheme, type SxProps, type Theme
-} from '@mui/material';
+import type { UseQueryResult } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { Stack, Typography, useTheme, type SxProps, type Theme } from '@mui/material';
+import { useRef, useState } from 'react';
 
-
-import { useBooksList, useResponsive, useSetTabTitle } from '../hooks';
+import type {
+    Book, BookAction, PageMode,
+    BooksPriceRangeMeta, PaginatedDataList
+} from '../../types';
+import type {
+    BookSearchParams, BookSearchParamsWithTagsArray
+} from '../../validations/bookSearchParams';
+import ClearBookFilterActions from './BooksListFilter/ClearBookFilterActions';
+import FilterActionIcon from './ActionIcons/FilterActionIcon';
+import { useAuthContext } from '../../contexts';
 import {
-    ADMIN, CONTENT_MARGIN, CREATE_BOOK,
-    DEFAULT_GAP, GRID_VIEW, SUPERADMIN
-} from '../constants';
+    ADMIN, CREATE_BOOK, GRID_VIEW,
+    SUPERADMIN, CONTENT_MARGIN, DEFAULT_GAP
+} from '../../constants';
+import AddActionIcon from './ActionIcons/AddActionIcon';
 import {
-    CustomModal, CustomPagination, Items,
-    BooksListFilterDesktop, type CustomModalRef,
-    BooksListFilterMobile, BookCardDesktop,
-    BookCardMobile
-} from '../components';
-import { useAuthContext } from '../contexts';
-import type { Book } from '../types';
-import type { ViewSelectorProps } from '../components/app/ViewSelector';
-import FilterActionIcon from '../components/app/ActionIcons/FilterActionIcon';
-import AddActionIcon from '../components/app/ActionIcons/AddActionIcon';
-import ClearBookFilterActions from '../components/app/BooksListFilter/ClearBookFilterActions';
-
-
+    useResponsive, type UseAdminBookCoverHook, type UsePublicBookCoverHook,
+    usePublicBookCover, useAdminBookCover
+} from '../../hooks';
+import { BooksListFilterDesktop, BooksListFilterMobile } from './BooksListFilter';
+import type { ViewSelectorProps } from './ViewSelector';
+import { CustomModal, CustomPagination, type CustomModalRef } from '../custom';
+import Items from './Items';
+import { BookCardDesktop, BookCardMobile } from './BookCard';
 
 type Styles = {
     searchBoxesStack: SxProps<Theme>;
@@ -71,30 +74,45 @@ const getStyles = (theme: Theme): Styles => {
 };
 
 
+type BookListLayoutProps = {
+    mode: PageMode;
+    getActions: (book: Book) => BookAction[];
+    booksList: UseQueryResult<PaginatedDataList<Book>, Error>;
+    params: BookSearchParamsWithTagsArray;
+    updateParams: (params: Partial<BookSearchParams>) => void;
+    priceRangeMeta: BooksPriceRangeMeta | undefined;
+};
 
-const BookManagementPage = () => {
-    const { isDesktop, isMobile } = useResponsive();
+const BookListLayout = (props: BookListLayoutProps) => {
+    const { mode, booksList, params, updateParams, priceRangeMeta, getActions } = props;
+    const { tags } = params;
+
     const theme = useTheme();
-    const { booksList, params, updateParams, priceRangeMeta } = useBooksList();
     const modalRef = useRef<CustomModalRef>(null);
     const { userType: clientUserType } = useAuthContext();
     const navigate = useNavigate();
+    const { isDesktop, isMobile } = useResponsive();
     const [selectedView, setSelectedView] = useState<ViewSelectorProps['selectedView']>('grid');
-    
-    const styles = getStyles(theme);
-    const { tags } = params;
-    const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
 
-    const openFilterModal = () => {
-        modalRef.current?.openModal();
+    const useBookCover = mode === 'admin' ? useAdminBookCover : usePublicBookCover;
+
+    const styles = getStyles(theme);
+    const isClientAdminOrSuperAdmin = clientUserType === SUPERADMIN || clientUserType === ADMIN;
+    
+    const handleCreateBook = () => {
+        navigate(CREATE_BOOK);
     };
 
     const onPageChange = (page: number) => {
         updateParams({ page });
     };
-    
-    useSetTabTitle('Book Management');
-    
+
+    const openFilterModal = () => {
+        modalRef.current?.openModal();
+    };
+
+    const showFirstPagination = booksList.data && booksList.data.pagination.totalPages > 0;
+    const showSecondPagination = booksList.data && booksList.data.pagination.totalPages > 1;
 
     return (
         <>
@@ -104,7 +122,12 @@ const BookManagementPage = () => {
                 justifyContent={'flex-start'}
                 alignItems={'center'}
             >
-                <Stack sx={styles.filterIconStack} direction={'row'} justifyContent={'flex-end'} alignItems={'center'}>
+                <Stack
+                    sx={styles.filterIconStack}
+                    direction={'row'}
+                    justifyContent={'flex-end'}
+                    alignItems={'center'}
+                >
                     <ClearBookFilterActions
                         tags={tags}
                         priceMin={params.priceMin}
@@ -114,16 +137,18 @@ const BookManagementPage = () => {
                     />
                     <FilterActionIcon onClick={openFilterModal} tooltipTitle='Filter options' />
                     {
-                        isClientAdminOrSuperAdmin && (
-                            <AddActionIcon onClick={() => {
-                                navigate(CREATE_BOOK);
-                            }} tooltipTitle='Add a new book' />
+                        mode === 'admin' && isClientAdminOrSuperAdmin && (
+                            <AddActionIcon
+                                onClick={handleCreateBook}
+                                tooltipTitle='Add a new book'
+                            />
                         )
                     }
                 </Stack>
                 {
                     isDesktop && priceRangeMeta &&
                     <BooksListFilterDesktop
+                        mode={mode}
                         tags={tags}
                         params={params}
                         updateParams={updateParams}
@@ -139,22 +164,23 @@ const BookManagementPage = () => {
                     </Typography>
                 }
                 {
-                    booksList.data &&
+                    showSecondPagination &&
                     <CustomPagination<Book>
                         sx={styles.topPagination}
                         paginatedDataList={booksList.data}
                         onPageChange={onPageChange}
                     />
                 }
-                <Items<Book>
+                <Items<Book, { getActions: (book: Book) => BookAction[], useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook }>
                     sx={styles.items}
                     items={booksList.data?.data || []}
+                    itemProps={{ getActions, useBookCover }}
                     ItemComponent={(!isMobile && selectedView === GRID_VIEW) ? BookCardDesktop : BookCardMobile}
                     getKey={(book) => book.bookId}
                     viewOption={selectedView}
                 />
                 {
-                    booksList.data &&
+                    showFirstPagination &&
                     <CustomPagination<Book>
                         paginatedDataList={booksList.data}
                         onPageChange={onPageChange}
@@ -177,4 +203,4 @@ const BookManagementPage = () => {
     );
 };
 
-export default BookManagementPage;
+export default BookListLayout;

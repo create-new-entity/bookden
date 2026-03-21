@@ -5,13 +5,31 @@ import type { PaginatedDataList, Book, BooksPriceRangeMeta } from '../types';
 import { type BookSearchParams, type CreateUpdateBookData } from '../validations';
 import { removeEmptyValues } from '../utility';
 
-export const getBook = async (bookId: number, token?: string) => {
+
+export const getPublicBook = async (bookId: number, token?: string) => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
-    const response = await axios.get(`${bookUrl}/${bookId}`, requestConfig);
+    const response = await axios.get(`${bookUrl}/${bookId}/public`, (token ? requestConfig : {}));
+    return response.data;
+};
+
+
+/*
+    "getAdminBook":
+    means get the book that may or may not be deleted.
+    Even if it was deleted, it will be returned, if the token
+    represents an admin or superadmin.
+*/
+export const getAdminBook = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const response = await axios.get(`${bookUrl}/${bookId}/admin`, requestConfig);
     return response.data;
 };
 
@@ -26,22 +44,81 @@ export async function getBooksFiltersMeta(): Promise<BooksPriceRangeMeta> {
 };
 
 
-export const getBooksList = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
+export const getPublicBooksList = async (params: BookSearchParams, token?: string): Promise<PaginatedDataList<Book>> => {
     const requestConfig: AxiosRequestConfig = {
         headers: {
             Authorization: `Bearer ${token}`
         }
     };
     const cleanedParams = removeEmptyValues(params);
-    const response = await axios.get(bookUrl, { params: cleanedParams, ...requestConfig });
+    const response = await axios.get(`${bookUrl}/public`, { params: cleanedParams, ...(token ? requestConfig : {}) });
     return response.data;
 };
 
-export const getBookCover = async (bookId: number) => {
+export const getAdminBooksList = async (params: BookSearchParams, token: string): Promise<PaginatedDataList<Book>> => {
     const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const cleanedParams = removeEmptyValues(params);
+    const response = await axios.get(`${bookUrl}/admin`, { params: cleanedParams, ...requestConfig });
+    return response.data;
+};
+
+export const getWishlistedBooks = async (params: BookSearchParams, token: string): Promise<PaginatedDataList<Book>> => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const cleanedParams = removeEmptyValues(params);
+    const response = await axios.get(`${bookUrl}/wishlist`, { params: cleanedParams, ...requestConfig });
+
+    return response.data;
+};
+
+export const getHomePageBookLists = async () => {
+    const response = await axios.get(`${bookUrl}/homepage-books`);
+    return response.data;
+};
+
+export const addBookToWishList = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.post(`${bookUrl}/${bookId}/wishlist`, null, requestConfig);
+};
+
+export const removeBookFromWishlist = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    await axios.delete(`${bookUrl}/${bookId}/wishlist`, requestConfig);
+};
+
+
+export const getPublicBookCover = async (bookId: number, token?: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        responseType: 'blob',
+        headers: (token ? { Authorization: `Bearer ${token}` } : {})
+    };
+    const response = await axios.get(`${bookUrl}/${bookId}/cover/public`, requestConfig);
+    return response.data;
+};
+
+export const getAdminBookCover = async (bookId: number, token: string) => {
+    const requestConfig: AxiosRequestConfig = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
         responseType: 'blob'
     };
-    const response = await axios.get(`${bookUrl}/${bookId}/cover`, requestConfig);
+    const response = await axios.get(`${bookUrl}/${bookId}/cover/admin`, requestConfig);
     return response.data;
 };
 

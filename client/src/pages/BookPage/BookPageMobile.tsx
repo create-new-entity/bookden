@@ -1,20 +1,31 @@
 import {
-    Button, Chip, Container, Paper,
-    Stack, Typography, useTheme,
+    Chip, Container, Paper,
+    Stack, Tooltip, Typography, useTheme,
     type SxProps, type Theme
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import * as R from 'ramda';
+import { useMemo } from 'react';
 
-import { useBook, useBookCover } from '../../hooks';
+import {
+    useBooksWishList,
+    useBooksWishListMutation,
+    type UseAdminBookCoverHook, type UseAdminBookHook,
+    type UsePublicBookCoverHook, type UsePublicBookHook
+} from '../../hooks';
 import {
     DEFAULT_BORDER_RADIUS, DEFAULT_GAP,
     LANGUAGE_LABEL_MAP,
     MARGIN_TOP_TO_AVOID_NAV_BAR, PLACE_HOLDER_BOOK_COVER
 } from '../../constants';
 import { BOOK_COVER_HEIGHT_MOBILE, BOOK_COVER_WIDTH_MOBILE } from './constants';
-import { useAuthContext } from '../../contexts';
-import { canBuyBook, canEditBook } from '../../utility';
+import { useAuthContext, useCartContext } from '../../contexts';
+import { canBuyOrWishlistBook, canEditBook } from '../../utility';
 import EditActionIcon from '../../components/app/ActionIcons/EditActionIcon';
+import AddToCartAction from '../../components/app/ActionIcons/AddToCartAction';
+import RemoveFromCartAction from '../../components/app/ActionIcons/RemoveFromCartAction';
+import AddToWishlistActionIcon from '../../components/app/ActionIcons/AddToWishlistAction';
+import RemoveFromWishlistActionIcon from '../../components/app/ActionIcons/RemoveFromWishlistAction';
 
 
 type Styles = {
@@ -27,13 +38,17 @@ type Styles = {
 const getStyles = (_theme: Theme): Styles => {
     return {
         rootStack: {
-            marginTop: `calc(${MARGIN_TOP_TO_AVOID_NAV_BAR} / 2)`
+            marginTop: `calc(${MARGIN_TOP_TO_AVOID_NAV_BAR} / 2)`,
+            marginBottom: '1rem'
         },
         bookTitle: {
+            width: '100%',
             overflow: 'hidden',
-            whiteSpace: 'wrap',
             marginLeft: '1rem',
-            marginRight: '1rem'
+            marginRight: '1rem',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            textAlign: 'center'
         },
         bookCoverContainer: {
             width: `${BOOK_COVER_WIDTH_MOBILE}rem`,
@@ -51,22 +66,51 @@ const getStyles = (_theme: Theme): Styles => {
 
 type BookPageMobileProps = {
     bookId: number;
+    useBook: UsePublicBookHook | UseAdminBookHook;
+    useBookCover: UsePublicBookCoverHook | UseAdminBookCoverHook;
 };
 const BookPageMobile = (props: BookPageMobileProps) => {
-    const { bookId } = props;
+    const { bookId, useBook, useBookCover } = props;
     
     const { userType } = useAuthContext();
     const navigate = useNavigate();
     const theme = useTheme();
     const bookQuery = useBook(bookId);
     const { bookCoverBlob } = useBookCover(bookId);
+    const { isInCart, addToCart, removeFromCart } = useCartContext();
+    const { isWishlisted } = useBooksWishList();
+    const { addToWishList, removeFromWishList } = useBooksWishListMutation();
 
-    const showEditBookButton = canEditBook(userType);
-    const showAddToCartButton = canBuyBook(userType);
+    const showEditBookButton = useMemo(() => canEditBook(userType), [userType]);
+    const canBuyOrWishlist = useMemo(() => canBuyOrWishlistBook(userType), [userType]);
+    const showAddToCartButton = useMemo(() => canBuyOrWishlist && !isInCart(bookId), [canBuyOrWishlist, isInCart, bookId]);
+    const showRemoveFromCartButton = useMemo(() => canBuyOrWishlist && isInCart(bookId), [canBuyOrWishlist, isInCart, bookId]);
+    const showAddToWishListButton = useMemo(() => canBuyOrWishlist && !isWishlisted(bookId), [canBuyOrWishlist, isWishlisted, bookId]);
+    const showRemoveFromWishListButton = useMemo(() => canBuyOrWishlist && isWishlisted(bookId), [canBuyOrWishlist, isWishlisted, bookId]);
     const styles = getStyles(theme);
 
     const handleEditBook = () => {
         navigate(`/books/${bookId}/update`);
+    };
+
+    const handleAddToCart = () => {
+        if(!bookQuery.data) return;
+        addToCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
+    };
+
+    const handleRemoveFromCart = () => {
+        if(!bookQuery.data) return;
+        removeFromCart(R.pick(['bookId', 'title', 'price'], bookQuery.data));
+    };
+
+    const handleAddToWishList = () => {
+        if(!bookQuery.data) return;
+        addToWishList.mutate(bookId);
+    };
+
+    const handleRemoveFromWishList = () => {
+        if(!bookQuery.data) return;
+        removeFromWishList.mutate(bookId);
     };
 
     return (
@@ -84,37 +128,70 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                 >
                     <img src={bookCoverBlob.objectUrl || PLACE_HOLDER_BOOK_COVER} alt='Book Cover' style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: DEFAULT_BORDER_RADIUS }} />
                 </Paper>
-                <Typography variant='body1' sx={styles.bookTitle}>
-                    {bookQuery.data?.title} by {bookQuery.data?.authors?.join(', ')}
-                </Typography>
+                <Tooltip title={bookQuery.data?.title}>
+                    <Typography variant='body1' sx={styles.bookTitle}>
+                        {bookQuery.data?.title} by {bookQuery.data?.authors?.join(', ')}
+                    </Typography>
+                </Tooltip>
                 <Stack
                     direction={'row'}
-                    justifyContent={'flex-start'}
+                    justifyContent={'space-between'}
                     alignItems={'center'}
                     gap={`${DEFAULT_GAP}px`}
                 >
                     <Typography variant='h4' color='info'>
                         €{bookQuery.data?.price}
                     </Typography>
-                    {
-                        showAddToCartButton && (
-                            <Button variant='contained' color='primary'>
-                                Add to cart
-                            </Button>
-                        )
-                    }
-                    {
-                        showEditBookButton && (
-                            <EditActionIcon
-                                onClick={handleEditBook}
-                                tooltipTitle='Edit Book'
-                            />
-                        )
-                    }
-                    {
-                        bookQuery.data?.deletedAt &&
-                        <Chip label='Deleted' color='error' size='small' />
-                    }
+                    <Stack
+                        direction={'row'}
+                        justifyContent={'flex-start'}
+                        alignItems={'center'}
+                    >
+                        {
+                            showAddToCartButton && (
+                                <AddToCartAction
+                                    onClick={handleAddToCart}
+                                    tooltipTitle='Add to cart'
+                                />
+                            )
+                        }
+                        {
+                            showRemoveFromCartButton && (
+                                <RemoveFromCartAction
+                                    onClick={handleRemoveFromCart}
+                                    tooltipTitle='Remove from cart'
+                                />
+                            )
+                        }
+                        {
+                            showAddToWishListButton && (
+                                <AddToWishlistActionIcon
+                                    onClick={handleAddToWishList}
+                                    tooltipTitle='Add to wishlist'
+                                />
+                            )
+                        }
+                        {
+                            showRemoveFromWishListButton && (
+                                <RemoveFromWishlistActionIcon
+                                    onClick={handleRemoveFromWishList}
+                                    tooltipTitle='Remove from wishlist'
+                                />
+                            )
+                        }
+                        {
+                            showEditBookButton && (
+                                <EditActionIcon
+                                    onClick={handleEditBook}
+                                    tooltipTitle='Edit Book'
+                                />
+                            )
+                        }
+                        {
+                            bookQuery.data?.deletedAt &&
+                            <Chip label='Deleted' color='error' size='small' />
+                        }
+                    </Stack>
                 </Stack>
                 <Paper
                     elevation={5}
@@ -145,9 +222,22 @@ const BookPageMobile = (props: BookPageMobileProps) => {
                                 </Typography>
                             )
                         }
-                        <Typography>
-                            Tags: {bookQuery.data?.tags?.join(', ')}
-                        </Typography>
+                        <Stack
+                            direction={'row'}
+                            justifyContent={'flex-start'}
+                            alignItems={'center'}
+                            sx={{ flexWrap: 'wrap', gap: `${DEFAULT_GAP / 2}px`}}
+                        >
+                            Tags:
+                            {
+                                bookQuery.data?.tags?.map((tag) => {
+                                    const encodedTag = encodeURIComponent(tag);
+                                    return (
+                                        <Chip label={tag} size='medium' onClick={() => navigate(`/books?tags=${encodedTag}`)} />
+                                    );
+                                })
+                            }
+                        </Stack>
                         <Typography variant='h5' fontWeight={'bold'}>
                             Synopsis:
                         </Typography>

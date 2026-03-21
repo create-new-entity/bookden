@@ -12,14 +12,22 @@ type UseCreateAdminUserReturn = {
 };
 
 export const useCreateAdminUser = (): UseCreateAdminUserReturn => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
     const navigate = useNavigate();
 
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const createAdminUserMutation = useMutation<void, AxiosErrorResponse, CreateAdminUserData>({
         mutationFn: (createUserPayload: CreateAdminUserData) => {
-            return createAdminUser(createUserPayload, token);
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in as a superadmin to create an admin user. Your session expired or user deleted. Please try again.');
+                return Promise.resolve();
+            }
+            return createAdminUser(createUserPayload, resolvedToken);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({

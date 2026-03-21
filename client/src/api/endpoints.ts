@@ -7,3 +7,4 @@ export const usersUrl = `${API_BASE}/users`;
 export const avatarUrl = `${API_BASE}/avatar`;
 export const userAvatarUrl = `${API_BASE}/avatar/users`;
 export const bookUrl = `${API_BASE}/books`;
+export const orderUrl = `${API_BASE}/orders`;

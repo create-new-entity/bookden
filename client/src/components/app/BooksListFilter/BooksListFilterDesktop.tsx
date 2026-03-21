@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Button, Collapse, Divider, Stack,
@@ -7,8 +7,9 @@ import {
 import type { SelectChangeEvent, Theme, SxProps } from '@mui/material';
 import { Add, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
+
 import type { BookSearchParams, BookSearchParamsWithTagsArray } from '../../../validations';
-import type { BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
+import type { PageMode, BooksPriceRangeMeta, BooksSortByOptions, SortOrder } from '../../../types';
 import {
     ADMIN, BOOKS_LIST_SORT_BY_OPTIONS, CREATE_BOOK, MARGIN_TOP_TO_AVOID_NAV_BAR,
     MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY,
@@ -17,7 +18,7 @@ import {
 import { SearchInput } from '../../custom';
 import SelectSortBy from '../SelectSortBy';
 import SelectSortOrder from '../SelectSortOrder';
-import { useAuthContext } from '../../../contexts';
+import { useAuthContext } from '../../../contexts'; 
 import BookTagsSelect from './BookTagsSelect';
 import BooksPriceFilter from './BooksPriceFilter';
 import { type UpdateMode } from '../../../hooks';
@@ -67,6 +68,7 @@ const getStyles = (theme: Theme): Styles => {
 
 
 type BooksListFilterDesktopProps = {
+    mode: PageMode;
     tags: string[];
     updateParams: (params: Partial<BookSearchParams>, mode: UpdateMode) => void;
     priceRangeMeta: BooksPriceRangeMeta;
@@ -76,6 +78,7 @@ type BooksListFilterDesktopProps = {
 };
 
 const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
+    const { mode } = props;
     const theme = useTheme();
     const styles = getStyles(theme);
     const { userType } = useAuthContext();
@@ -85,6 +88,20 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
     const isClientAdminOrSuperAdmin = userType === SUPERADMIN || userType === ADMIN;
     const { tags, params, updateParams, priceRangeMeta, selectedView, onViewChange } = props;
     const { search, sortBy, sortOrder, priceMin, priceMax } = params;
+
+    const resolvedBookListOptions = useMemo(() => {
+        return BOOKS_LIST_SORT_BY_OPTIONS.filter((option) => {
+            const { access } = option;
+            if(!access) {
+                // If access is not defined, it means the option is accessible to all user types.
+                return true;
+            }
+            if(!userType) {
+                return false;
+            }
+            return access.includes(userType);
+        });
+    }, [userType]);
 
     const handleSortOrderChange = (event: SelectChangeEvent<SortOrder>) => {
         updateParams({ sortOrder: event.target.value }, 'merge');
@@ -130,7 +147,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                     <SelectSortBy<BooksSortByOptions>
                         id="books-list-sort-by"
                         value={sortBy}
-                        options={BOOKS_LIST_SORT_BY_OPTIONS}
+                        options={resolvedBookListOptions}
                         onChange={handleSortByChange}
                         formControlSx={{ minWidth: MINIMUM_WIDTH_FOR_BOOKS_SELECT_SORT_BY }}
                     />
@@ -140,7 +157,7 @@ const BooksListFilterDesktop = (props: BooksListFilterDesktopProps) => {
                         onViewChange={onViewChange}
                     />
                     {
-                        isClientAdminOrSuperAdmin && (
+                        isClientAdminOrSuperAdmin && mode === 'admin' && (
                             <>
                                 <Divider
                                     orientation='vertical'

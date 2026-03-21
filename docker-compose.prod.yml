@@ -18,11 +18,12 @@ services:
       retries: 10
 
   redis:
-    container_name: bookden-redis
     image: redis:7-alpine
     restart: always
     networks:
       - bookden-network
+    env_file:
+      - ./env/redis.env
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

@@ -1,4 +1,4 @@
-import { Add } from '@mui/icons-material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import ActionIcon from './ActionIcon';
 
@@ -13,7 +13,7 @@ const AddActionIcon = (props: AddActionIconProps) => {
 
     return (
         <ActionIcon
-            icon={<Add />}
+            icon={<AddCircleIcon />}
             onClick={onClick}
             tooltipTitle={tooltipTitle}
         />

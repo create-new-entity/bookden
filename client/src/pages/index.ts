@@ -1,13 +1,16 @@
 
 
 export { default as LogInPage } from './LogInPage';
-export { default as HomePage } from './HomePage';
+export { default as HomePage, LeadToAllBooksText } from './HomePage';
 export { default as UserManagementPage } from './UserManagementPage';
 export { default as UserPage } from './UserPage';
 export { default as CreateAdminOrUpdateAnyUserProfilePage } from './CreateAdminOrUpdateAnyUserProfilePage';
 export { AdminToolsPage } from './AdminToolsPage';
 export { BookPage } from './BookPage';
-export { default as BookManagementPage } from './BookManagementPage';
+export { default as AdminBookManagementPage } from './AdminBookManagementPage';
+export { default as BookCatalogPage } from './BookCatalogPage';
+export { default as WishListPage } from './WishListPage';
+export * from './CartPage';
 export * from './CreateUpdateBook';
 export * from './ErrorPages';
 

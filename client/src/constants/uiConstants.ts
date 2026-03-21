@@ -12,7 +12,7 @@ export const NAV_BAR_Z_INDEX = 1000;
 export const DEFAULT_GAP = 20;
 export const DEFAULT_BORDER_RADIUS = '0.5rem';
 export const ITEMS_GRID_SIZES = { xs: 12, md: 6, lg: 3 };
-export const LIST_VIEW_GRID_SIZES = { xs: 12 };
+export const LIST_VIEW_GRID_SIZES = { xs: 11 };
 export const AVATAR_DIMENSIONS = 145;
 export const ONE_TENTH_OF_DEFAULT_GAP = DEFAULT_GAP / 10;
 

@@ -1,25 +1,94 @@
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 
-import { LOGGED_IN_USER_DATA } from '../constants';
-import { useAuthContext } from '../contexts';
-import { useSetTabTitle } from '../hooks';
+import {
+    Divider, Stack, Typography,
+    useTheme, type SxProps, type Theme
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+
+import { BooksCarousel, HeroBannerCarousel } from '../components';
+import { useHomePageBookLists, useResponsive, useSetTabTitle } from '../hooks';
+import { BOOKS } from '../constants';
+
+
+export const LeadToAllBooksText = () => {
+    return (
+        <Stack
+            direction={'row'}
+            justifyContent={'flex-start'}
+            alignItems={'center'}
+            gap={'0.3rem'}
+        >
+            <Typography variant='body1'>
+                You can browse our catalog
+            </Typography>
+            <Link to={BOOKS}>
+                <Typography variant='body1' color='info'>
+                    here.
+                </Typography>
+            </Link>
+        </Stack>
+    );
+};
+
+type Styles = {
+    rootStack: SxProps<Theme>;
+};
+
+const getStyles = (_theme: Theme, { isXs }: { isXs: boolean }): Styles => {
+    const resolvedPadding = isXs ? '1rem' : '4.5rem';
+    return {
+        rootStack: {
+            padding: resolvedPadding,
+        }
+    };
+};
+
+const GapBetWeenCarousels = '2.5rem';
 
 const HomePage = () => {
-    const { isLoggedIn } = useAuthContext();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if(!localStorage.getItem(LOGGED_IN_USER_DATA) && !isLoggedIn) {
-            navigate('/auth');
-        }
-    }, [navigate, isLoggedIn]);
 
     useSetTabTitle('Home');
+    const theme = useTheme();
+    const { isXs } = useResponsive();
+    const styles = getStyles(theme, { isXs });
+    const { data } = useHomePageBookLists();
+
+    const bookLists = data?.bookLists || [];
 
     return (
         <>
-            <div>Test</div>
+            <Stack
+                direction={'column'}
+                justifyContent={'flex-start'}
+                alignItems={'center'}
+                sx={styles.rootStack}
+                gap={GapBetWeenCarousels}
+            >
+                <Stack
+                    direction={'column'}
+                    justifyContent={'flex-start'}
+                    alignItems={'center'}
+                    gap={'0.5rem'}
+                >
+                    <Typography variant='h4'>
+                        Welcome to BookDen 📚
+                    </Typography>
+                    <LeadToAllBooksText />
+                </Stack>
+                <HeroBannerCarousel/>
+                <Divider sx={{ width: '100%' }} />
+                {
+                    bookLists.map((bookList) => {
+                        return (
+                            <BooksCarousel
+                                key={bookList.key}
+                                title={bookList.title}
+                                books={bookList.books}
+                            />
+                        );
+                    })
+                }
+            </Stack>
         </>
     );
 };

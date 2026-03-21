@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 
 
@@ -9,6 +9,10 @@ import { useEffect, useState } from 'react';
     useBlobImage loads image of user avatar, book cover and so on from the server.
     We pass the query key and query function to the hook.
     Hook returns the object url of the image.
+
+    We derive objectUrl from query data (useMemo) instead of setState in useEffect
+    to avoid "Maximum update depth exceeded" when many instances run simultaneously.
+    See: https://github.com/TanStack/query/issues/7264
 */
 
 type UseBlobImageOptions = {
@@ -25,28 +29,37 @@ export type UseBlobImageReturn = {
 };
 
 export const useBlobImage = ({ queryKey, queryFn, enabled = true }: UseBlobImageOptions): UseBlobImageReturn => {
-    const [objectUrl, setObjectUrl] = useState<string | undefined>(undefined);
     const blobResult = useQuery<Blob, AxiosError>({
         queryKey, queryFn, enabled, retry: false
     });
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
+    const objectUrl = useMemo(() => {
         const noValidBlobImage = blobResult.isError || !blobResult.data;
         if (noValidBlobImage) {
-            setObjectUrl(undefined);
-            return;
+            return undefined;
         }
-        
-        const url = URL.createObjectURL(blobResult.data);
-        setObjectUrl(url);
-        
-        return () => {
-            if(url) {
-                URL.revokeObjectURL(url);
-            }
-        };
+        return URL.createObjectURL(blobResult.data);
     }, [blobResult.data, blobResult.isError]);
 
+    useEffect(() => {
+        return () => {
+
+            /*
+                Note to future self:
+
+                Why check for isStillInUse?
+                Because we don't want to revoke the object url if the query is still in use.
+                If the query is still in use, the object url is still valid.
+                If we revoke early -> loads of warning logs in the console about "GET blob:... failed" -> refetch.
+            */
+            const state = queryClient.getQueryState(queryKey);
+            const isStillInUse = state?.data !== undefined;
+            if (!isStillInUse && objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
+        };
+    }, [objectUrl, queryClient, queryKey]);
 
     return {
         objectUrl,

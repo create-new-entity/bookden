@@ -20,6 +20,9 @@ const BOOK_COVER_NOT_FOUND = 'BookCoverNotFound' as const;
 const INVALID_BOOK_TAGS = 'InvalidBookTags' as const;
 const IMAGE_TOO_LARGE = 'ImageTooLarge' as const;
 const INVALID_FILE_UPLOAD = 'InvalidFileUpload' as const;
+const DUPLICATE_BOOK_IDS = 'DuplicateBookIds' as const;
+const ONLY_CUSTOMERS_CAN_CREATE_ORDERS = 'OnlyCustomersCanCreateOrders' as const;
+const INVALID_BOOK_IDS = 'InvalidBookIds' as const;
 
 export const errorNames = {
     unauthorized: UNAUTHORIZED,
@@ -43,7 +46,10 @@ export const errorNames = {
     bookCoverNotFound: BOOK_COVER_NOT_FOUND,
     invalidBookTags: INVALID_BOOK_TAGS,
     imageTooLarge: IMAGE_TOO_LARGE,
-    invalidFileUpload: INVALID_FILE_UPLOAD
+    invalidFileUpload: INVALID_FILE_UPLOAD,
+    duplicateBookIds: DUPLICATE_BOOK_IDS,
+    onlyCustomersCanCreateOrders: ONLY_CUSTOMERS_CAN_CREATE_ORDERS,
+    invalidBookIds: INVALID_BOOK_IDS
 };
 
 export const errorMessages = {
@@ -68,7 +74,10 @@ export const errorMessages = {
     [BOOK_COVER_NOT_FOUND]: 'Book cover not found',
     [INVALID_BOOK_TAGS]: 'One or more booktags are invalid',
     [IMAGE_TOO_LARGE]: 'Image is too large. Maximum allowed size is 3MB.',
-    [INVALID_FILE_UPLOAD]: 'Invalid file upload'
+    [INVALID_FILE_UPLOAD]: 'Invalid file upload',
+    [DUPLICATE_BOOK_IDS]: 'Duplicate book IDs are not allowed in order items.',
+    [ONLY_CUSTOMERS_CAN_CREATE_ORDERS]: 'Only customers can create orders.',
+    [INVALID_BOOK_IDS]: 'One or more books are not available.'
 };
 
 const AVATAR_UPLOAD_SUCCESS = 'AvatarUploadSuccess' as const;

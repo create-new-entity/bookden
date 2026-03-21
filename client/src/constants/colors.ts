@@ -21,7 +21,7 @@ export const customColors = {
     lightWarningText: '#1B1B1B',
 
     lightInfoMain: '#5BAFCF',
-    lightInfoLight: '#A7E1F3',
+    lightInfoLight: '#D3CAFF',
     lightInfoDark: '#2F8EAD',
     lightInfoText: '#FFFFFF',
 
@@ -31,9 +31,9 @@ export const customColors = {
     lightSuccessText: '#FFFFFF',
 
     // Light mode background & text
-    lightBackgroundDefault: '#F5F3F7',   // app background
+    lightBackgroundDefault: '#D4CFEB',   // app background
     lightBackgroundPaper: '#FFFFFF',     // cards, modals
-    lightBackgroundSurface: '#E0DCEC',   // menus, TextField, dropdowns
+    lightBackgroundSurface: '#E1D9F6',   // menus, TextField, dropdowns
 
     lightTextPrimary: '#212121',
     lightTextSecondary: '#666666',
@@ -61,7 +61,7 @@ export const customColors = {
 
     darkInfoMain: '#7FD0E6',
     darkInfoLight: '#CFF0FA',
-    darkInfoDark: '#3EA0BD',
+    darkInfoDark: '#9D85D9',
     darkInfoText: '#0B0B0B',
 
     darkSuccessMain: '#93D7A8',
@@ -70,7 +70,7 @@ export const customColors = {
     darkSuccessText: '#0B0B0B',
 
     // Dark mode background & text
-    darkBackgroundDefault: '#1C1A23',
+    darkBackgroundDefault: '#494262',
     darkBackgroundPaper: '#25232D',
     darkBackgroundSurface: '#2B2935',
     darkTextPrimary: '#EAE9F0',

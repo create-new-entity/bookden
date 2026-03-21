@@ -8,3 +8,4 @@ export * from './Pagination';
 export * from './TypeGuards';
 export * from './User';
 export * from './Utilities';
+export * from './Order';

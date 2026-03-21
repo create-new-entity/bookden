@@ -9,13 +9,23 @@ import { useNavigate } from 'react-router-dom';
 
 
 export const useDeleteBook = () => {
-    const { token } = useAuthContext();
+    const { token, hasExistingLoggedInUser } = useAuthContext();
     const queryClient = useQueryClient();
     const { handleShowNotification } = useNotificationContext();
     const navigate = useNavigate();
 
+    const { existingLoggedInData } = hasExistingLoggedInUser();
+    const resolvedToken = token || existingLoggedInData?.token;
+
     const deleteBookMutation = useMutation<void, AxiosErrorResponse, number>({
-        mutationFn: (bookId: number) => deleteBook(bookId, token),
+        mutationFn: (bookId: number) => {
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in as an admin or superadmin to delete a book. Session expired or user deleted. Please try again.');
+                return Promise.resolve();
+            }
+            return deleteBook(bookId, resolvedToken);
+        },
         onSuccess: (_, bookId) => {
             queryClient.invalidateQueries({ queryKey: ['booksList'] });
             queryClient.invalidateQueries({ queryKey: ['book', bookId] });
@@ -30,7 +40,14 @@ export const useDeleteBook = () => {
     });
 
     const deleteBookCoverMutation = useMutation<void, AxiosErrorResponse, number>({
-        mutationFn: (bookId: number) => deleteBookCover(bookId, token),
+        mutationFn: (bookId: number) => {
+            if(!resolvedToken) {
+                navigate(AUTH);
+                handleShowNotification('You need to be logged in as an admin or superadmin to delete a book cover. Session expired or user deleted. Please try again.');
+                return Promise.resolve();
+            }
+            return deleteBookCover(bookId, resolvedToken);
+        },
         onSuccess: (_, bookId) => {
             queryClient.invalidateQueries({ queryKey: ['bookCover', bookId] });
         },

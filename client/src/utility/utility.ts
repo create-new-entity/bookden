@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 
 import { ADMIN, CUSTOMER, SUPERADMIN } from '../constants';
 import type { UserType } from '../types';
+import type { SxProps, Theme } from '@mui/material';
 
 
 
@@ -32,8 +33,11 @@ export const canEditBook = (userType?: UserType) => {
     return userType === ADMIN || userType === SUPERADMIN;
 };
 
-export const canBuyBook = (userType?: UserType) => {
-    return userType === CUSTOMER;
+export const canBuyOrWishlistBook = (userType?: UserType) => {
+    if(userType) {
+        return userType === CUSTOMER;
+    }
+    return true; // We want to show add to cart button to all users, even if they are not logged in
 };
 
 
@@ -50,4 +54,19 @@ export const isTokenExpired = (token: string) => {
         return true;
     }
 };
-  
+
+export const roundTo2 = (value: number) => Math.round(value * 100) / 100;
+
+
+
+/*
+    TS keeps complaining when trying to override styles like this: <Box sx={[styles.arrowButton, styles.leftArrowButton]}>
+    Repeatedly doing conditional checks for array or not is tedious. Hence this small utility function.
+*/
+
+export const sxJoin = (...sxList: (SxProps<Theme> | undefined)[]): SxProps<Theme> => {
+    return sxList.flatMap((sx) => {
+        if (!sx) return [];
+        return Array.isArray(sx) ? sx : [sx];
+    });
+};

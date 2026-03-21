@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
 import { customColors, DEFAULT_BORDER_RADIUS, DEFAULT_SPACING, MEDIUM_SVG_ICON_FONT_SIZE, SMALL_SVG_ICON_FONT_SIZE } from '../constants';
@@ -123,6 +123,9 @@ export const getTheme = (mode: ThemeMode) => {
             },
             body1: {
                 fontSize: '1.2rem'
+            },
+            subtitle2: {
+                fontSize: '0.7rem'
             }
         },
         shape: {
@@ -197,7 +200,7 @@ export const getTheme = (mode: ThemeMode) => {
             },
             MuiPaper: {
                 defaultProps: {
-                    elevation: 0
+                    elevation: 3
                 },
                 styleOverrides: {
                     root: {
@@ -311,7 +314,7 @@ export const getTheme = (mode: ThemeMode) => {
         }
     };
 
-    return createTheme(theme, additionalThemeOptions);
+    return responsiveFontSizes(createTheme(theme, additionalThemeOptions));
 };
 
 export default getTheme('light');

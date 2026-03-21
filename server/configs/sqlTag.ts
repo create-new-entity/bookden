@@ -2,9 +2,10 @@ import { createSqlTag } from 'slonik';
 
 import {
     AvatarTypeAlias, BookCoverTypeAlias, BookTypeAlias,
-    PriceRangeTypeAlias,
-    TagTypeAlias, TotalTypeAlias, UserTypeAlias,
-    VoidTypeAlias
+    PriceRangeTypeAlias, TagTypeAlias, TotalTypeAlias,
+    UserBookWishlistTypeAlias, UserTypeAlias, VoidTypeAlias,
+    OrderTypeAlias, OrderItemTypeAlias,
+    OrderWithItemsTypeAlias
 } from '../typeAliases';
 
 export const sqlTag = createSqlTag({
@@ -16,6 +17,10 @@ export const sqlTag = createSqlTag({
         BookCover: BookCoverTypeAlias,
         Tag: TagTypeAlias,
         Void: VoidTypeAlias,
-        PriceRange: PriceRangeTypeAlias
+        PriceRange: PriceRangeTypeAlias,
+        UserBookWishlist: UserBookWishlistTypeAlias,
+        Order: OrderTypeAlias,
+        OrderItem: OrderItemTypeAlias,
+        OrderWithItems: OrderWithItemsTypeAlias
     }
 });
