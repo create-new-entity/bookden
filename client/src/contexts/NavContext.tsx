@@ -3,7 +3,7 @@ import {
     createContext, useCallback, useContext,
     useEffect, useMemo, useState, type ReactNode
 } from 'react';
-import { Stack, Typography } from '@mui/material';
+import { Avatar, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import ModeNightIcon from '@mui/icons-material/ModeNight';
@@ -23,7 +23,7 @@ import {
     ADMIN, ADMIN_TOOLS, ALL_TYPES_OF_USERS,
     BOOKS, CART, CUSTOMER,
     HOME, SUPERADMIN, UPDATE_PROFILE, WISHLIST } from '../constants';
-import { useThemeModeContext } from './index.ts';
+import { useAvatarContext, useThemeModeContext } from './index.ts';
 
 type NavContextMenuComponentProps = {
     icon: React.ReactNode;
@@ -68,6 +68,7 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
     const { clearAuthentication, hasExistingLoggedInUser, userType } = useAuthContext();
     const [options, setOptions] = useState<NavOption[]>([]);
     const { isLightMode, handleThemeModeSwitch } = useThemeModeContext();
+    const { avatarUrl } = useAvatarContext();
 
     const { existingLoggedInData, isUserLoggedIn } = hasExistingLoggedInUser();
     const resolvedUserType = useMemo(() => {
@@ -136,10 +137,10 @@ export const NavProvider = ({ children }: { children: ReactNode }) => {
                 navigate(UPDATE_PROFILE);
                 setShowNavDrawer(false);
             },
-            component: <NavContextMenuComponent icon={<AccountCircleIcon/>} title='Profile'/>,
+            component: <NavContextMenuComponent icon={<Avatar src={avatarUrl || undefined} sx={{ width: 24, height: 24 }} />} title='Profile'/>,
             access: ALL_TYPES_OF_USERS
         };
-    }, [navigate, setShowNavDrawer]);
+    }, [navigate, setShowNavDrawer, avatarUrl]);
 
     const wishListOption = useMemo(() => {
         return {

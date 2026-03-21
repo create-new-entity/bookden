@@ -57,7 +57,7 @@ const NavBar = () => {
     const [anchorElement, setAnchorElement] = useState<null | HTMLDivElement>(null);
     const { setShowNavDrawer, options } = useNavContext();
     const { userType, isLoggedIn } = useAuthContext();
-    const isBookSearchVisible = useBookSearchVisibility(userType as UserType);
+    const isBookSearchVisible = useBookSearchVisibility();
     const theme = useTheme();
     const navigate = useNavigate();
     const { isXs } = useResponsive();
