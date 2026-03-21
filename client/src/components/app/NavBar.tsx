@@ -14,7 +14,6 @@ import { ADMIN, CART, NAV_BAR_Z_INDEX, SUPERADMIN } from '../../constants';
 import { useAvatar, useBookSearchVisibility, useResponsive } from '../../hooks';
 import LoginActionIcon from './ActionIcons/LoginActionIcon';
 import ThemeSwitchIconOnly from './ThemeSwitch';
-import type { UserType } from '../../types';
 
 const getStyles = (_theme: Theme) => {
     return {
