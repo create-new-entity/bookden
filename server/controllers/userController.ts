@@ -3,6 +3,7 @@ import { ADMIN, AuthenticatedRequest, CUSTOMER, GetUsersQueryParams, SUPERADMIN 
 import { AuthenticationError, UnauthorizedError } from '../errors';
 import { canCreateUser, createUser, deleteUser, getAllUsers, getMyself, getUser, restoreUser, updateUser } from '../services';
 import { GetUsersQueryParamsSchema, UpdateUser, User } from '../validation';
+import { isProductionEnvironment } from '../configs';
 
 
 const getAllUsersController = async (req: AuthenticatedRequest<GetUsersQueryParams>, res: Response, next: NextFunction) => {
@@ -67,12 +68,11 @@ const patchUserController = async (req: AuthenticatedRequest, res: Response, nex
         next(loginRequiredError);
         return;
     }
+    
     const validated = UpdateUser.parse(req.body);
-
-    const isDevelopmentEnvironment = process.env.NODE_ENV === 'development';
+    
     const isSuperAdmin = req.user.userType === SUPERADMIN;
-
-    if(isSuperAdmin &&!isDevelopmentEnvironment) {
+    if(isSuperAdmin && isProductionEnvironment()) {
         /*
             Note to future self:
 
