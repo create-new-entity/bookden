@@ -18,7 +18,7 @@
 
 ### What is bookden?
 It is an e commerce platform where the "owner" of the app can list out books for sale to the potential customers. Customers
-can browse through books, wishlist thme, purchase them.
+can browse through books, wishlist them, purchase them.
 
 Go bak to [contents](#contents)
 
@@ -29,7 +29,7 @@ Go bak to [contents](#contents)
 1. Frontend: React + React Query + TypeScript + Zod + Material UI
 2. Backend: Node + Postgresql + Slonik + TypeScript + Zod + db-migrate ( migrations )
 3. Containerzation ( Docker ) + Github Actions ( CI/CD )
-4. Playwright
+4. E2E test: Playwright
 
 Go bak to [contents](#contents)
 
@@ -37,7 +37,7 @@ Go bak to [contents](#contents)
 
 ### How to run this locally?
 
-1. Create env files. You can simply rename the "server.env.example" to "server.env" and so on. The example files actually contains values that can be used. There is nothing in env files that needed hiding, hence I pushed them in *.env.example files 🙃.
+1. Create env files or You can simply rename the env example files in the env folder and that's it. For example, rename "server.env.example" to "server.env". The example files actually contains values that can be used. There is nothing in env files that needed hiding, hence I pushed them in *.env.example files 🙃.
 2. Make sure you have docker desktop in your machine.
 3. From root directory, to start the project, run this command: ```npm run start:dev```
 4. From root directory, to stop the project, run this command: ```npm run stop:dev```
@@ -108,7 +108,7 @@ Go bak to [contents](#contents)
 
 ### How to use it?
 
-1. [Start the app locally.](#how-to-run-this-locally). This will also populate the database with some [seed data](https://github.com/create-new-entity/bookden/tree/development/server/seed/seedData), so that it doesn't feel like an empty desert when the app starts. Meaning, a bunch of admin, customer users and lots of book data will already be inserted in the system. You can use any of the user to login and play in the system.
+1. [Start the app locally.](#how-to-run-this-locally). This will also populate the database with some [seed data](https://github.com/create-new-entity/bookden/tree/development/server/seed/seedData), so that it doesn't feel like an empty desert when the app starts. Meaning, a bunch of admin, customer users and lots of book data will already be inserted in the system. You can use any of the user to login and play in the system. There can be only one ```superadmin``` user. ```superadmin``` user can not be created/deleted.
 2. Without logging in you can still do the following:
     1. Browse the books in homepage
     2. Click the catalog link and browse the books there. Searching in the top nav will also lead to the catalog page.
