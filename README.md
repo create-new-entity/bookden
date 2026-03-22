@@ -242,7 +242,8 @@ Go bak to [contents](#contents)
 
 ### Demo
 
-<video src="https://drive.google.com/file/d/1wsqUZ9ASxkggY5u_o6gIT_WbGqP-LRLE/view?usp=sharing" width="1024" height="768" controls></video>
+
+<iframe width="1024" height="768" src="https://drive.google.com/file/d/1wsqUZ9ASxkggY5u_o6gIT_WbGqP-LRLE/view?usp=sharing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 Go bak to [contents](#contents)
 
