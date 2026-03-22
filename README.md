@@ -17,8 +17,15 @@
 ---
 
 ### What is bookden?
-It is an e commerce platform where the "owner" of the app can list out books for sale to the potential customers. Customers
-can browse through books, wishlist them, purchase them.
+
+Bookden is a full-stack e-commerce platform designed to simulate a real-world bookstore system with multiple user roles, complex data flows, and production-style architecture.
+
+It supports:
+- Multi-role access control (superadmin, admin, customer)
+- Book catalog management with search and filtering
+- Cart and purchase flow
+- Wishlist and user interactions
+- Admin tooling for operational control
 
 Go back to [contents](#contents)
 
