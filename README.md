@@ -5,7 +5,7 @@
 - [What is bookden?](#what-is-bookden)
 - [Why this project](#why-this-project)
 - [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project)
-- [Key Features](#key-features)
+- [Key Features](#key-features) 📋
 - [How to run this locally?](#how-to-run-this-locally)
 - [How to run tests locally?](#how-to-run-tests-locally)
 - [How to lint locally?](#how-to-lint-locally)
@@ -13,13 +13,13 @@
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
 - [System Design Highlights](#system-design-highlights)
-- [Some interesting places in code worth checking](#some-interesting-places-in-code-worth-checking)
-- [Demo Screenshot/GIFs](#demo-screenshots--gifs)
-- [Demo Video](#demo-video)
+- [Some interesting places in code worth checking](#some-interesting-places-in-code-worth-checking) 👷
+- [Demo Screenshot/GIFs](#demo-screenshots--gifs) 📷
+- [Demo Video](#demo-video) 🎥
 - [Live Demo](#live-demo)
 ---
 
-### What is bookden?
+### What is bookden? 📚
 
 Bookden is a full-stack e-commerce platform designed to simulate a real-world bookstore system with multiple user roles, complex data flows, and production-style architecture.
 
@@ -43,6 +43,8 @@ This project was built to demonstrate:
 
 The emphasis is on building maintainable, scalable systems rather than isolated features.
 
+Go back to [contents](#contents)
+
 ---
 
 ### What is the tech stack of this project?
@@ -65,6 +67,8 @@ Go back to [contents](#contents)
 - Reusable UI component system (carousel, list layouts)
 - End-to-end testing with Playwright
 - Dockerized development and CI/CD pipeline
+
+Go back to [contents](#contents)
 
 ---
 
@@ -269,6 +273,8 @@ Go back to [contents](#contents)
 - Multi-environment Docker setup (dev, test, e2e, prod)
 - CI/CD pipeline with automated testing
 
+Go back to [contents](#contents)
+
 ---
 
 ### Some interesting places in code worth checking
@@ -282,6 +288,8 @@ Go back to [contents](#contents)
 - [Items.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/Items.tsx#L50): A generic, decoupled, "dumb" items component. It's only purpose is to render a bunch of items, regardless of what they are. Used in [BookListLayout.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/BookListLayout.tsx#L86) and in [UserManagementPage.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/pages/UserManagementPage.tsx#L78).
 
 - [Carousel.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/custom/Carousel/Carousel.tsx#L89): Visible at home page. Used in [HeroBannerCarousel.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/HeroBanner/HeroBannerCarousel.tsx#L8) and  [BooksCarousel.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/BooksCarousel.tsx#L48). It is also another "dumb" component. Given a bunch of "items" and the "know-how" of how to render those items ( through ```SlideComponent``` props ), it can render any collection of items as slides / carousel.
+
+Go back to [contents](#contents)
 
 ---
 
@@ -317,3 +325,5 @@ Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/md-imran-p-177
 Go back to [contents](#contents)
 
 ---
+
+Thanks for coming by 🙂
