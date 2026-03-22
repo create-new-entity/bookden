@@ -1,5 +1,5 @@
 
-# Bookden - A portfolio e-commerce site
+# Bookden — Full-Stack Book Commerce Platform
 
 ### Contents
 - [What is bookden?](#what-is-bookden)
