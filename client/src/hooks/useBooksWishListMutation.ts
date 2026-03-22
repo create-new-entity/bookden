@@ -4,7 +4,7 @@ import { useAuthContext, useNotificationContext } from '../contexts';
 import type { AxiosErrorResponse } from '../types';
 import { addBookToWishList, removeBookFromWishlist } from '../api';
 import { useNavigate } from 'react-router-dom';
-import { AUTH } from '../constants';
+import { AUTH, UNAUTHORIZED_STATUS_CODE } from '../constants';
 
 
 export const useBooksWishListMutation = () => {
@@ -33,6 +33,13 @@ export const useBooksWishListMutation = () => {
             queryClient.invalidateQueries({
                 queryKey: ['booksList']
             });
+        },
+
+        onError: (error) => {
+            if(error.response?.status === UNAUTHORIZED_STATUS_CODE) {
+                handleShowNotification('Session expired or user deleted. Please log in again.');
+                navigate(AUTH);
+            }
         }
     });
 
