@@ -9,7 +9,9 @@
 - [How to lint locally?](#how-to-lint-locally)
 - [Is the project deployed somewhere online?](#is-the-project-deployed-somewhere-online)
 - [What does it do?](#what-does-it-do)
-- [How to use it?]()
+- [How to use it?](#how-to-use-it)
+- [Project Architecture](#project-architecture)
+- [Demo](#demo)
 
 ---
 
@@ -116,7 +118,7 @@ Go bak to [contents](#contents)
     1. Log in as the superadmin. username: ```superadmin```, password: ```password```
     2. From the top right avatar menu you can go to ```Admin Tools```
         1. ```Admin Tools``` -> ```User Management``` -> Shows all the users ( admin, customer ) details that are available in the system. All of these users have password: ```password``` ( for example, username: zoe_kendall, password: password ). You can also use any of this users and login as an admin or customer.
-        2. ```Admin Tools``` -> ```Book Management``` -> Shows all the books details that are available in the system. You can use the ```Add Book`` button to create a new book in the system. You can also edit, delete and restore any book.
+        2. ```Admin Tools``` -> ```Book Management``` -> Shows all the books details that are available in the system. You can use the ```Add Book``` button to create a new book in the system. You can also edit, delete and restore any book.
         3. User and Book ```delete``` actions are ```soft delete actions``` and they can be restored.
 
 4. How to use as an ```admin```:
@@ -233,6 +235,14 @@ bookden/
 │
 └── package.json                # Monorepo root config
 ```
+
+Go bak to [contents](#contents)
+
+---
+
+### Demo
+
+<video src="https://drive.google.com/file/d/1wsqUZ9ASxkggY5u_o6gIT_WbGqP-LRLE/view?usp=sharing" width="1024" height="768" controls></video>
 
 Go bak to [contents](#contents)
 
