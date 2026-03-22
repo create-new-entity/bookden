@@ -62,7 +62,7 @@ Go back to [contents](#contents)
 
 - Role-based access control (superadmin, admin, customer)
 - Advanced search with filtering and deep linking
-- Cart and order management system
+- Wishlist, Cart, Purchase features
 - Soft-delete and restore mechanisms
 - Reusable UI component system (carousel, list layouts)
 - End-to-end testing with Playwright
