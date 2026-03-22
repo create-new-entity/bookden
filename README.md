@@ -17,6 +17,7 @@
 - [Demo Screenshot/GIFs](#demo-screenshots--gifs) 📷
 - [Demo Video](#demo-video) 🎥
 - [Live Demo](#live-demo)
+- [Project Hours]()
 ---
 
 ### What is bookden? 📚
@@ -137,9 +138,9 @@ Go back to [contents](#contents)
     4. If you are in the catalog page, you can also hover and add to cart from there. If you try to wishlist any item, you should be logged in as a customer.
     5. After you add a bunch of books into cart, click the cart icon from top. This will lead to cart page. Checkout requires logging in as a customer.
 3. How to use as a ```superadmin```:
-    1. Log in as the superadmin. username: ```superadmin```, password: ```password```
+    1. Log in as the superadmin. username: ```superadmin```, password: 
     2. From the top right avatar menu you can go to ```Admin Tools```
-        1. ```Admin Tools``` -> ```User Management``` -> Shows all the users ( admin, customer ) details that are available in the system. All of these users have password: ```password``` ( for example, username: zoe_kendall, password: password ). You can also use any of this users and login as an admin or customer.
+        1. ```Admin Tools``` -> ```User Management``` -> Shows all the users ( admin, customer ) details that are available in the system. All of these users have password:  ( for example, username: zoe_kendall, password: ). You can also use any of this users and login as an admin or customer.
         2. ```Admin Tools``` -> ```Book Management``` -> Shows all the books details that are available in the system. You can use the ```Add Book``` button to create a new book in the system. You can also edit, delete and restore any book.
         3. User and Book ```delete``` actions are ```soft delete actions``` and they can be restored.
 
@@ -318,9 +319,15 @@ Go back to [contents](#contents)
 
 ### Live Demo
 
-🔗 Available upon request
+You can try the app online here: https://mdimranpavel.com/projects/bookden/
 
-Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/md-imran-p-17725182/).
+Go back to [contents](#contents)
+
+---
+
+### Project Hours
+
+Listed in this [google sheet](https://docs.google.com/spreadsheets/d/1vPSLy_XRG4CI-X7Amg12En3yJ-e00_dkvOvxsOblBgs/edit?usp=sharing).
 
 Go back to [contents](#contents)
 
