@@ -11,8 +11,8 @@
 - [What does it do?](#what-does-it-do)
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
-- [Demo](#demo-screenshots--gifs)
-
+- [Demo Screenshot/GIFs](#demo-screenshots--gifs)
+- [Demo Video](#demo-video)
 ---
 
 ### What is bookden?
@@ -247,6 +247,14 @@ Go bak to [contents](#contents)
 ![Bookden Demo mov-2026-03-22T09 18 21](https://github.com/user-attachments/assets/ea2524e3-c3f8-41af-bf8b-c3e3dbf1921f)
 ![Bookden Demo mov-2026-03-22T09 17 36](https://github.com/user-attachments/assets/50fee929-5955-4062-bb8e-34e04c101b6f)
 
+
+Go bak to [contents](#contents)
+
+---
+
+### Demo Video
+
+You can watch the demo video [here](https://drive.google.com/file/d/1wsqUZ9ASxkggY5u_o6gIT_WbGqP-LRLE/view?usp=sharing).
 
 Go bak to [contents](#contents)
 
