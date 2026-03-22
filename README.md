@@ -11,6 +11,7 @@
 - [What does it do?](#what-does-it-do)
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
+- [Some interesting pieces of code worth checking](#some-interesting-pieces-of-code-worth-checking)
 - [Demo Screenshot/GIFs](#demo-screenshots--gifs)
 - [Demo Video](#demo-video)
 ---
@@ -237,6 +238,20 @@ bookden/
 ```
 
 Go bak to [contents](#contents)
+
+---
+
+### Some interesting pieces of code worth checking
+
+- [getBooksInternal](https://github.com/create-new-entity/bookden/blob/development/server/services/bookService.ts#L62): Based on different contexts and options, narrows down what books should be returned to the client.
+
+- [useDeepLinkedSearchParams](https://github.com/create-new-entity/bookden/blob/development/client/src/hooks/useDeepLinkedSearchParams.ts#L11): This is wrapped by [useBookManagementDeepLinking](https://github.com/create-new-entity/bookden/blob/development/client/src/hooks/useBookManagementDeepLinking.ts#L6) and [useUserManagementDeepLinking](https://github.com/create-new-entity/bookden/blob/development/client/src/hooks/useUserManagementDeepLinking.ts#L6). useDeepLinkedSearchParams embeds whatever filtering options have been selected to filter out books/users in books catalog page / books management page / user management page. Meaning this hook is scalable for different use cases.
+
+- [BookListLayout.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/BookListLayout.tsx#L86): A component that renders a bunch of books. Re used in [AdminBookManagementPage.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/pages/AdminBookManagementPage.tsx#L9), [BookCatalogPage](https://github.com/create-new-entity/bookden/blob/development/client/src/pages/BookCatalogPage.tsx#L10) and  [WishListPage](https://github.com/create-new-entity/bookden/blob/development/client/src/pages/WishListPage.tsx#L11).
+
+- [Items.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/Items.tsx#L50): A generic, decoupled, "dumb" items component. It's only purpose is to render a bunch of items, regardless of what they are. Used in [BookListLayout.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/BookListLayout.tsx#L86) and in [UserManagementPage.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/pages/UserManagementPage.tsx#L78).
+
+- [Carousel.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/custom/Carousel/Carousel.tsx#L89): Visible at home page. Used in [HeroBannerCarousel.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/HeroBanner/HeroBannerCarousel.tsx#L8) and  [BooksCarousel.tsx](https://github.com/create-new-entity/bookden/blob/development/client/src/components/app/BooksCarousel.tsx#L48). It is also another "dumb" component. Given a bunch of "items" and the "know-how" of how to render those items ( through ```SlideComponent``` props ), it can render any collection of items as slides / carousel.
 
 ---
 
