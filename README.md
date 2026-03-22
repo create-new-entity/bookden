@@ -146,11 +146,11 @@ Go back to [contents](#contents)
         3. User and Book ```delete``` actions are ```soft delete actions``` and they can be restored.
 
 4. How to use as an ```admin```:
-    1. You can find out which admin user you want to use from the previous step. You can go to admin tools -> user management as superadmin and see the list of admin users available. You need the username from here. All users have password "password". Or you can also create a new admin and use that to login.
+    1. You can find out which admin user you want to use from the previous step. You can go to admin tools -> user management as superadmin and see the list of admin users available. You need the username from here. All users have password: . Or you can also create a new admin and use that to login.
     2. As an admin user, you can delete / restore customer account and CRUD books in the system.
 
 5. How to use as a ```customer```:
-    1. You can find out which customer user you want to use from the admin tools -> user management page. You need the username from here. All users have password "password". Or you can also sign up from the authentication page. Hit the login button from nav and this will lead you to the signin / signup page.
+    1. You can find out which customer user you want to use from the admin tools -> user management page. You need the username from here. All users have password: . Or you can also sign up from the authentication page. Hit the login button from nav and this will lead you to the signin / signup page.
     2. Once you have logged in as a customer you can browse book catalog, add/remove book from wishlist, add/remove book from/to cart and also checkout.
 
 6. The search feature in book catalog / book management / user management page has multiple filter options. The more options you select the narrower the search will become ( [getBooksInternal](https://github.com/create-new-entity/bookden/blob/development/server/services/bookService.ts#L62), [getAllUsers](https://github.com/create-new-entity/bookden/blob/development/server/services/userService.ts#L34) ).
