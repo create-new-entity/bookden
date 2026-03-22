@@ -13,7 +13,7 @@
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
 - [System Design Highlights](#system-design-highlights)
-- [Some interesting pieces of code worth checking](#some-interesting-pieces-of-code-worth-checking)
+- [Some interesting places in code worth checking](#some-interesting-places-in-code-worth-checking)
 - [Demo Screenshot/GIFs](#demo-screenshots--gifs)
 - [Demo Video](#demo-video)
 - [Live Demo](#live-demo)
@@ -271,7 +271,7 @@ Go back to [contents](#contents)
 
 ---
 
-### Some interesting pieces of code worth checking
+### Some interesting places in code worth checking
 
 - [getBooksInternal](https://github.com/create-new-entity/bookden/blob/development/server/services/bookService.ts#L62): Based on different contexts and options, narrows down what books should be returned to the client.
 
