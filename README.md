@@ -74,7 +74,7 @@ Go bak to [contents](#contents)
 
 ### Is the project deployed somewhere online?
 
-Yes. Please send me a DM on [linkedIn](#https://www.linkedin.com/in/md-imran-p-17725182/) if you are interested. I'll share you the link.
+Yes. Please send me a DM on [linkedIn](https://www.linkedin.com/in/md-imran-p-17725182/) if you are interested. I'll share you the link.
 
 Go bak to [contents](#contents)
 
