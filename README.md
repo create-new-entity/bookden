@@ -3,17 +3,20 @@
 
 ### Contents
 - [What is bookden?](#what-is-bookden)
+- [Why this project](#why-this-project)
 - [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project)
+- [Key Features](#key-features)
 - [How to run this locally?](#how-to-run-this-locally)
 - [How to run tests locally?](#how-to-run-tests-locally)
 - [How to lint locally?](#how-to-lint-locally)
-- [Is the project deployed somewhere online?](#is-the-project-deployed-somewhere-online)
 - [What does it do?](#what-does-it-do)
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
+- [System Design Highlights](#system-design-highlights)
 - [Some interesting pieces of code worth checking](#some-interesting-pieces-of-code-worth-checking)
 - [Demo Screenshot/GIFs](#demo-screenshots--gifs)
 - [Demo Video](#demo-video)
+- [Live Demo](#live-demo)
 ---
 
 ### What is bookden?
@@ -31,18 +34,41 @@ Go back to [contents](#contents)
 
 ---
 
+### Why this project?
+
+This project was built to demonstrate:
+- End-to-end system design in a full-stack TypeScript environment
+- Real-world product thinking (admin workflows, user roles, data flows)
+- Production-like practices (Docker, CI/CD, E2E testing)
+
+The emphasis is on building maintainable, scalable systems rather than isolated features.
+
+---
+
 ### What is the tech stack of this project?
 
 1. Frontend: React + React Query + TypeScript + Zod + Material UI
 2. Backend: Node + Postgresql + Slonik + TypeScript + Zod + db-migrate ( migrations )
-3. Containerzation ( Docker ) + Github Actions ( CI/CD )
+3. Containerization ( Docker ) + GitHub Actions ( CI/CD )
 4. E2E test: Playwright
 
 Go back to [contents](#contents)
 
 ---
 
-### How to run this locally?
+## Key Features
+
+- Role-based access control (superadmin, admin, customer)
+- Advanced search with filtering and deep linking
+- Cart and order management system
+- Soft-delete and restore mechanisms
+- Reusable UI component system (carousel, list layouts)
+- End-to-end testing with Playwright
+- Dockerized development and CI/CD pipeline
+
+---
+
+### How to run this project locally?
 
 1. Create env files or You can simply rename the env example files in the env folder and that's it. For example, rename "server.env.example" to "server.env". The example files actually contains values that can be used. There is nothing in env files that needed hiding, hence I pushed them in *.env.example files 🙃.
 2. Make sure you have docker desktop in your machine.
@@ -50,8 +76,6 @@ Go back to [contents](#contents)
 4. From root directory, to stop the project, run this command: ```npm run stop:dev```
 
 Go back to [contents](#contents)
-
-###
 
 ---
 
@@ -80,31 +104,17 @@ Go back to [contents](#contents)
 
 ---
 
-### Is the project deployed somewhere online?
-
-Yes. Please send me a DM on [linkedIn](https://www.linkedin.com/in/md-imran-p-17725182/) if you are interested. I'll share you the link.
-
-Go back to [contents](#contents)
-
----
-
 ### What does it do?
 
 You can think of it as such:
 
-A business owner, owns the site. He add/remove/update books that can be sold.
-He is the ```superadmin``` type. He can add/remove/update users who can add/remove/update books for him.
+A business owner (```superadmin```) manages the platform.  
+They can create, update, and remove books, as well as manage other users.
 
-This second type of users are ```admin``` type.
-This type of user can be thought of as employees (admin type) of the business owner (superadmin type).
+Admins (```admin```) act as employees of the platform.  
+They can manage books and handle customer-related operations.
 
-The third type of users are ```customer``` type. They create their accounts by signing up from the authentication page. They can
-update their profile and also delete their profile.
-
-superadmin or admin users can delete/restore customer type accounts.
-superadmin can also delete/restore admin type accounts.
-
-Customers can wishlist books, purchase books.
+Customers (```customer```) can sign up, browse books, add items to their wishlist or cart, and complete purchases.
 
 There are search functionalities with different types of filter options to find users/books.
 All types of users can use these search functionalities to find books/users and perform their respective add/update/delete/restore actions.
@@ -121,7 +131,7 @@ Go back to [contents](#contents)
     2. Click the catalog link and browse the books there. Searching in the top nav will also lead to the catalog page.
     3. Click any of the book cover anywhere, this will lead to single book view page. You can add to cart from there.
     4. If you are in the catalog page, you can also hover and add to cart from there. If you try to wishlist any item, you should be logged in as a customer.
-    5. After you add a bunch of books into cart, click the cart icon from top. This will lead to cartpage. Checkout requires logging in as a customer.
+    5. After you add a bunch of books into cart, click the cart icon from top. This will lead to cart page. Checkout requires logging in as a customer.
 3. How to use as a ```superadmin```:
     1. Log in as the superadmin. username: ```superadmin```, password: ```password```
     2. From the top right avatar menu you can go to ```Admin Tools```
@@ -248,6 +258,19 @@ Go back to [contents](#contents)
 
 ---
 
+### System Design Highlights
+
+- Clear separation of concerns (controllers → services → data layer)
+- Type-safe validation using Zod across client and server
+- Dynamic SQL query composition using Slonik
+- Deep-linkable search state via URL-driven filters
+- Reusable, decoupled UI components (e.g., generic Items, Carousel)
+- Soft-delete strategy with restore capability
+- Multi-environment Docker setup (dev, test, e2e, prod)
+- CI/CD pipeline with automated testing
+
+---
+
 ### Some interesting pieces of code worth checking
 
 - [getBooksInternal](https://github.com/create-new-entity/bookden/blob/development/server/services/bookService.ts#L62): Based on different contexts and options, narrows down what books should be returned to the client.
@@ -280,6 +303,16 @@ Go back to [contents](#contents)
 ### Demo Video
 
 You can watch the demo video [here](https://drive.google.com/file/d/1wsqUZ9ASxkggY5u_o6gIT_WbGqP-LRLE/view?usp=sharing).
+
+Go back to [contents](#contents)
+
+---
+
+### Live Demo
+
+🔗 Available upon request
+
+Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/md-imran-p-17725182/).
 
 Go back to [contents](#contents)
 
