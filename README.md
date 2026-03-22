@@ -1,5 +1,5 @@
 
-# Bookden — Full-Stack Book Commerce Platform
+# Bookden — Multi-Role E-Commerce Platform with Admin Tooling
 
 ### Contents
 - [What is bookden?](#what-is-bookden)
@@ -20,7 +20,7 @@
 It is an e commerce platform where the "owner" of the app can list out books for sale to the potential customers. Customers
 can browse through books, wishlist them, purchase them.
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -31,7 +31,7 @@ Go bak to [contents](#contents)
 3. Containerzation ( Docker ) + Github Actions ( CI/CD )
 4. E2E test: Playwright
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -42,7 +42,7 @@ Go bak to [contents](#contents)
 3. From root directory, to start the project, run this command: ```npm run start:dev```
 4. From root directory, to stop the project, run this command: ```npm run stop:dev```
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ###
 
@@ -59,7 +59,7 @@ How to run other tests locally ( from root directory ):
 2. From root directory, run: ```npm run test:client```
 3. To run both server and client tests in one go, run: ```npm run test```
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -69,7 +69,7 @@ Go bak to [contents](#contents)
 2. From root directory, to lint server, run: ```npm run lint:server```
 3. From root directory, to lint client and server in one go, run: ```npm run lint```
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -77,7 +77,7 @@ Go bak to [contents](#contents)
 
 Yes. Please send me a DM on [linkedIn](https://www.linkedin.com/in/md-imran-p-17725182/) if you are interested. I'll share you the link.
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -102,7 +102,7 @@ Customers can wishlist books, purchase books.
 There are search functionalities with different types of filter options to find users/books.
 All types of users can use these search functionalities to find books/users and perform their respective add/update/delete/restore actions.
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -133,7 +133,7 @@ Go bak to [contents](#contents)
 6. The search feature in book catalog / book management / user management page has multiple filter options. The more options you select the narrower the search will become ( [getBooksInternal](https://github.com/create-new-entity/bookden/blob/development/server/services/bookService.ts#L62), [getAllUsers](https://github.com/create-new-entity/bookden/blob/development/server/services/userService.ts#L34) ).
 
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -237,7 +237,7 @@ bookden/
 └── package.json                # Monorepo root config
 ```
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -266,7 +266,7 @@ Go bak to [contents](#contents)
 ![Bookden Demo mov-2026-03-22T09 19 09](https://github.com/user-attachments/assets/e50cc57e-c11d-4908-8e4c-de51adf4bd03)
 
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
 
@@ -274,6 +274,6 @@ Go bak to [contents](#contents)
 
 You can watch the demo video [here](https://drive.google.com/file/d/1wsqUZ9ASxkggY5u_o6gIT_WbGqP-LRLE/view?usp=sharing).
 
-Go bak to [contents](#contents)
+Go back to [contents](#contents)
 
 ---
