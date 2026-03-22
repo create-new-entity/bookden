@@ -16,9 +16,9 @@
 - [Some interesting places in code worth checking](#some-interesting-places-in-code-worth-checking) 👷
 - [Demo Screenshot/GIFs](#demo-screenshots--gifs) 📷
 - [Demo Video](#demo-video) 🎥
-- [Live Demo](#live-demo)
-- [Project Hours](#project-hours)
-- [Usage of generative language models]()
+- [Live Demo](#live-demo) 🔗
+- [Project Hours](#project-hours) 🕰️
+- [Usage of generative language models](#usage-of-generative-language-models) 🤖
 ---
 
 ### What is bookden? 📚
