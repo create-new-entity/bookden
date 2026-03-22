@@ -6,7 +6,7 @@
 - [Why this project](#why-this-project)
 - [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project)
 - [Key Features](#key-features) 📋
-- [How to run this locally?](#how-to-run-this-locally)
+- [How to run this project locally?](#how-to-run-this-project-locally)
 - [How to run tests locally?](#how-to-run-tests-locally)
 - [How to lint locally?](#how-to-lint-locally)
 - [What does it do?](#what-does-it-do)
