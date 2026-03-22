@@ -11,7 +11,7 @@
 - [What does it do?](#what-does-it-do)
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
-- [Demo](#demo)
+- [Demo](#demo-screenshots--gifs)
 
 ---
 
