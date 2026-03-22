@@ -326,5 +326,4 @@ Go back to [contents](#contents)
 
 ---
 
-Thanks for coming by 🙂
-You may also wanna browse [this repo](https://github.com/create-new-entity/fso-open).
+Thanks for coming by 🙂. You may also wanna browse [this repo](https://github.com/create-new-entity/fso-open).
