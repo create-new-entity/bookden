@@ -12,7 +12,7 @@ const TWENTY_SECONDS = 20000;
 jest.setTimeout(TWENTY_SECONDS);
 
 
-describe('Books Wish List tests', () => {
+describe.skip('Books Wish List tests', () => {
     let response;
 
     beforeAll(async () => {

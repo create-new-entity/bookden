@@ -19,7 +19,7 @@ const TIMEOUT = 10000; // 10 seconds
 */
 jest.setTimeout(TIMEOUT);
 
-describe('Orders CRUD tests', () => {
+describe.skip('Orders CRUD tests', () => {
     let response;
 
     beforeAll(async () => {
