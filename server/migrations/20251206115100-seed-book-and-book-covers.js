@@ -26,7 +26,7 @@ function extractUniqueTags() {
     if (Array.isArray(book.subjects)) {
       for (const subject of book.subjects) {
         if (typeof subject === 'string' && subject.trim() !== '') {
-          uniqueTags.add(subject.trim().toLowerCase());
+          uniqueTags.add(sanitizeTag(subject));
         }
       }
     }
@@ -42,6 +42,16 @@ function stripHtmlTags(input) {
     .replace(/<[^>]*>/g, ' ')   // remove all tags like <br>, <br/>, </p>, etc.
     .replace(/\s+/g, ' ')       // collapse multiple spaces
     .trim();
+}
+
+function sanitizeTag(tag) {
+  if (!tag || typeof tag !== 'string') return null;
+
+  return tag
+    .replace(/,/g, '')        // remove commas
+    .replace(/\s+/g, ' ')     // normalize spaces
+    .trim()
+    .toLowerCase();
 }
 
 
@@ -111,7 +121,7 @@ exports.up = async function(db) {
 
       bookTagsBuffer.push({
         bookId,
-        tags: book.subjects?.map(t => t.trim().toLowerCase()) ?? []
+        tags: book.subjects?.map(sanitizeTag) ?? []
       });
 
 
