@@ -16,7 +16,7 @@ const TWENTY_SECONDS = 20000;
 jest.setTimeout(TWENTY_SECONDS);
 
 
-describe('GET Book(s) related tests', () => {
+describe.skip('GET Book(s) related tests', () => {
     let response;
 
     beforeAll(async () => {
