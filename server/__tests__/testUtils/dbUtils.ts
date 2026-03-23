@@ -1,3 +1,4 @@
+import fs from 'fs';
 import apiSupertest from 'supertest';
 import path from 'path';
 
@@ -45,6 +46,7 @@ export const createSomeSeedUsers = async () => {
 
 
 const dummyImagePath = path.join(__dirname, '..', 'files', 'dummy.jpeg');
+const dummyBuffer = fs.readFileSync(dummyImagePath);
 
 export const createSomeSeedBooks = async () => {
     for (const book of booksSeedData) {
@@ -54,7 +56,8 @@ export const createSomeSeedBooks = async () => {
             .field('payload', JSON.stringify(book), {
                 contentType: 'application/json'
             })
-            .attach('coverImage', dummyImagePath, {
+            .attach('coverImage', dummyBuffer, {
+                filename: 'dummy.jpeg',
                 contentType: 'image/jpeg'
             })  // Use this dummy image as cover image for the book.
             .expect(201);
