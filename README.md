@@ -118,7 +118,7 @@ A business owner (```superadmin```) manages the platform.
 They can create, update, and remove books, as well as manage other users.
 
 Admins (```admin```) act as employees of the platform.  
-They can manage books and handle customer-related operations.
+They can manage books and customer users. They can not create or delete other admin users.
 
 Customers (```customer```) can sign up, browse books, add items to their wishlist or cart, and complete purchases.
 
