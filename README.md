@@ -133,7 +133,7 @@ Go back to [contents](#contents)
 
 ### How to use it?
 
-1. [Start the app locally.](#how-to-run-this-project-locally). This will also populate the database with some [seed data](https://github.com/create-new-entity/bookden/tree/development/server/seed/seedData), so that it doesn't feel like an empty desert when the app starts. Meaning, a bunch of admin, customer users and lots of book data will already be inserted in the system. You can use any of the user to login and play in the system. There can be only one ```superadmin``` user. ```superadmin``` user can not be created/deleted.
+1. [Start the app locally](#how-to-run-this-project-locally). This will also populate the database with some [seed data](https://github.com/create-new-entity/bookden/tree/development/server/seed/seedData), so that it doesn't feel like an empty desert when the app starts. Meaning, a bunch of admin, customer users and lots of book data will already be inserted in the system. You can use any of the user to login and play in the system. There can be only one ```superadmin``` user. ```superadmin``` user can not be created/deleted.
 2. Without logging in you can still do the following:
     1. Browse the books in homepage
     2. Click the catalog link and browse the books there. Searching in the top nav will also lead to the catalog page.
