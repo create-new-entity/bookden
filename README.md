@@ -2,14 +2,14 @@
 # Bookden — Multi-Role E-Commerce Platform with Admin Tooling
 
 ### Contents
-- [What is bookden?](#what-is-bookden)
-- [Why this project](#why-this-project)
-- [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project)
+- [What is bookden?](#what-is-bookden) ❓
+- [Why this project](#why-this-project) 🤔
+- [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project) 🛠️
 - [Key Features](#key-features) 📋
-- [How to run this project locally?](#how-to-run-this-project-locally)
-- [How to run tests locally?](#how-to-run-tests-locally)
+- [How to run this project locally?](#how-to-run-this-project-locally) 🏁
+- [How to run tests locally?](#how-to-run-tests-locally) 👨‍🔬
 - [How to lint locally?](#how-to-lint-locally)
-- [What does it do?](#what-does-it-do)
+- [What does it do?](#what-does-it-do) 🛍️
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
 - [System Design Highlights](#system-design-highlights)
@@ -19,8 +19,8 @@
 - [Live Demo](#live-demo) 🔗
 - [Project Hours](#project-hours) 🕰️
 - [Usage of generative language models](#usage-of-generative-language-models) 🤖
-- [Final Review / Assessment](#final-review--assessment)
-- [Other](#other)
+- [Final Review / Assessment](#final-review--assessment) 🖋️
+- [Other](#other) 👀
 ---
 
 ### What is bookden? 📚
