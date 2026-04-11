@@ -2,7 +2,7 @@
 # Bookden — Multi-Role E-Commerce Platform with Admin Tooling
 
 ### Contents
-- [What is bookden?](#what-is-bookden) ❓
+- [What is bookden?](#what-is-bookden-) ❓
 - [Why this project](#why-this-project) 🤔
 - [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project) 🛠️
 - [Key Features](#key-features) 📋
