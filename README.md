@@ -2,14 +2,14 @@
 # Bookden — Multi-Role E-Commerce Platform with Admin Tooling
 
 ### Contents
-- [What is bookden?](#what-is-bookden)
-- [Why this project](#why-this-project)
-- [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project)
+- [What is bookden?](#what-is-bookden) ❓
+- [Why this project](#why-this-project) 🤔
+- [What is the tech stack of this project?](#what-is-the-tech-stack-of-this-project) 🛠️
 - [Key Features](#key-features) 📋
-- [How to run this project locally?](#how-to-run-this-project-locally)
-- [How to run tests locally?](#how-to-run-tests-locally)
+- [How to run this project locally?](#how-to-run-this-project-locally) 🏁
+- [How to run tests locally?](#how-to-run-tests-locally) 👨‍🔬
 - [How to lint locally?](#how-to-lint-locally)
-- [What does it do?](#what-does-it-do)
+- [What does it do?](#what-does-it-do) 🛍️
 - [How to use it?](#how-to-use-it)
 - [Project Architecture](#project-architecture)
 - [System Design Highlights](#system-design-highlights)
@@ -19,6 +19,8 @@
 - [Live Demo](#live-demo) 🔗
 - [Project Hours](#project-hours) 🕰️
 - [Usage of generative language models](#usage-of-generative-language-models) 🤖
+- [Final Review / Assessment](#final-review--assessment) 🖋️
+- [Other](#other) 👀
 ---
 
 ### What is bookden? 📚
@@ -131,7 +133,7 @@ Go back to [contents](#contents)
 
 ### How to use it?
 
-1. [Start the app locally.](#how-to-run-this-locally). This will also populate the database with some [seed data](https://github.com/create-new-entity/bookden/tree/development/server/seed/seedData), so that it doesn't feel like an empty desert when the app starts. Meaning, a bunch of admin, customer users and lots of book data will already be inserted in the system. You can use any of the user to login and play in the system. There can be only one ```superadmin``` user. ```superadmin``` user can not be created/deleted.
+1. [Start the app locally](#how-to-run-this-project-locally). This will also populate the database with some [seed data](https://github.com/create-new-entity/bookden/tree/development/server/seed/seedData), so that it doesn't feel like an empty desert when the app starts. Meaning, a bunch of admin, customer users and lots of book data will already be inserted in the system. You can use any of the user to login and play in the system. There can be only one ```superadmin``` user. ```superadmin``` user can not be created/deleted.
 2. Without logging in you can still do the following:
     1. Browse the books in homepage
     2. Click the catalog link and browse the books there. Searching in the top nav will also lead to the catalog page.
@@ -345,4 +347,30 @@ Go back to [contents](#contents)
 
 ---
 
+### Final Review / Assessment
+
+Review can be seen [here](https://github.com/create-new-entity/bookden/issues/58).
+
+Summary of the review:
+
+```
+Bookden is a highly ambitious and well-executed fullstack project that
+convincingly simulates a real e-commerce platform with a multi-role system.
+The project architecture is well thought out and the code is clearly organized.
+This is an excellent portfolio project that demonstrates
+broad expertise across frontend, backend, and DevOps.
+
+Great work!
+```
+
+Go back to [contents](#contents)
+
+---
+
+### Other
+
 Thanks for coming by 🙂. You may also wanna browse [this repo](https://github.com/create-new-entity/fso-open).
+
+Go back to [contents](#contents)
+
+---
