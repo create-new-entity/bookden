@@ -141,7 +141,7 @@ Go back to [contents](#contents)
     4. If you are in the catalog page, you can also hover and add to cart from there. If you try to wishlist any item, you should be logged in as a customer.
     5. After you add a bunch of books into cart, click the cart icon from top. This will lead to cart page. Checkout requires logging in as a customer.
 3. How to use as a ```superadmin```:
-    1. Log in as the superadmin. username: ```superadmin```, password: 
+    1. Log in as the superadmin. username: ```superadmin```, password is available upon request. [Please send me a DM on LinkedIn](https://www.linkedin.com/in/md-imran-p-17725182/) if you need the ```superadmin``` password on prod. In local, you can use the ```superadmin``` password [from here](https://github.com/create-new-entity/Bookden/blob/production/env/dev/server.env.example).
     2. From the top right avatar menu you can go to ```Admin Tools```
         1. ```Admin Tools``` -> ```User Management``` -> Shows all the users ( admin, customer ) details that are available in the system. All of these users have password:  ( for example, username: zoe_kendall, password: ). You can also use any of this users and login as an admin or customer.
         2. ```Admin Tools``` -> ```Book Management``` -> Shows all the books details that are available in the system. You can use the ```Add Book``` button to create a new book in the system. You can also edit, delete and restore any book.
